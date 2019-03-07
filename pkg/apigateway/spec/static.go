@@ -1506,87 +1506,6 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/app_version/action/business_admin/pass": {
-      "post": {
-        "summary": "business admin pass app version",
-        "operationId": "BusinessAdminPassAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/business_admin/reject": {
-      "post": {
-        "summary": "business admin reject app version",
-        "operationId": "BusinessAdminRejectAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/business_admin/review": {
-      "post": {
-        "summary": "business admin start review app version",
-        "operationId": "BusinessAdminReviewAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
     "/v1/app_version/action/cancel": {
       "post": {
         "summary": "cancel app version",
@@ -1641,10 +1560,10 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/app_version/action/develop_admin/pass": {
+    "/v1/app_version/action/pass/business": {
       "post": {
-        "summary": "pass app version",
-        "operationId": "DevelopAdminPassAppVersion",
+        "summary": "operator type business pass app version",
+        "operationId": "BusinessPassAppVersion",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1668,63 +1587,9 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/app_version/action/develop_admin/reject": {
+    "/v1/app_version/action/pass/isv": {
       "post": {
-        "summary": "reject app version",
-        "operationId": "DevelopAdminRejectAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/develop_admin/review": {
-      "post": {
-        "summary": "develop admin start review app version",
-        "operationId": "DevelopAdminReviewAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/isv/pass": {
-      "post": {
-        "summary": "isv pass app version",
+        "summary": "operator type isv pass app version",
         "operationId": "IsvPassAppVersion",
         "responses": {
           "200": {
@@ -1749,15 +1614,15 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/app_version/action/isv/reject": {
+    "/v1/app_version/action/pass/technical": {
       "post": {
-        "summary": "isv reject app version",
-        "operationId": "IsvRejectAppVersion",
+        "summary": "operator type technical pass app version",
+        "operationId": "TechnicalPassAppVersion",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
+              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
             }
           }
         },
@@ -1767,34 +1632,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/isv/review": {
-      "post": {
-        "summary": "isv start review app version",
-        "operationId": "IsvReviewAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
+              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
             }
           }
         ],
@@ -1830,6 +1668,87 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/app_version/action/reject/business": {
+      "post": {
+        "summary": "operator type business reject app version",
+        "operationId": "BusinessRejectAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/reject/isv": {
+      "post": {
+        "summary": "operator type isv reject app version",
+        "operationId": "IsvRejectAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/reject/technical": {
+      "post": {
+        "summary": "operator type reject app version",
+        "operationId": "TechnicalRejectAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/app_version/action/release": {
       "post": {
         "summary": "release app version",
@@ -1849,6 +1768,87 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixReleaseAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/review/business": {
+      "post": {
+        "summary": "operator type business start review app version",
+        "operationId": "BusinessReviewAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/review/isv": {
+      "post": {
+        "summary": "operator type isv start review app version",
+        "operationId": "IsvReviewAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/review/technical": {
+      "post": {
+        "summary": "operator type technical start review app version",
+        "operationId": "TechnicalReviewAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
             }
           }
         ],
@@ -2060,7 +2060,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "role",
+            "name": "operator_type",
             "in": "query",
             "required": false,
             "type": "array",
@@ -7149,7 +7149,7 @@ var Files = map[string]string{
         "operator": {
           "type": "string"
         },
-        "role": {
+        "operator_type": {
           "type": "string"
         },
         "message": {
@@ -7209,7 +7209,7 @@ var Files = map[string]string{
         "operator": {
           "type": "string"
         },
-        "review_access": {
+        "operator_type": {
           "type": "string"
         },
         "message": {

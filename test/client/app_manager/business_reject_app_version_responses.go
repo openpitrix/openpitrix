@@ -16,17 +16,17 @@ import (
 	"openpitrix.io/openpitrix/test/models"
 )
 
-// IsvRejectAppVersionReader is a Reader for the IsvRejectAppVersion structure.
-type IsvRejectAppVersionReader struct {
+// BusinessRejectAppVersionReader is a Reader for the BusinessRejectAppVersion structure.
+type BusinessRejectAppVersionReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *IsvRejectAppVersionReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *BusinessRejectAppVersionReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
 	case 200:
-		result := NewIsvRejectAppVersionOK()
+		result := NewBusinessRejectAppVersionOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -37,24 +37,24 @@ func (o *IsvRejectAppVersionReader) ReadResponse(response runtime.ClientResponse
 	}
 }
 
-// NewIsvRejectAppVersionOK creates a IsvRejectAppVersionOK with default headers values
-func NewIsvRejectAppVersionOK() *IsvRejectAppVersionOK {
-	return &IsvRejectAppVersionOK{}
+// NewBusinessRejectAppVersionOK creates a BusinessRejectAppVersionOK with default headers values
+func NewBusinessRejectAppVersionOK() *BusinessRejectAppVersionOK {
+	return &BusinessRejectAppVersionOK{}
 }
 
-/*IsvRejectAppVersionOK handles this case with default header values.
+/*BusinessRejectAppVersionOK handles this case with default header values.
 
 A successful response.
 */
-type IsvRejectAppVersionOK struct {
+type BusinessRejectAppVersionOK struct {
 	Payload *models.OpenpitrixRejectAppVersionResponse
 }
 
-func (o *IsvRejectAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /v1/app_version/action/reject/isv][%d] isvRejectAppVersionOK  %+v", 200, o.Payload)
+func (o *BusinessRejectAppVersionOK) Error() string {
+	return fmt.Sprintf("[POST /v1/app_version/action/reject/business][%d] businessRejectAppVersionOK  %+v", 200, o.Payload)
 }
 
-func (o *IsvRejectAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *BusinessRejectAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.OpenpitrixRejectAppVersionResponse)
 

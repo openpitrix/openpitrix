@@ -330,25 +330,25 @@
       type: string
     password:
       type: string
-- action: BusinessAdminPassAppVersion
+- action: BusinessPassAppVersion
   request: PassAppVersionRequest
-  description: business admin pass app version
+  description: operator type business pass app version
   service: AppManager
   body:
     version_id:
       type: string
-- action: BusinessAdminRejectAppVersion
+- action: BusinessRejectAppVersion
   request: RejectAppVersionRequest
-  description: business admin reject app version
+  description: operator type business reject app version
   service: AppManager
   body:
     message:
       type: string
     version_id:
       type: string
-- action: BusinessAdminReviewAppVersion
+- action: BusinessReviewAppVersion
   request: ReviewAppVersionRequest
-  description: business admin start review app version
+  description: operator type business start review app version
   service: AppManager
   body:
     version_id:
@@ -494,10 +494,10 @@
       type: int64
     operator:
       type: '[]string'
+    operator_type:
+      type: '[]string'
     reverse:
       type: boolean
-    role:
-      type: '[]string'
     search_word:
       type: string
     sort_key:
@@ -603,29 +603,6 @@
       type: string
     status:
       type: '[]string'
-- action: DevelopAdminPassAppVersion
-  request: PassAppVersionRequest
-  description: pass app version
-  service: AppManager
-  body:
-    version_id:
-      type: string
-- action: DevelopAdminRejectAppVersion
-  request: RejectAppVersionRequest
-  description: reject app version
-  service: AppManager
-  body:
-    message:
-      type: string
-    version_id:
-      type: string
-- action: DevelopAdminReviewAppVersion
-  request: ReviewAppVersionRequest
-  description: develop admin start review app version
-  service: AppManager
-  body:
-    version_id:
-      type: string
 - action: GetAppStatistics
   request: GetAppStatisticsRequest
   description: get app statistics
@@ -648,14 +625,14 @@
       type: string
 - action: IsvPassAppVersion
   request: PassAppVersionRequest
-  description: isv pass app version
+  description: operator type isv pass app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: IsvRejectAppVersion
   request: RejectAppVersionRequest
-  description: isv reject app version
+  description: operator type isv reject app version
   service: AppManager
   body:
     message:
@@ -664,7 +641,7 @@
       type: string
 - action: IsvReviewAppVersion
   request: ReviewAppVersionRequest
-  description: isv start review app version
+  description: operator type isv start review app version
   service: AppManager
   body:
     version_id:
@@ -736,6 +713,29 @@
 - action: SuspendAppVersion
   request: SuspendAppVersionRequest
   description: suspend app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: TechnicalPassAppVersion
+  request: PassAppVersionRequest
+  description: operator type technical pass app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: TechnicalRejectAppVersion
+  request: RejectAppVersionRequest
+  description: operator type reject app version
+  service: AppManager
+  body:
+    message:
+      type: string
+    version_id:
+      type: string
+- action: TechnicalReviewAppVersion
+  request: ReviewAppVersionRequest
+  description: operator type technical start review app version
   service: AppManager
   body:
     version_id:

@@ -251,32 +251,32 @@ func testVersionLifeCycle(t *testing.T, versionId string) {
 	_, err = client.AppManager.IsvPassAppVersion(passAppVersionParams, nil)
 	testutil.NoError(t, err, Service)
 
-	reviewAppVersionParams := app_manager.NewBusinessAdminReviewAppVersionParams()
+	reviewAppVersionParams := app_manager.NewBusinessReviewAppVersionParams()
 	reviewAppVersionParams.WithBody(&models.OpenpitrixReviewAppVersionRequest{
 		VersionID: versionId,
 	})
-	_, err = client.AppManager.BusinessAdminReviewAppVersion(reviewAppVersionParams, nil)
+	_, err = client.AppManager.BusinessReviewAppVersion(reviewAppVersionParams, nil)
 	testutil.NoError(t, err, Service)
 
-	busPassAppVersionParams := app_manager.NewBusinessAdminPassAppVersionParams()
+	busPassAppVersionParams := app_manager.NewBusinessPassAppVersionParams()
 	busPassAppVersionParams.WithBody(&models.OpenpitrixPassAppVersionRequest{
 		VersionID: versionId,
 	})
-	_, err = client.AppManager.BusinessAdminPassAppVersion(busPassAppVersionParams, nil)
+	_, err = client.AppManager.BusinessPassAppVersion(busPassAppVersionParams, nil)
 	testutil.NoError(t, err, Service)
 
-	devReviewAppVersionParams := app_manager.NewDevelopAdminReviewAppVersionParams()
+	devReviewAppVersionParams := app_manager.NewTechnicalReviewAppVersionParams()
 	devReviewAppVersionParams.WithBody(&models.OpenpitrixReviewAppVersionRequest{
 		VersionID: versionId,
 	})
-	_, err = client.AppManager.DevelopAdminReviewAppVersion(devReviewAppVersionParams, nil)
+	_, err = client.AppManager.TechnicalReviewAppVersion(devReviewAppVersionParams, nil)
 	testutil.NoError(t, err, Service)
 
-	devPassAppVersionParams := app_manager.NewDevelopAdminPassAppVersionParams()
+	devPassAppVersionParams := app_manager.NewTechnicalPassAppVersionParams()
 	devPassAppVersionParams.WithBody(&models.OpenpitrixPassAppVersionRequest{
 		VersionID: versionId,
 	})
-	_, err = client.AppManager.DevelopAdminPassAppVersion(devPassAppVersionParams, nil)
+	_, err = client.AppManager.TechnicalPassAppVersion(devPassAppVersionParams, nil)
 	testutil.NoError(t, err, Service)
 
 	releaseAppVersionParams := app_manager.NewReleaseAppVersionParams()

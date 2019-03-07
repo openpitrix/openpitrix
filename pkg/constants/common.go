@@ -229,9 +229,11 @@ const (
 	GrantTypePassword          = "password"
 	GrantTypeRefreshToken      = "refresh_token"
 
-	ReviewAccessBusiness = "business"
-	ReviewAccessDevelop  = "develop"
-	ReviewAccessIsv      = "isv"
+	OperatorTypeGlobalAdmin = "global_admin"
+	OperatorTypeDeveloper   = "developer"
+	OperatorTypeBusiness    = "business"
+	OperatorTypeTechnical   = "technical"
+	OperatorTypeIsv         = "isv"
 )
 
 var GrantTypeTokens = []string{

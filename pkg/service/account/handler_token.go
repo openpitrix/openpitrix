@@ -93,6 +93,7 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 		}
 	}
 
+	userId = token.UserId
 	accessToken, err := jwtutil.Generate(p.IAMConfig.SecretKey, p.IAMConfig.ExpireTime, userId)
 	if err != nil {
 		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
