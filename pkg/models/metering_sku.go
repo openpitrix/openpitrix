@@ -277,11 +277,11 @@ func PbToMeteringAttributeBindings(pbMab *pb.CreateMeteringAttributeBindingsRequ
 
 func MeteringAttributeBindingToPb(mab *MeteringAttributeBinding) *pb.MeteringAttributeBinding {
 	return &pb.MeteringAttributeBinding{
-		BindingId: pbutil.ToProtoString(mab.BindingId),
-		SkuId: pbutil.ToProtoString(mab.SkuId),
+		BindingId:   pbutil.ToProtoString(mab.BindingId),
+		SkuId:       pbutil.ToProtoString(mab.SkuId),
 		AttributeId: pbutil.ToProtoString(mab.AttributeId),
-		Status:       pbutil.ToProtoString(mab.Status),
-		CreateTime:   pbutil.ToProtoTimestamp(mab.CreateTime),
-		StatusTime:   pbutil.ToProtoTimestamp(mab.StatusTime),
+		Status:      pbutil.ToProtoString(mab.Status),
+		CreateTime:  pbutil.ToProtoTimestamp(mab.CreateTime),
+		StatusTime:  pbutil.ToProtoTimestamp(mab.StatusTime),
 	}
 }

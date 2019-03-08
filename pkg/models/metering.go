@@ -9,7 +9,6 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/util/pbutil"
 
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
@@ -48,7 +47,6 @@ func pbToMeteringValues(pbMetVals []*pb.MeteringValue) map[string]float64 {
 }
 
 func NewLeasing(req *pb.SkuMetering, groupId, userId string, actionTime, renewalTime time.Time) *Leasing {
-	now := time.Now()
 	return &Leasing{
 		LeasingId:          NewLeasingId(),
 		GroupId:            groupId,
@@ -78,18 +76,16 @@ type Leased struct {
 	StopTime       map[time.Time]time.Time //{closeTime: restartTime, ..}
 }
 
-var LeasedColumns = db.GetColumnsFromStruct(&Leased{})
-
-func (l Leasing) toLeased() Leased {
-	return Leased{
+func (l Leasing) toLeased() *Leased {
+	return &Leased{
 		LeasedId:       l.LeasingId,
 		GroupId:        l.GroupId,
 		UserId:         l.UserId,
 		ResourceId:     l.ResourceId,
 		SkuId:          l.SkuId,
-		OtherInfo:      l.OtherInfo,
 		MeteringValues: l.MeteringValues,
 		LeaseTime:      l.LeaseTime,
-		CloseTime:      l.CloseTime,
+		StopTime:       l.StopTime,
+		CreateTime:     time.Now(),
 	}
 }

@@ -6,6 +6,7 @@ package metering
 
 import (
 	"context"
+	"time"
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -226,6 +227,12 @@ func insertLeasings(ctx context.Context, leasings []*models.Leasing) error {
 	return err
 }
 
+func getLeasing(ctx context.Context, leasingID, userId, resourceId, skuId string) (*models.Leasing, error) {
+	//ids: leasingId, resourceId, userId, skuId
+	//TODO: impl get leasing
+	return &models.Leasing{}, nil
+}
+
 //promotion
 func insertCombination(ctx context.Context, com *models.Combination) error {
 	_, err := pi.Global().DB(ctx).
@@ -256,7 +263,7 @@ func leasingToEtcd(leasing models.Leasing) error {
 	return nil
 }
 
-func leasingToRedis(leasing models.Leasing) error {
+func leasingToRedis(leasingId string, renewalTime time.Time) error {
 	//TODO: impl add leasing to redis
 	return nil
 }

@@ -15,6 +15,8 @@ import (
 const (
 	EN = "En"
 	ZH = "Zh"
+
+	NIL_STR = ""
 )
 
 const (

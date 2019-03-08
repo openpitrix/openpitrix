@@ -43,7 +43,6 @@ func (s *Server) DeletePrices(ctx context.Context, req *pb.DeletePricesRequest) 
 }
 
 
-
 func Billing() {
 	leasing := models.Leasing{}
 	contract, err := calculate(leasing)
@@ -54,7 +53,6 @@ func Billing() {
 	if err.Error() == "balance not enough" {
 		addToNoMoney(leasing)
 	}
-
 }
 
 func calculate(leasing models.Leasing) (*models.LeasingContract, error) {

@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/pb"
 )
 
 func NewPriceId() string {
@@ -18,15 +18,15 @@ func NewPriceId() string {
 }
 
 type Price struct {
-	PriceId     string
-	BindingId   string
-	Prices      map[int64]float64
-	Currency    string
-	Status      string
-	StartTime   time.Time
-	EndTime     time.Time
-	CreateTime  time.Time
-	StatusTime  time.Time
+	PriceId    string
+	BindingId  string
+	Prices     map[int64]float64
+	Currency   string
+	Status     string
+	StartTime  time.Time
+	EndTime    time.Time
+	CreateTime time.Time
+	StatusTime time.Time
 }
 
 func NewPrice(bindingId, currency string, prices map[int64]float64, startTime, endTime time.Time) *Price {
@@ -35,15 +35,15 @@ func NewPrice(bindingId, currency string, prices map[int64]float64, startTime, e
 		startTime = now
 	}
 	return &Price{
-		PriceId:     NewPriceId(),
-		BindingId:   bindingId,
-		Prices:      prices,
-		Currency:    currency,
-		Status:      constants.StatusActive,
-		StartTime:   startTime,
-		EndTime:     endTime,
-		CreateTime:  now,
-		StatusTime:  now,
+		PriceId:    NewPriceId(),
+		BindingId:  bindingId,
+		Prices:     prices,
+		Currency:   currency,
+		Status:     constants.StatusActive,
+		StartTime:  startTime,
+		EndTime:    endTime,
+		CreateTime: now,
+		StatusTime: now,
 	}
 }
 
@@ -59,20 +59,17 @@ func PbToPrice(pbPrice *pb.CreatePriceRequest) *Price {
 
 func PriceToPb(price *Price) *pb.Price {
 	return &pb.Price{
-		PriceId: pbutil.ToProtoString(price.PriceId),
-		BindingId: pbutil.ToProtoString(price.BindingId),
-		Prices: price.Prices,
-		Currency: pb.Currency(pb.Currency_value[price.Currency]),
-		Status: pbutil.ToProtoString(price.Status),
-		StartTime: pbutil.ToProtoTimestamp(price.StartTime),
-		EndTime: pbutil.ToProtoTimestamp(price.EndTime),
+		PriceId:    pbutil.ToProtoString(price.PriceId),
+		BindingId:  pbutil.ToProtoString(price.BindingId),
+		Prices:     price.Prices,
+		Currency:   pb.Currency(pb.Currency_value[price.Currency]),
+		Status:     pbutil.ToProtoString(price.Status),
+		StartTime:  pbutil.ToProtoTimestamp(price.StartTime),
+		EndTime:    pbutil.ToProtoTimestamp(price.EndTime),
 		CreateTime: pbutil.ToProtoTimestamp(price.CreateTime),
 		StatusTime: pbutil.ToProtoTimestamp(price.StatusTime),
 	}
 }
-
-
-
 
 type LeasingContract struct {
 	Id             string

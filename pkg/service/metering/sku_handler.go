@@ -214,7 +214,6 @@ func (s *Server) DeleteMeteringAttributeBindings(ctx context.Context, req *pb.De
 	return &pb.DeleteMeteringAttributeBindingsResponse{}, nil
 }
 
-
 func renewalTimeFromSku(ctx context.Context, skuId string, actionTime time.Time) (*time.Time, error) {
 	sku, err := getSku(ctx, skuId)
 

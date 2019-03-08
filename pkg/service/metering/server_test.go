@@ -11,14 +11,13 @@ import (
 	"os"
 	"testing"
 	"time"
-
 )
 
 //server struct
-var ss struct{
-	server 		*Server
-	ctx 		context.Context
-	cancel 		context.CancelFunc
+var ss struct {
+	server *Server
+	ctx    context.Context
+	cancel context.CancelFunc
 }
 
 var ENVs = map[string]map[string]string{
@@ -34,7 +33,7 @@ var ENVs = map[string]map[string]string{
 	},
 }
 
-func TestMain(m *testing.M){
+func TestMain(m *testing.M) {
 
 	//check if enable testing
 	if !*tTestingEnvEnabled {
@@ -43,8 +42,8 @@ func TestMain(m *testing.M){
 	}
 
 	//setup envs
-	for _, typeEnvs := range ENVs{
-		for k, v := range typeEnvs{
+	for _, typeEnvs := range ENVs {
+		for k, v := range typeEnvs {
 			os.Setenv(k, v)
 		}
 	}
@@ -67,4 +66,3 @@ func TestNewServer(t *testing.T) {
 	succInfo := "TestNewServer Passed, server: %v, context: %v, cancleFunc: %v"
 	t.Logf(succInfo, ss.server, ss.ctx, ss.cancel)
 }
-

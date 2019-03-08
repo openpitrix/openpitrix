@@ -238,7 +238,7 @@ type CouponReceived struct {
 	CouponReceivedId string
 	CouponId         string
 	UserId           string
-	Remain          float64
+	Remain           float64
 	Status           string
 	CreateTime       time.Time
 	StatusTime       time.Time
@@ -247,12 +247,12 @@ type CouponReceived struct {
 func NewCouponReceived(couponId, userId string, remain float64) *CouponReceived {
 	now := time.Now()
 	return &CouponReceived{
-		CouponReceivedId:   NewCouponReceivedId(),
-		CouponId: couponId,
-		UserId: userId,
-		Remain: remain,
-		Status: constants.StatusActive,
-		CreateTime: now,
-		StatusTime: now,
+		CouponReceivedId: NewCouponReceivedId(),
+		CouponId:         couponId,
+		UserId:           userId,
+		Remain:           remain,
+		Status:           constants.StatusActive,
+		CreateTime:       now,
+		StatusTime:       now,
 	}
 }
