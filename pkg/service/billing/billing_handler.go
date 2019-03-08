@@ -11,33 +11,38 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 func (s *Server) CreatePrice(ctx context.Context, req *pb.CreatePriceRequest) (*pb.CreatePriceResponse, error) {
 	price := models.PbToPrice(req)
 
-	//get sku
-	sku, err := getSku(ctx, price.SkuId)
-	if err != nil {
-		return nil, err
-	}
-	if sku == nil {
-		return nil, notExistError(ctx, models.Sku{}, price.SkuId)
-	}
-
-	//check if price.AttributeId exist in sku.MeteringAttributeIds
-	if !stringutil.StringIn(price.AttributeId, sku.MeteringAttributeIds) {
-		return nil, notExistInOtherError(ctx, models.Attribute{}, models.Sku{})
-	}
+	//TODO: how to check bindId
+	//How about do not check bindId?
 
 	//insert price
-	err = insertPrice(ctx, price)
+	err := insertPrice(ctx, price)
 	if err != nil {
 		return nil, internalError(ctx, err)
 	}
 	return &pb.CreatePriceResponse{PriceId: pbutil.ToProtoString(price.PriceId)}, nil
 }
+
+func (s *Server) DescribePrices(ctx context.Context, req *pb.DescribePricesRequest) (*pb.DescribePricesResponse, error) {
+	//TODO: impl DescribePrices
+	return &pb.DescribePricesResponse{}, nil
+}
+
+func (s *Server) ModifyPrice(ctx context.Context, req *pb.ModifyPriceRequest) (*pb.ModifyPriceResponse, error) {
+	//TODO: impl ModifyPrice
+	return &pb.ModifyPriceResponse{}, nil
+}
+
+func (s *Server) DeletePrices(ctx context.Context, req *pb.DeletePricesRequest) (*pb.DeletePricesResponse, error) {
+	//TODO: impl DeletePrices
+	return &pb.DeletePricesResponse{}, nil
+}
+
+
 
 func Billing() {
 	leasing := models.Leasing{}
