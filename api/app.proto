@@ -106,7 +106,7 @@ message App {
 	google.protobuf.StringValue chart_name = 14;
 	google.protobuf.StringValue abstraction = 15;
 	google.protobuf.StringValue tos = 16;
-	google.protobuf.StringValue owner_path = 17;
+	google.protobuf.StringValue owner = 17;
 	google.protobuf.Timestamp create_time = 18;
 	google.protobuf.Timestamp status_time = 19;
 	google.protobuf.Timestamp update_time = 20;
@@ -119,6 +119,7 @@ message App {
 	google.protobuf.StringValue company_website = 25;
 	google.protobuf.StringValue company_profile = 26;
 	google.protobuf.Timestamp company_join_time = 27;
+	google.protobuf.StringValue owner_path = 28;
 }
 
 message DescribeAppsRequest {
@@ -134,7 +135,7 @@ message DescribeAppsRequest {
 	repeated string name = 12;
 	repeated string repo_id = 13;
 	repeated string status = 14;
-	repeated string owner_path = 15;
+	repeated string owner = 15;
 	repeated string chart_name = 16;
 	repeated string category_id = 17;
 	repeated string display_columns = 18;
@@ -175,7 +176,7 @@ message AppVersion {
 	google.protobuf.StringValue version_id = 1;
 	google.protobuf.BoolValue active = 2;
 	google.protobuf.StringValue app_id = 3;
-	google.protobuf.StringValue owner_path = 4;
+	google.protobuf.StringValue owner = 4;
 	google.protobuf.StringValue name = 5;
 	google.protobuf.StringValue description = 6;
 	google.protobuf.StringValue home = 7;
@@ -194,6 +195,7 @@ message AppVersion {
 	google.protobuf.UInt32Value sequence = 20;
 	google.protobuf.StringValue message = 21;
 	google.protobuf.StringValue type = 22;
+	google.protobuf.StringValue owner_path = 23;
 }
 
 message AppVersionAudit {
@@ -289,7 +291,7 @@ message DescribeAppVersionsRequest {
 	repeated string version_id = 10;
 	repeated string app_id = 11;
 	repeated string name = 12;
-	repeated string owner_path = 13;
+	repeated string owner = 13;
 	repeated string description = 14;
 	repeated string package_name = 15;
 	repeated string status = 16;
@@ -451,7 +453,7 @@ service AppManager {
 			body: "*"
 		};
 	}
-	rpc UploadAppAttachment(UploadAppAttachmentRequest) returns (UploadAppAttachmentResponse){
+	rpc UploadAppAttachment (UploadAppAttachmentRequest) returns (UploadAppAttachmentResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "UploadAppAttachment"
 		};

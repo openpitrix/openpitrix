@@ -22,6 +22,7 @@ message Category {
 	google.protobuf.Timestamp update_time = 6;
 	google.protobuf.StringValue description = 7;
 	google.protobuf.StringValue icon = 8;
+	google.protobuf.StringValue owner = 9;
 }
 
 message DescribeCategoriesRequest {
@@ -36,7 +37,7 @@ message DescribeCategoriesRequest {
 
 	repeated string category_id = 7;
 	repeated string name = 8;
-	repeated string owner_path = 9;
+	repeated string owner = 9;
 }
 
 message DescribeCategoriesResponse {

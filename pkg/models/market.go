@@ -53,6 +53,7 @@ func MarketToPb(market *Market) *pb.Market {
 	pbMarket.Visibility = pbutil.ToProtoString(market.Visibility)
 	pbMarket.Status = pbutil.ToProtoString(market.Status)
 	pbMarket.OwnerPath = market.OwnerPath.ToProtoString()
+	pbMarket.Owner = pbutil.ToProtoString(market.Owner)
 	pbMarket.Description = pbutil.ToProtoString(market.Description)
 	pbMarket.CreateTime = pbutil.ToProtoTimestamp(market.CreateTime)
 	pbMarket.StatusTime = pbutil.ToProtoTimestamp(market.StatusTime)

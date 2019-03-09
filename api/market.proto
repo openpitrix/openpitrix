@@ -23,6 +23,7 @@ message Market {
 	google.protobuf.StringValue description = 6;
 	google.protobuf.Timestamp create_time = 7;
 	google.protobuf.Timestamp status_time = 8;
+	google.protobuf.StringValue owner = 9;
 }
 
 message CreateMarketRequest {
@@ -48,7 +49,7 @@ message DescribeMarketsRequest {
 	repeated string name = 12;
 	repeated string visibility = 13;
 	repeated string status = 14;
-	repeated string owner_path = 15;
+	repeated string owner = 15;
 	repeated string user_id = 16;
 }
 
@@ -102,6 +103,7 @@ message MarketUser {
 	google.protobuf.StringValue user_id = 2;
 	google.protobuf.StringValue owner_path = 3;
 	google.protobuf.Timestamp create_time = 4;
+	google.protobuf.StringValue owner = 5;
 }
 
 message DescribeMarketUsersRequest {
@@ -115,7 +117,7 @@ message DescribeMarketUsersRequest {
 
 	repeated string market_id = 11;
 	repeated string user_id = 12;
-	repeated string owner_path = 13;
+	repeated string owner = 13;
 }
 
 message DescribeMarketUsersResponse {

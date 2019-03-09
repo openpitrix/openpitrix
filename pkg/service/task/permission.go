@@ -32,7 +32,7 @@ func CheckTasksPermission(ctx context.Context, resourceIds []string) ([]*models.
 	}
 	if sender != nil {
 		for _, task := range tasks {
-			if !task.OwnerPath.CheckPermission(sender) {
+			if !task.OwnerPath.CheckPermission(sender) && task.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, task.TaskId)
 			}
 		}

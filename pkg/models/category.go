@@ -55,6 +55,7 @@ func CategoryToPb(category *Category) *pb.Category {
 	pbCategory.Name = pbutil.ToProtoString(category.Name)
 	pbCategory.Locale = pbutil.ToProtoString(category.Locale)
 	pbCategory.OwnerPath = category.OwnerPath.ToProtoString()
+	pbCategory.Owner = pbutil.ToProtoString(category.Owner)
 	pbCategory.Description = pbutil.ToProtoString(category.Description)
 	pbCategory.CreateTime = pbutil.ToProtoTimestamp(category.CreateTime)
 	pbCategory.Icon = pbutil.ToProtoString(category.Icon)

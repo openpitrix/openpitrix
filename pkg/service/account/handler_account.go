@@ -901,10 +901,26 @@ func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.J
 	if err != nil {
 		return nil, err
 	}
-	_, err = CheckUsersPermission(ctx, userIds)
+	userWithGroups, err := CheckUsersPermission(ctx, userIds)
 	if err != nil {
 		return nil, err
 	}
+
+	var oldGroupIds []string
+	for _, userWithGroup := range userWithGroups {
+		for _, group := range userWithGroup.GroupSet {
+			oldGroupIds = append(oldGroupIds, group.GroupId)
+		}
+	}
+
+	_, err = imClient.LeaveGroup(ctx, &pbim.LeaveGroupRequest{
+		GroupId: oldGroupIds,
+		UserId:  userIds,
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotJoinGroup)
+	}
+
 	_, err = imClient.JoinGroup(ctx, &pbim.JoinGroupRequest{
 		GroupId: groupIds,
 		UserId:  userIds,
@@ -920,28 +936,7 @@ func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.J
 }
 
 func (p *Server) LeaveGroup(ctx context.Context, req *pb.LeaveGroupRequest) (*pb.LeaveGroupResponse, error) {
-	groupIds := req.GetGroupId()
-	userIds := req.GetUserId()
-	_, err := CheckGroupsPermission(ctx, groupIds)
-	if err != nil {
-		return nil, err
-	}
-	_, err = CheckUsersPermission(ctx, userIds)
-	if err != nil {
-		return nil, err
-	}
-	_, err = imClient.LeaveGroup(ctx, &pbim.LeaveGroupRequest{
-		GroupId: groupIds,
-		UserId:  userIds,
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCannotLeaveGroup)
-	}
-
-	return &pb.LeaveGroupResponse{
-		GroupId: groupIds,
-		UserId:  userIds,
-	}, nil
+	return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
 }
 
 func (p *Server) GetUserGroupOwner(ctx context.Context, req *pb.GetUserGroupOwnerRequest) (*pb.GetUserGroupOwnerResponse, error) {

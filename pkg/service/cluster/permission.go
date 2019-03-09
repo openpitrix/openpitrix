@@ -32,7 +32,7 @@ func CheckClustersPermission(ctx context.Context, resourceIds []string) ([]*mode
 	}
 	if sender != nil {
 		for _, cluster := range clusters {
-			if !cluster.OwnerPath.CheckPermission(sender) {
+			if !cluster.OwnerPath.CheckPermission(sender) && cluster.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, cluster.ClusterId)
 			}
 		}
@@ -84,7 +84,7 @@ func CheckClusterNodesPermission(ctx context.Context, resourceIds []string) ([]*
 	}
 	if sender != nil {
 		for _, clusternode := range clusternodes {
-			if !clusternode.OwnerPath.CheckPermission(sender) {
+			if !clusternode.OwnerPath.CheckPermission(sender) && clusternode.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, clusternode.NodeId)
 			}
 		}
@@ -136,7 +136,7 @@ func CheckKeyPairsPermission(ctx context.Context, resourceIds []string) ([]*mode
 	}
 	if sender != nil {
 		for _, keypair := range keypairs {
-			if !keypair.OwnerPath.CheckPermission(sender) {
+			if !keypair.OwnerPath.CheckPermission(sender) && keypair.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, keypair.KeyPairId)
 			}
 		}

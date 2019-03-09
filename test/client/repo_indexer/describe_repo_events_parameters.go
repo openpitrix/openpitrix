@@ -73,8 +73,8 @@ type DescribeRepoEventsParams struct {
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
+	/*Owner*/
+	Owner []string
 	/*RepoEventID*/
 	RepoEventID []string
 	/*RepoID*/
@@ -142,15 +142,15 @@ func (o *DescribeRepoEventsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe repo events params
-func (o *DescribeRepoEventsParams) WithOwnerPath(ownerPath []string) *DescribeRepoEventsParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe repo events params
+func (o *DescribeRepoEventsParams) WithOwner(owner []string) *DescribeRepoEventsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe repo events params
-func (o *DescribeRepoEventsParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe repo events params
+func (o *DescribeRepoEventsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithRepoEventID adds the repoEventID to the describe repo events params
@@ -226,11 +226,11 @@ func (o *DescribeRepoEventsParams) WriteToRequest(r runtime.ClientRequest, reg s
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

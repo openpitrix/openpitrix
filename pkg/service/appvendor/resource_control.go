@@ -32,7 +32,7 @@ func DescribeVendorVerifyInfos(ctx context.Context, req *pb.DescribeVendorVerify
 		From(constants.TableVendorVerifyInfo).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableVendorVerifyInfo))
 
 	query = manager.AddQueryOrderDir(query, req, "submit_time")

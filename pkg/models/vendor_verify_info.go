@@ -85,6 +85,8 @@ func (vendor *VendorVerifyInfo) ParseVendor2Pb(ctx context.Context, inVendor *Ve
 		pbVendor.SubmitTime = pbutil.ToProtoTimestamp(*inVendor.SubmitTime)
 	}
 	pbVendor.StatusTime = pbutil.ToProtoTimestamp(inVendor.StatusTime)
+	pbVendor.Owner = pbutil.ToProtoString(inVendor.Owner)
+	pbVendor.OwnerPath = inVendor.OwnerPath.ToProtoString()
 	return &pbVendor
 }
 

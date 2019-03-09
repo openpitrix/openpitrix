@@ -428,7 +428,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     package_name:
       type: '[]string'
@@ -465,7 +465,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     repo_id:
       type: '[]string'
@@ -554,7 +554,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     package_name:
       type: '[]string'
@@ -591,7 +591,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     repo_id:
       type: '[]string'
@@ -777,7 +777,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     reverse:
       type: boolean
@@ -802,7 +802,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     reverse:
       type: boolean
@@ -910,7 +910,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     reverse:
       type: boolean
@@ -1051,7 +1051,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     reverse:
       type: boolean
@@ -1080,7 +1080,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     reverse:
       type: boolean
@@ -1115,7 +1115,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     reverse:
       type: boolean
@@ -1156,7 +1156,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     reverse:
       type: boolean
@@ -1189,7 +1189,7 @@
       type: string
     offset:
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     pub_key:
       type: string
@@ -1337,7 +1337,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     provider:
       type: string
@@ -1384,7 +1384,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     reverse:
       type: boolean
@@ -1409,7 +1409,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     reverse:
       type: boolean
@@ -1467,7 +1467,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     repo_event_id:
       type: '[]string'
@@ -1538,7 +1538,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     provider:
       type: '[]string'
@@ -1687,7 +1687,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     provider:
       type: '[]string'
@@ -1714,7 +1714,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     provider:
       type: '[]string'
@@ -1741,7 +1741,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     provider:
       type: '[]string'
@@ -1775,7 +1775,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     provider:
       type: '[]string'
@@ -1861,7 +1861,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner_path:
+    owner:
       type: '[]string'
     reverse:
       type: boolean

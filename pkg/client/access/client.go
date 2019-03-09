@@ -5,7 +5,10 @@
 package access
 
 import (
+	"context"
+
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
@@ -22,4 +25,23 @@ func NewClient() (*Client, error) {
 	return &Client{
 		AccessManagerClient: pb.NewAccessManagerClient(conn),
 	}, nil
+}
+
+func GetActionBundleRoles(ctx context.Context, actionBundleIds []string, statuses []string) ([]*pb.Role, error) {
+	client, err := NewClient()
+	if err != nil {
+		logger.Error(ctx, "Failed to create account manager client: %+v", err)
+		return nil, err
+	}
+
+	response, err := client.DescribeRoles(ctx, &pb.DescribeRolesRequest{
+		ActionBundleId: actionBundleIds,
+		Status:         statuses,
+	})
+	if err != nil {
+		logger.Error(ctx, "Describe users failed: %+v", err)
+		return nil, err
+	}
+
+	return response.RoleSet, nil
 }

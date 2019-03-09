@@ -32,7 +32,7 @@ func CheckReposPermission(ctx context.Context, resourceIds []string) ([]*models.
 	}
 	if sender != nil {
 		for _, repo := range repos {
-			if !repo.OwnerPath.CheckPermission(sender) {
+			if !repo.OwnerPath.CheckPermission(sender) && repo.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, repo.RepoId)
 			}
 		}

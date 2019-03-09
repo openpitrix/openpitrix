@@ -77,8 +77,8 @@ type DescribeMarketsParams struct {
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
+	/*Owner*/
+	Owner []string
 	/*Reverse*/
 	Reverse *bool
 	/*SearchWord*/
@@ -174,15 +174,15 @@ func (o *DescribeMarketsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe markets params
-func (o *DescribeMarketsParams) WithOwnerPath(ownerPath []string) *DescribeMarketsParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe markets params
+func (o *DescribeMarketsParams) WithOwner(owner []string) *DescribeMarketsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe markets params
-func (o *DescribeMarketsParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe markets params
+func (o *DescribeMarketsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithReverse adds the reverse to the describe markets params
@@ -307,11 +307,11 @@ func (o *DescribeMarketsParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

@@ -32,7 +32,7 @@ func CheckRepoEventsPermission(ctx context.Context, resourceIds []string) ([]*mo
 	}
 	if sender != nil {
 		for _, repoevent := range repoevents {
-			if !repoevent.OwnerPath.CheckPermission(sender) {
+			if !repoevent.OwnerPath.CheckPermission(sender) && repoevent.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, repoevent.RepoEventId)
 			}
 		}

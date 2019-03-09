@@ -96,7 +96,7 @@ func (p *Server) describeApps(ctx context.Context, req *pb.DescribeAppsRequest, 
 		Where(db.Eq(constants.ColumnActive, active))
 
 	if !active {
-		query = query.Where(manager.BuildOwnerPathFilter(ctx, req))
+		query = query.Where(manager.BuildPermissionFilter(ctx))
 	}
 
 	if len(categoryIds) > 0 {
@@ -478,7 +478,7 @@ func (p *Server) DescribeAppVersionReviews(ctx context.Context, req *pb.Describe
 		From(constants.TableAppVersionReview).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersionReview))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
@@ -517,7 +517,7 @@ func (p *Server) DescribeAppVersionAudits(ctx context.Context, req *pb.DescribeA
 		From(constants.TableAppVersionAudit).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersionAudit))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
@@ -568,7 +568,7 @@ func (p *Server) describeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 		Where(db.Eq(constants.ColumnActive, active))
 
 	if !active {
-		query = query.Where(manager.BuildOwnerPathFilter(ctx, req))
+		query = query.Where(manager.BuildPermissionFilter(ctx))
 	}
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnSequence)

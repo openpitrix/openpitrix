@@ -47,6 +47,7 @@ message Job {
 	google.protobuf.StringValue runtime_id = 13;
 	google.protobuf.Timestamp create_time = 14;
 	google.protobuf.Timestamp status_time = 15;
+	google.protobuf.StringValue owner = 16;
 }
 message DescribeJobsRequest {
 	google.protobuf.StringValue search_word = 1;
@@ -66,7 +67,7 @@ message DescribeJobsRequest {
 	google.protobuf.StringValue provider = 16;
 	google.protobuf.StringValue runtime_id = 17;
 	repeated string status = 18;
-	repeated string owner_path = 19;
+	repeated string owner = 19;
 }
 message DescribeJobsResponse {
 	uint32 total_count = 1;

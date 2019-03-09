@@ -72,6 +72,7 @@ func RuntimeToPb(runtime *Runtime) *pb.Runtime {
 	pbRuntime.Zone = pbutil.ToProtoString(runtime.Zone)
 	pbRuntime.RuntimeCredentialId = pbutil.ToProtoString(runtime.RuntimeCredentialId)
 	pbRuntime.OwnerPath = runtime.OwnerPath.ToProtoString()
+	pbRuntime.Owner = pbutil.ToProtoString(runtime.Owner)
 	pbRuntime.Status = pbutil.ToProtoString(runtime.Status)
 	pbRuntime.Debug = pbutil.ToProtoBool(runtime.Debug)
 	pbRuntime.CreateTime = pbutil.ToProtoTimestamp(runtime.CreateTime)

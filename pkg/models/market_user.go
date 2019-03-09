@@ -38,6 +38,7 @@ func MarketUserToPb(marketUser *MarketUser) *pb.MarketUser {
 	pbMarketUser.MarketId = pbutil.ToProtoString(marketUser.MarketId)
 	pbMarketUser.UserId = pbutil.ToProtoString(marketUser.UserId)
 	pbMarketUser.OwnerPath = marketUser.OwnerPath.ToProtoString()
+	pbMarketUser.Owner = pbutil.ToProtoString(marketUser.Owner)
 	pbMarketUser.CreateTime = pbutil.ToProtoTimestamp(marketUser.CreateTime)
 	return &pbMarketUser
 }

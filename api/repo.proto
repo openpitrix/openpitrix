@@ -92,6 +92,7 @@ message Repo {
 	google.protobuf.StringValue app_default_status = 16;
 	// 0 for self resource; 1 for openpitrix resource
 	google.protobuf.Int32Value controller = 17;
+	google.protobuf.StringValue owner = 18;
 }
 
 message DescribeReposRequest {
@@ -112,7 +113,7 @@ message DescribeReposRequest {
 	google.protobuf.StringValue label = 17;
 	google.protobuf.StringValue selector = 18;
 	repeated string category_id = 19;
-	repeated string owner_path = 20;
+	repeated string owner = 20;
 	repeated string app_default_status = 21;
 	string user_id = 22;
 	// 0 for self resource; 1 for openpitrix resource
