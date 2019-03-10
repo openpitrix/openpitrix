@@ -6,8 +6,10 @@ package metering
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
@@ -47,7 +49,7 @@ func (s *Server) UpdateMetering(ctx context.Context, req *pb.UpdateMeteringReque
 			metering.GetSkuId().GetValue(),
 		)
 
-		//TODO: Update lesasing metering_values and save
+		//TODO: Update lesasing metering_values and save leasing
 		leasingToEtcd(*leasing)
 	}
 
@@ -59,8 +61,8 @@ func (s *Server) StopMetering(ctx context.Context, req *pb.StopMeteringRequest) 
 
 	for resourceId, skuId := range req.GetResourceSkuIds() {
 		leasing, _ := getLeasing(ctx, NIL_STR, userId, resourceId, skuId)
-
-		ClearLeasinRedis(leasing.LeasingId)
+		//if duration in attributes
+		clearLeasinRedis(leasing.LeasingId)
 		//TODO: Update lesasing metering_values and save
 		leasingToEtcd(*leasing)
 	}
@@ -68,9 +70,19 @@ func (s *Server) StopMetering(ctx context.Context, req *pb.StopMeteringRequest) 
 }
 
 func (s *Server) TerminateMetering(ctx context.Context, req *pb.TerminateMeteringRequest) (*pb.CommonMeteringResponse, error) {
-	//TODO: Do same as stopMetering
+	userId := req.GetUserId().GetValue()
 
-	//TODO: Move leasing to leased
+	for resourceId, skuId := range req.GetResourceSkuIds() {
+		leasing, _ := getLeasing(ctx, NIL_STR, userId, resourceId, skuId)
+		//if duration in attributes
+		//.........................................
+		clearLeasinRedis(leasing.LeasingId)
+		//TODO: Update UpdateTime renewalTime of leasing and save it
+		leasingToEtcd(*leasing)
+		//.........................................
+
+		toLeased(leasing)
+	}
 	return &pb.CommonMeteringResponse{}, nil
 }
 
@@ -94,8 +106,16 @@ func consumeLeasingRedis(ctx context.Context) {
 	go updateMeteringByRedis(ctx, leasingId, updateTime)
 }
 
-func ClearLeasinRedis(leasingId string) error {
+func clearLeasinRedis(leasingId string) error {
 	//TODO: clear leasing in redis
+	return nil
+}
+
+func toLeased(leasing *models.Leasing) error {
+	leased := leasing.ToLeased()
+	leasing.Status = constants.StatusDeleted
+	//TODO: save leasing and leased
+	fmt.Println(leased.LeasedId)
 	return nil
 }
 

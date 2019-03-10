@@ -76,7 +76,7 @@ type Leased struct {
 	StopTime       map[time.Time]time.Time //{closeTime: restartTime, ..}
 }
 
-func (l Leasing) toLeased() *Leased {
+func (l *Leasing) ToLeased() *Leased {
 	return &Leased{
 		LeasedId:       l.LeasingId,
 		GroupId:        l.GroupId,
