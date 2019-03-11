@@ -909,7 +909,9 @@ func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.J
 	var oldGroupIds []string
 	for _, userWithGroup := range userWithGroups {
 		for _, group := range userWithGroup.GroupSet {
-			oldGroupIds = append(oldGroupIds, group.GroupId)
+			if !stringutil.StringIn(group.GroupId, oldGroupIds) {
+				oldGroupIds = append(oldGroupIds, group.GroupId)
+			}
 		}
 	}
 
