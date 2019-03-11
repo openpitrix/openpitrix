@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixCanDoRequest
 type OpenpitrixCanDoRequest struct {
 
+	// api method
+	APIMethod string `json:"api_method,omitempty"`
+
 	// url
 	URL string `json:"url,omitempty"`
 

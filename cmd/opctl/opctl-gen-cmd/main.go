@@ -198,6 +198,7 @@ func getTmpl(name, tmpl string) *template.Template {
 			str = stringutil.UnderscoreToCamelCase(str)
 			str = strings.Replace(str, "Id", "ID", -1)
 			str = strings.Replace(str, "Url", "URL", -1)
+			str = strings.Replace(str, "Api", "API", -1)
 			return str
 		},
 	}).Parse(tmpl)

@@ -419,7 +419,8 @@ message CeaseClustersResponse {
 }
 
 
-message GetClusterStatisticsRequest {}
+message GetClusterStatisticsRequest {
+}
 
 message GetClusterStatisticsResponse {
 	// cluster create time range -> cluster count, max length is 14
@@ -701,6 +702,14 @@ service ClusterManager {
 		};
 		option (google.api.http) = {
 			get: "/v1/clusters/apps"
+		};
+	}
+	rpc DescribeDebugAppClusters (DescribeAppClustersRequest) returns (DescribeAppClustersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe debug app clusters"
+		};
+		option (google.api.http) = {
+			get: "/v1/debug_clusters/apps"
 		};
 	}
 	rpc DescribeClusterNodes (DescribeClusterNodesRequest) returns (DescribeClusterNodesResponse) {

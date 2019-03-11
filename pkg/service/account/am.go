@@ -83,7 +83,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.CanDoRequest:
 		return manager.NewChecker(ctx, r).
-			Required("user_id", "url", "url_method").
+			Required("user_id").
 			Exec()
 	case *pb.GetRoleModuleRequest:
 		return manager.NewChecker(ctx, r).

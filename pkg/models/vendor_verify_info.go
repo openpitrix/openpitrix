@@ -93,27 +93,25 @@ func (vendor *VendorVerifyInfo) ParseVendor2Pb(ctx context.Context, inVendor *Ve
 type VendorStatistics struct {
 	UserId            string
 	CompanyName       string
-	ActiveAppCount    int32
-	ClusterCountMonth int32
-	ClusterCountTotal int32
+	ActiveAppCount    uint32
+	ClusterCountMonth uint32
+	ClusterCountTotal uint32
 }
 
-func (vendor *VendorStatistics) ParseVendorStatistics2Pb(ctx context.Context, inVendor *VendorStatistics) *pb.VendorStatistics {
+func VendorStatisticsToPb(vendorStatistics *VendorStatistics) *pb.VendorStatistics {
 	pbVendor := pb.VendorStatistics{}
-	pbVendor.UserId = pbutil.ToProtoString(inVendor.UserId)
-	pbVendor.CompanyName = pbutil.ToProtoString(inVendor.CompanyName)
-	pbVendor.ActiveAppCount = pbutil.ToProtoInt32(inVendor.ActiveAppCount)
-	pbVendor.ClusterCountMonth = pbutil.ToProtoInt32(inVendor.ClusterCountMonth)
-	pbVendor.ClusterCountTotal = pbutil.ToProtoInt32(inVendor.ClusterCountTotal)
+	pbVendor.UserId = pbutil.ToProtoString(vendorStatistics.UserId)
+	pbVendor.CompanyName = pbutil.ToProtoString(vendorStatistics.CompanyName)
+	pbVendor.ActiveAppCount = vendorStatistics.ActiveAppCount
+	pbVendor.ClusterCountMonth = vendorStatistics.ClusterCountMonth
+	pbVendor.ClusterCountTotal = vendorStatistics.ClusterCountTotal
 	return &pbVendor
 }
 
-func (vendor *VendorStatistics) ParseVendorStatisticsSet2PbSet(ctx context.Context, inVendors []*VendorStatistics) []*pb.VendorStatistics {
-	var pbVendorStatisticses []*pb.VendorStatistics
-	for _, inVendor := range inVendors {
-		var pbVendor *pb.VendorStatistics
-		pbVendor = vendor.ParseVendorStatistics2Pb(ctx, inVendor)
-		pbVendorStatisticses = append(pbVendorStatisticses, pbVendor)
+func VendorStatisticsSetToPbSet(vendorStatisticsSet []*VendorStatistics) []*pb.VendorStatistics {
+	var pbVendorStatisticsSet []*pb.VendorStatistics
+	for _, vendorStatistics := range vendorStatisticsSet {
+		pbVendorStatisticsSet = append(pbVendorStatisticsSet, VendorStatisticsToPb(vendorStatistics))
 	}
-	return pbVendorStatisticses
+	return pbVendorStatisticsSet
 }

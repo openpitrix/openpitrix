@@ -4324,6 +4324,114 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/debug_clusters/apps": {
+      "get": {
+        "summary": "describe debug app clusters",
+        "operationId": "DescribeDebugAppClusters",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeAppClustersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "with_detail",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "created_date",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
     "/v1/debug_clusters/create": {
       "post": {
         "summary": "create debug cluster",
@@ -6155,6 +6263,9 @@ var Files = map[string]string{
         },
         "url_method": {
           "type": "string"
+        },
+        "api_method": {
+          "type": "string"
         }
       }
     },
@@ -7901,15 +8012,15 @@ var Files = map[string]string{
         },
         "active_app_count": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "cluster_count_month": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "cluster_count_total": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         }
       }
     },

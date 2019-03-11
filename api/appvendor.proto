@@ -91,9 +91,9 @@ message RejectVendorVerifyInfoResponse {
 message VendorStatistics {
 	google.protobuf.StringValue user_id = 1;
 	google.protobuf.StringValue company_name = 2;
-	google.protobuf.Int32Value active_app_count = 3;
-	google.protobuf.Int32Value cluster_count_month = 4;
-	google.protobuf.Int32Value cluster_count_total = 5;
+	uint32 active_app_count = 3;
+	uint32 cluster_count_month = 4;
+	uint32 cluster_count_total = 5;
 }
 
 message DescribeVendorStatisticsResponse {
@@ -101,7 +101,7 @@ message DescribeVendorStatisticsResponse {
 	repeated VendorStatistics vendor_verify_statistics_set = 2;
 }
 
-message GetVendorVerifyInfoRequest{
+message GetVendorVerifyInfoRequest {
 	google.protobuf.StringValue user_id = 1;
 }
 
@@ -138,7 +138,6 @@ service AppVendorManager {
 			get: "/v1/app_vendors/app_vendor_statistics"
 		};
 	}
-
 
 
 	rpc PassVendorVerifyInfo (PassVendorVerifyInfoRequest) returns (PassVendorVerifyInfoResponse) {
