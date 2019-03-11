@@ -5,6 +5,7 @@
 package pbutil
 
 import (
+	"context"
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
@@ -91,4 +92,48 @@ func ToProtoBool(bool bool) *wrappers.BoolValue {
 
 func ToProtoBytes(bytes []byte) *wrappers.BytesValue {
 	return &wrappers.BytesValue{Value: bytes}
+}
+
+type DescribeResponse interface {
+	GetTotalCount() uint32
+}
+
+type DescribeApi interface {
+	SetRequest(ctx context.Context, req interface{}, limit, offset uint32) error
+	Describe(ctx context.Context, req interface{}, advancedParams ...string) (DescribeResponse, error)
+}
+
+func DescribeAllResponses(ctx context.Context, describeApi DescribeApi, req interface{}, advancedParams ...string) ([]DescribeResponse, error) {
+	limit := uint32(db.DefaultSelectLimit)
+	offset := uint32(0)
+	var responses []DescribeResponse
+
+	if err := describeApi.SetRequest(ctx, req, limit, offset); err != nil {
+		return nil, err
+	}
+	response, err := describeApi.Describe(ctx, req, advancedParams...)
+	if err != nil {
+		return nil, err
+	}
+
+	totalCount := response.GetTotalCount()
+
+	responses = append(responses, response)
+	offset = offset + db.DefaultSelectLimit
+	for {
+		if totalCount > uint32(offset) {
+			if err := describeApi.SetRequest(ctx, req, limit, offset); err != nil {
+				return nil, err
+			}
+			response, err = describeApi.Describe(ctx, req)
+			if err != nil {
+				return nil, err
+			}
+			responses = append(responses, response)
+			offset = offset + db.DefaultSelectLimit
+		} else {
+			break
+		}
+	}
+	return responses, nil
 }

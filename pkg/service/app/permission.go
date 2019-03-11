@@ -32,7 +32,7 @@ func CheckAppsPermission(ctx context.Context, resourceIds []string) ([]*models.A
 	}
 	if sender != nil {
 		for _, app := range apps {
-			if !app.OwnerPath.CheckPermission(sender) {
+			if !app.OwnerPath.CheckPermission(sender) && app.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, app.AppId)
 			}
 		}
@@ -84,7 +84,7 @@ func CheckAppVersionsPermission(ctx context.Context, resourceIds []string) ([]*m
 	}
 	if sender != nil {
 		for _, appversion := range appversions {
-			if !appversion.OwnerPath.CheckPermission(sender) {
+			if !appversion.OwnerPath.CheckPermission(sender) && appversion.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, appversion.VersionId)
 			}
 		}

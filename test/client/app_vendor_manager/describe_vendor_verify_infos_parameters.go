@@ -75,8 +75,8 @@ type DescribeVendorVerifyInfosParams struct {
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
+	/*Owner*/
+	Owner []string
 	/*Reverse*/
 	Reverse *bool
 	/*SearchWord*/
@@ -159,15 +159,15 @@ func (o *DescribeVendorVerifyInfosParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe vendor verify infos params
-func (o *DescribeVendorVerifyInfosParams) WithOwnerPath(ownerPath []string) *DescribeVendorVerifyInfosParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe vendor verify infos params
+func (o *DescribeVendorVerifyInfosParams) WithOwner(owner []string) *DescribeVendorVerifyInfosParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe vendor verify infos params
-func (o *DescribeVendorVerifyInfosParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe vendor verify infos params
+func (o *DescribeVendorVerifyInfosParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithReverse adds the reverse to the describe vendor verify infos params
@@ -273,11 +273,11 @@ func (o *DescribeVendorVerifyInfosParams) WriteToRequest(r runtime.ClientRequest
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

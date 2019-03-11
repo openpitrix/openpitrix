@@ -67,6 +67,7 @@ func RepoToPb(repo *Repo) *pb.Repo {
 	pbRepo.Credential = pbutil.ToProtoString(repo.Credential)
 	pbRepo.Visibility = pbutil.ToProtoString(repo.Visibility)
 	pbRepo.OwnerPath = repo.OwnerPath.ToProtoString()
+	pbRepo.Owner = pbutil.ToProtoString(repo.Owner)
 	pbRepo.Status = pbutil.ToProtoString(repo.Status)
 	pbRepo.CreateTime = pbutil.ToProtoTimestamp(repo.CreateTime)
 	pbRepo.StatusTime = pbutil.ToProtoTimestamp(repo.StatusTime)

@@ -70,7 +70,7 @@ func (p *Server) DescribeMarkets(ctx context.Context, req *pb.DescribeMarketsReq
 		From(constants.TableMarket).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableMarket))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 
@@ -255,7 +255,7 @@ func (p *Server) DescribeMarketUsers(ctx context.Context, req *pb.DescribeMarket
 		From(constants.TableMarketUser).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableMarketUser))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)

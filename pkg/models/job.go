@@ -73,6 +73,7 @@ func JobToPb(job *Job) *pb.Job {
 	pbJob.Directive = pbutil.ToProtoString(job.Directive)
 	pbJob.Provider = pbutil.ToProtoString(job.Provider)
 	pbJob.OwnerPath = job.OwnerPath.ToProtoString()
+	pbJob.Owner = pbutil.ToProtoString(job.Owner)
 	pbJob.Status = pbutil.ToProtoString(job.Status)
 	pbJob.ErrorCode = pbutil.ToProtoUInt32(job.ErrorCode)
 	pbJob.Executor = pbutil.ToProtoString(job.Executor)

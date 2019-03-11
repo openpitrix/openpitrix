@@ -50,7 +50,7 @@ func Check{{pascalCase .}}sPermission(ctx context.Context, resourceIds []string)
 	}
 	if sender != nil {
 		for _, {{escape .}} := range {{escape .}}s {
-			if !{{escape .}}.OwnerPath.CheckPermission(sender) {
+			if !{{escape .}}.OwnerPath.CheckPermission(sender) && {{escape .}}.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, {{escape .}}.{{columnId . | pascalCase}}Id)
 			}
 		}

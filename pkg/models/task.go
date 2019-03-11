@@ -69,6 +69,7 @@ func TaskToPb(task *Task) *pb.Task {
 	pbTask.TaskAction = pbutil.ToProtoString(task.TaskAction)
 	pbTask.Directive = pbutil.ToProtoString(task.Directive)
 	pbTask.OwnerPath = task.OwnerPath.ToProtoString()
+	pbTask.Owner = pbutil.ToProtoString(task.Owner)
 	pbTask.Status = pbutil.ToProtoString(task.Status)
 	pbTask.ErrorCode = pbutil.ToProtoUInt32(task.ErrorCode)
 	pbTask.Executor = pbutil.ToProtoString(task.Executor)

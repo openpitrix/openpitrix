@@ -56,6 +56,7 @@ message Task {
 	google.protobuf.Timestamp create_time = 11;
 	google.protobuf.Timestamp status_time = 12;
 	google.protobuf.BoolValue failure_allowed = 13;
+	google.protobuf.StringValue owner = 14;
 }
 message DescribeTasksRequest {
 	google.protobuf.StringValue search_word = 1;
@@ -72,7 +73,7 @@ message DescribeTasksRequest {
 	google.protobuf.StringValue executor = 13;
 	google.protobuf.StringValue target = 14;
 	repeated string status = 15;
-	repeated string owner_path = 16;
+	repeated string owner = 16;
 }
 message DescribeTasksResponse {
 	uint32 total_count = 1;

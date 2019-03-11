@@ -6,7 +6,7 @@ package appvendor
 
 import (
 	"context"
-	"math"
+	"strings"
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	accessclient "openpitrix.io/openpitrix/pkg/client/access"
@@ -15,7 +15,6 @@ import (
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -207,95 +206,85 @@ func (s *Server) RejectVendorVerifyInfo(ctx context.Context, req *pb.RejectVendo
 }
 
 func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.DescribeVendorVerifyInfosRequest) (*pb.DescribeVendorStatisticsResponse, error) {
-	appClient, err := appclient.NewAppManagerClient()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
-
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	var vendorStatisticses []*models.VendorStatistics
+	var vendorStatisticsSet []*models.VendorStatistics
 	vendors, vendorCount, err := DescribeVendorVerifyInfos(ctx, req)
 	if err != nil {
-		logger.Error(ctx, "Failed to describe vendorVerifyInfos, error: %+v", err)
+		logger.Error(ctx, "Failed to describe vendor verify info: %+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	/*============================================================================================================*/
-	//To get ClusterCountTotal
-	var clusterCntAll4AllPages int32
-	var clusterCntMonth4AllPages int32
 	for _, vendor := range vendors {
-		//step1:Get real appCnt for each vendor
-		var vendorStatistics models.VendorStatistics
-		appVendorUserId := vendor.UserId
+		vendorStatistics := &models.VendorStatistics{
+			UserId:            vendor.UserId,
+			CompanyName:       vendor.CompanyName,
+			ActiveAppCount:    0,
+			ClusterCountMonth: 0,
+			ClusterCountTotal: 0,
+		}
 
-		pbApps, appCnt, err := appClient.DescribeAppsWithAppVendorUserId(ctx, appVendorUserId, db.DefaultSelectLimit, 0)
+		vendorCtx, err := clientutil.SetUserToContext(ctx, vendor.UserId, "DescribeApps")
+		if err != nil {
+			logger.Error(ctx, "Failed to set [%s] as sender: %+v", vendor.UserId, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+
+		describeAppsReq := &pb.DescribeAppsRequest{
+			Status: []string{constants.StatusActive},
+		}
+		// Use vendor's sender to describe apps
+		describeAllResponses, err := pbutil.DescribeAllResponses(vendorCtx, new(appclient.DescribeAppsApi), describeAppsReq)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 		}
 
-		//step2:if the real appCnt is smaller than db.DefaultSelectLimit,there is only one page apps,and the rows of this one page is length of pbApps.
-		//Just accumulate the clusterCnt4SingleApp for each app.
-		if appCnt <= int32(db.DefaultSelectLimit) {
-			for _, pbApp := range pbApps {
-				_, clusterCntAll4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), false, db.DefaultSelectLimit, 0)
-				_, clusterCntMonth4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), true, db.DefaultSelectLimit, 0)
-				if err != nil {
-					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		var appIds []string
+		for _, response := range describeAllResponses {
+			switch r := response.(type) {
+			case *pb.DescribeAppsResponse:
+				for _, app := range r.AppSet {
+					appIds = append(appIds, app.GetAppId().GetValue())
 				}
-				clusterCntAll4AllPages = clusterCntAll4AllPages + clusterCntAll4SingleApp
-				clusterCntMonth4AllPages = clusterCntMonth4AllPages + clusterCntMonth4SingleApp
+			default:
+				return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorDescribeResourcesFailed)
 			}
+		}
+		vendorStatistics.ActiveAppCount = uint32(len(appIds))
 
-		} else {
-			//step3:if the real appCnt is bigger than db.DefaultSelectLimit(200),there are more than 1 page Apps.
-			//Should accumulate the clusterCnt4SingleApp for each apps ,then accumulate the number for each page.
-			pages := int(math.Ceil(float64(appCnt / db.DefaultSelectLimit)))
-			for i := 1; i <= pages; i++ {
-				offset := db.DefaultSelectLimit * i
-				pbApps, _, err := appClient.DescribeAppsWithAppVendorUserId(ctx, appVendorUserId, db.DefaultSelectLimit, uint32(offset))
-				if err != nil {
-					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-				}
-
-				var clusterCntAll4OnePage int32
-				var clusterCntMonth4OnePage int32
-				for _, pbApp := range pbApps {
-					_, clusterCntAll4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), false, db.DefaultSelectLimit, uint32(offset))
-					_, clusterCntMonth4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), true, db.DefaultSelectLimit, uint32(offset))
-					if err != nil {
-						return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-					}
-					clusterCntAll4OnePage = clusterCntAll4OnePage + clusterCntAll4SingleApp
-					clusterCntMonth4OnePage = clusterCntMonth4OnePage + clusterCntMonth4SingleApp
-				}
-				clusterCntAll4AllPages = clusterCntAll4AllPages + clusterCntAll4OnePage
-				clusterCntMonth4AllPages = clusterCntMonth4AllPages + clusterCntMonth4OnePage
+		if vendorStatistics.ActiveAppCount > 0 {
+			monthResponse, err := clusterClient.DescribeAppClusters(ctx, &pb.DescribeAppClustersRequest{
+				AppId:          appIds,
+				CreatedDate:    pbutil.ToProtoUInt32(30),
+				DisplayColumns: []string{},
+			})
+			if err != nil {
+				logger.Error(ctx, "Describe app clusters with app id [%s] failed: %+v", strings.Join(appIds, ","), err)
+				return nil, err
 			}
+			vendorStatistics.ClusterCountMonth = monthResponse.TotalCount
 
+			totalResponse, err := clusterClient.DescribeAppClusters(ctx, &pb.DescribeAppClustersRequest{
+				AppId:          appIds,
+				DisplayColumns: []string{},
+			})
+			if err != nil {
+				logger.Error(ctx, "Describe app clusters failed: %+v", err)
+				return nil, err
+			}
+			vendorStatistics.ClusterCountTotal = totalResponse.TotalCount
 		}
 
-		/*============================================================================================================*/
-		vendorStatistics.UserId = vendor.UserId
-
-		vendorStatistics.CompanyName = vendor.CompanyName
-		vendorStatistics.ActiveAppCount = int32(appCnt)
-		vendorStatistics.ClusterCountTotal = clusterCntAll4AllPages
-		vendorStatistics.ClusterCountMonth = clusterCntMonth4AllPages
-
-		vendorStatisticses = append(vendorStatisticses, &vendorStatistics)
-
+		vendorStatisticsSet = append(vendorStatisticsSet, vendorStatistics)
 	}
 
-	var vendorStatistics models.VendorStatistics //need use a vendorStatistics object to call function
-	vendorStatisticsPbSet := vendorStatistics.ParseVendorStatisticsSet2PbSet(ctx, vendorStatisticses)
+	pbVendorStatisticsSet := models.VendorStatisticsSetToPbSet(vendorStatisticsSet)
 
 	res := &pb.DescribeVendorStatisticsResponse{
-		VendorVerifyStatisticsSet: vendorStatisticsPbSet,
+		VendorVerifyStatisticsSet: pbVendorStatisticsSet,
 		TotalCount:                vendorCount,
 	}
 	return res, nil

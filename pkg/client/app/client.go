@@ -6,13 +6,12 @@ package app
 
 import (
 	"context"
+	"fmt"
 
-	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/gerr"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 type Client struct {
@@ -29,26 +28,32 @@ func NewAppManagerClient() (*Client, error) {
 	}, nil
 }
 
-func (c *Client) DescribeAppsWithAppVendorUserId(ctx context.Context, appVendorUserId string, limit uint32, offset uint32) ([]*pb.App, int32, error) {
-	account, err := accountclient.NewClient()
-	if err != nil {
-		return nil, 0, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
+type DescribeAppsApi struct{}
 
-	groupPath, _ := account.GetUserGroupPath(ctx, appVendorUserId)
-	var groupPaths []string
-	groupPaths = append(groupPaths, groupPath)
-
-	req := pb.DescribeAppsRequest{
-		OwnerPath: groupPaths,
-		Limit:     limit,
-		Offset:    offset,
+func (p *DescribeAppsApi) SetRequest(ctx context.Context, req interface{}, limit uint32, offset uint32) error {
+	switch r := req.(type) {
+	case *pb.DescribeAppsRequest:
+		r.Limit = limit
+		r.Offset = offset
+	default:
+		return fmt.Errorf("invalid req")
 	}
+	return nil
+}
 
-	response, err := c.DescribeApps(ctx, &req)
-	if err != nil {
-		logger.Error(ctx, "Describe apps failed: %+v", err)
-		return nil, 0, err
+func (p *DescribeAppsApi) Describe(ctx context.Context, req interface{}, advancedParams ...string) (pbutil.DescribeResponse, error) {
+	switch r := req.(type) {
+	case *pb.DescribeAppsRequest:
+		appClient, err := NewAppManagerClient()
+		if err != nil {
+			return nil, err
+		}
+		if len(advancedParams) > 0 && advancedParams[0] == "active" {
+			return appClient.DescribeActiveApps(ctx, r)
+		} else {
+			return appClient.DescribeApps(ctx, r)
+		}
+	default:
+		return nil, fmt.Errorf("invalid req")
 	}
-	return response.AppSet, int32(response.TotalCount), nil
 }

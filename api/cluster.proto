@@ -244,6 +244,7 @@ message ClusterNode {
 	ClusterRole cluster_role = 26;
 	ClusterCommon cluster_common = 27;
 	repeated string key_pair_id = 28;
+	google.protobuf.StringValue owner = 29;
 }
 
 message ClusterRole {
@@ -276,6 +277,7 @@ message ClusterLink {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue external_cluster_id = 3;
 	google.protobuf.StringValue owner_path = 4;
+	google.protobuf.StringValue owner = 5;
 }
 
 message Cluster {
@@ -308,6 +310,7 @@ message Cluster {
 	repeated ClusterLink cluster_link_set = 27;
 	repeated ClusterCommon cluster_common_set = 28;
 	repeated ClusterLoadbalancer cluster_loadbalancer_set = 29;
+	google.protobuf.StringValue owner = 30;
 }
 
 message DescribeClustersRequest {
@@ -325,7 +328,7 @@ message DescribeClustersRequest {
 	google.protobuf.StringValue search_word = 10;
 	google.protobuf.StringValue sort_key = 11;
 	google.protobuf.BoolValue reverse = 12;
-	repeated string owner_path = 13;
+	repeated string owner = 13;
 	google.protobuf.StringValue cluster_type = 14;
 	google.protobuf.BoolValue with_detail = 15;
 	google.protobuf.UInt32Value created_date = 16;
@@ -346,7 +349,7 @@ message DescribeAppClustersRequest {
 	google.protobuf.StringValue search_word = 5;
 	google.protobuf.StringValue sort_key = 6;
 	google.protobuf.BoolValue reverse = 7;
-	repeated string owner_path = 8;
+	repeated string owner = 8;
 	google.protobuf.BoolValue with_detail = 9;
 	google.protobuf.UInt32Value created_date = 10;
 	repeated string display_columns = 11;
@@ -367,7 +370,7 @@ message DescribeClusterNodesRequest {
 	google.protobuf.StringValue search_word = 6;
 	google.protobuf.StringValue sort_key = 7;
 	google.protobuf.BoolValue reverse = 8;
-	repeated string owner_path = 9;
+	repeated string owner = 9;
 	repeated string display_columns = 10;
 }
 message DescribeClusterNodesResponse {
@@ -416,7 +419,8 @@ message CeaseClustersResponse {
 }
 
 
-message GetClusterStatisticsRequest {}
+message GetClusterStatisticsRequest {
+}
 
 message GetClusterStatisticsResponse {
 	// cluster create time range -> cluster count, max length is 14
@@ -438,6 +442,7 @@ message KeyPair {
 	google.protobuf.Timestamp create_time = 6;
 	google.protobuf.Timestamp status_time = 7;
 	repeated string node_id = 8;
+	google.protobuf.StringValue owner = 9;
 }
 
 message CreateKeyPairRequest {
@@ -455,7 +460,7 @@ message DescribeKeyPairsRequest {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
 	google.protobuf.StringValue pub_key = 4;
-	repeated string owner_path = 5;
+	repeated string owner = 5;
 	google.protobuf.StringValue search_word = 6;
 	uint32 limit = 7;
 	uint32 offset = 8;
@@ -697,6 +702,14 @@ service ClusterManager {
 		};
 		option (google.api.http) = {
 			get: "/v1/clusters/apps"
+		};
+	}
+	rpc DescribeDebugAppClusters (DescribeAppClustersRequest) returns (DescribeAppClustersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe debug app clusters"
+		};
+		option (google.api.http) = {
+			get: "/v1/debug_clusters/apps"
 		};
 	}
 	rpc DescribeClusterNodes (DescribeClusterNodesRequest) returns (DescribeClusterNodesResponse) {

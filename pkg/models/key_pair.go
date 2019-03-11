@@ -43,6 +43,7 @@ func KeyPairNodesToPb(keyPairNodes *KeyPairWithNodes) *pb.KeyPair {
 	pbKeyPair.Description = pbutil.ToProtoString(keyPairNodes.Description)
 	pbKeyPair.PubKey = pbutil.ToProtoString(keyPairNodes.PubKey)
 	pbKeyPair.OwnerPath = keyPairNodes.OwnerPath.ToProtoString()
+	pbKeyPair.Owner = pbutil.ToProtoString(keyPairNodes.Owner)
 	pbKeyPair.CreateTime = pbutil.ToProtoTimestamp(keyPairNodes.CreateTime)
 	pbKeyPair.StatusTime = pbutil.ToProtoTimestamp(keyPairNodes.StatusTime)
 	pbKeyPair.NodeId = keyPairNodes.NodeId

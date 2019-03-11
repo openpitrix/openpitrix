@@ -42,6 +42,7 @@ func (p *Server) CanDo(ctx context.Context, req *pb.CanDoRequest) (*pb.CanDoResp
 		UserId:    req.UserId,
 		Url:       req.Url,
 		UrlMethod: req.UrlMethod,
+		ApiMethod: req.ApiMethod,
 	})
 	if err != nil {
 		return nil, err

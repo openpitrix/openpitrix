@@ -111,6 +111,7 @@ var AllCmd = []Cmd{
 	NewDescribeAppClustersCmd(),
 	NewDescribeClusterNodesCmd(),
 	NewDescribeClustersCmd(),
+	NewDescribeDebugAppClustersCmd(),
 	NewDescribeDebugClustersCmd(),
 	NewDescribeKeyPairsCmd(),
 	NewDescribeSubnetsCmd(),
@@ -214,6 +215,7 @@ func (*CanDoCmd) GetActionName() string {
 }
 
 func (c *CanDoCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.APIMethod, "api_method", "", "", "")
 	f.StringVarP(&c.URL, "url", "", "", "")
 	f.StringVarP(&c.URLMethod, "url_method", "", "", "")
 	f.StringVarP(&c.UserID, "user_id", "", "", "")
@@ -1547,7 +1549,7 @@ func (c *DescribeActiveAppVersionsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.PackageName, "package_name", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -1600,7 +1602,7 @@ func (c *DescribeActiveAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoID, "repo_id", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -1748,7 +1750,7 @@ func (c *DescribeAppVersionsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.PackageName, "package_name", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -1801,7 +1803,7 @@ func (c *DescribeAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoID, "repo_id", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -2483,7 +2485,7 @@ func (c *DescribeAppVendorStatisticsCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -2530,7 +2532,7 @@ func (c *DescribeVendorVerifyInfosCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -2847,7 +2849,7 @@ func (c *DescribeCategoriesCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -3274,7 +3276,7 @@ func (c *DescribeAppClustersCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -3325,7 +3327,7 @@ func (c *DescribeClusterNodesCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.NodeID, "node_id", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -3380,7 +3382,7 @@ func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "")
@@ -3401,6 +3403,57 @@ func (c *DescribeClustersCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.ClusterManager.DescribeClusters(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeDebugAppClustersCmd struct {
+	*cluster_manager.DescribeDebugAppClustersParams
+}
+
+func NewDescribeDebugAppClustersCmd() Cmd {
+	return &DescribeDebugAppClustersCmd{
+		cluster_manager.NewDescribeDebugAppClustersParams(),
+	}
+}
+
+func (*DescribeDebugAppClustersCmd) GetActionName() string {
+	return "DescribeDebugAppClusters"
+}
+
+func (c *DescribeDebugAppClustersCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
+	c.CreatedDate = new(int64)
+	f.Int64VarP(c.CreatedDate, "created_date", "", 0, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	c.WithDetail = new(bool)
+	f.BoolVarP(c.WithDetail, "with_detail", "", false, "")
+}
+
+func (c *DescribeDebugAppClustersCmd) Run(out Out) error {
+	params := c.DescribeDebugAppClustersParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ClusterManager.DescribeDebugAppClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -3439,7 +3492,7 @@ func (c *DescribeDebugClustersCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "")
@@ -3495,7 +3548,7 @@ func (c *DescribeKeyPairsCmd) ParseFlag(f Flag) {
 	f.StringVarP(c.Name, "name", "", "", "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.PubKey = new(string)
 	f.StringVarP(c.PubKey, "pub_key", "", "", "")
 	c.SearchWord = new(string)
@@ -3985,7 +4038,7 @@ func (c *DescribeJobsCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Provider = new(string)
 	f.StringVarP(c.Provider, "provider", "", "", "")
 	c.Reverse = new(bool)
@@ -4109,7 +4162,7 @@ func (c *DescribeMarketUsersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.MarketID, "market_id", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -4156,7 +4209,7 @@ func (c *DescribeMarketsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -4314,7 +4367,7 @@ func (c *DescribeRepoEventsCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoEventID, "repo_event_id", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoID, "repo_id", "", []string{}, "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
@@ -4477,7 +4530,7 @@ func (c *DescribeReposCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoID, "repo_id", "", []string{}, "")
 	c.Reverse = new(bool)
@@ -4842,7 +4895,7 @@ func (c *DescribeDebugRuntimeCredentialsCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -4890,7 +4943,7 @@ func (c *DescribeDebugRuntimesCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -4938,7 +4991,7 @@ func (c *DescribeRuntimeCredentialsCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -5021,7 +5074,7 @@ func (c *DescribeRuntimesCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -5287,7 +5340,7 @@ func (c *DescribeTasksCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)

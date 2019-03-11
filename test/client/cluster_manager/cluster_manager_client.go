@@ -373,6 +373,35 @@ func (a *Client) DescribeClusters(params *DescribeClustersParams, authInfo runti
 }
 
 /*
+DescribeDebugAppClusters describes debug app clusters
+*/
+func (a *Client) DescribeDebugAppClusters(params *DescribeDebugAppClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeDebugAppClustersOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeDebugAppClustersParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeDebugAppClusters",
+		Method:             "GET",
+		PathPattern:        "/v1/debug_clusters/apps",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeDebugAppClustersReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeDebugAppClustersOK), nil
+
+}
+
+/*
 DescribeDebugClusters describes debug clusters
 */
 func (a *Client) DescribeDebugClusters(params *DescribeDebugClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeDebugClustersOK, error) {

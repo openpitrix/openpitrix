@@ -52,6 +52,7 @@ func RepoEventToPb(repoTask *RepoEvent) *pb.RepoEvent {
 	pbRepoTask.Status = pbutil.ToProtoString(repoTask.Status)
 	pbRepoTask.Result = pbutil.ToProtoString(repoTask.Result)
 	pbRepoTask.OwnerPath = repoTask.OwnerPath.ToProtoString()
+	pbRepoTask.Owner = pbutil.ToProtoString(repoTask.Owner)
 	pbRepoTask.CreateTime = pbutil.ToProtoTimestamp(repoTask.CreateTime)
 	pbRepoTask.StatusTime = pbutil.ToProtoTimestamp(repoTask.StatusTime)
 	return &pbRepoTask

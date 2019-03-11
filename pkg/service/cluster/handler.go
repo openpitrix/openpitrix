@@ -316,7 +316,7 @@ func (p *Server) DescribeKeyPairs(ctx context.Context, req *pb.DescribeKeyPairsR
 		From(constants.TableKeyPair).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableKeyPair))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 
@@ -1487,7 +1487,7 @@ func (p *Server) describeClusters(ctx context.Context, req *pb.DescribeClustersR
 		From(constants.TableCluster).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableCluster))
 	query = query.Where(db.Eq("debug", debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
@@ -1556,65 +1556,42 @@ func (p *Server) describeClusters(ctx context.Context, req *pb.DescribeClustersR
 }
 
 func (p *Server) DescribeAppClusters(ctx context.Context, req *pb.DescribeAppClustersRequest) (*pb.DescribeAppClustersResponse, error) {
-	appClient, err := appclient.NewAppManagerClient()
+	return p.describeAppClusters(ctx, req, false)
+}
+
+func (p *Server) DescribeDebugAppClusters(ctx context.Context, req *pb.DescribeAppClustersRequest) (*pb.DescribeAppClustersResponse, error) {
+	return p.describeAppClusters(ctx, req, true)
+}
+
+func (p *Server) describeAppClusters(ctx context.Context, req *pb.DescribeAppClustersRequest, debug bool) (*pb.DescribeAppClustersResponse, error) {
+	var advancedParam string
+	if !debug {
+		advancedParam = "active"
+	}
+
+	describeAppsReq := &pb.DescribeAppsRequest{
+		AppId: req.GetAppId(),
+	}
+	describeAllResponses, err := pbutil.DescribeAllResponses(ctx, new(appclient.DescribeAppsApi), describeAppsReq, advancedParam)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	// check permission
-	appIds := req.GetAppId()
-	if len(appIds) > 0 {
-		offset := 0
-		for {
-			if offset < len(appIds) {
-				_, err = appClient.DescribeApps(ctx, &pb.DescribeAppsRequest{
-					AppId:  req.GetAppId(),
-					Offset: uint32(offset),
-					Limit:  db.DefaultSelectLimit,
-				})
-				if err != nil {
-					return nil, err
-				}
-				offset = offset + db.DefaultSelectLimit
-			} else {
-				break
+	var appIds []string
+	for _, response := range describeAllResponses {
+		switch r := response.(type) {
+		case *pb.DescribeAppsResponse:
+			for _, app := range r.AppSet {
+				appIds = append(appIds, app.GetAppId().GetValue())
 			}
-		}
-	} else {
-		offset := 0
-		response, err := appClient.DescribeApps(ctx, &pb.DescribeAppsRequest{
-			Limit:          db.DefaultSelectLimit,
-			Offset:         uint32(offset),
-			DisplayColumns: []string{constants.ColumnAppId},
-		})
-		if err != nil {
-			return nil, err
-		}
-		totalCount := response.TotalCount
-		for _, app := range response.GetAppSet() {
-			appIds = append(appIds, app.GetAppId().GetValue())
-		}
-		offset = offset + db.DefaultSelectLimit
-		for {
-			if totalCount > uint32(offset) {
-				response, err = appClient.DescribeApps(ctx, &pb.DescribeAppsRequest{
-					Limit:          db.DefaultSelectLimit,
-					Offset:         uint32(offset),
-					DisplayColumns: []string{constants.ColumnAppId},
-				})
-				if err != nil {
-					return nil, err
-				}
-				for _, app := range response.GetAppSet() {
-					appIds = append(appIds, app.GetAppId().GetValue())
-				}
-				offset = offset + db.DefaultSelectLimit
-			} else {
-				break
-			}
+		default:
+			return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorDescribeResourcesFailed)
 		}
 	}
 
+	if len(req.AppId) < len(appIds) {
+		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorDescribeResourcesFailed)
+	}
 	req.AppId = appIds
 
 	var clusters []*models.Cluster
@@ -1711,7 +1688,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 		From(constants.TableClusterNode).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableClusterNode))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	if len(displayColumns) > 0 {

@@ -67,6 +67,7 @@ func RuntimeCredentialToPb(runtimeCredential *RuntimeCredential) *pb.RuntimeCred
 	pbRuntimeCredential.RuntimeCredentialContent = pbutil.ToProtoString(runtimeCredential.RuntimeCredentialContent)
 	pbRuntimeCredential.Provider = pbutil.ToProtoString(runtimeCredential.Provider)
 	pbRuntimeCredential.OwnerPath = runtimeCredential.OwnerPath.ToProtoString()
+	pbRuntimeCredential.Owner = pbutil.ToProtoString(runtimeCredential.Owner)
 	pbRuntimeCredential.Status = pbutil.ToProtoString(runtimeCredential.Status)
 	pbRuntimeCredential.CreateTime = pbutil.ToProtoTimestamp(runtimeCredential.CreateTime)
 	pbRuntimeCredential.StatusTime = pbutil.ToProtoTimestamp(runtimeCredential.StatusTime)

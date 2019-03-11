@@ -34,7 +34,7 @@ func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategor
 		From(constants.TableCategory).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableCategory))
 	// TODO: validate sort_key
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)

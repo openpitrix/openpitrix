@@ -37,6 +37,9 @@ type OpenpitrixTask struct {
 	// node id
 	NodeID string `json:"node_id,omitempty"`
 
+	// owner
+	Owner string `json:"owner,omitempty"`
+
 	// owner path
 	OwnerPath string `json:"owner_path,omitempty"`
 

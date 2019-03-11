@@ -27,6 +27,7 @@ func ClusterLinkToPb(clusterLink *ClusterLink) *pb.ClusterLink {
 		Name:              pbutil.ToProtoString(clusterLink.Name),
 		ExternalClusterId: pbutil.ToProtoString(clusterLink.ExternalClusterId),
 		OwnerPath:         clusterLink.OwnerPath.ToProtoString(),
+		Owner:             pbutil.ToProtoString(clusterLink.Owner),
 	}
 }
 

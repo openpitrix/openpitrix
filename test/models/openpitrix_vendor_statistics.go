@@ -17,13 +17,13 @@ import (
 type OpenpitrixVendorStatistics struct {
 
 	// active app count
-	ActiveAppCount int32 `json:"active_app_count,omitempty"`
+	ActiveAppCount int64 `json:"active_app_count,omitempty"`
 
 	// cluster count month
-	ClusterCountMonth int32 `json:"cluster_count_month,omitempty"`
+	ClusterCountMonth int64 `json:"cluster_count_month,omitempty"`
 
 	// cluster count total
-	ClusterCountTotal int32 `json:"cluster_count_total,omitempty"`
+	ClusterCountTotal int64 `json:"cluster_count_total,omitempty"`
 
 	// company name
 	CompanyName string `json:"company_name,omitempty"`

@@ -74,6 +74,7 @@ func AppToPb(app *App) *pb.App {
 	pbApp.Readme = pbutil.ToProtoString(app.Readme)
 	pbApp.ChartName = pbutil.ToProtoString(app.ChartName)
 	pbApp.OwnerPath = app.OwnerPath.ToProtoString()
+	pbApp.Owner = pbutil.ToProtoString(app.Owner)
 	pbApp.Keywords = pbutil.ToProtoString(app.Keywords)
 	pbApp.Abstraction = pbutil.ToProtoString(app.Abstraction)
 	pbApp.Tos = pbutil.ToProtoString(app.Tos)

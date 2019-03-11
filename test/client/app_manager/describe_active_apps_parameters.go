@@ -83,8 +83,8 @@ type DescribeActiveAppsParams struct {
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
+	/*Owner*/
+	Owner []string
 	/*RepoID*/
 	RepoID []string
 	/*Reverse*/
@@ -211,15 +211,15 @@ func (o *DescribeActiveAppsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe active apps params
-func (o *DescribeActiveAppsParams) WithOwnerPath(ownerPath []string) *DescribeActiveAppsParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe active apps params
+func (o *DescribeActiveAppsParams) WithOwner(owner []string) *DescribeActiveAppsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe active apps params
-func (o *DescribeActiveAppsParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe active apps params
+func (o *DescribeActiveAppsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithRepoID adds the repoID to the describe active apps params
@@ -357,11 +357,11 @@ func (o *DescribeActiveAppsParams) WriteToRequest(r runtime.ClientRequest, reg s
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 
