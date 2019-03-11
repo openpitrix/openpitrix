@@ -25,13 +25,13 @@ type Leasing struct {
 	UserId             string
 	ResourceId         string
 	SkuId              string
-	MeteringValues     map[string]float64
+	MeteringValues     map[string]float64  //
 	LeaseTime          time.Time //action_time
 	UpdateDurationTime time.Time //update time for duration
 	RenewalTime        time.Time //next update time
 	CreateTime         time.Time
-	StatusTime         time.Time               //update time by other services(cluster_manager)
-	StopTime           map[time.Time]time.Time //{closeTime: restartTime, ..}
+	StatusTime         time.Time //update time by other services(cluster_manager)
+	StopTimes           map[time.Time]time.Time //{closeTime: restartTime, ..}
 	Status             string
 }
 
@@ -60,7 +60,7 @@ func NewLeasing(req *pb.SkuMetering, groupId, userId string, actionTime, renewal
 		Status:             constants.StatusActive,
 		CreateTime:         actionTime,
 		StatusTime:         actionTime,
-		StopTime:           nil,
+		StopTimes:           nil,
 	}
 }
 
@@ -85,7 +85,7 @@ func (l *Leasing) ToLeased() *Leased {
 		SkuId:          l.SkuId,
 		MeteringValues: l.MeteringValues,
 		LeaseTime:      l.LeaseTime,
-		StopTime:       l.StopTime,
+		StopTime:       l.StopTimes,
 		CreateTime:     time.Now(),
 	}
 }

@@ -7,7 +7,7 @@ package models
 import "time"
 
 type Charge struct {
-	Id         string
+	ChargeId   string
 	ContractId string
 	UserId     string
 	Fee        float32
@@ -16,7 +16,7 @@ type Charge struct {
 }
 
 type ReCharge struct {
-	Id         string
+	ReChargeId string
 	ContractId string
 	UserId     string
 	Fee        float32
@@ -24,4 +24,8 @@ type ReCharge struct {
 	Operator   string
 	CreateTime time.Time
 	remark     string
+}
+
+type Income struct {
+	IncomeId string
 }

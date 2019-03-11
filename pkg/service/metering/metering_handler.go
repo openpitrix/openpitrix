@@ -61,10 +61,15 @@ func (s *Server) StopMetering(ctx context.Context, req *pb.StopMeteringRequest) 
 
 	for resourceId, skuId := range req.GetResourceSkuIds() {
 		leasing, _ := getLeasing(ctx, NIL_STR, userId, resourceId, skuId)
+
 		//if duration in attributes
+		//.........................................
 		clearLeasinRedis(leasing.LeasingId)
-		//TODO: Update lesasing metering_values and save
+		//TODO: Update UpdateTime renewalTime of leasing and save it
 		leasingToEtcd(*leasing)
+		//.........................................
+
+		//TODO: Update Status(stoped) / StopTimes of leasing and save it
 	}
 	return &pb.CommonMeteringResponse{}, nil
 }
@@ -74,12 +79,15 @@ func (s *Server) TerminateMetering(ctx context.Context, req *pb.TerminateMeterin
 
 	for resourceId, skuId := range req.GetResourceSkuIds() {
 		leasing, _ := getLeasing(ctx, NIL_STR, userId, resourceId, skuId)
+
 		//if duration in attributes
 		//.........................................
 		clearLeasinRedis(leasing.LeasingId)
 		//TODO: Update UpdateTime renewalTime of leasing and save it
 		leasingToEtcd(*leasing)
 		//.........................................
+
+		//TODO: Update Status StopTimes of leasing
 
 		toLeased(leasing)
 	}
@@ -100,7 +108,7 @@ func updateMeteringByRedis(ctx context.Context, leasingId string, updateTime tim
 	//TODO: guarantee consistency operations
 }
 
-func consumeLeasingRedis(ctx context.Context) {
+func ConsumeRedis(ctx context.Context) {
 	//TODO: consume due leasing from redis
 	leasingId, updateTime := "", time.Now() //updateTIme: current renewalTime
 	go updateMeteringByRedis(ctx, leasingId, updateTime)

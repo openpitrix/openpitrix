@@ -17,6 +17,10 @@ func NewPriceId() string {
 	return idutil.GetUuid("price-")
 }
 
+func NewContractId() string {
+	return idutil.GetUuid("contract-")
+}
+
 type Price struct {
 	PriceId    string
 	BindingId  string
@@ -72,11 +76,13 @@ func PriceToPb(price *Price) *pb.Price {
 }
 
 type LeasingContract struct {
-	Id             string
+	ContractId     string
 	LeasingId      string
+	ResourceId     string
 	SkuId          string
 	UserId         string
-	MeteringValues map[string]interface{}
+	MeteringValues map[string]float64
+	Status         string //active/updating
 	StartTime      time.Time
 	StatusTime     time.Time
 	CreateTime     time.Time
@@ -86,7 +92,27 @@ type LeasingContract struct {
 	BeforeBillFee  float32
 	CouponFee      float32
 	RealFee        float32
-	currency       string
+	Currency       string
+}
+
+func NewLeasingContract(leasingId, resourceId, skuId, userId, currency string,
+	meteringValues map[string]float64,
+	startTime, updateDurationTime time.Time) *LeasingContract {
+
+	now := time.Now()
+	return &LeasingContract{
+		ContractId:     NewContractId(),
+		LeasingId:      leasingId,
+		ResourceId:     resourceId,
+		SkuId:          skuId,
+		UserId:         userId,
+		MeteringValues: meteringValues,
+		Status:         constants.StatusActive,
+		StartTime:      startTime,
+		StatusTime:     now,
+		CreateTime:     now,
+		Currency:       currency,
+	}
 }
 
 type LeasedContract struct {

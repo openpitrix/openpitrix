@@ -64,11 +64,14 @@ func PbToCombinationPrice(req *pb.CreateCombinationPriceRequest) *CombinationPri
 	)
 }
 
+//The requirements of this Probation:
+//the startTime of using_sku is later than StartTime of Probation,
+// and earlier than EndTime of Probation;
 type Probation struct {
 	ProbationId string
 	SkuId       string
 	AttributeId string
-	Status      string
+	Status      string  //active/using/used
 	StartTime   time.Time
 	EndTime     time.Time
 	CreateTime  time.Time
@@ -121,6 +124,7 @@ func NewProbationRecord(probationId, userId string, remain float64) *ProbationRe
 		StatusTime:  now,
 	}
 }
+
 
 type Discount struct {
 	DiscountId      string

@@ -71,3 +71,18 @@ func insertProbation(ctx context.Context, probation *models.Probation) error {
 	}
 	return err
 }
+
+func insertLeasingContract(ctx context.Context, contract *models.LeasingContract) error {
+	//TODO: impl insert
+	return nil
+}
+
+func getLeasingContract(ctx context.Context, contractId, leasingId string) (*models.LeasingContract, error){
+	//TODO: impl
+	return &models.LeasingContract{}, nil
+}
+
+func insufficientBalanceToEtcd(resourceId, skuId, userId string) error {
+	//TODO: add resourceId, skuId, userId to Etcd(insufficient queue)
+	return nil
+}
