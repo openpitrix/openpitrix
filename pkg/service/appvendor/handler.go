@@ -58,18 +58,19 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	isExist, err := s.checkIsExist(ctx, appVendorUserId)
-	if err != nil {
-		logger.Error(ctx, "Failed to get vendor [%s] verify info: %+v", appVendorUserId, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
-	}
-
 	vendorUser, err := accountClient.GetUser(ctx, appVendorUserId)
 	if err != nil {
 		logger.Error(ctx, "Failed to get vendor user [%s]: %+v", appVendorUserId, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
+	isExist, err := s.checkIsExist(ctx, appVendorUserId)
+	if err != nil {
+		logger.Error(ctx, "Failed to get vendor [%s] verify info: %+v", appVendorUserId, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	}
+
+	vendor := models.ReqToVendorVerifyInfo(ctx, req)
 	if isExist {
 		_, err := CheckAppVendorPermission(ctx, appVendorUserId)
 		if err != nil {
@@ -81,41 +82,40 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
 		}
 	} else {
-		vendor := models.ReqToVendorVerifyInfo(ctx, req)
 		err = CreateVendorVerifyInfo(ctx, vendor)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 		}
 		logger.Debug(ctx, "Create new vendor verify info: [%+v]", vendor)
+	}
 
-		if !stringutil.StringIn(sender.UserId, constants.InternalUsers) {
-			var emailNotifications []*models.EmailNotification
+	if !stringutil.StringIn(sender.UserId, constants.InternalUsers) {
+		var emailNotifications []*models.EmailNotification
 
-			// notify isv_auth users
-			systemCtx := clientutil.SetSystemUserToContext(ctx)
-			actionBundleUsers, _ := accessClient.GetActionBundleUsers(systemCtx, []string{constants.ActionBundleIsvAuth})
-			for _, user := range actionBundleUsers {
-				emailNotifications = append(emailNotifications, &models.EmailNotification{
-					Title:       constants.SubmitVendorNotifyAdminTitle.GetDefaultMessage(vendor.CompanyName),
-					Content:     constants.SubmitVendorNotifyAdminContent.GetDefaultMessage(user.GetUsername().GetValue(), vendor.CompanyName),
-					Owner:       sender.UserId,
-					ContentType: constants.NfContentTypeVerify,
-					Addresses:   []string{user.GetEmail().GetValue()},
-				})
-			}
-
-			// notify isv
+		// notify isv_auth users
+		systemCtx := clientutil.SetSystemUserToContext(ctx)
+		actionBundleUsers, _ := accessClient.GetActionBundleUsers(systemCtx, []string{constants.ActionBundleIsvAuth})
+		for _, user := range actionBundleUsers {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.SubmitVendorNotifyIsvTitle.GetDefaultMessage(),
-				Content:     constants.SubmitVendorNotifyIsvContent.GetDefaultMessage(vendorUser.GetUsername().GetValue()),
+				Title:       constants.SubmitVendorNotifyAdminTitle.GetDefaultMessage(vendor.CompanyName),
+				Content:     constants.SubmitVendorNotifyAdminContent.GetDefaultMessage(user.GetUsername().GetValue(), vendor.CompanyName),
 				Owner:       sender.UserId,
 				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{vendorUser.GetEmail().GetValue()},
+				Addresses:   []string{user.GetEmail().GetValue()},
 			})
-
-			// send notifications
-			nfclient.SendEmailNotification(ctx, emailNotifications)
 		}
+
+		// notify isv
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.SubmitVendorNotifyIsvTitle.GetDefaultMessage(),
+			Content:     constants.SubmitVendorNotifyIsvContent.GetDefaultMessage(vendorUser.GetUsername().GetValue()),
+			Owner:       sender.UserId,
+			ContentType: constants.NfContentTypeVerify,
+			Addresses:   []string{vendorUser.GetEmail().GetValue()},
+		})
+
+		// send notifications
+		nfclient.SendEmailNotification(ctx, emailNotifications)
 	}
 	res := &pb.SubmitVendorVerifyInfoResponse{
 		UserId: pbutil.ToProtoString(appVendorUserId),
