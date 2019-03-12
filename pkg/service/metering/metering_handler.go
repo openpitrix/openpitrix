@@ -14,12 +14,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-func (s *Server) StartMetering(ctx context.Context, req *pb.StartMeteringRequest) (*pb.CommonMeteringResponse, error) {
+func (s *Server) InitMetering(ctx context.Context, req *pb.InitMeteringRequest) (*pb.CommonMeteringResponse, error) {
 	var leasings []*models.Leasing
 	now := time.Now()
-	for _, metering := range req.GetSkuMeterings() {
-		renewaltime, _ := renewalTimeFromSku(ctx, metering.GetSkuId().GetValue(), now)
-		leasings = append(leasings, models.NewLeasing(metering, GetGroupId(), req.GetUserId().GetValue(), now, *renewaltime))
+	for skuId, meteringValue := range req.GetSkuMeterings() {
+		renewalTime, _ := renewalTimeFromSku(ctx, skuId, now)
+		leasings = append(leasings, models.NewLeasing(meteringValue, GetGroupId(), req.GetResourceId().GetValue(), skuId, req.GetUserId().GetValue(), now, *renewalTime))
 	}
 
 	//insert leasings
@@ -30,75 +30,93 @@ func (s *Server) StartMetering(ctx context.Context, req *pb.StartMeteringRequest
 
 	//TODO: Add leasing to REDIS if duration exist.
 	//TODO: How to guarantee consistency operations.
-	//MeteringResponse
-	var leasingIds []string
 	for _, l := range leasings {
+		//TODO: check MeteringValue > 0
 		err = leasingToEtcd(*l)
-		leasingIds = append(leasingIds, l.LeasingId)
 	}
-	return &pb.CommonMeteringResponse{LeasingIds: leasingIds}, nil
+	return &pb.CommonMeteringResponse{ResourceId: req.GetResourceId()}, nil
 }
 
+func (s *Server) StartMeterings(ctx context.Context, req *pb.StartMeteringsRequest) (*pb.CommonMeteringsResponse, error) {
+	//TODO: get leasings by resource.ResourceId and resource.skuId(if skuIds is nil, get all leasings of resourceId)
+	//      update Status of skus to active
+	//TODO: Add leasing to REDIS and Etcd if duration exist.
+
+	return &pb.CommonMeteringsResponse{}, nil
+}
+
+//Can not update duration
 func (s *Server) UpdateMetering(ctx context.Context, req *pb.UpdateMeteringRequest) (*pb.CommonMeteringResponse, error) {
-	userId := req.GetUserId().GetValue()
 	for _, metering := range req.GetSkuMeterings() {
 		leasing, _ := getLeasing(ctx,
 			NIL_STR,
-			userId,
-			metering.GetResourceId().GetValue(),
+			req.GetResourceId().GetValue(),
 			metering.GetSkuId().GetValue(),
 		)
 
 		//TODO: Update lesasing metering_values and save leasing
+		//      check attribute_name, make sure not duration
 		leasingToEtcd(*leasing)
 	}
 
 	return &pb.CommonMeteringResponse{}, nil
 }
 
-func (s *Server) StopMetering(ctx context.Context, req *pb.StopMeteringRequest) (*pb.CommonMeteringResponse, error) {
-	userId := req.GetUserId().GetValue()
+//Before StopMetering, need to call UpdateMetering if needed.
+func (s *Server) StopMeterings(ctx context.Context, req *pb.StopMeteringsRequest) (*pb.CommonMeteringsResponse, error) {
+	var leasings []*models.Leasing
 
-	for resourceId, skuId := range req.GetResourceSkuIds() {
-		leasing, _ := getLeasing(ctx, NIL_STR, userId, resourceId, skuId)
+	for _, resource := range req.GetResources() {
+		for _, skuId := range resource.SkuIds {
+			leasing, _ := getLeasing(ctx, NIL_STR, resource.GetResourceId().GetValue(), skuId)
+			leasings = append(leasings, leasing)
+		}
+	}
+
+	for _, leasing := range leasings {
 
 		//if duration in attributes
 		//.........................................
-		clearLeasinRedis(leasing.LeasingId)
+		clearLeasingRedis(leasing.LeasingId)
 		//TODO: Update UpdateTime renewalTime of leasing and save it
 		leasingToEtcd(*leasing)
 		//.........................................
 
 		//TODO: Update Status(stoped) / StopTimes of leasing and save it
 	}
-	return &pb.CommonMeteringResponse{}, nil
+	return &pb.CommonMeteringsResponse{}, nil
 }
 
-func (s *Server) TerminateMetering(ctx context.Context, req *pb.TerminateMeteringRequest) (*pb.CommonMeteringResponse, error) {
-	userId := req.GetUserId().GetValue()
+func (s *Server) TerminateMeterings(ctx context.Context, req *pb.TerminateMeteringRequest) (*pb.CommonMeteringsResponse, error) {
+	var leasings []*models.Leasing
 
-	for resourceId, skuId := range req.GetResourceSkuIds() {
-		leasing, _ := getLeasing(ctx, NIL_STR, userId, resourceId, skuId)
+	for _, resource := range req.GetResources() {
+		for _, skuId := range resource.SkuIds {
+			leasing, _ := getLeasing(ctx, NIL_STR, resource.GetResourceId().GetValue(), skuId)
+			leasings = append(leasings, leasing)
+		}
+	}
+
+	for _, leasing := range leasings {
 
 		//if duration in attributes
 		//.........................................
-		clearLeasinRedis(leasing.LeasingId)
+		clearLeasingRedis(leasing.LeasingId)
 		//TODO: Update UpdateTime renewalTime of leasing and save it
 		leasingToEtcd(*leasing)
 		//.........................................
 
-		//TODO: Update Status StopTimes of leasing
-
+		//TODO: Update StopTimes of leasing
 		toLeased(leasing)
 	}
-	return &pb.CommonMeteringResponse{}, nil
+	return &pb.CommonMeteringsResponse{}, nil
 }
 
 //meteringValues: map<attributeId>value
 func updateMeteringByRedis(ctx context.Context, leasingId string, updateTime time.Time) {
 
 	//TODO: get leasing by leasingId
-	leasing, _ := getLeasing(ctx, leasingId, NIL_STR, NIL_STR, NIL_STR)
+	leasing, _ := getLeasing(ctx, leasingId, NIL_STR, NIL_STR)
 	//TODO: update updataTIme and next renewalTime
 	renewalTime := time.Now()
 
@@ -114,7 +132,7 @@ func ConsumeRedis(ctx context.Context) {
 	go updateMeteringByRedis(ctx, leasingId, updateTime)
 }
 
-func clearLeasinRedis(leasingId string) error {
+func clearLeasingRedis(leasingId string) error {
 	//TODO: clear leasing in redis
 	return nil
 }
@@ -127,6 +145,10 @@ func toLeased(leasing *models.Leasing) error {
 	return nil
 }
 
-func GetGroupId() string {
-	return "Group_01"
+func (s *Server) DescribeLeasings(ctx context.Context, req *pb.DescribeLeasingsRequest) (*pb.DescribeLeasingsResponse, error) {
+	var leasings []*pb.Leasing
+
+	//TODO: get leasings by DescribeLeasingsRequest
+
+	return &pb.DescribeLeasingsResponse{Leasings: leasings}, nil
 }

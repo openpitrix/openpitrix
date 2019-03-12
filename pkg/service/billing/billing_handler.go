@@ -8,7 +8,6 @@ import (
 	"context"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -63,9 +62,9 @@ func (s *Server) DeleteAccounts(ctx context.Context, req *pb.DeleteAccountsReque
 	return &pb.DeleteAccountsResponse{}, nil
 }
 
-
 type Metering struct {
 	LeasingId      string
+	ReourceId      string
 	SkuId          string
 	UserId         string
 	Action         string //start/update/stop/terminate metering
@@ -73,20 +72,26 @@ type Metering struct {
 	UpdateTime     time.Time
 }
 
-func ConsumeEtcd(ctx context.Context) {
+//Loop running...
+func EtcdConeumer(ctx context.Context) {
 	//TODO: get Metering from etcd
 	metering := Metering{}
 	Billing(ctx, metering)
 
 }
 
+func CreateLeasingContract(ctx context.Context, metering Metering) *models.LeasingContract {
+	//TODO: new LeasingContract and set Status to updating
+	contract := &models.LeasingContract{}
+	insertLeasingContract(ctx, contract)
+	return contract
+}
+
 func Billing(ctx context.Context, metering Metering) {
 	//get LeasingContract
 	var contract *models.LeasingContract
-	if metering.Action == "start" {
-		//TODO: new LeasingContract and set Status to updating
-		contract = &models.LeasingContract{Status: constants.StatusUpdating}
-		insertLeasingContract(ctx, contract)
+	if metering.Action == "init" {
+		contract = CreateLeasingContract(ctx, metering)
 	} else {
 		//TODO: get LeasingContract by leasingId
 		contract, _ = getLeasingContract(ctx, "", metering.LeasingId)
@@ -96,8 +101,16 @@ func Billing(ctx context.Context, metering Metering) {
 	//calculate due_fee by value
 	calculate(ctx, metering, contract)
 
-	//charge due fee
+	//deduct coupon
 	if contract.DueFee > 0 {
+		deductCoupon(contract)
+	}
+	if contract.DueFee < 0 {
+		refundCoupon(contract)
+	}
+
+	//charge due_fee from account
+ 	if contract.DueFee > 0 {
 		_, err := charge(contract)
 		if err != nil {
 			if err.Error() == "balance not enough" {
@@ -127,7 +140,8 @@ func Billing(ctx context.Context, metering Metering) {
 
 }
 
-func calculate(ctx context.Context, metering Metering, contract *models.LeasingContract) {
+//Update DueFee / Probation / Coupon
+func calculate(ctx context.Context, metering Metering, contract *models.LeasingContract) error {
 	//************************ main process ***********************
 	for attId, value := range metering.MeteringValues {
 		//get billingValue
@@ -159,13 +173,8 @@ func calculate(ctx context.Context, metering Metering, contract *models.LeasingC
 			contract.DueFee = contract.DueFee + billingMeteringValue*realPrice
 		}
 
-		if contract.DueFee > 0 {
-			deductCoupon(contract)
-		}
-		if contract.DueFee < 0 {
-			refundCoupon(contract)
-		}
 	}
+	return nil
 }
 
 func probationFromSku(skuId, userId string, endTime time.Time) float64 {
@@ -200,7 +209,6 @@ func deductCoupon(contract *models.LeasingContract) error {
 	//          generate CouponUsed and set status to undetermined
 	return nil
 }
-
 
 func refundCoupon(contract *models.LeasingContract) error {
 	//TODO: update Status of CouponUsed of the contract from undetermined to deleted or done by DueFee and Balance

@@ -76,23 +76,23 @@ func PriceToPb(price *Price) *pb.Price {
 }
 
 type LeasingContract struct {
-	ContractId     string
-	LeasingId      string
-	ResourceId     string
-	SkuId          string
-	UserId         string
-	MeteringValues map[string]float64
-	Status         string //active/updating
-	StartTime      time.Time
-	StatusTime     time.Time
-	CreateTime     time.Time
-	FeeInfo        string
-	Fee            float64
-	DueFee         float64
-	BeforeBillFee  float64
-	CouponFee      float64
-	RealFee        float64
-	Currency       string
+	ContractId       string
+	LeasingId        string
+	ResourceId       string
+	SkuId            string
+	UserId           string
+	MeteringValues   map[string]float64
+	FeeInfo          string
+	Fee              float64
+	DueFee           float64
+	OtherContractFee float64
+	CouponFee        float64
+	RealFee          float64
+	Currency         string
+	Status           string //active/updating/deleted
+	StartTime        time.Time
+	StatusTime       time.Time
+	CreateTime       time.Time
 }
 
 func NewLeasingContract(leasingId, resourceId, skuId, userId, currency string,
@@ -116,21 +116,37 @@ func NewLeasingContract(leasingId, resourceId, skuId, userId, currency string,
 }
 
 type LeasedContract struct {
-	ContractId     string
-	LeasingId      string
-	SkuId          string
-	UserId         string
-	MeteringValues map[string]interface{}
-	StartTime      time.Time
-	EndTime        time.Time
-	CreateTime     time.Time
-	FeeInfo        string
-	Fee            float32
-	DueFee         float32
-	BeforeBillFee  float32
-	CouponFee      float32
-	RealFee        float32
-	currency       string
+	ContractId       string
+	LeasingId        string
+	ResourceId       string
+	SkuId            string
+	UserId           string
+	MeteringValues   map[string]float64
+	FeeInfo          string
+	Fee              float64
+	DueFee           float64
+	OtherContractFee float64
+	CouponFee        float64
+	RealFee          float64
+	currency         string
+	StartTime        time.Time
+	EndTime          time.Time
+	CreateTime       time.Time
+}
+
+func (lc LeasingContract) ToLeasedContract() *LeasedContract {
+	return &LeasedContract{
+		ContractId:       lc.ContractId,
+		LeasingId:        lc.LeasingId,
+		ResourceId:       lc.ResourceId,
+		SkuId:            lc.SkuId,
+		UserId:           lc.UserId,
+		MeteringValues:   lc.MeteringValues,
+		FeeInfo:          lc.FeeInfo,
+		Fee:              lc.Fee,
+		DueFee:           lc.DueFee,
+		OtherContractFee: lc.OtherContractFee,
+	}
 }
 
 type Account struct {
@@ -140,6 +156,6 @@ type Account struct {
 	Currency   string
 	Income     map[string]float64
 	Status     string
-	StartTime  time.Time
+	CreateTime time.Time
 	StatusTime time.Time
 }

@@ -103,3 +103,7 @@ func notExistInOtherError(ctx context.Context, structObj, targetStructObj interf
 	}
 	return gerr.New(ctx, gerr.NotFound, gerr.ErrorNotExistInOther, a)
 }
+
+func GetGroupId() string {
+	return "Group_01"
+}

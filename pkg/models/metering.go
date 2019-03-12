@@ -25,42 +25,42 @@ type Leasing struct {
 	UserId             string
 	ResourceId         string
 	SkuId              string
-	MeteringValues     map[string]float64  //
-	LeaseTime          time.Time //action_time
-	UpdateDurationTime time.Time //update time for duration
-	RenewalTime        time.Time //next update time
+	MeteringValues     map[string]float64 //
+	LeaseTime          time.Time          //action_time
+	UpdateDurationTime time.Time          //update time for duration
+	RenewalTime        time.Time          //next update time
 	CreateTime         time.Time
-	StatusTime         time.Time //update time by other services(cluster_manager)
-	StopTimes           map[time.Time]time.Time //{closeTime: restartTime, ..}
+	StatusTime         time.Time               //update time by other services(cluster_manager)
+	StopTimes          map[time.Time]time.Time //{closeTime: restartTime, ..}
 	Status             string
 }
 
 var LeasingColumns = db.GetColumnsFromStruct(&Leasing{})
 
-func pbToMeteringValues(pbMetVals []*pb.MeteringValue) map[string]float64 {
+func pbToMeteringValues(pbMeteringValues []*pb.MeteringValue) map[string]float64 {
 	metertingValues := map[string]float64{}
-	for _, pbMetVal := range pbMetVals {
+	for _, pbMetVal := range pbMeteringValues {
 		attributeId := pbMetVal.GetAttributeId().GetValue()
 		metertingValues[attributeId] = pbMetVal.GetValue().Value
 	}
 	return metertingValues
 }
 
-func NewLeasing(req *pb.SkuMetering, groupId, userId string, actionTime, renewalTime time.Time) *Leasing {
+func NewLeasing(req *pb.MeteringValue, groupId, resourceId, skuId, userId string, actionTime, renewalTime time.Time) *Leasing {
 	return &Leasing{
 		LeasingId:          NewLeasingId(),
 		GroupId:            groupId,
 		UserId:             userId,
-		ResourceId:         req.GetResourceId().GetValue(),
-		SkuId:              req.GetSkuId().GetValue(),
-		MeteringValues:     pbToMeteringValues(req.GetMeteringValues()),
+		ResourceId:         resourceId,
+		SkuId:              skuId,
+		MeteringValues:     pbToMeteringValues(req),
 		LeaseTime:          actionTime,
 		UpdateDurationTime: actionTime,
 		RenewalTime:        renewalTime,
 		Status:             constants.StatusActive,
 		CreateTime:         actionTime,
 		StatusTime:         actionTime,
-		StopTimes:           nil,
+		StopTimes:          nil,
 	}
 }
 
