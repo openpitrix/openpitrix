@@ -8,6 +8,7 @@ import (
 	"context"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -42,6 +43,27 @@ func (s *Server) DeletePrices(ctx context.Context, req *pb.DeletePricesRequest) 
 	return &pb.DeletePricesResponse{}, nil
 }
 
+func (s *Server) CreateAccount(ctx context.Context, req *pb.CreateAccountRequest) (*pb.CreateAccountResponse, error) {
+	//TODO: impl CreateAccount
+	return &pb.CreateAccountResponse{}, nil
+}
+
+func (s *Server) DescribeAccounts(ctx context.Context, req *pb.DescribeAccountsRequest) (*pb.DescribeAccountsResponse, error) {
+	//TODO: impl DescribeAccounts
+	return &pb.DescribeAccountsResponse{}, nil
+}
+
+func (s *Server) ModifyAccount(ctx context.Context, req *pb.ModifyAccountRequest) (*pb.ModifyAccountResponse, error) {
+	//TODO: impl ModifyAccount
+	return &pb.ModifyAccountResponse{}, nil
+}
+
+func (s *Server) DeleteAccounts(ctx context.Context, req *pb.DeleteAccountsRequest) (*pb.DeleteAccountsResponse, error) {
+	//TODO: impl DeleteAccounts
+	return &pb.DeleteAccountsResponse{}, nil
+}
+
+
 type Metering struct {
 	LeasingId      string
 	SkuId          string
@@ -58,12 +80,12 @@ func ConsumeEtcd(ctx context.Context) {
 
 }
 
-func Billing(ctx context.Context, metering Metering) error {
+func Billing(ctx context.Context, metering Metering) {
 	//get LeasingContract
 	var contract *models.LeasingContract
 	if metering.Action == "start" {
 		//TODO: new LeasingContract and set Status to updating
-		contract = &models.LeasingContract{}
+		contract = &models.LeasingContract{Status: constants.StatusUpdating}
 		insertLeasingContract(ctx, contract)
 	} else {
 		//TODO: get LeasingContract by leasingId
@@ -71,60 +93,80 @@ func Billing(ctx context.Context, metering Metering) error {
 		//TODO: update MeteringValues/Status(updating: incase not finished billing) of LeasingContract and save it
 	}
 
-	switch metering.Action {
-	case "start":
-		calculate(ctx, metering, contract)
-	case "update":
-		calculate(ctx, metering, contract)
-	case "stop":
-		//TODO: update Status of LeasingContract to stoped
-		//TODO: if duration in MeteringValues, reCalculate and reCharge
-		//????: How to handle Coupon ?
-	case "terminate":
-		//TODO: update Status of LeasingContract to deleted
-		//TODO: if duration in MeteringValues, reCalculate and reCharge
-		//????: How to handle Coupon ?
-	}
+	//calculate due_fee by value
+	calculate(ctx, metering, contract)
 
 	//charge due fee
 	if contract.DueFee > 0 {
 		_, err := charge(contract)
-		if err.Error() == "balance not enough" {
-			insufficientBalanceToEtcd(contract.ResourceId, contract.SkuId, contract.UserId)
+		if err != nil {
+			if err.Error() == "balance not enough" {
+				insufficientBalanceToEtcd(contract.ResourceId, contract.SkuId, contract.UserId)
+			}
+			//TODO: send alert email
+			return
 		}
 	}
 
-	//recharge
+	//recharge if attribute_name is duration and attribute_unit is hour
 	if contract.DueFee < 0 {
-		reCharge(contract)
+		refund(contract)
 	}
 
-	return nil
+	switch metering.Action {
+	case "start":
+		fallthrough
+	case "update":
+		//TODO: set Status of LeasingContract to active and save it
+	case "stop":
+		//TODO: update Status of LeasingContract to stoped and save it
+	case "terminate":
+		//TODO: update Status of LeasingContract to deleted
+		//TODO: Move LeasingContract to LeasedContract
+	}
+
 }
 
-func calculate(ctx context.Context, metering Metering, contract *models.LeasingContract){
+func calculate(ctx context.Context, metering Metering, contract *models.LeasingContract) {
 	//************************ main process ***********************
 	for attId, value := range metering.MeteringValues {
-		probationValue := probationFromSku(contract.SkuId, contract.UserId, contract.StartTime)
-		//TODO: if the value < probationValue, log for using probation and update Status to active.
+		//get billingValue
+		oldValue := contract.MeteringValues[attId]
+		billingMeteringValue := value - oldValue
+		if attId == "att-00001" { //the attribute is duration
+			probationValue := probationFromSku(contract.SkuId, contract.UserId, contract.StartTime)
+			//TODO: if the value < probationValue, log for using probation and update Status to active.
+			if value < probationValue {
+				//loggor.info(...)
+				//update status of to active
+				billingMeteringValue = 0
+			} else if oldValue < probationValue {
+				billingMeteringValue = oldValue - probationValue
+				//TODO: update status of ProbationRecord to used
+			}
+		}
 
-		//loggor.info(...)
-		//update status of to active
+		//caculate dueFee
+		if billingMeteringValue > 0 {
+			//TODO:
+			// 1. get Price by skuId and attId, get price by value_interval ----- priceFromSku
+			// 2. get discount by spuId/skuId/priceId and startTime/endTime ----- discountFromSku
+			// 3. get price by value from Price, price for special value
+			//    realPrice = price*Discount.DiscountPercent or price-Discount.DiscountValue
+			realPrice := 1.0
 
-		//TODO: if the value > probationValue, get real price and calculate the fee
-		//    1. update status of ProbationRecord to used
-		//    2. get Price by skuId and attId, get price by value_interval ----- priceFromSku
-		//    3. oldValue = contract.MeteringValues[attId]
-		//       billingMeteringValue = oldValue>probation?value-oldValue:value-probation
-		//    4. get discount by spuId/skuId/priceId and startTime/endTime ----- discountFromSku
-		//    5. get price by value from Price, price
-		//       realPrice = price*Discount.DiscountPercent or price-Discount.DiscountValue
+			//TODO: calculate dueFee = dueFee + billingMeteringValue * realPrice
+			contract.DueFee = contract.DueFee + billingMeteringValue*realPrice
+		}
 
-		//TODO: calculate dueFee = dueFee + billingMeteringValue * realPrice
-		deductCoupon(contract.UserId, "", contract.SkuId, "")
+		if contract.DueFee > 0 {
+			deductCoupon(contract)
+		}
+		if contract.DueFee < 0 {
+			refundCoupon(contract)
+		}
 	}
 }
-
 
 func probationFromSku(skuId, userId string, endTime time.Time) float64 {
 	//TODO: get Probation and ProbationRecord by skuId and userId
@@ -146,12 +188,22 @@ func discountFromSku(spuId, skuId, priceId string, startTime, endTime time.Time)
 	return &models.Discount{}, nil
 }
 
-//TODO: Make sure the coupon
-func deductCoupon(userId, spuId, skuId, priceId string) error {
-	//TODO: get CouponReceived by UserId and Status
-	//TODO: get Coupon by CouponId
-	//TODO: if the spuId/skuId/priceId in Coupon.Limit_ids,
-	//      update contract.dueFee and CouponReceived.Remain,
-	//      if CouponReceived.Remain is 0, update Status of CouponReceived to used.
+//TODO: Make sure condition of the coupon
+//TODO: Make sure the sequence(eg: Remain, EndTime) of coupons to deduct for due_fee
+func deductCoupon(contract *models.LeasingContract) error {
+	//TODO: update Status of CouponUsed of the contract from undetermined to done
+
+	//TODO: get CouponReceiveds by UserId and Status (active and using)
+	//TODO: get Coupons by CouponIds
+	//TODO: if the spuId/skuId/priceId is in Coupon.Limit_ids and equal:
+	//          update contract.dueFee and Remain/Status of CouponReceived,
+	//          generate CouponUsed and set status to undetermined
+	return nil
+}
+
+
+func refundCoupon(contract *models.LeasingContract) error {
+	//TODO: update Status of CouponUsed of the contract from undetermined to deleted or done by DueFee and Balance
+	//TODO: update The Remian/Status of CouponReceived
 	return nil
 }

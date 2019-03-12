@@ -10,22 +10,38 @@ type Charge struct {
 	ChargeId   string
 	ContractId string
 	UserId     string
-	Fee        float32
+	Fee        float64
 	Currency   string
+	Status     string
+	CreateTime time.Time
+	StatusTime time.Time
+}
+
+type Refund struct {
+	RefundId   string
+	ContractId string
+	UserId     string
+	Fee        float64
+	Currency   string
+	Status     string
 	CreateTime time.Time
 }
 
 type ReCharge struct {
-	ReChargeId string
-	ContractId string
-	UserId     string
-	Fee        float32
-	Currency   string
-	Operator   string
-	CreateTime time.Time
-	remark     string
+	ReChargeId  string
+	UserId      string
+	Balance     float64
+	Currency    string
+	Status      string
+	CreateTime  time.Time
+	Description string
 }
 
 type Income struct {
-	IncomeId string
+	IncomeId   string
+	ContractId string
+	OwnerId    string
+	Balance    string
+	Currency   string
+	CreateTime time.Time
 }

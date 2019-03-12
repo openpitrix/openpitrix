@@ -87,11 +87,11 @@ type LeasingContract struct {
 	StatusTime     time.Time
 	CreateTime     time.Time
 	FeeInfo        string
-	Fee            float32
-	DueFee         float32
-	BeforeBillFee  float32
-	CouponFee      float32
-	RealFee        float32
+	Fee            float64
+	DueFee         float64
+	BeforeBillFee  float64
+	CouponFee      float64
+	RealFee        float64
 	Currency       string
 }
 
@@ -131,4 +131,15 @@ type LeasedContract struct {
 	CouponFee      float32
 	RealFee        float32
 	currency       string
+}
+
+type Account struct {
+	UserId     string
+	UserType   string
+	Balance    float64
+	Currency   string
+	Income     map[string]float64
+	Status     string
+	StartTime  time.Time
+	StatusTime time.Time
 }

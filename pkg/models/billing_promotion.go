@@ -71,7 +71,7 @@ type Probation struct {
 	ProbationId string
 	SkuId       string
 	AttributeId string
-	Status      string  //active/using/used
+	Status      string //active/using/used
 	StartTime   time.Time
 	EndTime     time.Time
 	CreateTime  time.Time
@@ -124,7 +124,6 @@ func NewProbationRecord(probationId, userId string, remain float64) *ProbationRe
 		StatusTime:  now,
 	}
 }
-
 
 type Discount struct {
 	DiscountId      string
@@ -243,7 +242,7 @@ type CouponReceived struct {
 	CouponId         string
 	UserId           string
 	Remain           float64
-	Status           string
+	Status           string //active/using/used/overdue
 	CreateTime       time.Time
 	StatusTime       time.Time
 }
@@ -259,4 +258,14 @@ func NewCouponReceived(couponId, userId string, remain float64) *CouponReceived 
 		CreateTime:       now,
 		StatusTime:       now,
 	}
+}
+
+type CouponUsed struct {
+	CouponReceivedId string
+	ContractId       string
+	CouponUsedId     string
+	Balance          float64
+	Currency         string
+	Status           string //undetermined --> done / deleted(refund)
+	CreateTime       string
 }

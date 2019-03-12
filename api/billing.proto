@@ -84,6 +84,169 @@ message DeletePricesResponse {
 	repeated string price_ids = 1;
 }
 
+message Account {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue user_type = 2;
+	google.protobuf.DoubleValue balance = 3;
+	google.protobuf.StringValue currency = 4;
+	map<string, double> income = 5;
+	google.protobuf.StringValue status = 6;
+	google.protobuf.Timestamp create_time = 7;
+	google.protobuf.Timestamp status_time = 8;
+	google.protobuf.StringValue description = 9;
+}
+
+message CreateAccountRequest {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue user_type = 2;
+	google.protobuf.DoubleValue balance = 3;
+	google.protobuf.StringValue currency = 4;
+	map<string, double> income = 5;
+	google.protobuf.StringValue description = 6;
+}
+
+message CreateAccountResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+
+message DescribeAccountsRequest {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue user_type = 2;
+	google.protobuf.StringValue sort_key = 3;
+	google.protobuf.BoolValue reverse = 4;
+	uint32 offset = 5;
+	uint32 limit = 6;
+}
+
+message DescribeAccountsResponse {
+	repeated Account accounts = 1;
+}
+
+message ModifyAccountRequest {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue user_type = 2;
+	google.protobuf.DoubleValue balance = 3;
+	google.protobuf.StringValue currency = 4;
+	map<string, double> income = 5;
+	google.protobuf.StringValue description = 6;
+}
+
+message ModifyAccountResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+
+message DeleteAccountsRequest {
+	repeated string user_ids = 1;
+}
+
+message DeleteAccountsResponse {
+	repeated string user_ids = 1;
+}
+
+message Recharge {
+	google.protobuf.StringValue recharge_id = 1;
+	google.protobuf.StringValue user_id = 2;
+	google.protobuf.DoubleValue balance = 3;
+	google.protobuf.StringValue currency = 4;
+	google.protobuf.StringValue status = 5;
+	google.protobuf.Timestamp create_time = 6;
+	google.protobuf.StringValue description = 7;
+}
+
+message CreateRechargeRequest {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.DoubleValue balance = 2;
+	google.protobuf.StringValue currency = 3;
+	google.protobuf.StringValue description = 4;
+}
+
+message CreateRechargeResponse {
+	google.protobuf.StringValue recharge_id = 1;
+}
+
+message DescribeRechargesRequest {
+	google.protobuf.StringValue recharge_id = 1;
+	google.protobuf.StringValue user_id = 2;
+	uint32 offset = 3;
+	uint32 limit = 4;
+}
+
+message DescribeRechargesResponse {
+	repeated Recharge recharges = 1;
+}
+
+message Charge {
+	google.protobuf.StringValue charge_id = 1;
+	google.protobuf.StringValue contract_id = 2;
+	google.protobuf.StringValue user_id = 3;
+	google.protobuf.DoubleValue fee = 4;
+	google.protobuf.StringValue currency = 5;
+	google.protobuf.StringValue status = 6;
+	google.protobuf.Timestamp create_time = 7;
+	google.protobuf.Timestamp status_time = 8;
+}
+
+message DescribeChargesRequest {
+	google.protobuf.StringValue charge_id = 1;
+	google.protobuf.StringValue contract_id = 2;
+	google.protobuf.StringValue user_id = 3;
+	google.protobuf.StringValue sort_key = 4;
+	google.protobuf.BoolValue reverse = 5;
+	uint32 offset = 6;
+	uint32 limit = 7;
+}
+
+message DescribeChargesResponse {
+	repeated Charge charges = 1;
+}
+
+message Refund {
+	google.protobuf.StringValue Refund_id = 1;
+	google.protobuf.StringValue contract_id = 2;
+	google.protobuf.StringValue user_id = 3;
+	google.protobuf.DoubleValue fee = 4;
+	google.protobuf.StringValue currency = 5;
+	google.protobuf.StringValue status = 6;
+	google.protobuf.Timestamp create_time = 7;
+}
+
+message DescribeRefundsRequest {
+	google.protobuf.StringValue refund_id = 1;
+	google.protobuf.StringValue contract_id = 2;
+	google.protobuf.StringValue user_id = 3;
+	google.protobuf.StringValue sort_key = 4;
+	google.protobuf.BoolValue reverse = 5;
+	uint32 offset = 6;
+	uint32 limit = 7;
+}
+
+message DescribeRefundsResponse {
+	repeated Refund refunds = 1;
+}
+
+message Income {
+	google.protobuf.StringValue income_id = 1;
+	google.protobuf.StringValue contract_id = 2;
+	google.protobuf.StringValue owner_id = 3;
+	google.protobuf.DoubleValue balance = 4;
+	google.protobuf.StringValue currency = 5;
+	google.protobuf.Timestamp create_time = 6;
+}
+
+message DescribeIncomesRequest {
+	google.protobuf.StringValue income_id = 1;
+	google.protobuf.StringValue contract_id = 2;
+	google.protobuf.StringValue owner_id = 3;
+	google.protobuf.StringValue sort_key = 4;
+	google.protobuf.BoolValue reverse = 5;
+	uint32 offset = 6;
+	uint32 limit = 7;
+}
+
+message DescribeIncomesResponse {
+	repeated Income incomes = 1;
+}
+
 service BillingManager {
 	rpc CreatePrice (CreatePriceRequest) returns (CreatePriceResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -123,6 +286,92 @@ service BillingManager {
 			body: "*"
 		};
 	}
+
+	rpc CreateAccount (CreateAccountRequest) returns (CreateAccountResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create account"
+		};
+		option (google.api.http) = {
+			post: "/v1/billing/account"
+			body: "*"
+		};
+	}
+
+	rpc DescribeAccounts (DescribeAccountsRequest) returns (DescribeAccountsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe accounts"
+		};
+		option (google.api.http) = {
+			get: "/v1/billing/accounts"
+		};
+	}
+
+	rpc ModifyAccount (ModifyAccountRequest) returns (ModifyAccountResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify  account"
+		};
+		option (google.api.http) = {
+			put: "/v1/billing/account"
+			body: "*"
+		};
+	}
+
+	rpc DeleteAccounts (DeleteAccountsRequest) returns (DeleteAccountsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete accounts"
+		};
+		option (google.api.http) = {
+			delete: "/v1/billing/accounts"
+			body: "*"
+		};
+	}
+
+	rpc CreateRecharge (CreateRechargeRequest) returns (CreateRechargeResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "recharge for user"
+		};
+		option (google.api.http) = {
+			post: "/v1/billing/recharge"
+			body: "*"
+		};
+	}
+
+	rpc DescribeRecharges (DescribeRechargesRequest) returns (DescribeRechargesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe recharges"
+		};
+		option (google.api.http) = {
+			get: "/v1/billing/recharges"
+		};
+	}
+
+	rpc DescribeCharges (DescribeChargesRequest) returns (DescribeChargesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe charges"
+		};
+		option (google.api.http) = {
+			get: "/v1/billing/charges"
+		};
+	}
+
+	rpc DescribeRefunds (DescribeRefundsRequest) returns (DescribeRefundsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe refunds"
+		};
+		option (google.api.http) = {
+			get: "/v1/billing/refunds"
+		};
+	}
+
+	rpc DescribeIncomes (DescribeIncomesRequest) returns (DescribeIncomesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe incomes"
+		};
+		option (google.api.http) = {
+			get: "/v1/billing/incomes"
+		};
+	}
+
 }
 
 
@@ -604,5 +853,4 @@ service PromotionManager {
 			body: "*"
 		};
 	}
-
 }
