@@ -383,7 +383,7 @@ func getLatestAppVersion(ctx context.Context, appId string, status ...string) (*
 }
 
 func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorVerifyInfo, error) {
-	accountclient, err := account.NewClient()
+	accountClient, err := account.NewClient()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
@@ -393,15 +393,11 @@ func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorV
 		if stringutil.StringIn(uid, constants.InternalUsers) {
 			continue
 		}
-		getOwnerRes, err := accountclient.GetUserGroupOwner(ctx, &pb.GetUserGroupOwnerRequest{
-			UserId: uid,
-		})
+		isvUser, err := accountClient.GetIsvFromUser(ctx, uid)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
-		if getOwnerRes.Owner != "" {
-			ownerIds = append(ownerIds, getOwnerRes.Owner)
-		}
+		ownerIds = append(ownerIds, isvUser.GetUserId().GetValue())
 	}
 
 	vendorVerifyInfoSet, err := appvendor.GetVendorInfos(ctx, ownerIds)

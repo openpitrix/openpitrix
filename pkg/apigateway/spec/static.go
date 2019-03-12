@@ -589,6 +589,16 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "action_bundle_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -6609,17 +6619,6 @@ var Files = map[string]string{
       "properties": {
         "role": {
           "$ref": "#/definitions/openpitrixRole"
-        }
-      }
-    },
-    "openpitrixGetUserGroupOwnerResponse": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
         }
       }
     },

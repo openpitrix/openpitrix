@@ -325,6 +325,7 @@ func (*DescribeRolesCmd) GetActionName() string {
 }
 
 func (c *DescribeRolesCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.ActionBundleID, "action_bundle_id", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	c.Offset = new(int64)

@@ -63,6 +63,8 @@ for the describe roles operation typically these are written to a http.Request
 */
 type DescribeRolesParams struct {
 
+	/*ActionBundleID*/
+	ActionBundleID []string
 	/*Limit*/
 	Limit *int64
 	/*Offset*/
@@ -118,6 +120,17 @@ func (o *DescribeRolesParams) WithHTTPClient(client *http.Client) *DescribeRoles
 // SetHTTPClient adds the HTTPClient to the describe roles params
 func (o *DescribeRolesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithActionBundleID adds the actionBundleID to the describe roles params
+func (o *DescribeRolesParams) WithActionBundleID(actionBundleID []string) *DescribeRolesParams {
+	o.SetActionBundleID(actionBundleID)
+	return o
+}
+
+// SetActionBundleID adds the actionBundleId to the describe roles params
+func (o *DescribeRolesParams) SetActionBundleID(actionBundleID []string) {
+	o.ActionBundleID = actionBundleID
 }
 
 // WithLimit adds the limit to the describe roles params
@@ -226,6 +239,14 @@ func (o *DescribeRolesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 	var res []error
+
+	valuesActionBundleID := o.ActionBundleID
+
+	joinedActionBundleID := swag.JoinByFormat(valuesActionBundleID, "multi")
+	// query array param action_bundle_id
+	if err := r.SetQueryParam("action_bundle_id", joinedActionBundleID...); err != nil {
+		return err
+	}
 
 	if o.Limit != nil {
 

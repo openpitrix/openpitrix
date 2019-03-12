@@ -39,6 +39,8 @@
   description: admin permission
   service: AccessManager
   query:
+    action_bundle_id:
+      type: '[]string'
     limit:
       type: int64
     offset:

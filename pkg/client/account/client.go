@@ -64,6 +64,17 @@ func (c *Client) GetUsers(ctx context.Context, userIds []string) ([]*pb.User, er
 	return response.UserSet, nil
 }
 
+func (c *Client) GetUser(ctx context.Context, userId string) (*pb.User, error) {
+	users, err := c.GetUsers(ctx, []string{userId})
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		return nil, fmt.Errorf("not found user [%s]", userId)
+	}
+	return users[0], nil
+}
+
 func (c *Client) GetUserGroupPath(ctx context.Context, userId string) (string, error) {
 	var userGroupPath string
 
@@ -91,15 +102,10 @@ func (c *Client) GetUserGroupPath(ctx context.Context, userId string) (string, e
 
 }
 
-func GetRoleUsers(ctx context.Context, roleIds []string) ([]*pb.User, error) {
-	client, err := NewClient()
-	if err != nil {
-		logger.Error(ctx, "Failed to create account manager client: %+v", err)
-		return nil, err
-	}
-
-	response, err := client.DescribeUsers(ctx, &pb.DescribeUsersRequest{
+func (c *Client) GetRoleUsers(ctx context.Context, roleIds []string) ([]*pb.User, error) {
+	response, err := c.DescribeUsers(ctx, &pb.DescribeUsersRequest{
 		RoleId: roleIds,
+		Status: []string{constants.StatusActive},
 	})
 	if err != nil {
 		logger.Error(ctx, "Describe users failed: %+v", err)
@@ -109,40 +115,28 @@ func GetRoleUsers(ctx context.Context, roleIds []string) ([]*pb.User, error) {
 	return response.UserSet, nil
 }
 
-func GetUsers(ctx context.Context, userIds []string) ([]*pb.User, error) {
-	client, err := NewClient()
+func (c *Client) GetIsvFromUser(ctx context.Context, userId string) (*pb.User, error) {
+	groupPath, err := c.GetUserGroupPath(ctx, userId)
 	if err != nil {
-		logger.Error(ctx, "Failed to create account manager client: %+v", err)
-		return nil, err
-	}
-	response, err := client.GetUsers(ctx, userIds)
-	if err != nil {
-		return nil, err
-	}
-	return response, err
-}
-
-func GetIsvFromUsers(ctx context.Context, userIds []string) ([]*pb.User, error) {
-	client, err := NewClient()
-	if err != nil {
-		logger.Error(ctx, "Failed to create account manager client: %+v", err)
 		return nil, err
 	}
 
-	var owners []string
-	for _, userId := range userIds {
-		response, err := client.GetUserGroupOwner(ctx, &pb.GetUserGroupOwnerRequest{
-			UserId: userId,
-		})
-		if err != nil {
-			return nil, err
-		}
-		owners = append(owners, response.Owner)
-	}
+	rootGroupId := strings.Split(groupPath, ".")[0]
 
-	response, err := client.GetUsers(ctx, owners)
+	describeUsersResponse, err := c.DescribeUsers(ctx, &pb.DescribeUsersRequest{
+		RootGroupId: []string{rootGroupId},
+		Status:      []string{constants.StatusActive},
+		RoleId:      []string{constants.RoleIsv},
+	})
 	if err != nil {
+		logger.Error(ctx, "Failed to describe users: %+v", err)
 		return nil, err
 	}
-	return response, err
+
+	if len(describeUsersResponse.UserSet) == 0 {
+		logger.Error(ctx, "Isv not exist with root group id [%s]", rootGroupId)
+		return nil, fmt.Errorf("isv not exist")
+	}
+
+	return describeUsersResponse.UserSet[0], nil
 }

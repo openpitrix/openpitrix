@@ -234,6 +234,12 @@ const (
 	OperatorTypeBusiness    = "business"
 	OperatorTypeTechnical   = "technical"
 	OperatorTypeIsv         = "isv"
+
+	ActionBundleBusinessReview  = "business_review"
+	ActionBundleTechnicalReview = "technical_review"
+	ActionBundleIsvReview       = "isv_review"
+	ActionBundleIsvApply        = "isv_apply"
+	ActionBundleIsvAuth         = "isv_auth"
 )
 
 var GrantTypeTokens = []string{
