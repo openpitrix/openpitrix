@@ -109,10 +109,23 @@ func getSystemUserId(ctx context.Context) (string, error) {
 	if err != nil {
 		return userId, err
 	}
-	if len(getRoleWithUserResponse.Role.UserIdSet) == 0 {
+	userIds := getRoleWithUserResponse.Role.UserIdSet
+	if len(userIds) == 0 {
+		logger.Error(ctx, "There is no global admin user")
 		return userId, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
 	}
-	userId = getRoleWithUserResponse.Role.UserIdSet[0]
+	listUsersResponse, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
+		UserId: userIds,
+		Status: []string{constants.StatusActive},
+	})
+	if err != nil {
+		return userId, err
+	}
+	if len(listUsersResponse.UserSet) == 0 {
+		logger.Error(ctx, "There is no active global admin user")
+		return userId, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
+	}
+	userId = listUsersResponse.UserSet[0].UserId
 	return userId, nil
 }
 
@@ -131,6 +144,7 @@ func getRootGroupId(ctx context.Context, userId string) (string, error) {
 		UserId: userId,
 	})
 	if err != nil {
+		logger.Error(ctx, "Get user [%s] failed: %+v", userId, err)
 		return rootGroupId, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 

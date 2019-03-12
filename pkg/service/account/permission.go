@@ -68,6 +68,10 @@ func CheckUsersPermission(ctx context.Context, userIds []string) ([]*pbim.UserWi
 }
 
 func CheckRootGroupIds(ctx context.Context, checkGroupIds []string, rootGroupId string) error {
+	s := ctxutil.GetSender(ctx)
+	if s.UserId == constants.UserSystem {
+		return nil
+	}
 	listGroupsResponse, err := imClient.ListGroups(ctx, &pbim.ListGroupsRequest{
 		GroupId: checkGroupIds,
 	})

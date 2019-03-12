@@ -812,7 +812,8 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 		})
 
 		// notify isv reviewers
-		isv, err := accountClient.GetIsvFromUser(ctx, s.UserId)
+		systemCtx := clientutil.SetSystemUserToContext(ctx)
+		isv, err := accountClient.GetIsvFromUser(systemCtx, s.UserId)
 		if err != nil {
 			logger.Error(ctx, "Failed to get isv from user [%s], %+v", s.UserId, err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -912,7 +913,8 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 		})
 
 		// notify isv
-		isv, err := accountClient.GetIsvFromUser(ctx, version.Owner)
+		systemCtx := clientutil.SetSystemUserToContext(ctx)
+		isv, err := accountClient.GetIsvFromUser(systemCtx, version.Owner)
 		if err != nil {
 			logger.Error(ctx, "Failed to get isv from user [%s], %+v", version.Owner, err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -926,7 +928,7 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 		})
 
 		// notify admin
-		adminUsers, err := accountClient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
+		adminUsers, err := accountClient.GetRoleUsers(systemCtx, []string{constants.RoleGlobalAdmin})
 		if err != nil {
 			logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -1255,7 +1257,8 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 		})
 
 		// notify isv
-		isv, err := accountClient.GetIsvFromUser(ctx, version.Owner)
+		systemCtx := clientutil.SetSystemUserToContext(ctx)
+		isv, err := accountClient.GetIsvFromUser(systemCtx, version.Owner)
 		if err != nil {
 			logger.Error(ctx, "Failed to get isv from user [%s], %+v", version.Owner, err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -1269,7 +1272,7 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 		})
 
 		// notify admin
-		adminUsers, err := accountClient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
+		adminUsers, err := accountClient.GetRoleUsers(systemCtx, []string{constants.RoleGlobalAdmin})
 		if err != nil {
 			logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)

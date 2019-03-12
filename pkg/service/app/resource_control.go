@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/client/account"
 	"openpitrix.io/openpitrix/pkg/client/appvendor"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -393,7 +394,8 @@ func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorV
 		if stringutil.StringIn(uid, constants.InternalUsers) {
 			continue
 		}
-		isvUser, err := accountClient.GetIsvFromUser(ctx, uid)
+		systemCtx := clientutil.SetSystemUserToContext(ctx)
+		isvUser, err := accountClient.GetIsvFromUser(systemCtx, uid)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
@@ -443,11 +445,11 @@ func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.A
 	if err != nil {
 		return pbApps, err
 	}
-	rcmap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), appIds)
+	rcMap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), appIds)
 	if err != nil {
 		return pbApps, err
 	}
-	vendormap, err := getVendorMap(ctx, userIds)
+	vendorMap, err := getVendorMap(ctx, userIds)
 	if err != nil {
 		return pbApps, err
 	}
@@ -461,10 +463,10 @@ func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.A
 		if appVersionType, ok := appsVersionTypes[app.AppId]; ok {
 			pbApp.AppVersionTypes = pbutil.ToProtoString(appVersionType)
 		}
-		if categorySet, ok := rcmap[app.AppId]; ok {
+		if categorySet, ok := rcMap[app.AppId]; ok {
 			pbApp.CategorySet = categorySet
 		}
-		if vendor, ok := vendormap[app.Owner]; ok {
+		if vendor, ok := vendorMap[app.Owner]; ok {
 			pbApp.CompanyJoinTime = vendor.StatusTime
 			pbApp.CompanyName = vendor.CompanyName
 			pbApp.CompanyProfile = vendor.CompanyProfile
