@@ -98,3 +98,17 @@ CREATE TABLE IF NOT EXISTS coupon_received (
 	ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (coupon_received_id)
 );
+
+
+/** coupon used record **/
+CREATE TABLE IF NOT EXISTS coupon_used (
+	coupon_used_id VARCHAR(50)   NOT NULL,
+	coupon_received_id VARCHAR(50)   NOT NULL,
+	contract_id          VARCHAR(50)   NOT NULL,
+	balance             DECIMAL(8, 2) NOT NULL,
+	currency            VARCHAR(50) NOT NULL  DEFAULT 'cny',
+	status             VARCHAR(16) DEFAULT 'undetermined'
+	COMMENT 'undetermined --> done / refunded',
+	create_time        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (coupon_used_id)
+);

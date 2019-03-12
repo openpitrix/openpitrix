@@ -261,11 +261,11 @@ func NewCouponReceived(couponId, userId string, remain float64) *CouponReceived 
 }
 
 type CouponUsed struct {
+	CouponUsedId     string
 	CouponReceivedId string
 	ContractId       string
-	CouponUsedId     string
 	Balance          float64
 	Currency         string
-	Status           string //undetermined --> done / deleted(refund)
+	Status           string //undetermined --> done / refunded
 	CreateTime       string
 }

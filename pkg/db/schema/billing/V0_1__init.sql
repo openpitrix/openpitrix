@@ -66,53 +66,6 @@ CREATE TABLE IF NOT EXISTS leased_contract (
 );
 
 
-/** Charge **/
-CREATE TABLE IF NOT EXISTS charge (
-	id          VARCHAR(50)   NOT NULL UNIQUE,
-	user_id     VARCHAR(50)   NOT NULL,
-	contract_id VARCHAR(50)   NOT NULL,
-	fee         DECIMAL(8, 2) NOT NULL
-	COMMENT 'total fee from starting cluster to now',
-	currency    VARCHAR(10)   NOT NULL DEFAULT 'cny',
-	info        JSON COMMENT '{couponReceivedID: fee}',
-	status      VARCHAR(16)            DEFAULT 'successful'
-	COMMENT 'successful, failed',
-	create_time TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
-	remark      TEXT,
-	PRIMARY KEY (id)
-);
-
-
-CREATE TABLE IF NOT EXISTS recharge (
-	id          VARCHAR(50)   NOT NULL UNIQUE,
-	user_id     VARCHAR(50)   NOT NULL,
-	contract_id VARCHAR(50),
-	fee         DECIMAL(8, 2) NOT NULL
-	COMMENT 'total fee from starting cluster to now',
-	currency    VARCHAR(10)   NOT NULL DEFAULT 'cny',
-	info        JSON COMMENT '{couponReceivedID: fee}',
-	status      VARCHAR(16)            DEFAULT 'successful'
-	COMMENT 'successful, failed',
-	operator    VARCHAR(50)   NOT NULL DEFAULT 'system',
-	create_time TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
-	remark      TEXT,
-	PRIMARY KEY (id)
-);
-
-
-CREATE TABLE IF NOT EXISTS income (
-	id                  VARCHAR(50)   NOT NULL UNIQUE,
-	user_id             VARCHAR(50)   NOT NULL,
-	contract_id         VARCHAR(50)   NOT NULL,
-	resource_version_id VARCHAR(50)   NOT NULL,
-	balance             DECIMAL(9, 2) NOT NULL DEFAULT 0,
-	currency            VARCHAR(10)   NOT NULL DEFAULT 'cny',
-	create_time         TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
-	remark              TEXT,
-	PRIMARY KEY (id)
-);
-
-
 CREATE TABLE IF NOT EXISTS account (
 	user_id     VARCHAR(50)   NOT NULL UNIQUE,
 	user_type   VARCHAR(16)   NOT NULL,
@@ -124,4 +77,55 @@ CREATE TABLE IF NOT EXISTS account (
 	status_time TIMESTAMP     NULL
 	ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (user_id)
+);
+
+
+/** Charge **/
+CREATE TABLE IF NOT EXISTS charge (
+	charge_id   VARCHAR(50)   NOT NULL UNIQUE,
+	contract_id VARCHAR(50)   NOT NULL,
+	user_id     VARCHAR(50)   NOT NULL,
+	fee         DECIMAL(8, 2) NOT NULL
+	COMMENT 'due_fee in contract',
+	currency    VARCHAR(10)   NOT NULL DEFAULT 'cny',
+	status      VARCHAR(16)            DEFAULT 'successful'
+	COMMENT 'successful, failed',
+	create_time TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (charge_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS refund (
+	refund_id   VARCHAR(50)   NOT NULL UNIQUE,
+	contract_id VARCHAR(50)   NOT NULL,
+	fee         DECIMAL(8, 2) NOT NULL
+	COMMENT 'due_fee in contract',
+	currency    VARCHAR(10)   NOT NULL DEFAULT 'cny',
+	status      VARCHAR(16)            DEFAULT 'successful'
+	COMMENT 'successful, failed',
+	create_time TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (refund_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS recharge (
+	recharge_id VARCHAR(50)   NOT NULL UNIQUE,
+	balance     DECIMAL(8, 2) NOT NULL
+	COMMENT 'the money that recharged',
+	currency    VARCHAR(10)   NOT NULL DEFAULT 'cny',
+	status      VARCHAR(16)            DEFAULT 'successful'
+	COMMENT 'successful, failed',
+	create_time TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
+	description TEXT,
+	PRIMARY KEY (recharge_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS income (
+	income_id                  VARCHAR(50)   NOT NULL UNIQUE,
+	contract_id         VARCHAR(50)   NOT NULL,
+	balance             DECIMAL(9, 2) NOT NULL DEFAULT 0,
+	currency            VARCHAR(10)   NOT NULL DEFAULT 'cny',
+	create_time         TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (income_id)
 );
