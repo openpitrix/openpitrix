@@ -143,6 +143,79 @@ message DeleteAccountsResponse {
 	repeated string user_ids = 1;
 }
 
+message LeasingContract {
+	google.protobuf.StringValue contract_id = 1;
+	google.protobuf.StringValue leasing_id = 2;
+	google.protobuf.StringValue resource_id = 3;
+	google.protobuf.StringValue sku_id = 4;
+	google.protobuf.StringValue user_id = 5;
+	map<string, double> metering_values = 6;
+	google.protobuf.StringValue fee_info = 7;
+	google.protobuf.DoubleValue fee = 8;
+	google.protobuf.DoubleValue due_fee = 9;
+	google.protobuf.DoubleValue other_contract_fee = 10;
+	google.protobuf.DoubleValue coupon_fee = 11;
+	google.protobuf.DoubleValue real_fee = 12;
+	google.protobuf.StringValue currency = 13;
+	google.protobuf.StringValue status = 14;
+	google.protobuf.Timestamp start_time = 15;
+	google.protobuf.Timestamp create_time = 16;
+	google.protobuf.Timestamp status_time = 17;
+}
+
+message DescribeLeasingContractsRequest {
+	google.protobuf.StringValue contract_id = 1;
+	google.protobuf.StringValue leasing_id = 2;
+	google.protobuf.StringValue resource_id = 3;
+	google.protobuf.StringValue sku_id = 4;
+	google.protobuf.StringValue user_id = 5;
+	google.protobuf.StringValue status = 6;
+	google.protobuf.StringValue sort_key = 7;
+	google.protobuf.BoolValue reverse = 8;
+	uint32 offset = 9;
+	uint32 limit = 10;
+}
+
+message DescribeLeasingContractsResponse {
+	repeated LeasingContract leasing_contracts = 1;
+}
+
+message LeasedContract {
+	google.protobuf.StringValue contract_id = 1;
+	google.protobuf.StringValue leasing_id = 2;
+	google.protobuf.StringValue resource_id = 3;
+	google.protobuf.StringValue sku_id = 4;
+	google.protobuf.StringValue user_id = 5;
+	map<string, double> metering_values = 6;
+	google.protobuf.StringValue fee_info = 7;
+	google.protobuf.DoubleValue fee = 8;
+	google.protobuf.DoubleValue due_fee = 9;
+	google.protobuf.DoubleValue other_contract_fee = 10;
+	google.protobuf.DoubleValue coupon_fee = 11;
+	google.protobuf.DoubleValue real_fee = 12;
+	google.protobuf.StringValue currency = 13;
+	google.protobuf.Timestamp start_time = 14;
+	google.protobuf.Timestamp end_time = 15;
+	google.protobuf.Timestamp create_time = 16;
+}
+
+message DescribeLeasedContractsRequest {
+	google.protobuf.StringValue contract_id = 1;
+	google.protobuf.StringValue leasing_id = 2;
+	google.protobuf.StringValue resource_id = 3;
+	google.protobuf.StringValue sku_id = 4;
+	google.protobuf.StringValue user_id = 5;
+	google.protobuf.StringValue status = 6;
+	google.protobuf.StringValue sort_key = 7;
+	google.protobuf.BoolValue reverse = 8;
+	uint32 offset = 9;
+	uint32 limit = 10;
+}
+
+message DescribeLeasedContractsResponse {
+	repeated LeasedContract leased_contracts = 1;
+}
+
 message Recharge {
 	google.protobuf.StringValue recharge_id = 1;
 	google.protobuf.StringValue user_id = 2;
@@ -326,6 +399,24 @@ service BillingManager {
 		};
 	}
 
+	rpc DescribeLeasingContracts (DescribeLeasingContractsRequest) returns (DescribeLeasingContractsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe leasing_contract"
+		};
+		option (google.api.http) = {
+			get: "/v1/billing/leasing/contracts"
+		};
+	}
+
+	rpc DescribeLeasedContracts (DescribeLeasedContractsRequest) returns (DescribeLeasedContractsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe leased_contract"
+		};
+		option (google.api.http) = {
+			get: "/v1/billing/leased/contracts"
+		};
+	}
+
 	rpc CreateRecharge (CreateRechargeRequest) returns (CreateRechargeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "recharge for user"
@@ -373,6 +464,97 @@ service BillingManager {
 	}
 
 }
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////// Billing Backend APIs //////////////////////////////////////
+//////////////////////////        Start         //////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+message Context {
+	//context.Context
+}
+
+message Metering {
+    google.protobuf.StringValue leasing_id = 1;
+    google.protobuf.StringValue resource_id = 2;
+    google.protobuf.StringValue sku_id = 3;
+    google.protobuf.StringValue user_id = 4;
+    google.protobuf.StringValue action_id = 5;
+    map<string, double> metering_values = 6;
+	google.protobuf.Timestamp update_time = 7;
+}
+
+message BillingRequest {
+	Context context = 1;
+	Metering metering = 2;
+}
+
+message NIL {} //there is no response
+
+message CreateLeasingContractRequest {
+	google.protobuf.StringValue leasing_id = 1;
+	google.protobuf.StringValue resource_id = 2;
+	google.protobuf.StringValue sku_id = 3;
+	google.protobuf.StringValue user_id = 4;
+	map<string, double> metering_values = 5;
+	google.protobuf.Timestamp start_time = 6;
+}
+
+message CreateLeasingContractResponse {
+	LeasingContract leasing_contract = 1;
+}
+
+message CalculateRequest {
+	Context ctx = 1;
+	Metering metering = 2;
+	LeasingContract leaing_contract = 3;
+}
+
+message LeasingContractOperationRequest {
+	Context ctx = 1;
+	LeasingContract leaing_contract = 2;
+}
+
+
+service BillingBackendManager {
+	rpc EtcdConsumer (Context) returns (Metering) {
+		//call billing with metering
+	}
+
+	rpc Billing (BillingRequest) returns (NIL) {
+		// CreateLeasingContract() or get LeasingContract
+
+		// Calculate()
+
+		// DuductCoupon() if due_fee > 0
+		// RefundCoupon() if due_fee < 0
+
+		//CreateCharge() if due_fee > 0
+		//CreateRefund() if due_fee < 0
+
+	}
+
+	rpc CreateLeasingContract (CreateLeasingContractRequest) returns (CreateLeasingContractResponse) {}
+
+	rpc Calculate (CalculateRequest) returns (LeasingContract) {}
+
+	rpc DeductCoupon (LeasingContractOperationRequest) returns (LeasingContract) {}
+
+	rpc RefundCoupon (LeasingContractOperationRequest) returns (LeasingContract) {}
+
+	rpc CreateCharge (LeasingContractOperationRequest) returns (LeasingContract) {}
+
+	rpc CreateRefund (LeasingContractOperationRequest) returns (LeasingContract) {}
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////// 			End         //////////////////////////////////////
+////////////////////////// Billing Backend APIs //////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
 
 
 //************************************* Promotion *************************

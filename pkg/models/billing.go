@@ -128,25 +128,31 @@ type LeasedContract struct {
 	OtherContractFee float64
 	CouponFee        float64
 	RealFee          float64
-	currency         string
+	Currency         string
 	StartTime        time.Time
 	EndTime          time.Time
 	CreateTime       time.Time
 }
 
-func (lc LeasingContract) ToLeasedContract() *LeasedContract {
+func (leasingContract LeasingContract) ToLeasedContract() *LeasedContract {
 	return &LeasedContract{
-		ContractId:       lc.ContractId,
-		LeasingId:        lc.LeasingId,
-		ResourceId:       lc.ResourceId,
-		SkuId:            lc.SkuId,
-		UserId:           lc.UserId,
-		MeteringValues:   lc.MeteringValues,
-		FeeInfo:          lc.FeeInfo,
-		Fee:              lc.Fee,
-		DueFee:           lc.DueFee,
-		OtherContractFee: lc.OtherContractFee,
-	}
+		ContractId:       leasingContract.ContractId,
+		LeasingId:        leasingContract.LeasingId,
+		ResourceId:       leasingContract.ResourceId,
+		SkuId:            leasingContract.SkuId,
+		UserId:           leasingContract.UserId,
+		MeteringValues:   leasingContract.MeteringValues,
+		FeeInfo:          leasingContract.FeeInfo,
+		Fee:              leasingContract.Fee,
+		DueFee:           leasingContract.DueFee,
+		OtherContractFee: leasingContract.OtherContractFee,
+		CouponFee: leasingContract.CouponFee,
+		RealFee: leasingContract.RealFee,
+		Currency: leasingContract.Currency,
+		StartTime: leasingContract.StartTime,
+		EndTime: leasingContract.StatusTime,
+		CreateTime: time.Now(),
+    }
 }
 
 type Account struct {

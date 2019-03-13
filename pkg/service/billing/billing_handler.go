@@ -103,10 +103,10 @@ func Billing(ctx context.Context, metering Metering) {
 
 	//deduct coupon
 	if contract.DueFee > 0 {
-		deductCoupon(contract)
+		deductCoupon(ctx, contract)
 	}
 	if contract.DueFee < 0 {
-		refundCoupon(contract)
+		refundCoupon(ctx, contract)
 	}
 
 	//charge due_fee from account
@@ -199,7 +199,7 @@ func discountFromSku(spuId, skuId, priceId string, startTime, endTime time.Time)
 
 //TODO: Make sure condition of the coupon
 //TODO: Make sure the sequence(eg: Remain, EndTime) of coupons to deduct for due_fee
-func deductCoupon(contract *models.LeasingContract) error {
+func deductCoupon(ctx context.Context, contract *models.LeasingContract) error {
 	//TODO: update Status of CouponUsed used by contract from undetermined to done
 
 	//TODO: get CouponReceiveds by UserId and Status (active and using)
@@ -210,7 +210,7 @@ func deductCoupon(contract *models.LeasingContract) error {
 	return nil
 }
 
-func refundCoupon(contract *models.LeasingContract) error {
+func refundCoupon(ctx context.Context, contract *models.LeasingContract) error {
 	//TODO: update Status of CouponUsed of the contract from undetermined to deleted or done by DueFee and Balance
 	//TODO: update The Remian/Status of CouponReceived
 	return nil
