@@ -467,27 +467,28 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 }
 
 func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*pb.DeleteUsersResponse, error) {
-	userIds := req.GetUserId()
-	_, err := CheckUsersPermission(ctx, userIds)
-	if err != nil {
-		return nil, err
-	}
-	_, err = amClient.UnbindUserRole(ctx, &pbam.UnbindUserRoleRequest{
-		UserId: userIds,
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotDeleteUsers)
-	}
-	_, err = imClient.DeleteUsers(ctx, &pbim.DeleteUsersRequest{
-		UserId: userIds,
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotDeleteUsers)
-	}
-
-	return &pb.DeleteUsersResponse{
-		UserId: userIds,
-	}, nil
+	return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
+	//userIds := req.GetUserId()
+	//_, err := CheckUsersPermission(ctx, userIds)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//_, err = amClient.UnbindUserRole(ctx, &pbam.UnbindUserRoleRequest{
+	//	UserId: userIds,
+	//})
+	//if err != nil {
+	//	return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotDeleteUsers)
+	//}
+	//_, err = imClient.DeleteUsers(ctx, &pbim.DeleteUsersRequest{
+	//	UserId: userIds,
+	//})
+	//if err != nil {
+	//	return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotDeleteUsers)
+	//}
+	//
+	//return &pb.DeleteUsersResponse{
+	//	UserId: userIds,
+	//}, nil
 }
 
 func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
