@@ -109,10 +109,23 @@ func getSystemUserId(ctx context.Context) (string, error) {
 	if err != nil {
 		return userId, err
 	}
-	if len(getRoleWithUserResponse.Role.UserIdSet) == 0 {
+	userIds := getRoleWithUserResponse.Role.UserIdSet
+	if len(userIds) == 0 {
+		logger.Error(ctx, "There is no global admin user")
 		return userId, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
 	}
-	userId = getRoleWithUserResponse.Role.UserIdSet[0]
+	listUsersResponse, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
+		UserId: userIds,
+		Status: []string{constants.StatusActive},
+	})
+	if err != nil {
+		return userId, err
+	}
+	if len(listUsersResponse.UserSet) == 0 {
+		logger.Error(ctx, "There is no active global admin user")
+		return userId, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
+	}
+	userId = listUsersResponse.UserSet[0].UserId
 	return userId, nil
 }
 
@@ -131,6 +144,7 @@ func getRootGroupId(ctx context.Context, userId string) (string, error) {
 		UserId: userId,
 	})
 	if err != nil {
+		logger.Error(ctx, "Get user [%s] failed: %+v", userId, err)
 		return rootGroupId, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -561,26 +575,28 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		return nil, err
 	}
 
-	var emailNotifications []*models.EmailNotification
-	if roleId == constants.RoleIsv {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.AdminInviteIsvNotifyTitle.GetDefaultMessage(),
-			Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(username, email, password),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeInvite,
-			Addresses:   []string{email},
-		})
-	} else {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.AdminInviteUserNotifyTitle.GetDefaultMessage(),
-			Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(username, email, password),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeInvite,
-			Addresses:   []string{email},
-		})
-	}
+	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
+		var emailNotifications []*models.EmailNotification
+		if roleId == constants.RoleIsv {
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.AdminInviteIsvNotifyTitle.GetDefaultMessage(),
+				Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(username, email, password),
+				Owner:       s.UserId,
+				ContentType: constants.NfContentTypeInvite,
+				Addresses:   []string{email},
+			})
+		} else {
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.AdminInviteUserNotifyTitle.GetDefaultMessage(),
+				Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(username, email, password),
+				Owner:       s.UserId,
+				ContentType: constants.NfContentTypeInvite,
+				Addresses:   []string{email},
+			})
+		}
 
-	nfclient.SendEmailNotification(ctx, emailNotifications)
+		nfclient.SendEmailNotification(ctx, emailNotifications)
+	}
 
 	reply := &pb.CreateUserResponse{
 		UserId: pbutil.ToProtoString(createUserResponse.UserId),
@@ -640,22 +656,24 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.CreateUserRequest) (
 		return nil, err
 	}
 
-	var emailNotifications []*models.EmailNotification
-	getUserResponse, err := imClient.GetUser(ctx, &pbim.GetUserRequest{
-		UserId: s.UserId,
-	})
-	if err != nil {
-		logger.Error(ctx, "Failed to get user [%s]: %+v", s.UserId, err)
-	} else {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(getUserResponse.User.Username),
-			Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(username, email, password),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeInvite,
-			Addresses:   []string{email},
+	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
+		var emailNotifications []*models.EmailNotification
+		getUserResponse, err := imClient.GetUser(ctx, &pbim.GetUserRequest{
+			UserId: s.UserId,
 		})
+		if err != nil {
+			logger.Error(ctx, "Failed to get user [%s]: %+v", s.UserId, err)
+		} else {
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(getUserResponse.User.Username),
+				Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(username, email, password),
+				Owner:       s.UserId,
+				ContentType: constants.NfContentTypeInvite,
+				Addresses:   []string{email},
+			})
+		}
+		nfclient.SendEmailNotification(ctx, emailNotifications)
 	}
-	nfclient.SendEmailNotification(ctx, emailNotifications)
 
 	reply := &pb.CreateUserResponse{
 		UserId: pbutil.ToProtoString(createUserResponse.UserId),
@@ -909,7 +927,9 @@ func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.J
 	var oldGroupIds []string
 	for _, userWithGroup := range userWithGroups {
 		for _, group := range userWithGroup.GroupSet {
-			oldGroupIds = append(oldGroupIds, group.GroupId)
+			if !stringutil.StringIn(group.GroupId, oldGroupIds) {
+				oldGroupIds = append(oldGroupIds, group.GroupId)
+			}
 		}
 	}
 
@@ -937,30 +957,4 @@ func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.J
 
 func (p *Server) LeaveGroup(ctx context.Context, req *pb.LeaveGroupRequest) (*pb.LeaveGroupResponse, error) {
 	return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
-}
-
-func (p *Server) GetUserGroupOwner(ctx context.Context, req *pb.GetUserGroupOwnerRequest) (*pb.GetUserGroupOwnerResponse, error) {
-	userId := req.GetUserId()
-	_, err := CheckUsersPermission(ctx, []string{userId})
-	if err != nil {
-		return nil, err
-	}
-	res, err := imClient.GetUserWithGroup(ctx, &pbim.GetUserRequest{
-		UserId: userId,
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-	reply := &pb.GetUserGroupOwnerResponse{
-		UserId: userId,
-	}
-
-	owner, ok := res.User.GroupSet[0].Extra[OwnerKey]
-	if !ok {
-		return reply, nil
-	}
-
-	reply.Owner = owner
-
-	return reply, nil
 }

@@ -35,7 +35,7 @@ type VendorVerifyInfo struct {
 	StatusTime        time.Time
 }
 
-func (vendor *VendorVerifyInfo) ParseReq2Vendor(ctx context.Context, req *pb.SubmitVendorVerifyInfoRequest) *VendorVerifyInfo {
+func ReqToVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendorVerifyInfoRequest) *VendorVerifyInfo {
 	Vendor := VendorVerifyInfo{}
 	Vendor.UserId = req.GetUserId()
 	Vendor.CompanyName = req.GetCompanyName().GetValue()
@@ -56,17 +56,15 @@ func (vendor *VendorVerifyInfo) ParseReq2Vendor(ctx context.Context, req *pb.Sub
 	return &Vendor
 }
 
-func (vendor *VendorVerifyInfo) ParseVendorSet2PbSet(ctx context.Context, inVendors []*VendorVerifyInfo) []*pb.VendorVerifyInfo {
+func VendorVerifyInfoSetToPbSet(inVendors []*VendorVerifyInfo) []*pb.VendorVerifyInfo {
 	var pbVendors []*pb.VendorVerifyInfo
 	for _, inVendor := range inVendors {
-		var pbVendor *pb.VendorVerifyInfo
-		pbVendor = vendor.ParseVendor2Pb(ctx, inVendor)
-		pbVendors = append(pbVendors, pbVendor)
+		pbVendors = append(pbVendors, VendorVerifyInfoToPb(inVendor))
 	}
 	return pbVendors
 }
 
-func (vendor *VendorVerifyInfo) ParseVendor2Pb(ctx context.Context, inVendor *VendorVerifyInfo) *pb.VendorVerifyInfo {
+func VendorVerifyInfoToPb(inVendor *VendorVerifyInfo) *pb.VendorVerifyInfo {
 	pbVendor := pb.VendorVerifyInfo{}
 	pbVendor.UserId = pbutil.ToProtoString(inVendor.UserId)
 	pbVendor.CompanyName = pbutil.ToProtoString(inVendor.CompanyName)

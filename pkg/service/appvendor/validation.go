@@ -11,49 +11,51 @@ import (
 	"github.com/asaskevich/govalidator"
 
 	"openpitrix.io/openpitrix/pkg/gerr"
+	"openpitrix.io/openpitrix/pkg/logger"
 )
 
-//Url
-func VerifyUrl(ctx context.Context, urlStr string) (bool, error) {
-	if !govalidator.IsURL(urlStr) {
-		return false, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateFailed, urlStr)
+func VerifyUrl(ctx context.Context, url string) error {
+	if !govalidator.IsURL(url) {
+		logger.Error(ctx, "Failed to verify url [%s]", url)
+		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalUrlFormat, url)
 	}
-	return true, nil
+	return nil
 }
 
-//Email
-func VerifyEmailFmt(ctx context.Context, emailStr string) (bool, error) {
+func VerifyEmail(ctx context.Context, email string) error {
 	pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`
 	reg := regexp.MustCompile(pattern)
-	result := reg.MatchString(emailStr)
-	if result {
-		return true, nil
+	isMatch := reg.MatchString(email)
+	if isMatch {
+		return nil
 	} else {
-		return false, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateFailed, emailStr)
+		logger.Error(ctx, "Failed to verify email [%s]", email)
+		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateFailed, email)
 	}
 
 }
 
-//mobilephone, no prefix, the length is 11.
-func VerifyPhoneFmt(ctx context.Context, phoneNumberStr string) (bool, error) {
+// no prefix, the length is 11.
+func VerifyPhoneNumber(ctx context.Context, phoneNumber string) error {
 	pattern := `^1[0-9]{10}$`
 	reg := regexp.MustCompile(pattern)
-	result := reg.MatchString(phoneNumberStr)
-	if result {
-		return true, nil
+	isMatch := reg.MatchString(phoneNumber)
+	if isMatch {
+		return nil
 	} else {
-		return false, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateFailed, phoneNumberStr)
+		logger.Error(ctx, "Failed to verify phone number [%s]", phoneNumber)
+		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalPhoneNumFormat, phoneNumber)
 	}
 }
 
-//BankAccountNumber
-func VerifyBankAccountNumberFmt(ctx context.Context, bankAccountNumberStr string) (bool, error) {
+func VerifyBankAccountNumber(ctx context.Context, bankAccountNumber string) error {
 	pattern := `\d{12}|\d{15}|\d{16}|\d{17}|\d{18}|\d{19}`
 	reg := regexp.MustCompile(pattern)
-	result := reg.MatchString(bankAccountNumberStr)
-	if result {
-		return true, nil
+	isMatch := reg.MatchString(bankAccountNumber)
+	if isMatch {
+		return nil
 	} else {
-		return false, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateFailed, bankAccountNumberStr)
+		logger.Error(ctx, "Failed to verify bank account number [%s]", bankAccountNumber)
+		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalBankAccountNumberFormat, bankAccountNumber)
 	}
 }

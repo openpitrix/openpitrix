@@ -71,7 +71,6 @@ service AccountManager {
 	rpc LeaveGroup (LeaveGroupRequest) returns (LeaveGroupResponse) {
 		option (google.api.http) = { post: "/v1/groups:leave" body: "*" };
 	};
-	rpc GetUserGroupOwner (GetUserGroupOwnerRequest) returns (GetUserGroupOwnerResponse);
 }
 
 service AccessManager {
@@ -342,15 +341,6 @@ message LeaveGroupResponse {
 	repeated string user_id = 2;
 }
 
-message GetUserGroupOwnerRequest {
-	string user_id = 1;
-}
-
-message GetUserGroupOwnerResponse {
-	string user_id = 1;
-	string owner = 2;
-}
-
 message Role {
 	string role_id = 1;
 	string role_name = 2;
@@ -474,6 +464,7 @@ message DescribeRolesRequest {
 	repeated string role_name = 7;
 	repeated string portal = 8;
 	repeated string status = 9;
+	repeated string action_bundle_id = 10;
 }
 
 message DescribeRolesResponse {

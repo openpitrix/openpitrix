@@ -5,7 +5,11 @@
 package access
 
 import (
+	"context"
+
+	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
@@ -22,4 +26,35 @@ func NewClient() (*Client, error) {
 	return &Client{
 		AccessManagerClient: pb.NewAccessManagerClient(conn),
 	}, nil
+}
+
+func (c *Client) GetActionBundleRoles(ctx context.Context, actionBundleIds []string) ([]*pb.Role, error) {
+	response, err := c.DescribeRoles(ctx, &pb.DescribeRolesRequest{
+		ActionBundleId: actionBundleIds,
+		Status:         []string{constants.StatusActive},
+	})
+	if err != nil {
+		logger.Error(ctx, "Describe roles failed: %+v", err)
+		return nil, err
+	}
+
+	return response.RoleSet, nil
+}
+
+func (c *Client) GetActionBundleUsers(ctx context.Context, actionBundleIds []string) ([]*pb.User, error) {
+	roles, err := c.GetActionBundleRoles(ctx, actionBundleIds)
+	if err != nil {
+		return nil, err
+	}
+	var roleIds []string
+	for _, role := range roles {
+		roleIds = append(roleIds, role.RoleId)
+	}
+
+	accountClient, err := accountclient.NewClient()
+	if err != nil {
+		logger.Error(ctx, "Get account manager client failed: %+v", err)
+		return nil, err
+	}
+	return accountClient.GetRoleUsers(ctx, roleIds)
 }

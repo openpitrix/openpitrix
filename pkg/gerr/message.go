@@ -397,10 +397,10 @@ var (
 		en:   "illegal Email format [%s]",
 		zhCN: "非法的Email格式[%s]",
 	}
-	ErrorIllegalPhoneFormat = ErrorMessage{
-		Name: "illegal_phone_format",
-		en:   "illegal Phone format [%s]",
-		zhCN: "非法的Phone格式[%s]",
+	ErrorIllegalPhoneNumFormat = ErrorMessage{
+		Name: "illegal_phone_num_format",
+		en:   "illegal phone number format [%s]",
+		zhCN: "非法的电话号码格式[%s]",
 	}
 	ErrorIllegalBankAccountNumberFormat = ErrorMessage{
 		Name: "illegal_bankAccountNumber_format",

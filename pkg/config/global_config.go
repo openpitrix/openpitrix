@@ -136,7 +136,10 @@ func (g *GlobalConfig) RegisterRuntimeProviderConfig(provider, config string) er
 	if len(g.Runtime) == 0 {
 		g.Runtime = make(map[string]*RuntimeProviderConfig)
 	}
-	g.Runtime[provider] = runtimeProviderConfig
+	_, ok := g.Runtime[provider]
+	if !ok {
+		g.Runtime[provider] = runtimeProviderConfig
+	}
 	return nil
 }
 

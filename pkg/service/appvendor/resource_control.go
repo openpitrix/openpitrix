@@ -35,25 +35,25 @@ func DescribeVendorVerifyInfos(ctx context.Context, req *pb.DescribeVendorVerify
 		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableVendorVerifyInfo))
 
-	query = manager.AddQueryOrderDir(query, req, "submit_time")
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnSubmitTime)
 	if len(displayColumns) > 0 {
 		_, err := query.Load(&vendors)
 		if err != nil {
-			logger.Error(ctx, "Failed to describe vendorVerifyInfos [%v], error: %+v.", req, err)
+			logger.Error(ctx, "Failed to describe vendor verify info: %+v", err)
 			return nil, 0, err
 		}
 	}
 
 	count, err := query.Count()
 	if err != nil {
-		logger.Error(ctx, "Failed to describe vendorVerifyInfos count [%v], error: %+v.", req, err)
+		logger.Error(ctx, "Failed to describe vendor verify info count: %+v", err)
 		return nil, 0, err
 	}
 
 	return vendors, count, err
 }
 
-func PassVendorVerifyInfo(ctx context.Context, appVendorUserId string) (string, error) {
+func PassVendorVerifyInfo(ctx context.Context, appVendorUserId string) error {
 	sender := ctxutil.GetSender(ctx)
 	approver := sender.UserId
 
@@ -65,29 +65,29 @@ func PassVendorVerifyInfo(ctx context.Context, appVendorUserId string) (string, 
 		Where(db.Eq(constants.ColumnUserId, appVendorUserId)).
 		Exec()
 	if err != nil {
-		logger.Error(ctx, "Failed to pass vendorVerifyInfo [%s].", appVendorUserId)
-		return "", err
+		logger.Error(ctx, "Failed to pass vendor [%s] verify info: %+v", appVendorUserId, err)
+		return err
 	}
-	return appVendorUserId, err
+	return err
 }
 
-func RejectVendorVerifyInfo(ctx context.Context, userID string, rejectmsg string, approver string) (string, error) {
+func RejectVendorVerifyInfo(ctx context.Context, appVendorUserId string, rejectMsg string, approver string) error {
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableVendorVerifyInfo).
-		Set(constants.ColumnStatus, "rejected").
+		Set(constants.ColumnStatus, constants.StatusRejected).
 		Set(constants.ColumnStatusTime, time.Now()).
-		Set(constants.ColumnRejectMessage, rejectmsg).
+		Set(constants.ColumnRejectMessage, rejectMsg).
 		Set(constants.ColumnApprover, approver).
-		Where(db.Eq(constants.ColumnUserId, userID)).
+		Where(db.Eq(constants.ColumnUserId, appVendorUserId)).
 		Exec()
 	if err != nil {
-		logger.Error(ctx, "Failed to reject vendorVerifyInfo [%s].", userID)
-		return "", err
+		logger.Error(ctx, "Failed to reject vendor [%s] verify info: %+v", appVendorUserId, err)
+		return err
 	}
-	return userID, err
+	return err
 }
 
-func UpdateVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendorVerifyInfoRequest) (string, error) {
+func UpdateVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendorVerifyInfoRequest) error {
 	appVendorUserId := req.UserId
 	attributes := manager.BuildUpdateAttributes(req, constants.ColumnCompanyName, constants.ColumnCompanyWebsite, constants.ColumnCompanyProfile,
 		constants.ColumnAuthorizerName, constants.ColumnAuthorizerEmail, constants.ColumnAuthorizerPhone, constants.ColumnBankName, constants.ColumnBankAccountName,
@@ -96,7 +96,7 @@ func UpdateVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendorVerifyInfoR
 	attributes[constants.ColumnSubmitTime] = time.Now()
 	attributes[constants.ColumnStatusTime] = time.Now()
 
-	logger.Debug(ctx, "SubmitVendorVerifyInfo update attributes: [%+v]", attributes)
+	logger.Debug(ctx, "Update vendor verify info attributes: [%+v]", attributes)
 
 	var err error
 	if len(attributes) != 0 {
@@ -106,35 +106,35 @@ func UpdateVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendorVerifyInfoR
 			Where(db.Eq(constants.ColumnUserId, appVendorUserId)).
 			Exec()
 		if err != nil {
-			logger.Error(ctx, "Failed to update vendorVerifyInfo [%s].", appVendorUserId)
-			return "", err
+			logger.Error(ctx, "Failed to update vendor [%s] verify info: %+v", appVendorUserId, err)
+			return err
 		}
 	}
-	return appVendorUserId, nil
+	return nil
 }
 
-func CreateVendorVerifyInfo(ctx context.Context, vendor models.VendorVerifyInfo) (string, error) {
+func CreateVendorVerifyInfo(ctx context.Context, vendor *models.VendorVerifyInfo) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableVendorVerifyInfo).
 		Record(vendor).
 		Exec()
 	if err != nil {
-		logger.Error(ctx, "Failed to create vendorVerifyInfo [%+v].", vendor)
-		return "", err
+		logger.Error(ctx, "Failed to create vendor verify info: %+v", err)
+		return err
 	}
-	return vendor.UserId, nil
+	return nil
 }
 
-func GetVendorVerifyInfo(ctx context.Context, userID string) (*models.VendorVerifyInfo, error) {
+func GetVendorVerifyInfo(ctx context.Context, appVendorUserId string) (*models.VendorVerifyInfo, error) {
 	vendor := &models.VendorVerifyInfo{}
 	vendorColumns := db.GetColumnsFromStruct(&models.VendorVerifyInfo{})
 	err := pi.Global().DB(ctx).
 		Select(vendorColumns...).
 		From(constants.TableVendorVerifyInfo).
-		Where(db.Eq(constants.ColumnUserId, userID)).
+		Where(db.Eq(constants.ColumnUserId, appVendorUserId)).
 		LoadOne(&vendor)
 	if err != nil {
-		logger.Error(ctx, "Failed to get vendorVerifyInfo [%s], vendorVerifyInfo not exists.", userID)
+		logger.Error(ctx, "Failed to get vendor [%s] verify info: %+v", appVendorUserId, err)
 		return nil, err
 	}
 	return vendor, err

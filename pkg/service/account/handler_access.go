@@ -144,15 +144,16 @@ func (p *Server) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.GetRo
 
 func (p *Server) DescribeRoles(ctx context.Context, req *pb.DescribeRolesRequest) (*pb.DescribeRolesResponse, error) {
 	response, err := amClient.DescribeRoles(ctx, &pbam.DescribeRolesRequest{
-		SearchWord: req.SearchWord,
-		SortKey:    req.SortKey,
-		Reverse:    req.Reverse,
-		Offset:     req.Offset,
-		Limit:      req.Limit,
-		RoleId:     req.RoleId,
-		RoleName:   req.RoleName,
-		Portal:     req.Portal,
-		Status:     req.Status,
+		SearchWord:     req.SearchWord,
+		SortKey:        req.SortKey,
+		Reverse:        req.Reverse,
+		Offset:         req.Offset,
+		Limit:          req.Limit,
+		RoleId:         req.RoleId,
+		RoleName:       req.RoleName,
+		Portal:         req.Portal,
+		Status:         req.Status,
+		ActionBundleId: req.ActionBundleId,
 	})
 	if err != nil {
 		return nil, err
