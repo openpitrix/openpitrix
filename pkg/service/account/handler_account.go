@@ -642,6 +642,21 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.CreateUserRequest) (
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
+
+	userId := createUserResponse.UserId
+
+	rootGroupId, err := getRootGroupId(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
+	_, err = imClient.JoinGroup(ctx, &pbim.JoinGroupRequest{
+		GroupId: []string{rootGroupId},
+		UserId:  []string{userId},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
 	_, err = amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
 		UserId: []string{createUserResponse.UserId},
 		RoleId: []string{roleId},
