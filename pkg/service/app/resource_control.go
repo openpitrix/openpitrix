@@ -109,6 +109,41 @@ func getAppVersion(ctx context.Context, versionId string) (*models.AppVersion, e
 	return version, nil
 }
 
+func checkAppName(ctx context.Context, name string) error {
+	count, err := pi.Global().DB(ctx).
+		Select(models.AppColumns...).
+		From(constants.TableApp).
+		Where(db.Eq(constants.ColumnName, name)).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
+		Count()
+	if err != nil {
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if count > 0 {
+		return gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorAppNameExists, name)
+	}
+
+	return nil
+}
+
+func checkAppVersionName(ctx context.Context, appId, name string) error {
+	count, err := pi.Global().DB(ctx).
+		Select(models.AppVersionColumns...).
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnName, name)).
+		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
+		Count()
+	if err != nil {
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if count > 0 {
+		return gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorAppVersionExists, appId, name)
+	}
+
+	return nil
+}
+
 func insertVersion(ctx context.Context, version *models.AppVersion) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableAppVersion).

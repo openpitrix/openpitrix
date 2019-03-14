@@ -154,6 +154,11 @@ func (p *Server) ValidatePackage(ctx context.Context, req *pb.ValidatePackageReq
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
 	name := req.GetName().GetValue()
 
+	err := checkAppName(ctx, name)
+	if err != nil {
+		return nil, err
+	}
+
 	pkg := req.GetVersionPackage().GetValue()
 
 	v, err := repoiface.LoadPackage(ctx, req.GetVersionType().GetValue(), pkg)
@@ -425,6 +430,17 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
 	}
 
+	name := req.GetName().GetValue()
+	if name == "" {
+		name = v.GetVersionName()
+	}
+
+	appId := req.GetAppId().GetValue()
+	err = checkAppVersionName(ctx, appId, name)
+	if err != nil {
+		return nil, err
+	}
+
 	attachmentContent, err := archiveutil.Load(bytes.NewReader(pkg))
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
@@ -444,14 +460,9 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 
 	attachmentId := uploadAttachmentRes.AttachmentId
 
-	name := req.GetName().GetValue()
-	if name == "" {
-		name = v.GetVersionName()
-	}
-
 	s := ctxutil.GetSender(ctx)
 	newAppVersion := models.NewAppVersion(
-		req.GetAppId().GetValue(),
+		appId,
 		name,
 		req.GetDescription().GetValue(),
 		s.GetOwnerPath())
@@ -514,13 +525,20 @@ func (p *Server) DescribeAppVersionAudits(ctx context.Context, req *pb.DescribeA
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
+	if _, err := CheckAppsPermission(ctx, req.AppId); err != nil {
+		return nil, err
+	}
+
+	if _, err := CheckAppVersionsPermission(ctx, req.VersionId); err != nil {
+		return nil, err
+	}
+
 	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.AppVersionAuditColumns)
 	query := pi.Global().DB(ctx).
 		Select(displayColumns...).
 		From(constants.TableAppVersionAudit).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersionAudit))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
