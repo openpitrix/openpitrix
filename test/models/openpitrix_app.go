@@ -58,6 +58,9 @@ type OpenpitrixApp struct {
 	// icon
 	Icon string `json:"icon,omitempty"`
 
+	// isv
+	Isv string `json:"isv,omitempty"`
+
 	// keywords
 	Keywords string `json:"keywords,omitempty"`
 

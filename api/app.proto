@@ -120,6 +120,7 @@ message App {
 	google.protobuf.StringValue company_profile = 26;
 	google.protobuf.Timestamp company_join_time = 27;
 	google.protobuf.StringValue owner_path = 28;
+	google.protobuf.StringValue isv = 29;
 }
 
 message DescribeAppsRequest {

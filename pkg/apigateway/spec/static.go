@@ -7162,6 +7162,9 @@ var Files = map[string]string{
         },
         "owner_path": {
           "type": "string"
+        },
+        "isv": {
+          "type": "string"
         }
       }
     },
