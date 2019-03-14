@@ -138,6 +138,7 @@ func (rp *repoProxy) syncAppInfo(ctx context.Context, appIface wrapper.VersionIn
 		app = models.NewApp(
 			chartName,
 			sender.OwnerPath(rp.repo.GetOwnerPath().GetValue()),
+			rp.repo.GetOwner().GetValue(),
 		)
 		app.RepoId = repoId
 		app.ChartName = chartName

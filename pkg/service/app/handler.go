@@ -204,10 +204,25 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 
 	attachmentId := uploadAttachmentRes.AttachmentId
 
+	accountClient, err := accountclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
 	s := ctxutil.GetSender(ctx)
-	newApp := models.NewApp(
-		name,
-		s.GetOwnerPath())
+
+	var isv string
+	if s.UserId == constants.UserSystem {
+		isv = constants.UserSystem
+	} else {
+		isvUser, err := accountClient.GetIsvFromUser(ctx, s.UserId)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		isv = isvUser.GetUserId().GetValue()
+	}
+
+	newApp := models.NewApp(name, s.GetOwnerPath(), isv)
 
 	if len(iconAttachmentId) > 0 {
 		newApp.Icon = iconAttachmentId
@@ -795,11 +810,6 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 		return nil, err
 	}
 
-	err = submitAppVersionReview(ctx, version)
-	if err != nil {
-		return nil, err
-	}
-
 	accountClient, err := accountclient.NewClient()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -808,6 +818,26 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 	accessClient, err := accessclient.NewClient()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	err = submitAppVersionReview(ctx, version)
+	if err != nil {
+		return nil, err
+	}
+
+	noNeedIsvReview := accessClient.CheckActionBundleUser(ctx, []string{constants.ActionBundleIsvReview}, s.UserId)
+	if noNeedIsvReview {
+		operatorType := constants.OperatorTypeIsv
+		version, _ = CheckAppVersionPermission(ctx, versionId)
+		err = startAppVersionReview(ctx, version, operatorType)
+		if err != nil {
+			return nil, err
+		}
+		version, _ = CheckAppVersionPermission(ctx, versionId)
+		err = passAppVersionReview(ctx, version, constants.OperatorTypeIsv)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
@@ -830,29 +860,47 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 		})
 
 		// notify isv reviewers
-		systemCtx := clientutil.SetSystemUserToContext(ctx)
-		isv, err := accountClient.GetIsvFromUser(systemCtx, s.UserId)
-		if err != nil {
-			logger.Error(ctx, "Failed to get isv from user [%s], %+v", s.UserId, err)
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-		}
-		isvCtx, err := clientutil.SetUserToContext(ctx, isv.GetUserId().GetValue(), "DescribeUsers")
-		if err != nil {
-			logger.Error(ctx, "Failed to set [%s] as sender: %+v", isv.GetUserId().GetValue(), err)
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-		}
-		isvUsers, err := accessClient.GetActionBundleUsers(isvCtx, []string{constants.ActionBundleIsvReview})
-		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-		}
-		for _, user := range isvUsers {
-			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(user.GetUsername().GetValue(), app.Name, version.Name),
-				Owner:       s.UserId,
-				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{user.GetEmail().GetValue()},
-			})
+		if noNeedIsvReview {
+			systemCtx := clientutil.SetSystemUserToContext(ctx)
+			isv, err := accountClient.GetIsvFromUser(systemCtx, s.UserId)
+			if err != nil {
+				logger.Error(ctx, "Failed to get isv from user [%s], %+v", s.UserId, err)
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			isvCtx, err := clientutil.SetUserToContext(ctx, isv.GetUserId().GetValue(), "DescribeUsers")
+			if err != nil {
+				logger.Error(ctx, "Failed to set [%s] as sender: %+v", isv.GetUserId().GetValue(), err)
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			isvUsers, err := accessClient.GetActionBundleUsers(isvCtx, []string{constants.ActionBundleIsvReview})
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			for _, user := range isvUsers {
+				emailNotifications = append(emailNotifications, &models.EmailNotification{
+					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(user.GetUsername().GetValue(), app.Name, version.Name),
+					Owner:       s.UserId,
+					ContentType: constants.NfContentTypeVerify,
+					Addresses:   []string{user.GetEmail().GetValue()},
+				})
+			}
+		} else {
+			// notify business reviewers
+			systemCtx := clientutil.SetSystemUserToContext(ctx)
+			businessUsers, err := accessClient.GetActionBundleUsers(systemCtx, []string{constants.ActionBundleBusinessReview})
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			for _, user := range businessUsers {
+				emailNotifications = append(emailNotifications, &models.EmailNotification{
+					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(user.GetUsername().GetValue(), app.Name, version.Name),
+					Owner:       s.UserId,
+					ContentType: constants.NfContentTypeVerify,
+					Addresses:   []string{user.GetEmail().GetValue()},
+				})
+			}
 		}
 
 		nfclient.SendEmailNotification(ctx, emailNotifications)

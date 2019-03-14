@@ -28,6 +28,19 @@ func NewClient() (*Client, error) {
 	}, nil
 }
 
+func (c *Client) CheckActionBundleUser(ctx context.Context, actionBundleIds []string, userId string) bool {
+	users, err := c.GetActionBundleUsers(ctx, actionBundleIds)
+	if err != nil {
+		return false
+	}
+	for _, user := range users {
+		if user.GetUserId().GetValue() == userId {
+			return true
+		}
+	}
+	return false
+}
+
 func (c *Client) GetActionBundleRoles(ctx context.Context, actionBundleIds []string) ([]*pb.Role, error) {
 	response, err := c.DescribeRoles(ctx, &pb.DescribeRolesRequest{
 		ActionBundleId: actionBundleIds,
