@@ -54,16 +54,17 @@ type TaskServiceConfig struct {
 }
 
 type RuntimeProviderConfig struct {
-	ApiServer     string `json:"api_server"`
-	Zone          string `json:"zone"`
-	ImageId       string `json:"image_id"`
-	ImageUrl      string `json:"image_url"`
-	ImageName     string `json:"image_name"`
-	FrontgateConf string `json:"frontgate_conf"`
-	ProviderType  string `json:"provider_type"`
-	Host          string `json:"host"`
-	Port          int    `json:"port"`
-	Enable        bool   `json:"enable"`
+	ApiServer       string                 `json:"api_server"`
+	Zone            string                 `json:"zone"`
+	ImageId         string                 `json:"image_id"`
+	ImageUrl        string                 `json:"image_url"`
+	ImageName       string                 `json:"image_name"`
+	FrontgateConf   string                 `json:"frontgate_conf"`
+	ProviderType    string                 `json:"provider_type"`
+	Host            string                 `json:"host"`
+	Port            int                    `json:"port"`
+	Enable          bool                   `json:"enable"`
+	AdvancedOptions map[string]interface{} `json:"advanced_options"`
 }
 
 func (r *RuntimeProviderConfig) GetPort() int {
@@ -139,6 +140,10 @@ func (g *GlobalConfig) RegisterRuntimeProviderConfig(provider, config string) er
 	_, ok := g.Runtime[provider]
 	if !ok {
 		g.Runtime[provider] = runtimeProviderConfig
+	} else {
+		oldEnable := g.Runtime[provider].Enable
+		g.Runtime[provider] = runtimeProviderConfig
+		g.Runtime[provider].Enable = oldEnable
 	}
 	return nil
 }
