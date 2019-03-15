@@ -11,6 +11,7 @@ import (
 	pbim "kubesphere.io/im/pkg/pb"
 
 	pbam "openpitrix.io/iam/pkg/pb"
+	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	"openpitrix.io/openpitrix/pkg/client/iam/im"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -578,6 +579,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
 		var emailNotifications []*models.EmailNotification
 		if roleId == constants.RoleIsv {
+
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.AdminInviteIsvNotifyTitle.GetDefaultMessage(),
 				Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(username, email, password),
@@ -586,15 +588,27 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 				Addresses:   []string{email},
 			})
 		} else {
+			platformName := pi.Global().GetBasicCfg().PlatformName
+			platformUrl := pi.Global().GetBasicCfg().PlatformUrl
+
+			accountClient, err := accountclient.NewClient()
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			senderUser, err := accountClient.GetUser(ctx, s.UserId)
+			if err != nil {
+				logger.Error(ctx, "Failed to get user [%s], %+v", s.UserId, err)
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.AdminInviteUserNotifyTitle.GetDefaultMessage(),
-				Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(username, email, password),
+				Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(platformName, username, senderUser.GetUsername().GetValue(), platformName, platformUrl, platformUrl, platformUrl, email, password),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeInvite,
 				Addresses:   []string{email},
 			})
 		}
-
 		nfclient.SendEmailNotification(ctx, emailNotifications)
 	}
 
@@ -664,9 +678,11 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.CreateUserRequest) (
 		if err != nil {
 			logger.Error(ctx, "Failed to get user [%s]: %+v", s.UserId, err)
 		} else {
+			platformName := pi.Global().GetBasicCfg().PlatformName
+			platformUrl := pi.Global().GetBasicCfg().PlatformUrl
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(getUserResponse.User.Username),
-				Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(username, email, password),
+				Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(username, email, password, platformName, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeInvite,
 				Addresses:   []string{email},

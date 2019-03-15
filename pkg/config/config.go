@@ -21,6 +21,7 @@ type Config struct {
 	Mysql MysqlConfig
 	Etcd  EtcdConfig
 	IAM   IAMConfig
+	Basic BasicConfig
 }
 
 type IAMConfig struct {
@@ -48,6 +49,11 @@ type MysqlConfig struct {
 	Password string `default:"password"`
 	Database string `default:"openpitrix"`
 	Disable  bool   `default:"false"`
+}
+
+type BasicConfig struct {
+	PlatformName string `default:"Openpitrix"`
+	PlatformUrl  string `default:"http://139.198.4.179:8000/"`
 }
 
 func (m *MysqlConfig) GetUrl() string {

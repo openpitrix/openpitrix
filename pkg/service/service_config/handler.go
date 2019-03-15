@@ -10,6 +10,7 @@ import (
 
 	nfpb "openpitrix.io/notification/pkg/pb"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
+	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -70,8 +71,18 @@ func (p *Server) SetServiceConfig(ctx context.Context, req *pb.SetServiceConfigR
 		}
 		err := pi.Global().SetGlobalCfg(ctx)
 		if err != nil {
-			return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorSetNotificationConfig)
+			return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorSetServiceConfig)
 		}
+	} else if req.BasicConfig != nil {
+		basicCfg := config.BasicConfig{
+			PlatformName: req.BasicConfig.GetPlatformName().GetValue(),
+			PlatformUrl:  req.BasicConfig.GetPlatformUrl().GetValue(),
+		}
+		err := pi.Global().SetBasicCfg(basicCfg)
+		if err != nil {
+			return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorSetServiceConfig)
+		}
+
 	} else {
 		err := fmt.Errorf("need service config to set")
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorSetServiceConfig)
@@ -113,6 +124,12 @@ func (p *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 			}
 			serviceConfigResponse.RuntimeConfig = &pb.RuntimeConfig{
 				ConfigSet: configs,
+			}
+		case constants.ServiceTypeBasicConfig:
+			basicCfg := pi.Global().GetBasicCfg()
+			serviceConfigResponse.BasicConfig = &pb.BasicConfig{
+				PlatformName: pbutil.ToProtoString(basicCfg.PlatformName),
+				PlatformUrl:  pbutil.ToProtoString(basicCfg.PlatformUrl),
 			}
 		}
 	}

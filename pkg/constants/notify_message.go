@@ -3,8 +3,7 @@ package constants
 import (
 	"bytes"
 	"fmt"
-	"html/template"
-	"strings"
+	"text/template"
 )
 
 const (
@@ -16,21 +15,8 @@ const (
 const EmailNotifyName = "email"
 
 type EmailNotifyContent struct {
-	Content []string
+	Content string
 }
-
-const EmailNotifyTemplate = `
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>OpenPitrix Notification</title>
-    </head>
-    <body>
-		{{range .Content}}{{ . }}<br />{{end}}
-	</body>
-</html>
-`
 
 type NotifyMessage struct {
 	en   string
@@ -61,12 +47,21 @@ func (n *NotifyTitle) GetDefaultMessage(params ...interface{}) string {
 }
 
 func (n *NotifyContent) GetDefaultMessage(params ...interface{}) string {
-	t, _ := template.New(EmailNotifyName).Parse(EmailNotifyTemplate)
+	t, err := template.New(EmailNotifyName).Parse(EmailNotifyTemplate)
+	if err != nil {
+		fmt.Println("Parse email template string Failed:" + err.Error())
+	}
+
 	b := bytes.NewBuffer([]byte{})
 	emailContent := &EmailNotifyContent{
-		Content: strings.Split(n.GetMessage(defaultLocale, params...), "\n"),
+		Content: n.GetMessage(defaultLocale, params...),
 	}
-	t.Execute(b, emailContent)
+
+	err = t.Execute(b, emailContent)
+	if err != nil {
+		fmt.Println("Parse email template string Failed:" + err.Error())
+	}
+
 	return b.String()
 }
 
@@ -96,11 +91,36 @@ var (
 	AdminInviteUserNotifyContent = NotifyContent{
 		NotifyMessage: NotifyMessage{
 			zhCN: `
-%s 您好： 
-邀请成为平台用户。
-用户：%s 
-密码：%s 
-首次登陆后请修改密码。
+   						 <span class="platform">%s</span>
+                        </p>
+                        <p class="line1">Hi, %s</p>
+                        <p class="line2">
+                          <strong>%s</strong>邀请你加入<strong>「%s」</strong>，成为平台正式用户。
+                        </p>
+ 						 
+                        <p class="line3">
+                          <a class="linkBtn" href="%s">接受邀请</a>
+                        </p>
+
+                        <p class="line4">
+                          如果按钮无法点击，请直接访问以下链接：
+                        </p>
+
+                        <p class="line5">
+                          <a class="link" href="%s">%s</a>
+                        </p>
+
+                        <p class="line6">
+                          用户名：<strong>%s</strong>
+                        </p>
+
+                        <p>
+                          密码：<strong>%s</strong>
+                        </p>
+                        <hr />
+                        <p class="gray">
+                          * 此为系统邮件请勿回复
+                        </p>
 `,
 		},
 	}

@@ -6,14 +6,17 @@ package pi
 
 import (
 	"context"
+	"os"
 	"strings"
 	"sync"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/google/gops/agent"
 
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 
@@ -160,4 +163,25 @@ func (p *Pi) openEtcd() *Pi {
 	}
 	p.etcd = e
 	return p
+}
+
+func (p *Pi) GetBasicCfg() *config.BasicConfig {
+	p.cfg = config.LoadConf()
+	basicConfig := &config.BasicConfig{
+		PlatformName: p.cfg.Basic.PlatformName,
+		PlatformUrl:  p.cfg.Basic.PlatformUrl,
+	}
+	return basicConfig
+}
+
+func (p *Pi) SetBasicCfg(basicConfig config.BasicConfig) error {
+	if !govalidator.IsURL(basicConfig.PlatformUrl) {
+		return gerr.New(nil, gerr.InvalidArgument, gerr.ErrorIllegalUrlFormat, basicConfig.PlatformUrl)
+	}
+	mutex.Lock()
+	os.Setenv("OPENPITRIX_BASIC_PLATFORM_NAME", basicConfig.PlatformName)
+	os.Setenv("OPENPITRIX_BASIC_PLATFORM_URL", basicConfig.PlatformUrl)
+	config.LoadConf()
+	mutex.Unlock()
+	return nil
 }
