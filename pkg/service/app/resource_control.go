@@ -528,19 +528,23 @@ func loadAppNameMap(ctx context.Context, appIds []string) (map[string]string, er
 	return appNameMap, nil
 }
 
-func loadVersionNameMap(ctx context.Context, versionIds []string) (map[string]string, error) {
-	var versionNameMap = make(map[string]string)
-	if len(versionIds) > 0 {
-		_, err := pi.Global().DB(ctx).
-			Select(constants.ColumnVersionId, constants.ColumnName).
-			From(constants.TableAppVersion).
-			Where(db.Eq(constants.ColumnVersionId, versionIds)).
-			Load(&versionNameMap)
-		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-		}
+func loadVersionMap(ctx context.Context, versionIds []string) (map[string]*models.AppVersion, error) {
+	var versions []*models.AppVersion
+	versionMaps := make(map[string]*models.AppVersion)
+	_, err := pi.Global().DB(ctx).
+		Select(models.AppVersionColumns...).
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnVersionId, versionIds)).
+		Load(&versions)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
-	return versionNameMap, nil
+
+	for _, version := range versions {
+		versionMaps[version.VersionId] = version
+	}
+
+	return versionMaps, nil
 }
 
 func formatAppVersionReviewSet(ctx context.Context, appVersionReviews []*models.AppVersionReview) ([]*pb.AppVersionReview, error) {
@@ -556,7 +560,7 @@ func formatAppVersionReviewSet(ctx context.Context, appVersionReviews []*models.
 	if err != nil {
 		return nil, err
 	}
-	versionNameMap, err := loadVersionNameMap(ctx, versionIds)
+	versionMap, err := loadVersionMap(ctx, versionIds)
 	if err != nil {
 		return nil, err
 	}
@@ -567,8 +571,9 @@ func formatAppVersionReviewSet(ctx context.Context, appVersionReviews []*models.
 		if appName, ok := appNameMap[appId]; ok {
 			a.AppName = pbutil.ToProtoString(appName)
 		}
-		if versionName, ok := versionNameMap[versionId]; ok {
-			a.VersionName = pbutil.ToProtoString(versionName)
+		if version, ok := versionMap[versionId]; ok {
+			a.VersionName = pbutil.ToProtoString(version.Name)
+			a.VersionType = pbutil.ToProtoString(version.Type)
 		}
 	}
 
@@ -588,7 +593,7 @@ func formatAppVersionAuditSet(ctx context.Context, appVersionAudits []*models.Ap
 	if err != nil {
 		return nil, err
 	}
-	versionNameMap, err := loadVersionNameMap(ctx, versionIds)
+	versionMap, err := loadVersionMap(ctx, versionIds)
 	if err != nil {
 		return nil, err
 	}
@@ -599,8 +604,9 @@ func formatAppVersionAuditSet(ctx context.Context, appVersionAudits []*models.Ap
 		if appName, ok := appNameMap[appId]; ok {
 			a.AppName = pbutil.ToProtoString(appName)
 		}
-		if versionName, ok := versionNameMap[versionId]; ok {
-			a.VersionName = pbutil.ToProtoString(versionName)
+		if version, ok := versionMap[versionId]; ok {
+			a.VersionName = pbutil.ToProtoString(version.Name)
+			a.VersionType = pbutil.ToProtoString(version.Type)
 		}
 	}
 
