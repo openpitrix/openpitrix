@@ -7280,6 +7280,9 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "version_type": {
+          "type": "string"
         }
       }
     },
@@ -7315,6 +7318,9 @@ var Files = map[string]string{
           "format": "date-time"
         },
         "reviewer": {
+          "type": "string"
+        },
+        "version_type": {
           "type": "string"
         }
       }

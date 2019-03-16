@@ -45,6 +45,9 @@ type OpenpitrixAppVersionAudit struct {
 
 	// version name
 	VersionName string `json:"version_name,omitempty"`
+
+	// version type
+	VersionType string `json:"version_type,omitempty"`
 }
 
 // Validate validates this openpitrix app version audit

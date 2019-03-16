@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"time"
 
+	"google.golang.org/grpc"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -50,6 +52,54 @@ func NewTLSClient(tlsConfig *tls.Config) (*TLSClient, error) {
 	return &TLSClient{
 		PilotServiceForFrontgateClient: pbpilot.NewPilotServiceForFrontgateClient(conn),
 	}, nil
+}
+
+func (c *Client) SetDroneConfigWithTimeout(ctx context.Context, in *pbtypes.SetDroneConfigRequest, opts ...grpc.CallOption) (*pbtypes.Empty, error) {
+	withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+	defer cancel()
+	return c.SetDroneConfig(withTimeoutCtx, in, opts...)
+}
+
+func (c *Client) SetFrontgateConfigWithTimeout(ctx context.Context, in *pbtypes.FrontgateConfig, opts ...grpc.CallOption) (*pbtypes.Empty, error) {
+	withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+	defer cancel()
+	return c.SetFrontgateConfig(withTimeoutCtx, in, opts...)
+}
+
+func (c *Client) HandleSubtaskWithTimeout(ctx context.Context, in *pbtypes.SubTaskMessage, opts ...grpc.CallOption) (*pbtypes.Empty, error) {
+	withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+	defer cancel()
+	return c.HandleSubtask(withTimeoutCtx, in, opts...)
+}
+
+func (c *Client) PingFrontgateWithTimeout(ctx context.Context, in *pbtypes.FrontgateId, opts ...grpc.CallOption) (*pbtypes.Empty, error) {
+	withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+	defer cancel()
+	return c.PingFrontgate(withTimeoutCtx, in, opts...)
+}
+
+func (c *Client) PingDroneWithTimeout(ctx context.Context, in *pbtypes.DroneEndpoint, opts ...grpc.CallOption) (*pbtypes.Empty, error) {
+	withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+	defer cancel()
+	return c.PingDrone(withTimeoutCtx, in, opts...)
+}
+
+func (c *Client) PingMetadataBackendWithTimeout(ctx context.Context, in *pbtypes.FrontgateId, opts ...grpc.CallOption) (*pbtypes.Empty, error) {
+	withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+	defer cancel()
+	return c.PingMetadataBackend(withTimeoutCtx, in, opts...)
+}
+
+func (c *Client) RunCommandOnFrontgateNodeWithTimeout(ctx context.Context, in *pbtypes.RunCommandOnFrontgateRequest, opts ...grpc.CallOption) (*pbtypes.String, error) {
+	withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+	defer cancel()
+	return c.RunCommandOnFrontgateNode(withTimeoutCtx, in, opts...)
+}
+
+func (c *Client) RunCommandOnDroneWithTimeout(ctx context.Context, in *pbtypes.RunCommandOnDroneRequest, opts ...grpc.CallOption) (*pbtypes.String, error) {
+	withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+	defer cancel()
+	return c.RunCommandOnDrone(withTimeoutCtx, in, opts...)
 }
 
 func (c *Client) WaitSubtask(ctx context.Context, taskId string, timeout time.Duration, waitInterval time.Duration) error {
