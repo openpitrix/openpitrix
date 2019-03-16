@@ -5,6 +5,7 @@
 package retryutil
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -12,13 +13,18 @@ import (
 )
 
 func Retry(attempts int, sleep time.Duration, callback func() error) (err error) {
+	ctx := context.Background()
+	return RetryWithContext(ctx, attempts, sleep, callback)
+}
+
+func RetryWithContext(ctx context.Context, attempts int, sleep time.Duration, callback func() error) (err error) {
 	for i := 0; ; i++ {
 		err = callback()
 		if err == nil {
 			return
 		}
 
-		if i >= (attempts - 1) {
+		if i >= attempts {
 			break
 		}
 
@@ -26,7 +32,7 @@ func Retry(attempts int, sleep time.Duration, callback func() error) (err error)
 			time.Sleep(sleep)
 		}
 
-		logger.Warn(nil, "Will retry %d because of error: %+v", i, err)
+		logger.Warn(ctx, "Will retry %d because of error: %+v", i, err)
 	}
 	return fmt.Errorf("failed after %d attempts, error: %+v", attempts, err)
 }
