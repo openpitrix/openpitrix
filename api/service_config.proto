@@ -36,9 +36,15 @@ message RuntimeConfig {
 	repeated RuntimeItemConfig config_set = 1;
 }
 
+message BasicConfig {
+	google.protobuf.StringValue platform_name = 1;
+	google.protobuf.StringValue platform_url = 2;
+}
+
 message SetServiceConfigRequest {
 	NotificationConfig notification_config = 1;
 	RuntimeConfig runtime_config = 2;
+	BasicConfig basic_config = 3;
 }
 
 message SetServiceConfigResponse {
@@ -52,6 +58,7 @@ message GetServiceConfigRequest {
 message GetServiceConfigResponse {
 	NotificationConfig notification_config = 1;
 	RuntimeConfig runtime_config = 2;
+	BasicConfig basic_config = 3;
 }
 
 service ServiceConfig {

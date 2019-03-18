@@ -576,20 +576,30 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		return nil, err
 	}
 
+	//get the username of current login user.
+	resp, err := imClient.GetUser(ctx, &pbim.GetUserRequest{UserId: s.UserId})
+	if err != nil {
+		logger.Error(ctx, "Failed to get user [%s], %+v", s.UserId, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	senderUserName := resp.GetUser().GetUsername()
+	platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+	platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+
 	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
 		var emailNotifications []*models.EmailNotification
 		if roleId == constants.RoleIsv {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.AdminInviteIsvNotifyTitle.GetDefaultMessage(),
-				Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(username, email, password),
+				Title:       constants.AdminInviteIsvNotifyTitle.GetDefaultMessage(senderUserName),
+				Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(platformName, username, senderUserName, platformName, platformUrl, platformUrl, platformUrl, email, password),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeInvite,
 				Addresses:   []string{email},
 			})
 		} else {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.AdminInviteUserNotifyTitle.GetDefaultMessage(),
-				Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(username, email, password),
+				Title:       constants.AdminInviteUserNotifyTitle.GetDefaultMessage(senderUserName),
+				Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(platformName, username, senderUserName, platformName, platformUrl, platformUrl, platformUrl, email, password),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeInvite,
 				Addresses:   []string{email},
@@ -680,9 +690,13 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.CreateUserRequest) (
 		if err != nil {
 			logger.Error(ctx, "Failed to get user [%s]: %+v", s.UserId, err)
 		} else {
+			senderUserName := getUserResponse.User.Username
+			platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+			platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(getUserResponse.User.Username),
-				Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(username, email, password),
+				Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(senderUserName, platformName),
+				Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(platformName, username, senderUserName, platformName, platformUrl, platformUrl, platformUrl, email, password),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeInvite,
 				Addresses:   []string{email},

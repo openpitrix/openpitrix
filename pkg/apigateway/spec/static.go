@@ -10685,6 +10685,17 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixBasicConfig": {
+      "type": "object",
+      "properties": {
+        "platform_name": {
+          "type": "string"
+        },
+        "platform_url": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixEmailServiceConfig": {
       "type": "object",
       "properties": {
@@ -10731,6 +10742,9 @@ var Files = map[string]string{
         },
         "runtime_config": {
           "$ref": "#/definitions/openpitrixRuntimeConfig"
+        },
+        "basic_config": {
+          "$ref": "#/definitions/openpitrixBasicConfig"
         }
       }
     },
@@ -10773,6 +10787,9 @@ var Files = map[string]string{
         },
         "runtime_config": {
           "$ref": "#/definitions/openpitrixRuntimeConfig"
+        },
+        "basic_config": {
+          "$ref": "#/definitions/openpitrixBasicConfig"
         }
       }
     },

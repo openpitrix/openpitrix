@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixGetServiceConfigResponse
 type OpenpitrixGetServiceConfigResponse struct {
 
+	// basic config
+	BasicConfig *OpenpitrixBasicConfig `json:"basic_config,omitempty"`
+
 	// notification config
 	NotificationConfig *OpenpitrixNotificationConfig `json:"notification_config,omitempty"`
 
@@ -26,6 +29,11 @@ type OpenpitrixGetServiceConfigResponse struct {
 // Validate validates this openpitrix get service config response
 func (m *OpenpitrixGetServiceConfigResponse) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateBasicConfig(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
 
 	if err := m.validateNotificationConfig(formats); err != nil {
 		// prop
@@ -40,6 +48,25 @@ func (m *OpenpitrixGetServiceConfigResponse) Validate(formats strfmt.Registry) e
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixGetServiceConfigResponse) validateBasicConfig(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.BasicConfig) { // not required
+		return nil
+	}
+
+	if m.BasicConfig != nil {
+
+		if err := m.BasicConfig.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("basic_config")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

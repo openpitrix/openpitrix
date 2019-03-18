@@ -10676,6 +10676,17 @@
         }
       }
     },
+    "openpitrixBasicConfig": {
+      "type": "object",
+      "properties": {
+        "platform_name": {
+          "type": "string"
+        },
+        "platform_url": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixEmailServiceConfig": {
       "type": "object",
       "properties": {
@@ -10722,6 +10733,9 @@
         },
         "runtime_config": {
           "$ref": "#/definitions/openpitrixRuntimeConfig"
+        },
+        "basic_config": {
+          "$ref": "#/definitions/openpitrixBasicConfig"
         }
       }
     },
@@ -10764,6 +10778,9 @@
         },
         "runtime_config": {
           "$ref": "#/definitions/openpitrixRuntimeConfig"
+        },
+        "basic_config": {
+          "$ref": "#/definitions/openpitrixBasicConfig"
         }
       }
     },
