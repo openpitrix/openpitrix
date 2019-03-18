@@ -149,19 +149,17 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 		reviewStatus = "develop-"
 	}
 
-	var reviewer = ""
-	if action == Review {
-		reviewer = operator
-	}
-
-	_, err = pi.Global().DB(ctx).
+	updater := pi.Global().DB(ctx).
 		Update(constants.TableAppVersionReview).
 		Set(constants.ColumnStatus, reviewStatus+status).
 		Set(constants.ColumnStatusTime, time.Now()).
 		Set(constants.ColumnPhase, versionReview.Phase).
-		Set(constants.ColumnReviewer, reviewer).
-		Where(db.Eq(constants.ColumnReviewId, versionReview.ReviewId)).
-		Exec()
+		Where(db.Eq(constants.ColumnReviewId, versionReview.ReviewId))
+
+	if action == Review {
+		updater = updater.Set(constants.ColumnReviewer, operator)
+	}
+	_, err = updater.Exec()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed, versionReview.ReviewId)
 	}
