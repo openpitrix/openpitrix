@@ -1875,6 +1875,7 @@
   description: set service configration
   service: ServiceConfig
   body:
+    basic_config: {}
     notification_config: {}
     runtime_config: {}
 - action: DescribeTasks
