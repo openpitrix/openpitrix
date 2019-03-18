@@ -15,13 +15,14 @@ import (
 )
 
 type GlobalConfig struct {
-	App     AppServiceConfig                  `json:"app"`
-	Repo    RepoServiceConfig                 `json:"repo"`
-	Cluster ClusterServiceConfig              `json:"cluster"`
-	Runtime map[string]*RuntimeProviderConfig `json:"runtime"`
-	Pilot   PilotServiceConfig                `json:"pilot"`
-	Job     JobServiceConfig                  `json:"job"`
-	Task    TaskServiceConfig                 `json:"task"`
+	App      AppServiceConfig                  `json:"app"`
+	Repo     RepoServiceConfig                 `json:"repo"`
+	Cluster  ClusterServiceConfig              `json:"cluster"`
+	Runtime  map[string]*RuntimeProviderConfig `json:"runtime"`
+	Pilot    PilotServiceConfig                `json:"pilot"`
+	Job      JobServiceConfig                  `json:"job"`
+	Task     TaskServiceConfig                 `json:"task"`
+	BasicCfg BasicConfig                       `json:"basic_config"`
 }
 
 type AppServiceConfig struct {
@@ -51,6 +52,11 @@ type JobServiceConfig struct {
 
 type TaskServiceConfig struct {
 	MaxWorkingTasks int32 `json:"max_working_tasks"`
+}
+
+type BasicConfig struct {
+	PlatformName string `json:"platform_name"`
+	PlatformUrl  string `json:"platform_url"`
 }
 
 type RuntimeProviderConfig struct {

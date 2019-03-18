@@ -7,7 +7,6 @@ package service_config
 import (
 	"context"
 	"fmt"
-
 	nfpb "openpitrix.io/notification/pkg/pb"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	"openpitrix.io/openpitrix/pkg/config"
@@ -78,7 +77,11 @@ func (p *Server) SetServiceConfig(ctx context.Context, req *pb.SetServiceConfigR
 			PlatformName: req.BasicConfig.GetPlatformName().GetValue(),
 			PlatformUrl:  req.BasicConfig.GetPlatformUrl().GetValue(),
 		}
-		err := pi.Global().SetBasicCfg(basicCfg)
+
+		globalCfg := pi.Global().GlobalConfig()
+		globalCfg.BasicCfg = basicCfg
+
+		err := pi.Global().SetGlobalCfg(ctx)
 		if err != nil {
 			return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorSetServiceConfig)
 		}
@@ -126,7 +129,8 @@ func (p *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 				ConfigSet: configs,
 			}
 		case constants.ServiceTypeBasicConfig:
-			basicCfg := pi.Global().GetBasicCfg()
+
+			basicCfg := pi.Global().GlobalConfig().BasicCfg
 			serviceConfigResponse.BasicConfig = &pb.BasicConfig{
 				PlatformName: pbutil.ToProtoString(basicCfg.PlatformName),
 				PlatformUrl:  pbutil.ToProtoString(basicCfg.PlatformUrl),

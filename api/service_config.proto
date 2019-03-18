@@ -23,7 +23,6 @@ message EmailServiceConfig {
 	google.protobuf.BoolValue ssl_enable = 7;
 }
 
-
 message NotificationConfig {
 	EmailServiceConfig email_service_config = 1;
 }
@@ -45,7 +44,7 @@ message BasicConfig {
 message SetServiceConfigRequest {
 	NotificationConfig notification_config = 1;
 	RuntimeConfig runtime_config = 2;
-	BasicConfig basic_config=3;
+	BasicConfig basic_config = 3;
 }
 
 message SetServiceConfigResponse {
@@ -59,7 +58,7 @@ message GetServiceConfigRequest {
 message GetServiceConfigResponse {
 	NotificationConfig notification_config = 1;
 	RuntimeConfig runtime_config = 2;
-	BasicConfig basic_config=3;
+	BasicConfig basic_config = 3;
 }
 
 service ServiceConfig {

@@ -6,6 +6,7 @@ package appvendor
 
 import (
 	"context"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"strings"
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
@@ -95,10 +96,12 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 		// notify isv_auth users
 		systemCtx := clientutil.SetSystemUserToContext(ctx)
 		actionBundleUsers, _ := accessClient.GetActionBundleUsers(systemCtx, []string{constants.ActionBundleIsvAuth})
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
 		for _, user := range actionBundleUsers {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.SubmitVendorNotifyAdminTitle.GetDefaultMessage(vendor.CompanyName),
-				Content:     constants.SubmitVendorNotifyAdminContent.GetDefaultMessage(user.GetUsername().GetValue(), vendor.CompanyName),
+				Title:       constants.SubmitVendorNotifyAdminTitle.GetDefaultMessage(platformName, vendor.CompanyName),
+				Content:     constants.SubmitVendorNotifyAdminContent.GetDefaultMessage(platformName, user.GetUsername().GetValue(), vendor.CompanyName, platformUrl, platformUrl, platformUrl),
 				Owner:       sender.UserId,
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{user.GetEmail().GetValue()},
@@ -107,8 +110,8 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 
 		// notify isv
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.SubmitVendorNotifyIsvTitle.GetDefaultMessage(),
-			Content:     constants.SubmitVendorNotifyIsvContent.GetDefaultMessage(vendorUser.GetUsername().GetValue()),
+			Title:       constants.SubmitVendorNotifyIsvTitle.GetDefaultMessage(platformName),
+			Content:     constants.SubmitVendorNotifyIsvContent.GetDefaultMessage(platformName, vendorUser.GetUsername().GetValue(), platformUrl, platformUrl, platformUrl),
 			Owner:       sender.UserId,
 			ContentType: constants.NfContentTypeVerify,
 			Addresses:   []string{vendorUser.GetEmail().GetValue()},
@@ -169,9 +172,11 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 		}
 
 		// notify isv
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.PassVendorNotifyTitle.GetDefaultMessage(appVendor.CompanyName),
-			Content:     constants.PassVendorNotifyContent.GetDefaultMessage(vendorUser.GetUsername().GetValue(), appVendor.CompanyName),
+			Title:       constants.PassVendorNotifyTitle.GetDefaultMessage(platformName, appVendor.CompanyName),
+			Content:     constants.PassVendorNotifyContent.GetDefaultMessage(platformName, vendorUser.GetUsername().GetValue(), appVendor.CompanyName, platformUrl, platformUrl, platformUrl),
 			Owner:       sender.UserId,
 			ContentType: constants.NfContentTypeVerify,
 			Addresses:   []string{vendorUser.GetEmail().GetValue()},
@@ -216,9 +221,12 @@ func (s *Server) RejectVendorVerifyInfo(ctx context.Context, req *pb.RejectVendo
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.RejectVendorNotifyTitle.GetDefaultMessage(appVendor.CompanyName),
-			Content:     constants.RejectVendorNotifyContent.GetDefaultMessage(vendorUser.GetUsername().GetValue(), appVendor.CompanyName),
+			Title:       constants.RejectVendorNotifyTitle.GetDefaultMessage(platformName, appVendor.CompanyName),
+			Content:     constants.RejectVendorNotifyContent.GetDefaultMessage(platformName, vendorUser.GetUsername().GetValue(), appVendor.CompanyName, platformUrl, platformUrl, platformUrl),
 			Owner:       sender.UserId,
 			ContentType: constants.NfContentTypeVerify,
 			Addresses:   []string{vendorUser.GetEmail().GetValue()},
