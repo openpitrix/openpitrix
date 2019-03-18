@@ -7,6 +7,7 @@ package service_config
 import (
 	"context"
 	"fmt"
+
 	nfpb "openpitrix.io/notification/pkg/pb"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	"openpitrix.io/openpitrix/pkg/config"
