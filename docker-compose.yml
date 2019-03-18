@@ -87,13 +87,16 @@ services:
     image: "openpitrix/dashboard:latest"
     ports:
      - "8000:8000"
+     - "9300:9300"
     container_name: "openpitrix-dashboard"
     environment:
       - serverUrl=http://openpitrix-api-gateway:9100
       - apiVersion=v1
       - socketUrl=ws://openpitrix-api-gateway:9100/v1/io
+      - socketProxyPort=9300
       - clientId=x
       - clientSecret=y
+      - DEBUG=app
     links:
       - openpitrix-api-gateway:openpitrix-api-gateway
     logging:
