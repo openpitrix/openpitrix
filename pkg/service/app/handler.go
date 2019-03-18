@@ -851,9 +851,12 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.SubmitAppVersionNotifySubmitterTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.SubmitAppVersionNotifySubmitterContent.GetDefaultMessage(versionOwner.GetUsername().GetValue(), app.Name, version.Name),
+			Title:       constants.SubmitAppVersionNotifySubmitterTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.SubmitAppVersionNotifySubmitterContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeVerify,
 			Addresses:   []string{versionOwner.GetEmail().GetValue()},
@@ -878,8 +881,8 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 			}
 			for _, user := range isvUsers {
 				emailNotifications = append(emailNotifications, &models.EmailNotification{
-					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
-					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(user.GetUsername().GetValue(), app.Name, version.Name),
+					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(platformName, user.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 					Owner:       s.UserId,
 					ContentType: constants.NfContentTypeVerify,
 					Addresses:   []string{user.GetEmail().GetValue()},
@@ -894,8 +897,8 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 			}
 			for _, user := range businessUsers {
 				emailNotifications = append(emailNotifications, &models.EmailNotification{
-					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
-					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(user.GetUsername().GetValue(), app.Name, version.Name),
+					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(platformName, user.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 					Owner:       s.UserId,
 					ContentType: constants.NfContentTypeVerify,
 					Addresses:   []string{user.GetEmail().GetValue()},
@@ -963,16 +966,18 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 
 	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
 		var emailNotifications []*models.EmailNotification
-
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
 		// notify version owner
 		versionOwner, err := accountClient.GetUser(ctx, version.Owner)
 		if err != nil {
 			logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
+
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(versionOwner.GetUsername().GetValue(), app.Name, version.Name),
+			Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeVerify,
 			Addresses:   []string{versionOwner.GetEmail().GetValue()},
@@ -986,8 +991,8 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(isv.GetUsername().GetValue(), app.Name, version.Name),
+			Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(platformName, isv.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeVerify,
 			Addresses:   []string{isv.GetEmail().GetValue()},
@@ -1097,6 +1102,9 @@ func passAppVersion(ctx context.Context, operatorType string, req *pb.PassAppVer
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+
 		switch operatorType {
 		case constants.OperatorTypeIsv:
 			// notify business reviewers
@@ -1105,10 +1113,11 @@ func passAppVersion(ctx context.Context, operatorType string, req *pb.PassAppVer
 			if err != nil {
 				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 			}
+
 			for _, user := range businessUsers {
 				emailNotifications = append(emailNotifications, &models.EmailNotification{
-					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
-					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(user.GetUsername().GetValue(), app.Name, version.Name),
+					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(platformName, user.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 					Owner:       s.UserId,
 					ContentType: constants.NfContentTypeVerify,
 					Addresses:   []string{user.GetEmail().GetValue()},
@@ -1117,8 +1126,8 @@ func passAppVersion(ctx context.Context, operatorType string, req *pb.PassAppVer
 
 			// notify app version owner
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.PassAppVersionInfoNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.PassAppVersionInfoNotifyContent.GetDefaultMessage(versionOwner.GetUsername().GetValue(), app.Name, version.Name),
+				Title:       constants.PassAppVersionInfoNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.PassAppVersionInfoNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{versionOwner.GetEmail().GetValue()},
@@ -1132,8 +1141,8 @@ func passAppVersion(ctx context.Context, operatorType string, req *pb.PassAppVer
 			}
 			for _, user := range technicalUsers {
 				emailNotifications = append(emailNotifications, &models.EmailNotification{
-					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
-					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(user.GetUsername().GetValue(), app.Name, version.Name),
+					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(platformName, user.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 					Owner:       s.UserId,
 					ContentType: constants.NfContentTypeVerify,
 					Addresses:   []string{user.GetEmail().GetValue()},
@@ -1141,8 +1150,8 @@ func passAppVersion(ctx context.Context, operatorType string, req *pb.PassAppVer
 			}
 			// notify app version owner
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.PassAppVersionBusinessNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.PassAppVersionBusinessNotifyContent.GetDefaultMessage(versionOwner.GetUsername().GetValue(), app.Name, version.Name),
+				Title:       constants.PassAppVersionBusinessNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.PassAppVersionBusinessNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{versionOwner.GetEmail().GetValue()},
@@ -1150,8 +1159,8 @@ func passAppVersion(ctx context.Context, operatorType string, req *pb.PassAppVer
 		case constants.OperatorTypeTechnical:
 			// notify app version owner
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.PassAppVersionTechnicalNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.PassAppVersionTechnicalNotifyContent.GetDefaultMessage(versionOwner.GetUsername().GetValue(), app.Name, version.Name),
+				Title:       constants.PassAppVersionTechnicalNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.PassAppVersionTechnicalNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{versionOwner.GetEmail().GetValue()},
@@ -1194,6 +1203,8 @@ func rejectAppVersion(ctx context.Context, operatorType string, req *pb.RejectAp
 
 	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
 		var emailNotifications []*models.EmailNotification
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
 		versionOwner, err := accountClient.GetUser(ctx, version.Owner)
 		if err != nil {
 			logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
@@ -1202,24 +1213,24 @@ func rejectAppVersion(ctx context.Context, operatorType string, req *pb.RejectAp
 		switch operatorType {
 		case constants.OperatorTypeIsv:
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.RejectAppVersionInfoNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.RejectAppVersionInfoNotifyContent.GetDefaultMessage(versionOwner.GetUsername().GetValue(), app.Name, version.Name),
+				Title:       constants.RejectAppVersionInfoNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.RejectAppVersionInfoNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{versionOwner.GetEmail().GetValue()},
 			})
 		case constants.OperatorTypeBusiness:
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.RejectAppVersionBusinessNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.RejectAppVersionBusinessNotifyContent.GetDefaultMessage(versionOwner.GetUsername().GetValue(), app.Name, version.Name),
+				Title:       constants.RejectAppVersionBusinessNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.RejectAppVersionBusinessNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{versionOwner.GetEmail().GetValue()},
 			})
 		case constants.OperatorTypeTechnical:
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.RejectAppVersionTechnicalNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.RejectAppVersionTechnicalNotifyContent.GetDefaultMessage(versionOwner.GetUsername().GetValue(), app.Name, version.Name),
+				Title:       constants.RejectAppVersionTechnicalNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.RejectAppVersionTechnicalNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{versionOwner.GetEmail().GetValue()},
@@ -1307,6 +1318,8 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 
 	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
 		var emailNotifications []*models.EmailNotification
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
 
 		// notify owner
 		versionOwner, err := accountClient.GetUser(ctx, version.Owner)
@@ -1315,8 +1328,8 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(versionOwner.GetUsername().GetValue(), app.Name, version.Name),
+			Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeVerify,
 			Addresses:   []string{versionOwner.GetEmail().GetValue()},
@@ -1330,8 +1343,8 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(isv.GetUsername().GetValue(), app.Name, version.Name),
+			Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(platformName, isv.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeVerify,
 			Addresses:   []string{isv.GetEmail().GetValue()},
@@ -1345,8 +1358,8 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 		}
 		for _, adminUser := range adminUsers {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(adminUser.GetUsername().GetValue(), app.Name, version.Name),
+				Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(platformName, adminUser.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{adminUser.GetEmail().GetValue()},

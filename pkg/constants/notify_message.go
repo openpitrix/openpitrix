@@ -53,7 +53,7 @@ func (n *NotifyTitle) GetDefaultMessage(params ...interface{}) string {
 func (n *NotifyContent) GetDefaultMessage(params ...interface{}) string {
 	t, err := template.New(EmailNotifyName).Parse(EmailNotifyTemplate)
 	if err != nil {
-		fmt.Println("Parse email template string failed:" + err.Error())
+		fmt.Println("Parse email template string failed:%s" + err.Error())
 	}
 
 	b := bytes.NewBuffer([]byte{})
@@ -63,7 +63,7 @@ func (n *NotifyContent) GetDefaultMessage(params ...interface{}) string {
 
 	err = t.Execute(b, emailContent)
 	if err != nil {
-		fmt.Println("Parse email template string failed:" + err.Error())
+		fmt.Println("Parse email template string failed:%s" + err.Error())
 	}
 
 	return b.String()
