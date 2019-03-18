@@ -51,21 +51,14 @@ func (n *NotifyTitle) GetDefaultMessage(params ...interface{}) string {
 }
 
 func (n *NotifyContent) GetDefaultMessage(params ...interface{}) string {
-	t, err := template.New(EmailNotifyName).Parse(EmailNotifyTemplate)
-	if err != nil {
-		fmt.Println("Parse email template string failed:%s" + err.Error())
-	}
+	t, _ := template.New(EmailNotifyName).Parse(EmailNotifyTemplate)
 
 	b := bytes.NewBuffer([]byte{})
 	emailContent := &EmailNotifyContent{
 		Content: n.GetMessage(defaultLocale, params...),
 	}
 
-	err = t.Execute(b, emailContent)
-	if err != nil {
-		fmt.Println("Parse email template string failed:%s" + err.Error())
-	}
-
+	t.Execute(b, emailContent)
 	return b.String()
 }
 
