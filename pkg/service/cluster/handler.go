@@ -1541,8 +1541,9 @@ func (p *Server) describeClusters(ctx context.Context, req *pb.DescribeClustersR
 				})
 				if err != nil {
 					logger.Warn(ctx, "Describe cluster details failed: %+v", err)
+				} else {
+					pbClusterWrapper = response.Cluster
 				}
-				pbClusterWrapper = response.Cluster
 			}
 		}
 		pbClusters = append(pbClusters, pbClusterWrapper)
@@ -1662,8 +1663,10 @@ func (p *Server) describeAppClusters(ctx context.Context, req *pb.DescribeAppClu
 				})
 				if err != nil {
 					logger.Warn(ctx, "Describe cluster details failed: %+v", err)
+				} else {
+					pbClusterWrapper = response.Cluster
 				}
-				pbClusterWrapper = response.Cluster
+
 			}
 		}
 		pbClusters = append(pbClusters, pbClusterWrapper)
