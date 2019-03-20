@@ -50,16 +50,16 @@ func getShortVersion(v string) string {
 
 type Updater struct {
 	conn       *grpc.ClientConn
-	connClosed <-chan struct{}
+	connClosed chan struct{}
 
 	etcd *EtcdClientManager
 	cfg  *pbtypes.FrontgateConfig
 }
 
-func NewUpdater(conn *grpc.ClientConn, connClosed <-chan struct{}, cfg *pbtypes.FrontgateConfig) *Updater {
+func NewUpdater(conn *grpc.ClientConn, cfg *pbtypes.FrontgateConfig) *Updater {
 	return &Updater{
 		conn:       conn,
-		connClosed: connClosed,
+		connClosed: make(chan struct{}),
 		etcd:       NewEtcdClientManager(),
 		cfg:        cfg,
 	}
@@ -263,7 +263,21 @@ func (u *Updater) SendQuitToMetad() error {
 	return err
 }
 
+func (u *Updater) Close() {
+	if !u.cfg.AutoUpdate {
+		return
+	}
+	if u.connClosed != nil {
+		u.connClosed <- struct{}{}
+	}
+}
+
 func (u *Updater) Serve() {
+	if !u.cfg.AutoUpdate {
+		logger.Info(nil, "Not starting updater")
+		return
+	}
+	logger.Info(nil, "Starting updater")
 	ticker := time.NewTicker(CheckInterval)
 	defer ticker.Stop()
 
