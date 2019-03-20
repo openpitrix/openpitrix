@@ -43,5 +43,5 @@ pilot:
 #      image_url: https://openpitrix.pek3a.qingstor.com/image/ubuntu.tar.gz
 #      provider_type: vmbased
 basic_config:
-  platform_name: "OpenPitrix"
-  platform_url: "https://lab.openpitrix.io"`
+  platform_name: OpenPitrix
+  platform_url: https://lab.openpitrix.io`

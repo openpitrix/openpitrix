@@ -6049,6 +6049,33 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/service_configs/validate_email_service": {
+      "post": {
+        "summary": "validate email service",
+        "operationId": "ValidateEmailService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixValidateEmailServiceResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixValidateEmailServiceRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ServiceConfig"
+        ]
+      }
+    },
     "/v1/tasks": {
       "get": {
         "summary": "describe tasks with filter",
@@ -10706,7 +10733,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "port": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "display_sender": {
           "type": "string"
@@ -10794,6 +10822,23 @@ var Files = map[string]string{
       }
     },
     "openpitrixSetServiceConfigResponse": {
+      "type": "object",
+      "properties": {
+        "is_succ": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "openpitrixValidateEmailServiceRequest": {
+      "type": "object",
+      "properties": {
+        "email_service_config": {
+          "$ref": "#/definitions/openpitrixEmailServiceConfig"
+        }
+      }
+    },
+    "openpitrixValidateEmailServiceResponse": {
       "type": "object",
       "properties": {
         "is_succ": {
