@@ -29,7 +29,7 @@ type OpenpitrixEmailServiceConfig struct {
 	Password string `json:"password,omitempty"`
 
 	// port
-	Port string `json:"port,omitempty"`
+	Port int64 `json:"port,omitempty"`
 
 	// protocol
 	Protocol string `json:"protocol,omitempty"`

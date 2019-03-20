@@ -158,6 +158,7 @@ var AllCmd = []Cmd{
 	NewValidateRuntimeCredentialCmd(),
 	NewGetServiceConfigCmd(),
 	NewSetServiceConfigCmd(),
+	NewValidateEmailServiceCmd(),
 	NewDescribeTasksCmd(),
 	NewRetryTasksCmd(),
 	NewCreateClientCmd(),
@@ -5309,6 +5310,40 @@ func (c *SetServiceConfigCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.ServiceConfig.SetServiceConfig(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ValidateEmailServiceCmd struct {
+	*models.OpenpitrixValidateEmailServiceRequest
+}
+
+func NewValidateEmailServiceCmd() Cmd {
+	cmd := &ValidateEmailServiceCmd{}
+	cmd.OpenpitrixValidateEmailServiceRequest = &models.OpenpitrixValidateEmailServiceRequest{}
+	return cmd
+}
+
+func (*ValidateEmailServiceCmd) GetActionName() string {
+	return "ValidateEmailService"
+}
+
+func (c *ValidateEmailServiceCmd) ParseFlag(f Flag) {
+}
+
+func (c *ValidateEmailServiceCmd) Run(out Out) error {
+	params := service_config.NewValidateEmailServiceParams()
+	params.WithBody(c.OpenpitrixValidateEmailServiceRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ServiceConfig.ValidateEmailService(params, nil)
 	if err != nil {
 		return err
 	}

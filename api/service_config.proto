@@ -61,6 +61,15 @@ message GetServiceConfigResponse {
 	BasicConfig basic_config = 3;
 }
 
+message  ValidateEmailServiceRequest{
+	EmailServiceConfig email_service_config = 1;
+}
+
+
+message ValidateEmailServiceResponse{
+	google.protobuf.BoolValue is_succ = 1;
+}
+
 service ServiceConfig {
 	rpc SetServiceConfig (SetServiceConfigRequest) returns (SetServiceConfigResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -80,4 +89,16 @@ service ServiceConfig {
 			body: "*"
 		};
 	}
+
+
+	rpc ValidateEmailService(ValidateEmailServiceRequest)  returns (ValidateEmailServiceResponse){
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "validate email service"
+		};
+		option (google.api.http) = {
+			post: "/v1/service_configs/validate_email_service"
+			body: "*"
+		};
+	}
+
 }
