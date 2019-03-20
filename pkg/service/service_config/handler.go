@@ -140,3 +140,31 @@ func (p *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 	}
 	return serviceConfigResponse, nil
 }
+
+func (p *Server) ValidateEmailService(ctx context.Context, req *pb.ValidateEmailServiceRequest) (*pb.ValidateEmailServiceResponse, error) {
+	nfClient, err := nfclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateEmailService)
+	}
+	reqServiceCfg := &nfpb.ServiceConfig{
+		EmailServiceConfig: &nfpb.EmailServiceConfig{
+			Protocol:      req.EmailServiceConfig.Protocol,
+			EmailHost:     req.EmailServiceConfig.EmailHost,
+			Port:          req.EmailServiceConfig.Port,
+			DisplaySender: req.EmailServiceConfig.DisplaySender,
+			Email:         req.EmailServiceConfig.Email,
+			Password:      req.EmailServiceConfig.Password,
+			SslEnable:     req.EmailServiceConfig.SslEnable,
+		},
+	}
+	response, err := nfClient.ValidateEmailService(ctx, reqServiceCfg)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateEmailService)
+	}
+	if !response.GetIsSucc().GetValue() {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateEmailService)
+	}
+	return &pb.ValidateEmailServiceResponse{
+		IsSucc: pbutil.ToProtoBool(true),
+	}, nil
+}

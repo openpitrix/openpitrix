@@ -1878,6 +1878,12 @@
     basic_config: {}
     notification_config: {}
     runtime_config: {}
+- action: ValidateEmailService
+  request: ValidateEmailServiceRequest
+  description: validate email service
+  service: ServiceConfig
+  body:
+    email_service_config: {}
 - action: DescribeTasks
   request: DescribeTasksRequest
   description: describe tasks with filter
