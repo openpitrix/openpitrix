@@ -45,7 +45,7 @@ func Serve(cfg *ConfigManager, tlsPilotConfig *tls.Config) {
 		logger.Info(nil, "Starting file server on :%d", constants.FrontgateFileServerPort)
 		err := http.ListenAndServe(fmt.Sprintf(":%d", constants.FrontgateFileServerPort), http.FileServer(http.Dir(HttpServePath)))
 		if err != nil {
-			logger.Critical(nil, "Start file server failed, %+v", err)
+			logger.Critical(nil, "Start file server failed: %+v", err)
 			os.Exit(1)
 		}
 	}()
@@ -57,7 +57,7 @@ func Serve(cfg *ConfigManager, tlsPilotConfig *tls.Config) {
 			p,
 		)
 		if err != nil {
-			logger.Critical(nil, "%+v", err)
+			logger.Critical(nil, "Listen and serve frontgate service failed: %+v", err)
 			os.Exit(1)
 		}
 	}()
@@ -69,14 +69,17 @@ func ServeReverseRpcServerForPilot(
 	cfg *pbtypes.FrontgateConfig, tlsConfig *tls.Config,
 	service pbfrontgate.FrontgateService,
 ) {
-	logger.Info(nil, "ReverseRpcServerForPilot begin")
-	defer logger.Info(nil, "ReverseRpcServerForPilot end")
+	target := fmt.Sprintf("%s:%d", cfg.PilotHost, cfg.PilotPort)
+	logger.Info(nil, "Serve reverse rpc server for pilot [%s] begin.", target)
+	defer logger.Info(nil, "Serve reverse rpc server for pilot [%s] finished.", target)
 
 	var lastErrCode = codes.OK
-
+	ctx := context.Background()
 	for {
-		ch, conn, err := pilotutil.DialFrontgateChannelTLS(
-			context.Background(), fmt.Sprintf("%s:%d", cfg.PilotHost, cfg.PilotPort),
+		logger.Info(nil, "Dial pilot [%s] channel begin.", target)
+		ch, conn, err := pilotutil.DialPilotChannelTLS(
+			ctx,
+			target,
 			tlsConfig,
 			grpc.WithBlock(),
 			grpc.WithKeepaliveParams(keepalive.ClientParameters{
@@ -84,40 +87,42 @@ func ServeReverseRpcServerForPilot(
 				Timeout:             10 * time.Second,
 				PermitWithoutStream: true,
 			}),
-			grpc.WithTimeout(20*time.Second),
 		)
 		if err != nil {
+			logger.Error(nil, "Dial pilot [%s] channel failed: %+v", target, err)
 			gerr, ok := status.FromError(err)
 			if !ok {
-				logger.Error(nil, "err shoule be grpc error type")
+				logger.Error(nil, "The error is not grpc error type.")
 				time.Sleep(time.Second)
 				continue
 			}
 
 			if gerr.Code() != lastErrCode {
-				logger.Error(nil, "did not connect: %v", gerr.Err())
+				logger.Error(nil, "Failed to connect: %v", gerr.Err())
 			}
 
 			lastErrCode = gerr.Code()
 			continue
 		} else {
 			if lastErrCode == codes.Unavailable {
-				logger.Info(nil, "pilot connect ok")
+				logger.Info(nil, "Pilot connect ok")
 			}
 
 			lastErrCode = codes.OK
 		}
+		logger.Info(nil, "Dial pilot [%s] channel finished.", target)
 
-		connClosed := make(chan struct{})
-		if cfg.AutoUpdate {
-			go func() {
-				logger.Info(nil, "Starting updater")
-				updater := NewUpdater(conn, connClosed, cfg)
-				updater.Serve()
-			}()
-		}
+		updater := NewUpdater(conn, cfg)
+		go updater.Serve()
+
+		logger.Info(nil, "Serving frontgate service...")
+		// will long run util err
 		pbfrontgate.ServeFrontgateService(ch, service)
+
+		// close all
 		conn.Close()
-		connClosed <- struct{}{}
+		ch.Close()
+		updater.Close()
+		logger.Info(nil, "Serve frontgate service closed.")
 	}
 }

@@ -470,6 +470,6 @@ var (
 	ErrorCannotCreateUserWithRole = ErrorMessage{
 		Name: "error_cannot_create_user_with_role",
 		en:   "cannot create user with role [%s]",
-		zhCN: "无法创建[%]角色的用户",
+		zhCN: "无法创建[%s]角色的用户",
 	}
 )

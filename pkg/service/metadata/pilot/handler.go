@@ -197,7 +197,7 @@ func (p *Server) FrontgateChannel(ch pbpilot.PilotServiceForFrontgate_FrontgateC
 
 	info, err := c.GetFrontgateConfig(&pbtypes.Empty{})
 	if err != nil {
-		logger.Debug(nil, "%+v", err)
+		logger.Error(nil, "Get frontgate config failed: %+v", err)
 		return err
 	}
 

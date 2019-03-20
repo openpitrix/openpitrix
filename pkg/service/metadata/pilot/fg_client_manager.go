@@ -83,7 +83,7 @@ func (p *FrontgateClientManager) GetClient(id string) (*FrontgateClient, error) 
 		return cs[rand.Intn(len(cs))], nil
 	}
 
-	return nil, fmt.Errorf("not found")
+	return nil, fmt.Errorf("frontgate [%s] not found", id)
 }
 
 func (p *FrontgateClientManager) GetNodeClient(id, nodeId string) (*FrontgateClient, error) {
@@ -96,7 +96,7 @@ func (p *FrontgateClientManager) GetNodeClient(id, nodeId string) (*FrontgateCli
 		}
 	}
 
-	return nil, fmt.Errorf("not found")
+	return nil, fmt.Errorf("frontgate [%s] node [%s] not found", id, nodeId)
 }
 
 func (p *FrontgateClientManager) PutClient(c *pbfrontgate.FrontgateServiceClient, info *pbtypes.FrontgateConfig) (closed chan bool) {
