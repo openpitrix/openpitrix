@@ -470,7 +470,12 @@ var (
 	ErrorCannotCreateUserWithRole = ErrorMessage{
 		Name: "error_cannot_create_user_with_role",
 		en:   "cannot create user with role [%s]",
-		zhCN: "无法创建[%]角色的用户",
+		zhCN: "无法创建[%s]角色的用户",
+	}
+	ErrorValidateEmailService = ErrorMessage{
+		Name: "error_validate_email_service",
+		en:   "validate email service failed",
+		zhCN: "验证邮件服务配置失败",
 	}
 	ErrorValidateEmailService = ErrorMessage{
 		Name: "error_validate_email_service",
