@@ -28,7 +28,7 @@ const (
 	NotificationHost           = prefix + "notification"
 	MarketManagerHost          = prefix + "market-manager"
 	AttachmentManagerHost      = prefix + "attachment-manager"
-	VendorManagerHost          = prefix + "vendor-manager"
+	IsvManagerHost             = prefix + "isv-manager"
 )
 
 const (
@@ -48,7 +48,7 @@ const (
 	AccountServicePort         = 9115
 	FrontgateFileServerPort    = 9116
 	MarketManagerPort          = 9117
-	VendorManagerPort          = 9118
+	IsvManagerPort             = 9118
 	IMServicePort              = 9119
 	AMServicePort              = 9120
 	EtcdServicePort            = 2379

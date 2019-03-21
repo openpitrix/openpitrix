@@ -14,7 +14,7 @@ import (
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/client/account"
-	"openpitrix.io/openpitrix/pkg/client/appvendor"
+	"openpitrix.io/openpitrix/pkg/client/isv"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -437,7 +437,7 @@ func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorV
 		ownerIds = append(ownerIds, isvUser.GetUserId().GetValue())
 	}
 
-	vendorVerifyInfoSet, err := appvendor.GetVendorInfos(ctx, ownerIds)
+	vendorVerifyInfoSet, err := isv.GetVendorInfos(ctx, ownerIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}

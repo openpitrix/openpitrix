@@ -1,0 +1,172 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+message DescribeVendorVerifyInfosRequest {
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
+	uint32 limit = 4;
+	// default is 0
+	uint32 offset = 5;
+
+	repeated string user_id = 11;
+	repeated string status = 12;
+	repeated string display_columns = 13;
+	repeated string owner = 14;
+}
+
+message DescribeVendorVerifyInfosResponse {
+	uint32 total_count = 1;
+	repeated VendorVerifyInfo vendor_verify_info_set = 2;
+}
+
+message VendorVerifyInfo {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue company_name = 2;
+	google.protobuf.StringValue company_website = 3;
+	google.protobuf.StringValue company_profile = 4;
+	google.protobuf.StringValue authorizer_name = 5;
+	google.protobuf.StringValue authorizer_email = 6;
+	google.protobuf.StringValue authorizer_phone = 7;
+	google.protobuf.StringValue bank_name = 8;
+	google.protobuf.StringValue bank_account_name = 9;
+	google.protobuf.StringValue bank_account_number = 10;
+	google.protobuf.StringValue status = 11;
+	google.protobuf.StringValue reject_message = 12;
+	google.protobuf.StringValue approver = 13;
+	google.protobuf.StringValue owner = 14;
+	google.protobuf.StringValue owner_path = 15;
+	google.protobuf.Timestamp submit_time = 16;
+	google.protobuf.Timestamp status_time = 17;
+}
+
+message SubmitVendorVerifyInfoRequest {
+	string user_id = 1;
+	google.protobuf.StringValue company_name = 2;
+	google.protobuf.StringValue company_website = 3;
+	google.protobuf.StringValue company_profile = 4;
+	google.protobuf.StringValue authorizer_name = 5;
+	google.protobuf.StringValue authorizer_email = 6;
+	google.protobuf.StringValue authorizer_phone = 7;
+	google.protobuf.StringValue bank_name = 8;
+	google.protobuf.StringValue bank_account_name = 9;
+	google.protobuf.StringValue bank_account_number = 10;
+}
+
+message SubmitVendorVerifyInfoResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+
+message PassVendorVerifyInfoRequest {
+	string user_id = 1;
+}
+
+message PassVendorVerifyInfoResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+
+message RejectVendorVerifyInfoRequest {
+	string user_id = 1;
+	google.protobuf.StringValue reject_message = 2;
+}
+
+message RejectVendorVerifyInfoResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+
+message VendorStatistics {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue company_name = 2;
+	uint32 active_app_count = 3;
+	uint32 cluster_count_month = 4;
+	uint32 cluster_count_total = 5;
+}
+
+message DescribeVendorStatisticsResponse {
+	uint32 total_count = 1;
+	repeated VendorStatistics vendor_verify_statistics_set = 2;
+}
+
+message GetVendorVerifyInfoRequest {
+	google.protobuf.StringValue user_id = 1;
+}
+
+message GetVendorVerifyInfoResponse {
+	VendorVerifyInfo vendor_verify_info = 1;
+}
+
+service IsvManager {
+
+	rpc SubmitVendorVerifyInfo (SubmitVendorVerifyInfoRequest) returns (SubmitVendorVerifyInfoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "SubmitVendorVerifyInfo"
+		};
+		option (google.api.http) = {
+			post: "/v1/app_vendors",
+            body: "*"
+		};
+	}
+
+	rpc DescribeVendorVerifyInfos (DescribeVendorVerifyInfosRequest) returns (DescribeVendorVerifyInfosResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "DescribeVendorVerifyInfos"
+		};
+		option (google.api.http) = {
+			get: "/v1/app_vendors"
+		};
+	}
+
+	rpc DescribeAppVendorStatistics (DescribeVendorVerifyInfosRequest) returns (DescribeVendorStatisticsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "DescribeAppVendorStatistics"
+		};
+		option (google.api.http) = {
+			get: "/v1/app_vendors/app_vendor_statistics"
+		};
+	}
+
+
+	rpc PassVendorVerifyInfo (PassVendorVerifyInfoRequest) returns (PassVendorVerifyInfoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "PassVendorVerifyInfo"
+		};
+		option (google.api.http) = {
+ 			post: "/v1/app_vendors/pass",
+            body: "*"
+		};
+	}
+
+	rpc RejectVendorVerifyInfo (RejectVendorVerifyInfoRequest) returns (RejectVendorVerifyInfoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "RejectVendorVerifyInfo"
+		};
+		option (google.api.http) = {
+			post: "/v1/app_vendors/reject",
+            body: "*"
+		};
+	}
+
+	rpc GetVendorVerifyInfo (GetVendorVerifyInfoRequest) returns (GetVendorVerifyInfoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "get isv by isv user Id"
+		};
+		option (google.api.http) = {
+			get: "/v1/app_vendors/app_vendor"
+		};
+	}
+
+}

@@ -621,37 +621,37 @@ services:
     - openpitrix-db-init
     container_name: "openpitrix-attachment-db-ctrl"
 
-  # appvendor service
-  openpitrix-vendor-manager:
+  # isv service
+  openpitrix-isv-manager:
     build: .
     image: "openpitrix"
-    command: "appvendor-manager"
+    command: "isv-manager"
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
     depends_on:
-      - openpitrix-vendor-db-ctrl
+      - openpitrix-isv-db-ctrl
       - openpitrix-etcd
-    container_name: "openpitrix-appvendor-manager"
+    container_name: "openpitrix-isv-manager"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
-      - OPENPITRIX_MYSQL_DATABASE=appvendor
+      - OPENPITRIX_MYSQL_DATABASE=isv
     logging:
       driver: "json-file"
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
-  openpitrix-vendor-db-ctrl:
+  openpitrix-isv-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
-    command: -url=jdbc:mysql://openpitrix-db/appvendor -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    command: -url=jdbc:mysql://openpitrix-db/isv -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
-      - ./pkg/db/schema/appvendor:/flyway/sql
+      - ./pkg/db/schema/isv:/flyway/sql
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
       - openpitrix-db-init
-    container_name: "openpitrix-appvendor-db-ctrl"
+    container_name: "openpitrix-isv-db-ctrl"
 
   # notification service
   openpitrix-notification:

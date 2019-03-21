@@ -14,10 +14,10 @@ import (
 	"openpitrix.io/openpitrix/test/client/access_manager"
 	"openpitrix.io/openpitrix/test/client/account_manager"
 	"openpitrix.io/openpitrix/test/client/app_manager"
-	"openpitrix.io/openpitrix/test/client/app_vendor_manager"
 	"openpitrix.io/openpitrix/test/client/attachment_service"
 	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
+	"openpitrix.io/openpitrix/test/client/isv_manager"
 	"openpitrix.io/openpitrix/test/client/job_manager"
 	"openpitrix.io/openpitrix/test/client/market_manager"
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
@@ -75,13 +75,13 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix
 
 	cli.AppManager = app_manager.New(transport, formats)
 
-	cli.AppVendorManager = app_vendor_manager.New(transport, formats)
-
 	cli.AttachmentService = attachment_service.New(transport, formats)
 
 	cli.CategoryManager = category_manager.New(transport, formats)
 
 	cli.ClusterManager = cluster_manager.New(transport, formats)
+
+	cli.IsvManager = isv_manager.New(transport, formats)
 
 	cli.JobManager = job_manager.New(transport, formats)
 
@@ -149,13 +149,13 @@ type Openpitrix struct {
 
 	AppManager *app_manager.Client
 
-	AppVendorManager *app_vendor_manager.Client
-
 	AttachmentService *attachment_service.Client
 
 	CategoryManager *category_manager.Client
 
 	ClusterManager *cluster_manager.Client
+
+	IsvManager *isv_manager.Client
 
 	JobManager *job_manager.Client
 
@@ -186,13 +186,13 @@ func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 
 	c.AppManager.SetTransport(transport)
 
-	c.AppVendorManager.SetTransport(transport)
-
 	c.AttachmentService.SetTransport(transport)
 
 	c.CategoryManager.SetTransport(transport)
 
 	c.ClusterManager.SetTransport(transport)
+
+	c.IsvManager.SetTransport(transport)
 
 	c.JobManager.SetTransport(transport)
 
