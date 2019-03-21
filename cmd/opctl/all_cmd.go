@@ -14,10 +14,10 @@ import (
 	"openpitrix.io/openpitrix/test/client/access_manager"
 	"openpitrix.io/openpitrix/test/client/account_manager"
 	"openpitrix.io/openpitrix/test/client/app_manager"
-	"openpitrix.io/openpitrix/test/client/app_vendor_manager"
 	"openpitrix.io/openpitrix/test/client/attachment_service"
 	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
+	"openpitrix.io/openpitrix/test/client/isv_manager"
 	"openpitrix.io/openpitrix/test/client/job_manager"
 	"openpitrix.io/openpitrix/test/client/market_manager"
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
@@ -88,12 +88,6 @@ var AllCmd = []Cmd{
 	NewTechnicalReviewAppVersionCmd(),
 	NewUploadAppAttachmentCmd(),
 	NewValidatePackageCmd(),
-	NewDescribeAppVendorStatisticsCmd(),
-	NewDescribeVendorVerifyInfosCmd(),
-	NewGetVendorVerifyInfoCmd(),
-	NewPassVendorVerifyInfoCmd(),
-	NewRejectVendorVerifyInfoCmd(),
-	NewSubmitVendorVerifyInfoCmd(),
 	NewGetAttachmentCmd(),
 	NewCreateCategoryCmd(),
 	NewDeleteCategoriesCmd(),
@@ -126,6 +120,12 @@ var AllCmd = []Cmd{
 	NewStopClustersCmd(),
 	NewUpdateClusterEnvCmd(),
 	NewUpgradeClusterCmd(),
+	NewDescribeAppVendorStatisticsCmd(),
+	NewDescribeVendorVerifyInfosCmd(),
+	NewGetVendorVerifyInfoCmd(),
+	NewPassVendorVerifyInfoCmd(),
+	NewRejectVendorVerifyInfoCmd(),
+	NewSubmitVendorVerifyInfoCmd(),
 	NewDescribeJobsCmd(),
 	NewCreateMarketCmd(),
 	NewDeleteMarketsCmd(),
@@ -2467,250 +2467,6 @@ func (c *ValidatePackageCmd) Run(out Out) error {
 	return nil
 }
 
-type DescribeAppVendorStatisticsCmd struct {
-	*app_vendor_manager.DescribeAppVendorStatisticsParams
-}
-
-func NewDescribeAppVendorStatisticsCmd() Cmd {
-	return &DescribeAppVendorStatisticsCmd{
-		app_vendor_manager.NewDescribeAppVendorStatisticsParams(),
-	}
-}
-
-func (*DescribeAppVendorStatisticsCmd) GetActionName() string {
-	return "DescribeAppVendorStatistics"
-}
-
-func (c *DescribeAppVendorStatisticsCmd) ParseFlag(f Flag) {
-	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
-	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
-	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
-	c.Reverse = new(bool)
-	f.BoolVarP(c.Reverse, "reverse", "", false, "")
-	c.SearchWord = new(string)
-	f.StringVarP(c.SearchWord, "search_word", "", "", "")
-	c.SortKey = new(string)
-	f.StringVarP(c.SortKey, "sort_key", "", "", "")
-	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
-	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
-}
-
-func (c *DescribeAppVendorStatisticsCmd) Run(out Out) error {
-	params := c.DescribeAppVendorStatisticsParams
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppVendorManager.DescribeAppVendorStatistics(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
-type DescribeVendorVerifyInfosCmd struct {
-	*app_vendor_manager.DescribeVendorVerifyInfosParams
-}
-
-func NewDescribeVendorVerifyInfosCmd() Cmd {
-	return &DescribeVendorVerifyInfosCmd{
-		app_vendor_manager.NewDescribeVendorVerifyInfosParams(),
-	}
-}
-
-func (*DescribeVendorVerifyInfosCmd) GetActionName() string {
-	return "DescribeVendorVerifyInfos"
-}
-
-func (c *DescribeVendorVerifyInfosCmd) ParseFlag(f Flag) {
-	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
-	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
-	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
-	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
-	c.Reverse = new(bool)
-	f.BoolVarP(c.Reverse, "reverse", "", false, "")
-	c.SearchWord = new(string)
-	f.StringVarP(c.SearchWord, "search_word", "", "", "")
-	c.SortKey = new(string)
-	f.StringVarP(c.SortKey, "sort_key", "", "", "")
-	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
-	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
-}
-
-func (c *DescribeVendorVerifyInfosCmd) Run(out Out) error {
-	params := c.DescribeVendorVerifyInfosParams
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppVendorManager.DescribeVendorVerifyInfos(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
-type GetVendorVerifyInfoCmd struct {
-	*app_vendor_manager.GetVendorVerifyInfoParams
-}
-
-func NewGetVendorVerifyInfoCmd() Cmd {
-	return &GetVendorVerifyInfoCmd{
-		app_vendor_manager.NewGetVendorVerifyInfoParams(),
-	}
-}
-
-func (*GetVendorVerifyInfoCmd) GetActionName() string {
-	return "GetVendorVerifyInfo"
-}
-
-func (c *GetVendorVerifyInfoCmd) ParseFlag(f Flag) {
-	c.UserID = new(string)
-	f.StringVarP(c.UserID, "user_id", "", "", "")
-}
-
-func (c *GetVendorVerifyInfoCmd) Run(out Out) error {
-	params := c.GetVendorVerifyInfoParams
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppVendorManager.GetVendorVerifyInfo(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
-type PassVendorVerifyInfoCmd struct {
-	*models.OpenpitrixPassVendorVerifyInfoRequest
-}
-
-func NewPassVendorVerifyInfoCmd() Cmd {
-	cmd := &PassVendorVerifyInfoCmd{}
-	cmd.OpenpitrixPassVendorVerifyInfoRequest = &models.OpenpitrixPassVendorVerifyInfoRequest{}
-	return cmd
-}
-
-func (*PassVendorVerifyInfoCmd) GetActionName() string {
-	return "PassVendorVerifyInfo"
-}
-
-func (c *PassVendorVerifyInfoCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.UserID, "user_id", "", "", "")
-}
-
-func (c *PassVendorVerifyInfoCmd) Run(out Out) error {
-	params := app_vendor_manager.NewPassVendorVerifyInfoParams()
-	params.WithBody(c.OpenpitrixPassVendorVerifyInfoRequest)
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppVendorManager.PassVendorVerifyInfo(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
-type RejectVendorVerifyInfoCmd struct {
-	*models.OpenpitrixRejectVendorVerifyInfoRequest
-}
-
-func NewRejectVendorVerifyInfoCmd() Cmd {
-	cmd := &RejectVendorVerifyInfoCmd{}
-	cmd.OpenpitrixRejectVendorVerifyInfoRequest = &models.OpenpitrixRejectVendorVerifyInfoRequest{}
-	return cmd
-}
-
-func (*RejectVendorVerifyInfoCmd) GetActionName() string {
-	return "RejectVendorVerifyInfo"
-}
-
-func (c *RejectVendorVerifyInfoCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.RejectMessage, "reject_message", "", "", "")
-	f.StringVarP(&c.UserID, "user_id", "", "", "")
-}
-
-func (c *RejectVendorVerifyInfoCmd) Run(out Out) error {
-	params := app_vendor_manager.NewRejectVendorVerifyInfoParams()
-	params.WithBody(c.OpenpitrixRejectVendorVerifyInfoRequest)
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppVendorManager.RejectVendorVerifyInfo(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
-type SubmitVendorVerifyInfoCmd struct {
-	*models.OpenpitrixSubmitVendorVerifyInfoRequest
-}
-
-func NewSubmitVendorVerifyInfoCmd() Cmd {
-	cmd := &SubmitVendorVerifyInfoCmd{}
-	cmd.OpenpitrixSubmitVendorVerifyInfoRequest = &models.OpenpitrixSubmitVendorVerifyInfoRequest{}
-	return cmd
-}
-
-func (*SubmitVendorVerifyInfoCmd) GetActionName() string {
-	return "SubmitVendorVerifyInfo"
-}
-
-func (c *SubmitVendorVerifyInfoCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.AuthorizerEmail, "authorizer_email", "", "", "")
-	f.StringVarP(&c.AuthorizerName, "authorizer_name", "", "", "")
-	f.StringVarP(&c.AuthorizerPhone, "authorizer_phone", "", "", "")
-	f.StringVarP(&c.BankAccountName, "bank_account_name", "", "", "")
-	f.StringVarP(&c.BankAccountNumber, "bank_account_number", "", "", "")
-	f.StringVarP(&c.BankName, "bank_name", "", "", "")
-	f.StringVarP(&c.CompanyName, "company_name", "", "", "")
-	f.StringVarP(&c.CompanyProfile, "company_profile", "", "", "")
-	f.StringVarP(&c.CompanyWebsite, "company_website", "", "", "")
-	f.StringVarP(&c.UserID, "user_id", "", "", "")
-}
-
-func (c *SubmitVendorVerifyInfoCmd) Run(out Out) error {
-	params := app_vendor_manager.NewSubmitVendorVerifyInfoParams()
-	params.WithBody(c.OpenpitrixSubmitVendorVerifyInfoRequest)
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppVendorManager.SubmitVendorVerifyInfo(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
 type GetAttachmentCmd struct {
 	*attachment_service.GetAttachmentParams
 }
@@ -4004,6 +3760,250 @@ func (c *UpgradeClusterCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.ClusterManager.UpgradeCluster(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeAppVendorStatisticsCmd struct {
+	*isv_manager.DescribeAppVendorStatisticsParams
+}
+
+func NewDescribeAppVendorStatisticsCmd() Cmd {
+	return &DescribeAppVendorStatisticsCmd{
+		isv_manager.NewDescribeAppVendorStatisticsParams(),
+	}
+}
+
+func (*DescribeAppVendorStatisticsCmd) GetActionName() string {
+	return "DescribeAppVendorStatistics"
+}
+
+func (c *DescribeAppVendorStatisticsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DescribeAppVendorStatisticsCmd) Run(out Out) error {
+	params := c.DescribeAppVendorStatisticsParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.IsvManager.DescribeAppVendorStatistics(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeVendorVerifyInfosCmd struct {
+	*isv_manager.DescribeVendorVerifyInfosParams
+}
+
+func NewDescribeVendorVerifyInfosCmd() Cmd {
+	return &DescribeVendorVerifyInfosCmd{
+		isv_manager.NewDescribeVendorVerifyInfosParams(),
+	}
+}
+
+func (*DescribeVendorVerifyInfosCmd) GetActionName() string {
+	return "DescribeVendorVerifyInfos"
+}
+
+func (c *DescribeVendorVerifyInfosCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DescribeVendorVerifyInfosCmd) Run(out Out) error {
+	params := c.DescribeVendorVerifyInfosParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.IsvManager.DescribeVendorVerifyInfos(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type GetVendorVerifyInfoCmd struct {
+	*isv_manager.GetVendorVerifyInfoParams
+}
+
+func NewGetVendorVerifyInfoCmd() Cmd {
+	return &GetVendorVerifyInfoCmd{
+		isv_manager.NewGetVendorVerifyInfoParams(),
+	}
+}
+
+func (*GetVendorVerifyInfoCmd) GetActionName() string {
+	return "GetVendorVerifyInfo"
+}
+
+func (c *GetVendorVerifyInfoCmd) ParseFlag(f Flag) {
+	c.UserID = new(string)
+	f.StringVarP(c.UserID, "user_id", "", "", "")
+}
+
+func (c *GetVendorVerifyInfoCmd) Run(out Out) error {
+	params := c.GetVendorVerifyInfoParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.IsvManager.GetVendorVerifyInfo(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type PassVendorVerifyInfoCmd struct {
+	*models.OpenpitrixPassVendorVerifyInfoRequest
+}
+
+func NewPassVendorVerifyInfoCmd() Cmd {
+	cmd := &PassVendorVerifyInfoCmd{}
+	cmd.OpenpitrixPassVendorVerifyInfoRequest = &models.OpenpitrixPassVendorVerifyInfoRequest{}
+	return cmd
+}
+
+func (*PassVendorVerifyInfoCmd) GetActionName() string {
+	return "PassVendorVerifyInfo"
+}
+
+func (c *PassVendorVerifyInfoCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
+}
+
+func (c *PassVendorVerifyInfoCmd) Run(out Out) error {
+	params := isv_manager.NewPassVendorVerifyInfoParams()
+	params.WithBody(c.OpenpitrixPassVendorVerifyInfoRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.IsvManager.PassVendorVerifyInfo(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type RejectVendorVerifyInfoCmd struct {
+	*models.OpenpitrixRejectVendorVerifyInfoRequest
+}
+
+func NewRejectVendorVerifyInfoCmd() Cmd {
+	cmd := &RejectVendorVerifyInfoCmd{}
+	cmd.OpenpitrixRejectVendorVerifyInfoRequest = &models.OpenpitrixRejectVendorVerifyInfoRequest{}
+	return cmd
+}
+
+func (*RejectVendorVerifyInfoCmd) GetActionName() string {
+	return "RejectVendorVerifyInfo"
+}
+
+func (c *RejectVendorVerifyInfoCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.RejectMessage, "reject_message", "", "", "")
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
+}
+
+func (c *RejectVendorVerifyInfoCmd) Run(out Out) error {
+	params := isv_manager.NewRejectVendorVerifyInfoParams()
+	params.WithBody(c.OpenpitrixRejectVendorVerifyInfoRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.IsvManager.RejectVendorVerifyInfo(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type SubmitVendorVerifyInfoCmd struct {
+	*models.OpenpitrixSubmitVendorVerifyInfoRequest
+}
+
+func NewSubmitVendorVerifyInfoCmd() Cmd {
+	cmd := &SubmitVendorVerifyInfoCmd{}
+	cmd.OpenpitrixSubmitVendorVerifyInfoRequest = &models.OpenpitrixSubmitVendorVerifyInfoRequest{}
+	return cmd
+}
+
+func (*SubmitVendorVerifyInfoCmd) GetActionName() string {
+	return "SubmitVendorVerifyInfo"
+}
+
+func (c *SubmitVendorVerifyInfoCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.AuthorizerEmail, "authorizer_email", "", "", "")
+	f.StringVarP(&c.AuthorizerName, "authorizer_name", "", "", "")
+	f.StringVarP(&c.AuthorizerPhone, "authorizer_phone", "", "", "")
+	f.StringVarP(&c.BankAccountName, "bank_account_name", "", "", "")
+	f.StringVarP(&c.BankAccountNumber, "bank_account_number", "", "", "")
+	f.StringVarP(&c.BankName, "bank_name", "", "", "")
+	f.StringVarP(&c.CompanyName, "company_name", "", "", "")
+	f.StringVarP(&c.CompanyProfile, "company_profile", "", "", "")
+	f.StringVarP(&c.CompanyWebsite, "company_website", "", "", "")
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
+}
+
+func (c *SubmitVendorVerifyInfoCmd) Run(out Out) error {
+	params := isv_manager.NewSubmitVendorVerifyInfoParams()
+	params.WithBody(c.OpenpitrixSubmitVendorVerifyInfoRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.IsvManager.SubmitVendorVerifyInfo(params, nil)
 	if err != nil {
 		return err
 	}
