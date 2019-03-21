@@ -65,7 +65,7 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
 	logger.Info(nil, "Attachment service http://%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort)
-	logger.Info(nil, "Vendor service http://%s:%d", constants.VendorManagerHost, constants.VendorManagerPort)
+	logger.Info(nil, "Isv service http://%s:%d", constants.IsvManagerHost, constants.IsvManagerPort)
 	logger.Info(nil, "Service config http://%s:%d", constants.ApiGatewayHost, constants.ServiceConfigPort)
 
 	cfg.Mysql.Disable = true
@@ -216,8 +216,8 @@ func (s *Server) mainHandler() http.Handler {
 		pb.RegisterAttachmentServiceHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort),
 	}, {
-		pb.RegisterAppVendorManagerHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.VendorManagerHost, constants.VendorManagerPort),
+		pb.RegisterIsvManagerHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.IsvManagerHost, constants.IsvManagerPort),
 	}, {
 		pb.RegisterServiceConfigHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.ApiGatewayHost, constants.ServiceConfigPort),

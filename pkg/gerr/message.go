@@ -477,9 +477,4 @@ var (
 		en:   "validate email service failed",
 		zhCN: "验证邮件服务配置失败",
 	}
-	ErrorValidateEmailService = ErrorMessage{
-		Name: "error_validate_email_service",
-		en:   "validate email service failed",
-		zhCN: "验证邮件服务配置失败",
-	}
 )
