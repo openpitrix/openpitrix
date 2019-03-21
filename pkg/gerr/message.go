@@ -202,6 +202,11 @@ var (
 		en:   "subnet [%s] not found or vpc not bind eip",
 		zhCN: "没有找到子网[%s]或者VPC没有绑定公网IP",
 	}
+	ErrorThereAreNoAvailableSubnet = ErrorMessage{
+		Name: "there_are_no_available_subnet",
+		en:   "there are no available subnet",
+		zhCN: "没有可用的子网",
+	}
 	ErrorProviderNotFound = ErrorMessage{
 		Name: "provider_not_found",
 		en:   "provider [%s] not found",

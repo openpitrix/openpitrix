@@ -217,7 +217,11 @@ func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsReq
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	return providerClient.DescribeSubnets(ctx, req)
+	response, err := providerClient.DescribeSubnets(ctx, req)
+	if err != nil {
+		return response, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorThereAreNoAvailableSubnet)
+	}
+	return response, nil
 }
 
 func (p *Server) DeleteNodeKeyPairs(ctx context.Context, req *pb.DeleteNodeKeyPairsRequest) (*pb.DeleteNodeKeyPairsResponse, error) {
