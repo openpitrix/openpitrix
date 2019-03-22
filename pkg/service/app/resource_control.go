@@ -12,8 +12,6 @@ import (
 	"strings"
 	"time"
 
-	clientutil "openpitrix.io/openpitrix/pkg/client"
-	"openpitrix.io/openpitrix/pkg/client/account"
 	"openpitrix.io/openpitrix/pkg/client/isv"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -419,25 +417,16 @@ func getLatestAppVersion(ctx context.Context, appId string, status ...string) (*
 }
 
 func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorVerifyInfo, error) {
-	accountClient, err := account.NewClient()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
 	userIds = stringutil.Unique(userIds)
-	var ownerIds []string
+	var isvs []string
 	for _, uid := range userIds {
 		if stringutil.StringIn(uid, constants.InternalUsers) {
 			continue
 		}
-		systemCtx := clientutil.SetSystemUserToContext(ctx)
-		isvUser, err := accountClient.GetIsvFromUser(systemCtx, uid)
-		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-		}
-		ownerIds = append(ownerIds, isvUser.GetUserId().GetValue())
+		isvs = append(isvs, uid)
 	}
 
-	vendorVerifyInfoSet, err := isv.GetVendorInfos(ctx, ownerIds)
+	vendorVerifyInfoSet, err := isv.GetVendorInfos(ctx, isvs)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
@@ -473,7 +462,7 @@ func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.A
 	var userIds []string
 	for _, app := range apps {
 		appIds = append(appIds, app.AppId)
-		userIds = append(userIds, app.Owner)
+		userIds = append(userIds, app.Isv)
 	}
 	var pbApps []*pb.App
 	appsVersionTypes, err := getAppsVersionTypes(ctx, appIds, active)
@@ -501,7 +490,7 @@ func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.A
 		if categorySet, ok := rcMap[app.AppId]; ok {
 			pbApp.CategorySet = categorySet
 		}
-		if vendor, ok := vendorMap[app.Owner]; ok {
+		if vendor, ok := vendorMap[app.Isv]; ok {
 			pbApp.CompanyJoinTime = vendor.StatusTime
 			pbApp.CompanyName = vendor.CompanyName
 			pbApp.CompanyProfile = vendor.CompanyProfile

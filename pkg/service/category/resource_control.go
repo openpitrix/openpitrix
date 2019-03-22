@@ -32,7 +32,7 @@ func (p *Server) getCategories(ctx context.Context, categoryIds []string) ([]*mo
 	_, err := pi.Global().DB(ctx).
 		Select(models.CategoryColumns...).
 		From(constants.TableCategory).
-		Where(db.Eq("category_id", categoryIds)).
+		Where(db.Eq(constants.ColumnCategoryId, categoryIds)).
 		Load(&categories)
 	if err != nil {
 		return nil, err

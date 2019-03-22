@@ -107,6 +107,11 @@ var (
 		en:   "delete resource [%s] failed",
 		zhCN: "删除资源[%s]失败",
 	}
+	ErrorDeleteFrontgateWithClustersFailed = ErrorMessage{
+		Name: "delete_frontgate_with_clusters_failed",
+		en:   "delete frontgate [%s] with clusters [%s] failed",
+		zhCN: "删除代理[%s]失败，仍有[%s]依赖",
+	}
 	ErrorUpgradeResourceFailed = ErrorMessage{
 		Name: "upgrade_resource_failed",
 		en:   "upgrade resource [%s] failed",

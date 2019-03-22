@@ -46,8 +46,8 @@ func (i *EventController) NewRepoEvent(repoId string, ownerPath sender.OwnerPath
 	err := pi.Global().Etcd(i.ctx).Dlock(context.Background(), constants.RepoIndexPrefix+repoId, func() error {
 		count, err := pi.Global().DB(i.ctx).Select(models.RepoEventColumns...).
 			From(constants.TableRepoEvent).
-			Where(db.Eq("repo_id", repoId)).
-			Where(db.Eq("status", []string{constants.StatusWorking, constants.StatusPending})).
+			Where(db.Eq(constants.ColumnRepoId, repoId)).
+			Where(db.Eq(constants.ColumnStatus, []string{constants.StatusWorking, constants.StatusPending})).
 			Count()
 		if err != nil {
 			return err
@@ -74,7 +74,7 @@ func (i *EventController) NewRepoEvent(repoId string, ownerPath sender.OwnerPath
 	var repoEvent models.RepoEvent
 	err = pi.Global().DB(i.ctx).Select(models.RepoEventColumns...).
 		From(constants.TableRepoEvent).
-		Where(db.Eq("repo_event_id", repoEventId)).
+		Where(db.Eq(constants.ColumnRepoEventId, repoEventId)).
 		LoadOne(&repoEvent)
 	if err != nil {
 		return nil, err
@@ -85,9 +85,9 @@ func (i *EventController) NewRepoEvent(repoId string, ownerPath sender.OwnerPath
 func (i *EventController) updateRepoEventStatus(ctx context.Context, repoEvent *models.RepoEvent, status, result string) error {
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableRepoEvent).
-		Set("status", status).
-		Set("result", result).
-		Where(db.Eq("repo_event_id", repoEvent.RepoEventId)).
+		Set(constants.ColumnStatus, status).
+		Set(constants.ColumnResult, result).
+		Where(db.Eq(constants.ColumnRepoEventId, repoEvent.RepoEventId)).
 		Exec()
 	if err != nil {
 		logger.Critical(
@@ -143,7 +143,7 @@ func (i *EventController) getRepoEvent(repoEventId string) (repoEvent models.Rep
 	err = pi.Global().DB(i.ctx).
 		Select(models.RepoEventColumns...).
 		From(constants.TableRepoEvent).
-		Where(db.Eq("repo_event_id", repoEventId)).
+		Where(db.Eq(constants.ColumnRepoEventId, repoEventId)).
 		LoadOne(&repoEvent)
 	return
 }
