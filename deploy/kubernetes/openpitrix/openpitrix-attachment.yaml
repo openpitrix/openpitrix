@@ -14,8 +14,8 @@ spec:
   ports:
   - name: openpitrix-attachment-manager
     protocol: TCP
-    port: 9102
-    targetPort: 9102
+    port: 9120
+    targetPort: 9120
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
