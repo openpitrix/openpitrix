@@ -25,16 +25,17 @@ type Frontgate struct {
 	Runtime *models.RuntimeDetails
 }
 
-func (f *Frontgate) getFrontgateFromDb(ctx context.Context, vpcId, userId string) ([]*models.Cluster, error) {
+func (f *Frontgate) getFrontgateFromDb(ctx context.Context, vpcId, userId string, debug bool) ([]*models.Cluster, error) {
 	var frontgates []*models.Cluster
 	statuses := []string{constants.StatusActive, constants.StatusPending, constants.StatusStopped}
 	_, err := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
 		From(constants.TableCluster).
-		Where(db.Eq("vpc_id", vpcId)).
-		Where(db.Eq("owner", userId)).
-		Where(db.Eq("cluster_type", constants.FrontgateClusterType)).
-		Where(db.Eq("status", statuses)).
+		Where(db.Eq(constants.ColumnVpcId, vpcId)).
+		Where(db.Eq(constants.ColumnOwner, userId)).
+		Where(db.Eq(constants.ColumnClusterType, constants.FrontgateClusterType)).
+		Where(db.Eq(constants.ColumnStatus, statuses)).
+		Where(db.Eq(constants.ColumnDebug, debug)).
 		Load(&frontgates)
 	if err != nil {
 		return nil, err
@@ -69,7 +70,7 @@ func (f *Frontgate) GetFrontgate(ctx context.Context, frontgateId string) (*mode
 	err := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
 		From(constants.TableCluster).
-		Where(db.Eq("cluster_id", frontgateId)).
+		Where(db.Eq(constants.ColumnClusterId, frontgateId)).
 		LoadOne(&frontgate)
 	if err != nil {
 		return nil, err
@@ -90,6 +91,7 @@ func (f *Frontgate) GetActiveFrontgate(ctx context.Context, clusterWrapper *mode
 	var frontgate *models.Cluster
 	vpcId := clusterWrapper.Cluster.VpcId
 	owner := clusterWrapper.Cluster.Owner
+	debug := clusterWrapper.Cluster.Debug
 	err := pi.Global().Etcd(ctx).DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
 		// Check vpc status
 		providerClient, err := providerclient.NewRuntimeProviderManagerClient()
@@ -117,7 +119,7 @@ func (f *Frontgate) GetActiveFrontgate(ctx context.Context, clusterWrapper *mode
 			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceTransitionStatus, vpcId, constants.StatusUpdating)
 		}
 
-		frontgates, err := f.getFrontgateFromDb(ctx, vpcId, owner)
+		frontgates, err := f.getFrontgateFromDb(ctx, vpcId, owner, debug)
 		if err != nil {
 			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, vpcId)
 		}

@@ -389,12 +389,12 @@ func (p *Processor) Pre(ctx context.Context) error {
 	// update directive when changed
 	if oldDirective != p.Task.Directive {
 		attributes := map[string]interface{}{
-			"directive": p.Task.Directive,
+			constants.ColumnDirective: p.Task.Directive,
 		}
 		_, err := pi.Global().DB(ctx).
 			Update(constants.TableTask).
 			SetMap(attributes).
-			Where(db.Eq("task_id", p.Task.TaskId)).
+			Where(db.Eq(constants.ColumnTaskId, p.Task.TaskId)).
 			Exec()
 		if err != nil {
 			logger.Error(ctx, "Failed to update task [%s]: %+v", p.Task.TaskId, err)
