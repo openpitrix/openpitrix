@@ -146,6 +146,9 @@ func (p *Server) ValidateEmailService(ctx context.Context, req *pb.ValidateEmail
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateEmailService)
 	}
+	if req.EmailServiceConfig == nil {
+		return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateEmailService)
+	}
 	reqServiceCfg := &nfpb.ServiceConfig{
 		EmailServiceConfig: &nfpb.EmailServiceConfig{
 			Protocol:      req.EmailServiceConfig.Protocol,
