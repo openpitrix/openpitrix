@@ -194,7 +194,6 @@ bin-release-%: ## Bin release version
 	docker cp openpitrix-api-gateway:/usr/local/bin/opctl deploy/$*-bin; \
 	docker cp openpitrix-api-gateway:/usr/local/bin/frontgate deploy/$*-bin; \
 	docker cp openpitrix-api-gateway:/usr/local/bin/drone deploy/$*-bin; \
-	docker cp openpitrix:metadata:/usr/local/bin/metad deploy/$*-bin; \
 	cd deploy/ && tar -czvf $*-bin.tar.gz $*-bin; \
 	fi
 

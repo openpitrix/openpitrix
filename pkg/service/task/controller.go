@@ -50,7 +50,7 @@ func (c *Controller) updateTaskAttributes(ctx context.Context, taskId string, at
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableTask).
 		SetMap(attributes).
-		Where(db.Eq("task_id", taskId)).
+		Where(db.Eq(constants.ColumnTaskId, taskId)).
 		Exec()
 
 	return err
@@ -77,8 +77,8 @@ func (c *Controller) UpdateWorkingTasks(ctx context.Context) error {
 	//TODO: retry the tasks
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableTask).
-		SetMap(map[string]interface{}{"status": constants.StatusFailed}).
-		Where(db.Eq("status", constants.StatusWorking)).
+		SetMap(map[string]interface{}{constants.ColumnStatus: constants.StatusFailed}).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusWorking)).
 		Exec()
 	return err
 }
@@ -108,7 +108,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 	query := pi.Global().DB(ctx).
 		Select(models.TaskColumns...).
 		From(constants.TableTask).
-		Where(db.Eq("task_id", taskId))
+		Where(db.Eq(constants.ColumnTaskId, taskId))
 
 	err := query.LoadOne(&task)
 	if err != nil {
@@ -120,8 +120,8 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 	ctx = ctxutil.ContextWithSender(ctx, sender.New(task.Owner, task.OwnerPath, ""))
 
 	err = c.updateTaskAttributes(ctx, task.TaskId, map[string]interface{}{
-		"status":   constants.StatusWorking,
-		"executor": c.hostname,
+		constants.ColumnStatus:   constants.StatusWorking,
+		constants.ColumnExecutor: c.hostname,
 	})
 	if err != nil {
 		logger.Error(ctx, "Failed to update task: %+v", err)
@@ -443,8 +443,8 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 
 	}
 	err = c.updateTaskAttributes(ctx, task.TaskId, map[string]interface{}{
-		"status":      status,
-		"status_time": time.Now(),
+		constants.ColumnStatus:     status,
+		constants.ColumnStatusTime: time.Now(),
 	})
 	if err != nil {
 		logger.Error(ctx, "Failed to update task: %+v", err)

@@ -134,7 +134,7 @@ func (p *Server) describeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 		Limit(limit).
 		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
-	query = query.Where(db.Eq("debug", debug))
+	query = query.Where(db.Eq(constants.ColumnDebug, debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	if len(displayColumns) > 0 {
 		_, err := query.Load(&runtimes)
@@ -390,7 +390,7 @@ func (p *Server) describeRuntimeCredentials(ctx context.Context, req *pb.Describ
 		Limit(limit).
 		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntimeCredential))
-	query = query.Where(db.Eq("debug", debug))
+	query = query.Where(db.Eq(constants.ColumnDebug, debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&runtimeCredentials)
 	if err != nil {

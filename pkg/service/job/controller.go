@@ -44,7 +44,7 @@ func (c *Controller) updateJobAttributes(ctx context.Context, jobId string, attr
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableJob).
 		SetMap(attributes).
-		Where(db.Eq("job_id", jobId)).
+		Where(db.Eq(constants.ColumnJobId, jobId)).
 		Exec()
 	return err
 }
@@ -70,8 +70,8 @@ func (c *Controller) UpdateWorkingJobs(ctx context.Context) error {
 	//TODO: retry the job
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableJob).
-		SetMap(map[string]interface{}{"status": constants.StatusFailed}).
-		Where(db.Eq("status", constants.StatusWorking)).
+		SetMap(map[string]interface{}{constants.ColumnStatus: constants.StatusFailed}).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusWorking)).
 		Exec()
 	return err
 }
@@ -105,8 +105,8 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 	}
 
 	err := c.updateJobAttributes(ctx, job.JobId, map[string]interface{}{
-		"status":   job.Status,
-		"executor": c.hostname,
+		constants.ColumnStatus:   job.Status,
+		constants.ColumnExecutor: c.hostname,
 	})
 	if err != nil {
 		logger.Error(ctx, "Failed to update job: %+v", err)
@@ -117,7 +117,7 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 		query := pi.Global().DB(ctx).
 			Select(models.JobColumns...).
 			From(constants.TableJob).
-			Where(db.Eq("job_id", jobId))
+			Where(db.Eq(constants.ColumnJobId, jobId))
 
 		err := query.LoadOne(&job)
 		if err != nil {
@@ -207,8 +207,8 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 	}
 
 	err = c.updateJobAttributes(ctx, jobId, map[string]interface{}{
-		"status":      status,
-		"status_time": time.Now(),
+		constants.ColumnStatus:     status,
+		constants.ColumnStatusTime: time.Now(),
 	})
 	if err != nil {
 		logger.Error(ctx, "Failed to update job: %+v", err)
