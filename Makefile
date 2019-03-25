@@ -9,6 +9,10 @@ TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 DOCKER_TAGS=latest
 BUILDER_IMAGE=openpitrix/openpitrix-builder:release-v0.2.3
 RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
+RUN_IN_DOCKER_WITHOUT_GOPATH:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
+GO_BUILD_DARWIN:=CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -tags netgo
+GO_BUILD_LINUX:=CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags netgo
+GO_BUILD_WINDOWS:=CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags netgo
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
 GO_RACE:=go build -race
 GO_VET:=go vet
@@ -25,7 +29,8 @@ define get_build_flags
 	$(eval DATE=$(shell date +'%Y-%m-%dT%H:%M:%S'))
 	$(eval BUILD_FLAG= -X $(TRAG.Version).ShortVersion="$(SHORT_VERSION)" \
 		-X $(TRAG.Version).GitSha1Version="$(SHA1_VERSION)" \
-		-X $(TRAG.Version).BuildDate="$(DATE)")
+		-X $(TRAG.Version).BuildDate="$(DATE)" \
+		-w -s)
 endef
 
 COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-isv-manager openpitrix-notification openpitrix-im-service openpitrix-am-service
@@ -189,13 +194,38 @@ release-%: ## Release version
 	fi
 
 bin-release-%: ## Bin release version
+	$(call get_build_flags)
 	@if [ "`echo "$*" | grep -E "^openpitrix-v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
-	mkdir deploy/$*-bin; \
-	docker cp openpitrix-api-gateway:/usr/local/bin/op deploy/$*-bin; \
-	docker cp openpitrix-api-gateway:/usr/local/bin/opctl deploy/$*-bin; \
-	docker cp openpitrix-api-gateway:/usr/local/bin/frontgate deploy/$*-bin; \
-	docker cp openpitrix-api-gateway:/usr/local/bin/drone deploy/$*-bin; \
-	cd deploy/ && tar -czvf $*-bin.tar.gz $*-bin; \
+	echo "Release linux version ..."; \
+	mkdir -p deploy/$*-linux-bin; \
+	$(RUN_IN_DOCKER_WITHOUT_GOPATH) sh -c "\
+	$(GO_BUILD_LINUX) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/op $(TRAG.Gopkg)/cmd/op; \
+	$(GO_BUILD_LINUX) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/opctl $(TRAG.Gopkg)/cmd/opctl; \
+	$(GO_BUILD_LINUX) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/drone $(TRAG.Gopkg)/metadata/cmd/drone; \
+	$(GO_BUILD_LINUX) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/frontgate $(TRAG.Gopkg)/metadata/cmd/frontgate; \
+	"; \
+	cp tmp/bin/op tmp/bin/opctl tmp/bin/frontgate tmp/bin/drone deploy/$*-linux-bin; \
+	cd deploy/ && tar -czvf $*-linux-bin.tar.gz $*-linux-bin; cd ../; \
+	echo "Release darwin version ..."; \
+	mkdir -p deploy/$*-darwin-bin; \
+	$(RUN_IN_DOCKER_WITHOUT_GOPATH) sh -c "\
+	$(GO_BUILD_DARWIN) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/op $(TRAG.Gopkg)/cmd/op; \
+	$(GO_BUILD_DARWIN) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/opctl $(TRAG.Gopkg)/cmd/opctl; \
+	$(GO_BUILD_DARWIN) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/drone $(TRAG.Gopkg)/metadata/cmd/drone; \
+	$(GO_BUILD_DARWIN) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/frontgate $(TRAG.Gopkg)/metadata/cmd/frontgate; \
+	"; \
+	cp tmp/bin/op tmp/bin/opctl tmp/bin/frontgate tmp/bin/drone deploy/$*-darwin-bin; \
+	cd deploy/ && tar -czvf $*-darwin-bin.tar.gz $*-darwin-bin; cd ../; \
+	echo "Release windows version ..."; \
+	mkdir -p deploy/$*-windows-bin; \
+	$(RUN_IN_DOCKER_WITHOUT_GOPATH) sh -c "\
+	$(GO_BUILD_WINDOWS) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/op.exe $(TRAG.Gopkg)/cmd/op; \
+	$(GO_BUILD_WINDOWS) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/opctl.exe $(TRAG.Gopkg)/cmd/opctl; \
+	$(GO_BUILD_WINDOWS) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/drone.exe $(TRAG.Gopkg)/metadata/cmd/drone; \
+	$(GO_BUILD_WINDOWS) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/frontgate.exe $(TRAG.Gopkg)/metadata/cmd/frontgate; \
+	"; \
+	cp tmp/bin/op.exe tmp/bin/opctl.exe tmp/bin/frontgate.exe tmp/bin/drone.exe deploy/$*-windows-bin; \
+	cd deploy/ && tar -czvf $*-windows-bin.tar.gz $*-windows-bin; cd ../; \
 	fi
 
 .PHONY: test

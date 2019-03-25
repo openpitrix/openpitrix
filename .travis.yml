@@ -60,7 +60,9 @@ deploy:
   file:
   - deploy/openpitrix-$TRAVIS_TAG-kubernetes.tar.gz
   - deploy/openpitrix-$TRAVIS_TAG-docker-compose.tar.gz
-  - deploy/openpitrix-$TRAVIS_TAG-bin.tar.gz
+  - deploy/openpitrix-$TRAVIS_TAG-linux-bin.tar.gz
+  - deploy/openpitrix-$TRAVIS_TAG-darwin-bin.tar.gz
+  - deploy/openpitrix-$TRAVIS_TAG-windows-bin.tar.gz
   skip_cleanup: true
   on:
     repo: openpitrix/openpitrix
