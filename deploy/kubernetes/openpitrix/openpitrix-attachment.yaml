@@ -14,8 +14,8 @@ spec:
   ports:
   - name: openpitrix-attachment-manager
     protocol: TCP
-    port: 9102
-    targetPort: 9102
+    port: 9120
+    targetPort: 9120
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
@@ -55,7 +55,7 @@ spec:
         command:
           - attachment-manager
         ports:
-        - containerPort: 9102
+        - containerPort: 9120
           name: attachment-mgr
         env:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE

@@ -36,7 +36,13 @@ if [ -f ${NODEPORT_FILE} ];then
   API_NODEPORT=`cat ${NODEPORT_FILE} | grep API_NODEPORT | awk -F '=' '{print "nodePort: "$2}'`
   PILOT_NODEPORT=`cat ${NODEPORT_FILE} | grep PILOT_NODEPORT | awk -F '=' '{print "nodePort: "$2}'`
   DASHBOARD_NODEPORT=`cat ${NODEPORT_FILE} | grep DASHBOARD_NODEPORT | awk -F '=' '{print "nodePort: "$2}'`
+  WEBSOCKET_PORT=`cat ${NODEPORT_FILE} | grep WEBSOCKET_NODEPORT | awk -F '=' '{print $2}'`
 fi
+
+if [[ ! -n "${WEBSOCKET_PORT}" ]]; then
+  WEBSOCKET_PORT="30300"
+fi
+WEBSOCKET_NODEPORT="nodePort: "+${WEBSOCKET_PORT}
 
 CPU_REQUESTS=100
 MEMORY_REQUESTS=100
@@ -233,6 +239,8 @@ replace() {
 	  -e "s!\${API_NODEPORT}!${API_NODEPORT}!g" \
 	  -e "s!\${PILOT_NODEPORT}!${PILOT_NODEPORT}!g" \
 	  -e "s!\${DASHBOARD_NODEPORT}!${DASHBOARD_NODEPORT}!g" \
+	  -e "s!\${WEBSOCKET_PORT}!${WEBSOCKET_PORT}!g" \
+	  -e "s!\${WEBSOCKET_NODEPORT}!${WEBSOCKET_NODEPORT}!g" \
 	  -e "s!\${HOST}!${HOST}!g" \
 	  $1
 }

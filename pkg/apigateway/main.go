@@ -66,7 +66,7 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
 	logger.Info(nil, "Attachment service http://%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort)
 	logger.Info(nil, "Isv service http://%s:%d", constants.IsvManagerHost, constants.IsvManagerPort)
-	logger.Info(nil, "Service config http://%s:%d", constants.ApiGatewayHost, constants.ServiceConfigPort)
+	logger.Info(nil, "Service config http://localhost:%d", constants.ServiceConfigPort)
 
 	cfg.Mysql.Disable = true
 	pi.SetGlobal(cfg)
@@ -220,7 +220,7 @@ func (s *Server) mainHandler() http.Handler {
 		fmt.Sprintf("%s:%d", constants.IsvManagerHost, constants.IsvManagerPort),
 	}, {
 		pb.RegisterServiceConfigHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.ApiGatewayHost, constants.ServiceConfigPort),
+		fmt.Sprintf("localhost:%d", constants.ServiceConfigPort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {
