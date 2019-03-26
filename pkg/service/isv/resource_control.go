@@ -125,6 +125,19 @@ func CreateVendorVerifyInfo(ctx context.Context, vendor *models.VendorVerifyInfo
 	return nil
 }
 
+func GetVendorVerifyInfoCountByCompanyName(ctx context.Context, companyName string) (uint32, error) {
+	count, err := pi.Global().DB(ctx).
+		Select(constants.ColumnCompanyName).
+		From(constants.TableVendorVerifyInfo).
+		Where(db.Eq(constants.ColumnCompanyName, companyName)).
+		Count()
+	if err != nil {
+		logger.Error(ctx, "Failed to get company name count: %+v", err)
+		return 0, err
+	}
+	return count, nil
+}
+
 func GetVendorVerifyInfo(ctx context.Context, appVendorUserId string) (*models.VendorVerifyInfo, error) {
 	vendor := &models.VendorVerifyInfo{}
 	vendorColumns := db.GetColumnsFromStruct(&models.VendorVerifyInfo{})

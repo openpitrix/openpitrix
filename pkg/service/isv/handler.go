@@ -83,6 +83,13 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
 		}
 	} else {
+		count, err := GetVendorVerifyInfoCountByCompanyName(ctx, vendor.CompanyName)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		}
+		if count > 0 {
+			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorCompanyNameExists, vendor.CompanyName)
+		}
 		err = CreateVendorVerifyInfo(ctx, vendor)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
