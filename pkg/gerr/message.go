@@ -337,6 +337,11 @@ var (
 		en:   "app version [%s:%s] exists",
 		zhCN: "应用版本[%s:%s]已存在",
 	}
+	ErrorCompanyNameExists = ErrorMessage{
+		Name: "company_name_exists",
+		en:   "company name [%s] exists",
+		zhCN: "公司名称[%s]已存在",
+	}
 	ErrorCannotAccessRepo = ErrorMessage{
 		Name: "cannot_access_repo",
 		en:   "cannot access repo",
