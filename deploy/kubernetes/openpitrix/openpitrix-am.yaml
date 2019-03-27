@@ -60,11 +60,11 @@ spec:
         env:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
           value: 'true'
-        - name: OPENPITRIX_LOG_LEVEL
+        - name: AM_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
-        - name: OPENPITRIX_MYSQL_DATABASE
+        - name: AM_DB_DATABASE
           value: "am"
-        - name: OPENPITRIX_MYSQL_PASSWORD
+        - name: AM_DB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password.txt

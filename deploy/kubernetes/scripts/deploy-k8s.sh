@@ -25,7 +25,7 @@ TASK_REPLICA=1
 API_NODEPORT=""
 PILOT_NODEPORT=""
 DASHBOARD_NODEPORT=""
-
+DB_LOG_MODE_ENABLE="true"
 # use nodePort for api/pilot/dashboard service
 # $cat ${NODEPORT_FILE}
 # API_NODEPORT=31009
@@ -173,61 +173,28 @@ if [ "${VERSION}" == "" ];then
   VERSION=$(curl -L -s https://api.github.com/repos/openpitrix/openpitrix/releases/latest | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/")
 fi
 
-if [ "${VERSION}" == "latest" ];then
-  IMAGE="openpitrix/openpitrix:latest"
-  METADATA_IMAGE="openpitrix/openpitrix:metadata"
-  FLYWAY_IMAGE="openpitrix/openpitrix:flyway"
-  DASHBOARD_IMAGE="openpitrix/dashboard:latest"
-  IM_IMAGE="kubespheredev/im:latest"
-  IM_FLYWAY_IMAGE="kubespheredev/im:flyway"
-  AM_IMAGE="openpitrix/iam:latest"
-  AM_FLYWAY_IMAGE="openpitrix/iam:flyway"
-  NOTIFICATION_IMAGE="openpitrix/notification:latest"
-  NOTIFICATION_FLYWAY_IMAGE="openpitrix/notification:flyway"
-  IMAGE_PULL_POLICY="Always"
-else
-  IMAGE="openpitrix/openpitrix:${VERSION}"
-  METADATA_IMAGE="openpitrix/openpitrix:metadata-${VERSION}"
-  FLYWAY_IMAGE="openpitrix/openpitrix:flyway-${VERSION}"
-  IM_IMAGE="kubespheredev/im:latest-${VERSION}"
-  IM_FLYWAY_IMAGE="kubespheredev/im:flyway-${VERSION}"
-  AM_IMAGE="openpitrix/iam:latest-${VERSION}"
-  AM_FLYWAY_IMAGE="openpitrix/iam:flyway-${VERSION}"
-  NOTIFICATION_IMAGE="openpitrix/notification:latest-${VERSION}"
-  NOTIFICATION_FLYWAY_IMAGE="openpitrix/notification:flyway-${VERSION}"
+## export image versions
+source ./version.sh
+export_image_version ${VERSION}
 
-  curl -L -s https://api.github.com/repos/openpitrix/dashboard/releases | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/" | grep ${VERSION}
-  if [ $? == 0 ];then
-    DASHBOARD_IMAGE="openpitrix/dashboard:${VERSION}"
-  else
-  	MAJOR_VERSION=`echo ${VERSION} | awk -F '.' '{print $1}'`
-    for version_item in `curl -L -s https://api.github.com/repos/openpitrix/dashboard/releases | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/"`;do
-      echo version_item | grep ${MAJOR_VERSION}
-      if [ $? == 0 ];then
-        DASHBOARD_VERSION=${version_item}
-        break
-      fi
-    done
-    if [ "${DASHBOARD_VERSION}" == "" ];then
-      DASHBOARD_VERSION="latest"
-    fi
-    DASHBOARD_IMAGE="openpitrix/dashboard:${DASHBOARD_VERSION}"
-  fi
-  IMAGE_PULL_POLICY="IfNotPresent"
+if [[ "x${VERSION}" == "xlatest" ]];then
+	IMAGE_PULL_POLICY=Always
+else
+    IMAGE_PULL_POLICY=IfNotPresent
 fi
 
 replace() {
   sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" \
-      -e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
-      -e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
-      -e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
-      -e "s!\${AM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
-      -e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
-      -e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
 	  -e "s!\${IMAGE}!${IMAGE}!g" \
 	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
 	  -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" \
 	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" \
+      -e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
+      -e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
+      -e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
+      -e "s!\${AM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
+      -e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
+      -e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
 	  -e "s!\${CPU_REQUESTS}!${CPU_REQUESTS}!g" \
 	  -e "s!\${MEMORY_REQUESTS}!${MEMORY_REQUESTS}!g" \
 	  -e "s!\${CPU_LIMITS}!${CPU_LIMITS}!g" \
@@ -242,6 +209,7 @@ replace() {
 	  -e "s!\${WEBSOCKET_PORT}!${WEBSOCKET_PORT}!g" \
 	  -e "s!\${WEBSOCKET_NODEPORT}!${WEBSOCKET_NODEPORT}!g" \
 	  -e "s!\${HOST}!${HOST}!g" \
+	  -e "s!\${DB_LOG_MODE_ENABLE}!${DB_LOG_MODE_ENABLE}!g" \
 	  $1
 }
 
