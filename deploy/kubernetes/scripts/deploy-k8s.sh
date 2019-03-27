@@ -173,29 +173,29 @@ if [ "${VERSION}" == "" ];then
   VERSION=$(curl -L -s https://api.github.com/repos/openpitrix/openpitrix/releases/latest | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/")
 fi
 
-IM_IMAGE="kubespheredev/im:latest"
-IM_FLYWAY_IMAGE="kubespheredev/im:flyway"
-AM_IMAGE="openpitrix/iam:latest"
-AM_FLYWAY_IMAGE="openpitrix/iam:flyway"
-NOTIFICATION_IMAGE="openpitrix/notification:latest"
-NOTIFICATION_FLYWAY_IMAGE="openpitrix/notification:flyway"
-
-if [ "${VERSION}" == "dev" ];then
-  IMAGE="openpitrix/openpitrix-dev:latest"
-  METADATA_IMAGE="openpitrix/openpitrix-dev:metadata"
-  FLYWAY_IMAGE="openpitrix/openpitrix-dev:flyway"
-  DASHBOARD_IMAGE="openpitrix/dashboard:latest"
-  IMAGE_PULL_POLICY="Always"
-elif [ "${VERSION}" == "latest" ];then
+if [ "${VERSION}" == "latest" ];then
   IMAGE="openpitrix/openpitrix:latest"
   METADATA_IMAGE="openpitrix/openpitrix:metadata"
   FLYWAY_IMAGE="openpitrix/openpitrix:flyway"
   DASHBOARD_IMAGE="openpitrix/dashboard:latest"
+  IM_IMAGE="kubespheredev/im:latest"
+  IM_FLYWAY_IMAGE="kubespheredev/im:flyway"
+  AM_IMAGE="openpitrix/iam:latest"
+  AM_FLYWAY_IMAGE="openpitrix/iam:flyway"
+  NOTIFICATION_IMAGE="openpitrix/notification:latest"
+  NOTIFICATION_FLYWAY_IMAGE="openpitrix/notification:flyway"
   IMAGE_PULL_POLICY="Always"
 else
   IMAGE="openpitrix/openpitrix:${VERSION}"
   METADATA_IMAGE="openpitrix/openpitrix:metadata-${VERSION}"
   FLYWAY_IMAGE="openpitrix/openpitrix:flyway-${VERSION}"
+  IM_IMAGE="kubespheredev/im:latest-${VERSION}"
+  IM_FLYWAY_IMAGE="kubespheredev/im:flyway-${VERSION}"
+  AM_IMAGE="openpitrix/iam:latest-${VERSION}"
+  AM_FLYWAY_IMAGE="openpitrix/iam:flyway-${VERSION}"
+  NOTIFICATION_IMAGE="openpitrix/notification:latest-${VERSION}"
+  NOTIFICATION_FLYWAY_IMAGE="openpitrix/notification:flyway-${VERSION}"
+
   curl -L -s https://api.github.com/repos/openpitrix/dashboard/releases | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/" | grep ${VERSION}
   if [ $? == 0 ];then
     DASHBOARD_IMAGE="openpitrix/dashboard:${VERSION}"
@@ -221,7 +221,7 @@ replace() {
       -e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
       -e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
       -e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
-      -e "s!\${IM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
+      -e "s!\${AM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
       -e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
       -e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
 	  -e "s!\${IMAGE}!${IMAGE}!g" \
