@@ -60,9 +60,9 @@ func (p *Server) SetServiceConfig(ctx context.Context, req *pb.SetServiceConfigR
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorSetNotificationConfig)
 		}
 	} else if req.RuntimeConfig != nil {
-		for _, config := range req.RuntimeConfig.ConfigSet {
-			name := config.GetName().GetValue()
-			enable := config.GetEnable().GetValue()
+		for _, cfg := range req.RuntimeConfig.ConfigSet {
+			name := cfg.GetName().GetValue()
+			enable := cfg.GetEnable().GetValue()
 			runtimeProviderConfig, isExist := pi.Global().GlobalConfig().Runtime[name]
 			if !isExist {
 				return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorUnsupportedRuntimeProvider, name)
