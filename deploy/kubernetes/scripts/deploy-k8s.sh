@@ -39,7 +39,7 @@ if [ -f ${NODEPORT_FILE} ];then
   WEBSOCKET_PORT=`cat ${NODEPORT_FILE} | grep WEBSOCKET_NODEPORT | awk -F '=' '{print $2}'`
 fi
 
-if [[ ! -n "${WEBSOCKET_PORT}" ]]; then
+if [ ! -n "${WEBSOCKET_PORT}" ]; then
   WEBSOCKET_PORT="30300"
 fi
 WEBSOCKET_NODEPORT="nodePort: "+${WEBSOCKET_PORT}
@@ -174,8 +174,9 @@ if [ "${VERSION}" == "" ];then
 fi
 
 ## export image versions
-source ./version.sh
-export_image_version ${VERSION}
+source ../../version.sh
+OPENPITRIX_IMAGE_VERSION=`get_image_version openpitrix-${VERSION}`
+export ${OPENPITRIX_IMAGE_VERSION}
 
 if [[ "x${VERSION}" == "xlatest" ]];then
 	IMAGE_PULL_POLICY=Always
@@ -187,7 +188,6 @@ replace() {
   sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" \
 	  -e "s!\${IMAGE}!${IMAGE}!g" \
 	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
-	  -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" \
 	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" \
       -e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
       -e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
