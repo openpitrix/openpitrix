@@ -63,7 +63,7 @@ spec:
         - name: socketUrl
           value: ws://openpitrix-api-gateway:9100/v1/io
         - name: socketProxyPort
-          value: ${WEBSOCKET_PORT}
+          value: "${WEBSOCKET_PORT}"
         - name: clientId
           valueFrom:
             secretKeyRef:
