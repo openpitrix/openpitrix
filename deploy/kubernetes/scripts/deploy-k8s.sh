@@ -272,7 +272,7 @@ if [ "${BASE}" == "1" ] || [ "${ALL}" == "1" ];then
   done
 fi
 if [ "${METADATA}" == "1" ] || [ "${ALL}" == "1" ];then
-  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST}
+  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST} -t metadata
   if [ $? -ne 0 ]; then
 	echo "Deploy failed."
 	exit 1
@@ -309,7 +309,7 @@ if [ "${INGRESS}" == "1" ] || [ "${ALL}" == "1" ];then
     kubectl create namespace ingress-nginx
   fi
 
-  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST}
+  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST} -t ingress
   for FILE in `ls ./kubernetes/openpitrix/ingress/`;do
     apply_yaml ${VERSION} ingress/${FILE}
   done

@@ -61,7 +61,7 @@ spec:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
           value: 'true'
         - name: OPENPITRIX_LOG_LEVEL
-          value: "${OPENPITRIX_LOG_LEVEL}"
+          value: ${OPENPITRIX_LOG_LEVEL}
         resources:
           limits:
             cpu: ${CPU_LIMITS}m

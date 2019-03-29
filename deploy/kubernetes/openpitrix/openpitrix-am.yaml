@@ -59,7 +59,7 @@ spec:
           name: am-service
         env:
         - name: AM_LOG_LEVEL
-          value: "${OPENPITRIX_LOG_LEVEL}"
+          value: ${OPENPITRIX_LOG_LEVEL}
         - name: AM_IM_HOST
           value: "openpitrix-im-service"
         - name: AM_IM_PORT
