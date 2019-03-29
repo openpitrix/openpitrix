@@ -50,7 +50,7 @@ spec:
         command: ['sh', '-c', 'until nc -z openpitrix-rp-manager.${NAMESPACE}.svc 9121; do echo "waiting for runtime-manager"; sleep 2; done;']
       containers:
       - name: openpitrix-rp-aliyun
-        image: openpitrix/runtime-provider-aliyun
+        image: ${RP_ALIYUN_IMAGE}
         imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
           - runtime-provider

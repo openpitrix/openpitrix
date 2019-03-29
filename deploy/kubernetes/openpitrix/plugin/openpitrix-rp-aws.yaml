@@ -50,7 +50,7 @@ spec:
         command: ['sh', '-c', 'until nc -z openpitrix-rp-manager.${NAMESPACE}.svc 9121; do echo "waiting for runtime-manager"; sleep 2; done;']
       containers:
       - name: openpitrix-rp-aws
-        image: openpitrix/runtime-provider-aws
+        image: ${RP_AWS_IMAGE}
         imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
           - runtime-provider

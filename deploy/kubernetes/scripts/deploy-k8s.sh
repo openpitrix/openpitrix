@@ -202,6 +202,10 @@ replace() {
 		-e "s!\${AM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
 		-e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
 		-e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
+	  -e "s!\${RP_QINGCLOUD_IMAGE}!${RP_QINGCLOUD_IMAGE}!g" \
+	  -e "s!\${RP_AWS_IMAGE}!${RP_AWS_IMAGE}!g" \
+	  -e "s!\${RP_ALIYUN_IMAGE}!${RP_ALIYUN_IMAGE}!g" \
+	  -e "s!\${RP_K8S_IMAGE}!${RP_K8S_IMAGE}!g" \
 	  -e "s!\${CPU_REQUESTS}!${CPU_REQUESTS}!g" \
 	  -e "s!\${MEMORY_REQUESTS}!${MEMORY_REQUESTS}!g" \
 	  -e "s!\${CPU_LIMITS}!${CPU_LIMITS}!g" \
