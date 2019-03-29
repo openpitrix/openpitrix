@@ -4,7 +4,7 @@ echo "Deploying k8s resource..."
 
 [ -z `which kubectl` ] && echo "Deployed failed: You need to install 'kubectl' first." && exit 1
 
-# Back to the root of the project
+# Back to the root of the project(../deploy/)
 cd $(dirname $0)
 cd ../..
 
@@ -25,7 +25,7 @@ TASK_REPLICA=1
 API_NODEPORT=""
 PILOT_NODEPORT=""
 DASHBOARD_NODEPORT=""
-DB_LOG_MODE_ENABLE="true"
+DB_LOG_MODE_ENABLE=true
 # use nodePort for api/pilot/dashboard service
 # $cat ${NODEPORT_FILE}
 # API_NODEPORT=31009
@@ -40,7 +40,7 @@ if [ -f ${NODEPORT_FILE} ];then
 fi
 
 if [ ! -n "${WEBSOCKET_PORT}" ]; then
-  WEBSOCKET_PORT="30300"
+  WEBSOCKET_PORT=30300
 fi
 WEBSOCKET_NODEPORT="nodePort: "+${WEBSOCKET_PORT}
 
@@ -174,9 +174,16 @@ if [ "${VERSION}" == "" ];then
 fi
 
 ## export image versions
-source ../../version.sh
+set +e
+source ./version.sh
 OPENPITRIX_IMAGE_VERSION=`get_image_version openpitrix-${VERSION}`
-export ${OPENPITRIX_IMAGE_VERSION}
+if [ $? == 0 ]; then
+  export ${OPENPITRIX_IMAGE_VERSION}
+else
+  # echo error message
+  echo ${OPENPITRIX_IMAGE_VERSION}
+  exit 1
+fi
 
 if [[ "x${VERSION}" == "xlatest" ]];then
 	IMAGE_PULL_POLICY=Always

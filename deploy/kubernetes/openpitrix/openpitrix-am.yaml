@@ -63,7 +63,7 @@ spec:
         - name: AM_IM_HOST
           value: "openpitrix-im-service"
         - name: AM_IM_PORT
-          value: "9119"
+          value: 9119
         - name: AM_DB_LOG_MODE_ENABLE
           value: ${DB_LOG_MODE_ENABLE}
         - name: AM_DB_HOST
