@@ -55,7 +55,7 @@ spec:
           name: rp-manager
         env:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
-          value: 'true'
+          value: "${GRPC_SHOW_ERROR_CAUSE}"
         - name: OPENPITRIX_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
         resources:

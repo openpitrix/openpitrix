@@ -4,7 +4,7 @@ echo "Deploying k8s resource..."
 
 [ -z `which kubectl` ] && echo "Deployed failed: You need to install 'kubectl' first." && exit 1
 
-# Back to the root of the project(../deploy/)
+# Back to the root of the project
 cd $(dirname $0)
 cd ../..
 
@@ -27,6 +27,7 @@ PILOT_NODEPORT=""
 DASHBOARD_NODEPORT=""
 OPENPITRIX_LOG_LEVEL="info"
 DB_LOG_MODE_ENABLE="true"
+GRPC_SHOW_ERROR_CAUSE="true"
 # use nodePort for api/pilot/dashboard service
 # $cat ${NODEPORT_FILE}
 # API_NODEPORT=31009
@@ -175,9 +176,7 @@ if [ "${VERSION}" == "" ];then
 fi
 
 ## export image versions
-set +e
-source ./version.sh
-OPENPITRIX_IMAGE_VERSION=`get_image_version openpitrix-${VERSION}`
+OPENPITRIX_IMAGE_VERSION=`./version.sh openpitrix-${VERSION}`
 if [ $? == 0 ]; then
   export ${OPENPITRIX_IMAGE_VERSION}
 else
@@ -186,7 +185,7 @@ else
   exit 1
 fi
 
-if [[ "x${VERSION}" == "xlatest" ]];then
+if [ "x${VERSION}" == "xlatest" ];then
 	IMAGE_PULL_POLICY=Always
 else
     IMAGE_PULL_POLICY=IfNotPresent
@@ -197,12 +196,12 @@ replace() {
 	  -e "s!\${IMAGE}!${IMAGE}!g" \
 	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
 	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" \
-      -e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
-      -e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
-      -e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
-      -e "s!\${AM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
-      -e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
-      -e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
+		-e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
+		-e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
+		-e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
+		-e "s!\${AM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
+		-e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
+		-e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
 	  -e "s!\${CPU_REQUESTS}!${CPU_REQUESTS}!g" \
 	  -e "s!\${MEMORY_REQUESTS}!${MEMORY_REQUESTS}!g" \
 	  -e "s!\${CPU_LIMITS}!${CPU_LIMITS}!g" \
@@ -218,6 +217,7 @@ replace() {
 	  -e "s!\${WEBSOCKET_NODEPORT}!${WEBSOCKET_NODEPORT}!g" \
 	  -e "s!\${HOST}!${HOST}!g" \
 	  -e "s!\${DB_LOG_MODE_ENABLE}!${DB_LOG_MODE_ENABLE}!g" \
+	  -e "s!\${GRPC_SHOW_ERROR_CAUSE}!${GRPC_SHOW_ERROR_CAUSE}!g" \
 	  $1
 }
 
