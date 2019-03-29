@@ -53,6 +53,7 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-etcd:
     image: "quay.io/coreos/etcd:v3.2.18"
     command: etcd --data-dir /data --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://openpitrix-etcd:2379 --max-snapshots 5 --max-wals 5 --auto-compaction-retention=168
@@ -66,6 +67,7 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-minio:
     image: "minio/minio:RELEASE.2018-09-25T21-34-43Z"
     command: -c "mkdir -p /data/openpitrix-attachment /data/openpitrix-internal-repo/vmbased /data/openpitrix-internal-repo/helm && minio server /data"
@@ -83,6 +85,7 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-dashboard:
     image: "openpitrix/dashboard:latest"
     ports:
@@ -104,6 +107,7 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-api-gateway:
     build: .
     image: "openpitrix"
@@ -156,6 +160,7 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-repo-indexer:
     build: .
     image: "openpitrix"
@@ -179,7 +184,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-repo-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    image: "dhoer/flyway:5.1.4-mysql-8.0.11-alpine"
     command: -url=jdbc:mysql://openpitrix-db/repo -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
       - ./pkg/db/schema/repo:/flyway/sql
@@ -211,6 +216,17 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-app-db-ctrl:
+    image: "dhoer/flyway:5.1.4-mysql-8.0.11-alpine"
+    command: -url=jdbc:mysql://openpitrix-db/app -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/app:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db-init
+    container_name: "openpitrix-app-db-ctrl"
+
   openpitrix-category-manager:
     build: .
     image: "openpitrix"
@@ -231,16 +247,6 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
-  openpitrix-app-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
-    command: -url=jdbc:mysql://openpitrix-db/app -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
-    volumes:
-      - ./pkg/db/schema/app:/flyway/sql
-    links:
-      - openpitrix-db:openpitrix-db
-    depends_on:
-      - openpitrix-db-init
-    container_name: "openpitrix-app-db-ctrl"
 
   # runtime service
   openpitrix-runtime-manager:
@@ -264,7 +270,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-runtime-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    image: "dhoer/flyway:5.1.4-mysql-8.0.11-alpine"
     command: -url=jdbc:mysql://openpitrix-db/runtime -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
       - ./pkg/db/schema/runtime:/flyway/sql
@@ -391,7 +397,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-job-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    image: "dhoer/flyway:5.1.4-mysql-8.0.11-alpine"
     command: -url=jdbc:mysql://openpitrix-db/job -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
       - ./pkg/db/schema/job:/flyway/sql
@@ -423,7 +429,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-task-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    image: "dhoer/flyway:5.1.4-mysql-8.0.11-alpine"
     command: -url=jdbc:mysql://openpitrix-db/task -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
       - ./pkg/db/schema/task:/flyway/sql
@@ -455,7 +461,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-cluster-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    image: "dhoer/flyway:5.1.4-mysql-8.0.11-alpine"
     command: -url=jdbc:mysql://openpitrix-db/cluster -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
       - ./pkg/db/schema/cluster:/flyway/sql
@@ -493,7 +499,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-iam-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    image: "dhoer/flyway:5.1.4-mysql-8.0.11-alpine"
     command: -url=jdbc:mysql://openpitrix-db/iam -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
       - ./pkg/db/schema/iam:/flyway/sql
@@ -525,7 +531,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-im-db-ctrl:
-    image: kubespheredev/im:flyway
+    image: "kubespheredev/im:flyway"
     command: -url=jdbc:mysql://openpitrix-db/im -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     links:
       - openpitrix-db:openpitrix-db
@@ -556,7 +562,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-am-db-ctrl:
-    image: openpitrix/iam:flyway
+    image: "openpitrix/iam:flyway"
     command: -url=jdbc:mysql://openpitrix-db/am -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     links:
       - openpitrix-db:openpitrix-db
@@ -611,7 +617,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-attachment-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    image: "dhoer/flyway:5.1.4-mysql-8.0.11-alpine"
     command: -url=jdbc:mysql://openpitrix-db/attachment -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
     - ./pkg/db/schema/attachment:/flyway/sql
@@ -643,7 +649,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-isv-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    image: "dhoer/flyway:5.1.4-mysql-8.0.11-alpine"
     command: -url=jdbc:mysql://openpitrix-db/isv -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
       - ./pkg/db/schema/isv:/flyway/sql
@@ -676,7 +682,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-notification-db-ctrl:
-    image: openpitrix/notification:flyway
+    image: "openpitrix/notification:flyway"
     command: -url=jdbc:mysql://openpitrix-db/notification -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     links:
       - openpitrix-db:openpitrix-db

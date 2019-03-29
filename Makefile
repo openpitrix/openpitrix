@@ -35,7 +35,6 @@ endef
 
 COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-isv-manager openpitrix-notification openpitrix-im-service openpitrix-am-service
 COMPOSE_DB_CTRL=openpitrix-db-init openpitrix-im-db-init openpitrix-am-db-init openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-attachment-db-ctrl openpitrix-isv-db-ctrl openpitrix-notification-db-ctrl openpitrix-im-db-ctrl openpitrix-am-db-ctrl
-COMPOSE_RUNTIME_PROVIDER=openpitrix-rp-aliyun openpitrix-rp-qingcloud openpitrix-rp-aws openpitrix-rp-kubernetes
 CMD?=...
 WITH_METADATA?=yes
 WITH_K8S=no
@@ -163,7 +162,10 @@ compose-put-global-config: ## Put global config in docker compose
 	@test -s deploy/config/global_config.yaml || { echo "[deploy/config/global_config.yaml] not exist"; exit 1; }
 	cat deploy/config/global_config.yaml | docker run -i --rm openpitrix opctl validate_global_config
 	cat deploy/config/global_config.yaml | docker-compose exec -T openpitrix-etcd /bin/sh -c "export ETCDCTL_API=3 && etcdctl put openpitrix/global_config"
-	docker restart $(COMPOSE_RUNTIME_PROVIDER)
+
+.PHONY: compose-get-global-config
+compose-get-global-config: ## Get global config in docker compose
+	docker-compose exec -T openpitrix-etcd /bin/sh -c "export ETCDCTL_API=3 && etcdctl get openpitrix/global_config --print-value-only" > deploy/config/global_config.yaml
 
 .PHONY: generate-certs
 generate-certs: ## Generate tls certificates
@@ -187,8 +189,11 @@ release-%: ## Release version
 	cp -r deploy/config deploy/kubernetes deploy/$*-kubernetes/; \
 	cd deploy/ && tar -czvf $*-kubernetes.tar.gz $*-kubernetes; \
 	cd ../; \
+	rm -rf deploy/$*-docker-compose*; \
 	mkdir deploy/$*-docker-compose; \
 	cp -r deploy/docker-compose/. deploy/$*-docker-compose; \
+	echo `./deploy/version.sh $*` >> deploy/$*-docker-compose/.env; \
+	sed -i 's/ /\n/g' deploy/$*-docker-compose/.env; \
 	cp -r deploy/config/global_config.init.yaml deploy/$*-docker-compose/global_config.yaml; \
 	cd deploy/ && tar -czvf $*-docker-compose.tar.gz $*-docker-compose; \
 	fi
