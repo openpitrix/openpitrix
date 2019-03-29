@@ -59,13 +59,13 @@ spec:
           name: am-service
         env:
         - name: AM_LOG_LEVEL
-          value: ${OPENPITRIX_LOG_LEVEL}
+          value: "${OPENPITRIX_LOG_LEVEL}"
         - name: AM_IM_HOST
           value: "openpitrix-im-service"
         - name: AM_IM_PORT
-          value: 9119
+          value: "9119"
         - name: AM_DB_LOG_MODE_ENABLE
-          value: ${DB_LOG_MODE_ENABLE}
+          value: "${DB_LOG_MODE_ENABLE}"
         - name: AM_DB_HOST
           value: "openpitrix-db"
         - name: AM_DB_DATABASE

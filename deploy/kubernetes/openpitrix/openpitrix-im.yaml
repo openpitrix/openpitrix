@@ -59,11 +59,9 @@ spec:
           name: im-service
         env:
         - name: IM_LOG_LEVEL
-          value: ${OPENPITRIX_LOG_LEVEL}
+          value: "${OPENPITRIX_LOG_LEVEL}"
         - name: IM_DB_LOG_MODE_ENABLE
-          value: ${DB_LOG_MODE_ENABLE}
-        - name: IM_LOG_LEVEL
-          value: ${OPENPITRIX_LOG_LEVEL}
+          value: "${DB_LOG_MODE_ENABLE}"
         - name: IM_DB_HOST
           value: "openpitrix-db"
         - name: IM_DB_DATABASE
