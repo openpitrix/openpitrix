@@ -827,12 +827,15 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 
 	noNeedIsvReview := accessClient.CheckActionBundleUser(ctx, []string{constants.ActionBundleIsvReview}, s.UserId)
 	if noNeedIsvReview {
+		// When DescribeAppVersionReviews, need sort by create time
+		time.Sleep(1 * time.Second)
 		operatorType := constants.OperatorTypeIsv
 		version, _ = CheckAppVersionPermission(ctx, versionId)
 		err = startAppVersionReview(ctx, version, operatorType)
 		if err != nil {
 			return nil, err
 		}
+		time.Sleep(1 * time.Second)
 		version, _ = CheckAppVersionPermission(ctx, versionId)
 		err = passAppVersionReview(ctx, version, constants.OperatorTypeIsv)
 		if err != nil {
