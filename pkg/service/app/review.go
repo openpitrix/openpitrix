@@ -194,10 +194,10 @@ func startAppVersionReview(ctx context.Context, version *models.AppVersion, oper
 		if err != nil {
 			return err
 		}
-		err = addAppVersionAudit(ctx, version, constants.StatusInReview, operatorType, "")
-		if err != nil {
-			return err
-		}
+	}
+	err = addAppVersionAudit(ctx, version, constants.StatusInReview, operatorType, "")
+	if err != nil {
+		return err
 	}
 	return nil
 }
