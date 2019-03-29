@@ -31,7 +31,7 @@ cd $(dirname $0)
 cd ../..
 cd ./kubernetes/tls-config
 
-if [ x${TYPE} == "all" ] || [ x${TYPE} == "metadata" ] || [ x${TYPE} == "" ]; then
+if [ "x${TYPE}" == "xall" ] || [ "x${TYPE}" == "xmetadata" ] || [ "x${TYPE}" == "x" ]; then
   make pilot-server.crt
   make pilot-client.crt
 	SECRETS=("openpitrix-ca.crt" "pilot-server.crt" "pilot-server.key" "pilot-client.crt" "pilot-client.key")
@@ -41,7 +41,7 @@ if [ x${TYPE} == "all" ] || [ x${TYPE} == "metadata" ] || [ x${TYPE} == "" ]; th
 	done
 fi
 
-if [ x${TYPE} == "all" ] || [ x${TYPE} == "ingress" ] || [ x${TYPE} == "" ]; then
+if [ "x${TYPE}" == "xall" ] || [ "x${TYPE}" == "xingress" ] || [ "x${TYPE}" == "x" ]; then
 	make ingress.crt-${HOST}
 	kubectl create secret tls ingress-tls --key ingress.key --cert ingress.crt -n ${NAMESPACE} || true
 fi

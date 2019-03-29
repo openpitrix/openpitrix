@@ -39,26 +39,22 @@ openpitrix_v0_4_0="
 "
 
 ## Usage:
-## source version.sh
-## get_image_version [openpitrix_${version}]
+## sh version.sh [openpitrix_${version}]
 
-get_image_version()
-{
-	VERSION=$1
-	DEFAULT_VERSION="openpitrix_latest"
-	if [ "x${VERSION}" == x"" ]; then
-		VERSION=${DEFAULT_VERSION}
-	fi
+VERSION=$1
+DEFAULT_VERSION="openpitrix_latest"
+if [ "x${VERSION}" == "x" ]; then
+	VERSION=${DEFAULT_VERSION}
+fi
 
-	OP_VERSION=${VERSION//[.-]/_}
-	VERSIONS=`eval echo '$'"${OP_VERSION}"`
-	# check if the given version exist
-	if [ "x${VERSIONS}" == x"" ]; then
-		echo "The version ${OP_VERSION} of openpitrix not exist!"
-		exit 1
-	fi
+OP_VERSION=${VERSION//[.-]/_}
+VERSIONS=`eval echo '$'"${OP_VERSION}"`
+# check if the given version exist
+if [ "x${VERSIONS}" == "x" ]; then
+	echo "The version ${VERSION} of openpitrix not exist!"
+	exit 1
+fi
 
-	for V in ${VERSIONS} ; do
-		echo ${V}
-	done
-}
+for V in ${VERSIONS} ; do
+	echo ${V}
+done
