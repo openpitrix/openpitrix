@@ -184,7 +184,7 @@ compose-down: ## Shutdown docker compose
 release-%: ## Release version
 	@if [ "`echo "$*" | grep -E "^openpitrix-v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
 	mkdir deploy/$*-kubernetes; \
-	cp -r deploy/config deploy/kubernetes deploy/$*-kubernetes/; \
+	cp -r deploy/config deploy/kubernetes deploy/*.sh deploy/$*-kubernetes/; \
 	cd deploy/ && tar -czvf $*-kubernetes.tar.gz $*-kubernetes; \
 	cd ../; \
 	mkdir deploy/$*-docker-compose; \

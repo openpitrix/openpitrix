@@ -58,13 +58,19 @@ spec:
         - containerPort: 9120
           name: am-service
         env:
-        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
-          value: 'true'
-        - name: OPENPITRIX_LOG_LEVEL
+        - name: AM_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
-        - name: OPENPITRIX_MYSQL_DATABASE
+        - name: AM_IM_HOST
+          value: "openpitrix-im-service"
+        - name: AM_IM_PORT
+          value: "9119"
+        - name: AM_DB_LOG_MODE_ENABLE
+          value: "${DB_LOG_MODE_ENABLE}"
+        - name: AM_DB_HOST
+          value: "openpitrix-db"
+        - name: AM_DB_DATABASE
           value: "am"
-        - name: OPENPITRIX_MYSQL_PASSWORD
+        - name: AM_DB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password.txt

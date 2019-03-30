@@ -25,7 +25,9 @@ TASK_REPLICA=1
 API_NODEPORT=""
 PILOT_NODEPORT=""
 DASHBOARD_NODEPORT=""
-
+OPENPITRIX_LOG_LEVEL="info"
+DB_LOG_MODE_ENABLE="true"
+GRPC_SHOW_ERROR_CAUSE="true"
 # use nodePort for api/pilot/dashboard service
 # $cat ${NODEPORT_FILE}
 # API_NODEPORT=31009
@@ -39,8 +41,8 @@ if [ -f ${NODEPORT_FILE} ];then
   WEBSOCKET_PORT=`cat ${NODEPORT_FILE} | grep WEBSOCKET_NODEPORT | awk -F '=' '{print $2}'`
 fi
 
-if [[ ! -n "${WEBSOCKET_PORT}" ]]; then
-  WEBSOCKET_PORT="30300"
+if [ ! -n "${WEBSOCKET_PORT}" ]; then
+  WEBSOCKET_PORT=30300
 fi
 WEBSOCKET_NODEPORT="nodePort: "+${WEBSOCKET_PORT}
 
@@ -173,61 +175,37 @@ if [ "${VERSION}" == "" ];then
   VERSION=$(curl -L -s https://api.github.com/repos/openpitrix/openpitrix/releases/latest | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/")
 fi
 
-IM_IMAGE="kubespheredev/im:latest"
-IM_FLYWAY_IMAGE="kubespheredev/im:flyway"
-AM_IMAGE="openpitrix/iam:latest"
-AM_FLYWAY_IMAGE="openpitrix/iam:flyway"
-NOTIFICATION_IMAGE="openpitrix/notification:latest"
-NOTIFICATION_FLYWAY_IMAGE="openpitrix/notification:flyway"
-
-if [ "${VERSION}" == "dev" ];then
-  IMAGE="openpitrix/openpitrix-dev:latest"
-  METADATA_IMAGE="openpitrix/openpitrix-dev:metadata"
-  FLYWAY_IMAGE="openpitrix/openpitrix-dev:flyway"
-  DASHBOARD_IMAGE="openpitrix/dashboard:latest"
-  IMAGE_PULL_POLICY="Always"
-elif [ "${VERSION}" == "latest" ];then
-  IMAGE="openpitrix/openpitrix:latest"
-  METADATA_IMAGE="openpitrix/openpitrix:metadata"
-  FLYWAY_IMAGE="openpitrix/openpitrix:flyway"
-  DASHBOARD_IMAGE="openpitrix/dashboard:latest"
-  IMAGE_PULL_POLICY="Always"
+## export image versions
+OPENPITRIX_IMAGE_VERSION=`./version.sh openpitrix-${VERSION}`
+if [ $? == 0 ]; then
+  export ${OPENPITRIX_IMAGE_VERSION}
 else
-  IMAGE="openpitrix/openpitrix:${VERSION}"
-  METADATA_IMAGE="openpitrix/openpitrix:metadata-${VERSION}"
-  FLYWAY_IMAGE="openpitrix/openpitrix:flyway-${VERSION}"
-  curl -L -s https://api.github.com/repos/openpitrix/dashboard/releases | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/" | grep ${VERSION}
-  if [ $? == 0 ];then
-    DASHBOARD_IMAGE="openpitrix/dashboard:${VERSION}"
-  else
-  	MAJOR_VERSION=`echo ${VERSION} | awk -F '.' '{print $1}'`
-    for version_item in `curl -L -s https://api.github.com/repos/openpitrix/dashboard/releases | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/"`;do
-      echo version_item | grep ${MAJOR_VERSION}
-      if [ $? == 0 ];then
-        DASHBOARD_VERSION=${version_item}
-        break
-      fi
-    done
-    if [ "${DASHBOARD_VERSION}" == "" ];then
-      DASHBOARD_VERSION="latest"
-    fi
-    DASHBOARD_IMAGE="openpitrix/dashboard:${DASHBOARD_VERSION}"
-  fi
-  IMAGE_PULL_POLICY="IfNotPresent"
+  # echo error message
+  echo ${OPENPITRIX_IMAGE_VERSION}
+  exit 1
+fi
+
+if [ "x${VERSION}" == "xlatest" ];then
+	IMAGE_PULL_POLICY=Always
+else
+    IMAGE_PULL_POLICY=IfNotPresent
 fi
 
 replace() {
   sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" \
-      -e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
-      -e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
-      -e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
-      -e "s!\${IM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
-      -e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
-      -e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
 	  -e "s!\${IMAGE}!${IMAGE}!g" \
 	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
-	  -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" \
 	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" \
+		-e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
+		-e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
+		-e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
+		-e "s!\${AM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
+		-e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
+		-e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
+	  -e "s!\${RP_QINGCLOUD_IMAGE}!${RP_QINGCLOUD_IMAGE}!g" \
+	  -e "s!\${RP_AWS_IMAGE}!${RP_AWS_IMAGE}!g" \
+	  -e "s!\${RP_ALIYUN_IMAGE}!${RP_ALIYUN_IMAGE}!g" \
+	  -e "s!\${RP_K8S_IMAGE}!${RP_K8S_IMAGE}!g" \
 	  -e "s!\${CPU_REQUESTS}!${CPU_REQUESTS}!g" \
 	  -e "s!\${MEMORY_REQUESTS}!${MEMORY_REQUESTS}!g" \
 	  -e "s!\${CPU_LIMITS}!${CPU_LIMITS}!g" \
@@ -242,6 +220,8 @@ replace() {
 	  -e "s!\${WEBSOCKET_PORT}!${WEBSOCKET_PORT}!g" \
 	  -e "s!\${WEBSOCKET_NODEPORT}!${WEBSOCKET_NODEPORT}!g" \
 	  -e "s!\${HOST}!${HOST}!g" \
+	  -e "s!\${DB_LOG_MODE_ENABLE}!${DB_LOG_MODE_ENABLE}!g" \
+	  -e "s!\${GRPC_SHOW_ERROR_CAUSE}!${GRPC_SHOW_ERROR_CAUSE}!g" \
 	  $1
 }
 
@@ -296,7 +276,7 @@ if [ "${BASE}" == "1" ] || [ "${ALL}" == "1" ];then
   done
 fi
 if [ "${METADATA}" == "1" ] || [ "${ALL}" == "1" ];then
-  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST}
+  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST} -t metadata
   if [ $? -ne 0 ]; then
 	echo "Deploy failed."
 	exit 1
@@ -333,7 +313,7 @@ if [ "${INGRESS}" == "1" ] || [ "${ALL}" == "1" ];then
     kubectl create namespace ingress-nginx
   fi
 
-  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST}
+  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST} -t ingress
   for FILE in `ls ./kubernetes/openpitrix/ingress/`;do
     apply_yaml ${VERSION} ingress/${FILE}
   done

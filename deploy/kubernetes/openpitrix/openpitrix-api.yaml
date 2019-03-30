@@ -61,7 +61,7 @@ spec:
           name: api-gateway
         env:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
-          value: 'true'
+          value: "${GRPC_SHOW_ERROR_CAUSE}"
         - name: OPENPITRIX_MYSQL_DATABASE
           value: "openpitrix"
         - name: OPENPITRIX_MYSQL_PASSWORD

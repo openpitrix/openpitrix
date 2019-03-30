@@ -59,7 +59,7 @@ spec:
           name: repo-manager
         env:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
-          value: 'true'
+          value: "${GRPC_SHOW_ERROR_CAUSE}"
         - name: OPENPITRIX_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
         - name: OPENPITRIX_MYSQL_DATABASE
@@ -138,7 +138,7 @@ spec:
           name: repo-indexer
         env:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
-          value: 'true'
+          value: "${GRPC_SHOW_ERROR_CAUSE}"
         - name: OPENPITRIX_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
         - name: OPENPITRIX_MYSQL_DATABASE
