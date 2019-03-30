@@ -24,7 +24,7 @@ openpitrix_latest="
 ### OpenPitrix version v0.4.0
 openpitrix_v0_4_0="
 	IMAGE=openpitrix/openpitrix:v0.4.0
-	DASHBOARD_IMAGE=openpitrix/dashboard:v0.4.0
+	DASHBOARD_IMAGE=openpitrix/dashboard:v0.4.1
 	FLYWAY_IMAGE=openpitrix/openpitrix:flyway-v0.4.0
 	IM_IMAGE=kubespheredev/im:v0.1.0
 	IM_FLYWAY_IMAGE=kubespheredev/im:flyway-v0.1.0
