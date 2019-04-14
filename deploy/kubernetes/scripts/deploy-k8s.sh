@@ -12,7 +12,6 @@ DEFAULT_NAMESPACE=openpitrix-system
 
 NAMESPACE=${DEFAULT_NAMESPACE}
 VERSION=""
-DASHBOARD_VERSION=""
 METADATA=0
 DBCTRL=0
 BASE=0
@@ -66,11 +65,12 @@ usage() {
   echo "        -l LIMITS       : the limits of container resources. such as: cpu=100,memory=200, default is: cpu=500,memory=500"
   echo "        -j JOB REPLICA  : the job replica number."
   echo "        -t TASK REPLICA : the task replica number."
-  echo "        -c HOST         : the hostname used in ingress."
+  echo "        -o HOST         : the hostname used in ingress."
   echo "        -p PROVIDER     : the runtime provider plugin. such as: qingcloud,aws. such as: all"
   echo "        -b              : base model will be applied."
   echo "        -m              : metadata will be applied."
-  echo "        -d              : dbctrl will be applied."
+  echo "        -c              : dbctrl will be applied."
+  echo "        -d              : set openpitrix log level to debug."
   echo "        -u              : ui/dashboard will be applied."
   echo "        -i              : ingress will be applied."
   echo "        -s              : storage will be applied."
@@ -79,11 +79,11 @@ usage() {
 }
 
 
-while getopts :c:n:v:r:l:j:t:p:hbdmsuia option
+while getopts :o:n:v:r:l:j:t:p:hbcdmsuia option
 do
   case "${option}"
   in
-  c) HOST=${OPTARG};;
+  o) HOST=${OPTARG};;
   n) NAMESPACE=${OPTARG};;
   v) VERSION=${OPTARG};;
   r) REQUESTS=${OPTARG};;
@@ -91,7 +91,8 @@ do
   j) JOB_REPLICA=${OPTARG};;
   t) TASK_REPLICA=${OPTARG};;
   p) PROVIDER_PLUGINS=${OPTARG};;
-  d) DBCTRL=1;;
+  c) DBCTRL=1;;
+  d) OPENPITRIX_LOG_LEVEL="debug";;
   m) METADATA=1;;
   b) BASE=1;;
   u) DASHBOARD=1;;
@@ -176,43 +177,53 @@ if [ "${VERSION}" == "" ];then
 fi
 
 ## export image versions
-OPENPITRIX_IMAGE_VERSION=`./version.sh openpitrix-${VERSION}`
+VERSIONS_IMAGES=`./version.sh openpitrix-${VERSION}`
 if [ $? == 0 ]; then
-  export ${OPENPITRIX_IMAGE_VERSION}
+  export ${VERSIONS_IMAGES}
 else
   # echo error message
-  echo ${OPENPITRIX_IMAGE_VERSION}
+  echo ${VERSIONS_IMAGES}
   exit 1
 fi
 
 if [ "x${VERSION}" == "xlatest" ];then
 	IMAGE_PULL_POLICY=Always
 else
-    IMAGE_PULL_POLICY=IfNotPresent
+  IMAGE_PULL_POLICY=IfNotPresent
 fi
 
 replace() {
   sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" \
+	  -e "s!\${VERSION}!${VERSION}!g" \
 	  -e "s!\${IMAGE}!${IMAGE}!g" \
-	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
 	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" \
+	  -e "s!\${DASHBOARD_VERSION}!${DASHBOARD_VERSION}!g" \
+	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
+		-e "s!\${IM_VERSION}!${IM_VERSION}!g" \
 		-e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
 		-e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
+		-e "s!\${AM_VERSION}!${AM_VERSION}!g" \
 		-e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
 		-e "s!\${AM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
+		-e "s!\${NOTIFICATION_VERSION}!${NOTIFICATION_VERSION}!g" \
 		-e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
 		-e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
+	  -e "s!\${RP_QINGCLOUD_VERSION}!${RP_QINGCLOUD_VERSION}!g" \
 	  -e "s!\${RP_QINGCLOUD_IMAGE}!${RP_QINGCLOUD_IMAGE}!g" \
+	  -e "s!\${RP_AWS_VERSION}!${RP_AWS_VERSION}!g" \
 	  -e "s!\${RP_AWS_IMAGE}!${RP_AWS_IMAGE}!g" \
+	  -e "s!\${RP_ALIYUN_VERSION}!${RP_ALIYUN_VERSION}!g" \
 	  -e "s!\${RP_ALIYUN_IMAGE}!${RP_ALIYUN_IMAGE}!g" \
+	  -e "s!\${RP_K8S_VERSION}!${RP_K8S_VERSION}!g" \
 	  -e "s!\${RP_K8S_IMAGE}!${RP_K8S_IMAGE}!g" \
+	  -e "s!\${WATCHER_VERSION}!${WATCHER_VERSION}!g" \
+	  -e "s!\${WATCHER_IMAGE}!${WATCHER_IMAGE}!g" \
 	  -e "s!\${CPU_REQUESTS}!${CPU_REQUESTS}!g" \
 	  -e "s!\${MEMORY_REQUESTS}!${MEMORY_REQUESTS}!g" \
 	  -e "s!\${CPU_LIMITS}!${CPU_LIMITS}!g" \
 	  -e "s!\${MEMORY_LIMITS}!${MEMORY_LIMITS}!g" \
 	  -e "s!\${JOB_REPLICA}!${JOB_REPLICA}!g" \
 	  -e "s!\${TASK_REPLICA}!${TASK_REPLICA}!g" \
-	  -e "s!\${VERSION}!${VERSION}!g" \
 	  -e "s!\${IMAGE_PULL_POLICY}!${IMAGE_PULL_POLICY}!g" \
 	  -e "s!\${API_NODEPORT}!${API_NODEPORT}!g" \
 	  -e "s!\${PILOT_NODEPORT}!${PILOT_NODEPORT}!g" \
@@ -220,6 +231,7 @@ replace() {
 	  -e "s!\${WEBSOCKET_PORT}!${WEBSOCKET_PORT}!g" \
 	  -e "s!\${WEBSOCKET_NODEPORT}!${WEBSOCKET_NODEPORT}!g" \
 	  -e "s!\${HOST}!${HOST}!g" \
+	  -e "s!\${OPENPITRIX_LOG_LEVEL}!${OPENPITRIX_LOG_LEVEL}!g" \
 	  -e "s!\${DB_LOG_MODE_ENABLE}!${DB_LOG_MODE_ENABLE}!g" \
 	  -e "s!\${GRPC_SHOW_ERROR_CAUSE}!${GRPC_SHOW_ERROR_CAUSE}!g" \
 	  $1
@@ -240,8 +252,11 @@ if [ "${STORAGE}" == "1" ] || [ "${ALL}" == "1" ];then
     replace ./kubernetes/db/${FILE} | kubectl apply -f -
   done
 
-  for FILE in `ls ./kubernetes/etcd/`;do
-    replace ./kubernetes/etcd/${FILE} | kubectl apply -f -
+	./kubernetes/scripts/generate_config_map.sh
+	for FILE in `ls ./kubernetes/etcd/`;do
+	  if [ "x${FILE##*.}" == "xyaml" ]; then
+      replace ./kubernetes/etcd/${FILE} | kubectl apply -f -
+    fi
   done
 
   for FILE in `ls ./kubernetes/minio/`;do
@@ -276,7 +291,7 @@ if [ "${BASE}" == "1" ] || [ "${ALL}" == "1" ];then
   done
 fi
 if [ "${METADATA}" == "1" ] || [ "${ALL}" == "1" ];then
-  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST} -t metadata
+  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -o ${HOST} -t metadata
   if [ $? -ne 0 ]; then
 	echo "Deploy failed."
 	exit 1
@@ -313,7 +328,7 @@ if [ "${INGRESS}" == "1" ] || [ "${ALL}" == "1" ];then
     kubectl create namespace ingress-nginx
   fi
 
-  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST} -t ingress
+  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -o ${HOST} -t ingress
   for FILE in `ls ./kubernetes/openpitrix/ingress/`;do
     apply_yaml ${VERSION} ingress/${FILE}
   done

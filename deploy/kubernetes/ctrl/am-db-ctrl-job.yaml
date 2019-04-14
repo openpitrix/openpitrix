@@ -6,7 +6,7 @@ metadata:
   labels:
     app: openpitrix
     job: openpitrix-am-db-ctrl
-    version: ${VERSION}
+    version: ${AM_VERSION}
 spec:
   backoffLimit: 6
   completions: 1
@@ -16,7 +16,7 @@ spec:
       labels:
         app: openpitrix
         job: openpitrix-am-db-ctrl
-        version: ${VERSION}
+        version: ${AM_VERSION}
       name: openpitrix-am-db-ctrl
     spec:
       initContainers:
