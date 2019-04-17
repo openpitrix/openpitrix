@@ -1,10 +1,10 @@
 #!/bin/bash
 
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | DESIRED_VERSION=v2.12.0 bash
-
 TILLER_DEPLOY=`kubectl get deploy -n kube-system | grep 'tiller-deploy'`
-
 [ -n "$TILLER_DEPLOY" ] && echo "Helm is already initialized." && exit 1
+
+
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | DESIRED_VERSION=v2.12.0 bash
 
 helm init --tiller-image=gcr.io/kubernetes-helm/tiller:v2.12.0 --upgrade
 

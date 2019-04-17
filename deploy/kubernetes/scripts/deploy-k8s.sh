@@ -177,17 +177,17 @@ if [ "${VERSION}" == "" ];then
 fi
 
 ## export image versions
-VERSIONS_IMAGES=`./version.sh openpitrix-${VERSION}`
+VERSION_IMAGES=`./version.sh openpitrix-${VERSION}`
 if [ $? == 0 ]; then
-  export ${VERSIONS_IMAGES}
+  export ${VERSION_IMAGES}
 else
   # echo error message
-  echo ${VERSIONS_IMAGES}
+  echo ${VERSION_IMAGES}
   exit 1
 fi
 
 if [ "x${VERSION}" == "xlatest" ];then
-	IMAGE_PULL_POLICY=Always
+  IMAGE_PULL_POLICY=Always
 else
   IMAGE_PULL_POLICY=IfNotPresent
 fi
@@ -199,15 +199,15 @@ replace() {
 	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" \
 	  -e "s!\${DASHBOARD_VERSION}!${DASHBOARD_VERSION}!g" \
 	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
-		-e "s!\${IM_VERSION}!${IM_VERSION}!g" \
-		-e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
-		-e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
-		-e "s!\${AM_VERSION}!${AM_VERSION}!g" \
-		-e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
-		-e "s!\${AM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
-		-e "s!\${NOTIFICATION_VERSION}!${NOTIFICATION_VERSION}!g" \
-		-e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
-		-e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
+	  -e "s!\${IM_VERSION}!${IM_VERSION}!g" \
+	  -e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
+	  -e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
+	  -e "s!\${AM_VERSION}!${AM_VERSION}!g" \
+	  -e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
+	  -e "s!\${AM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
+	  -e "s!\${NOTIFICATION_VERSION}!${NOTIFICATION_VERSION}!g" \
+	  -e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
+	  -e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
 	  -e "s!\${RP_QINGCLOUD_VERSION}!${RP_QINGCLOUD_VERSION}!g" \
 	  -e "s!\${RP_QINGCLOUD_IMAGE}!${RP_QINGCLOUD_IMAGE}!g" \
 	  -e "s!\${RP_AWS_VERSION}!${RP_AWS_VERSION}!g" \
@@ -252,9 +252,9 @@ if [ "${STORAGE}" == "1" ] || [ "${ALL}" == "1" ];then
     replace ./kubernetes/db/${FILE} | kubectl apply -f -
   done
 
-	./kubernetes/scripts/generate_config_map.sh
-	for FILE in `ls ./kubernetes/etcd/`;do
-	  if [ "x${FILE##*.}" == "xyaml" ]; then
+  ./kubernetes/scripts/generate-config-map.sh
+  for FILE in `ls ./kubernetes/etcd/`;do
+    if [ "x${FILE##*.}" == "xyaml" ]; then
       replace ./kubernetes/etcd/${FILE} | kubectl apply -f -
     fi
   done
@@ -293,8 +293,8 @@ fi
 if [ "${METADATA}" == "1" ] || [ "${ALL}" == "1" ];then
   ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -o ${HOST} -t metadata
   if [ $? -ne 0 ]; then
-	echo "Deploy failed."
-	exit 1
+    echo "Deploy failed."
+    exit 1
   fi
 
   for FILE in `ls ./kubernetes/openpitrix/metadata/`;do
@@ -316,8 +316,8 @@ if [ "${PROVIDER_PLUGINS}" != "" ] || [ "${ALL}" == "1" ];then
     for item in `echo ${plugin}`;do
       for FILE in `ls ./kubernetes/openpitrix/plugin/ | grep "\-${item}.yaml"`;do
         echo $FILE
-    	apply_yaml ${VERSION} plugin/${FILE}
-  	  done
+        apply_yaml ${VERSION} plugin/${FILE}
+      done
     done
   fi
 fi

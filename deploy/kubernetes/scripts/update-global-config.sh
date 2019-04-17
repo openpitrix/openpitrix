@@ -37,7 +37,7 @@ if [ ! -f ${CONFIG_FILE} ]; then
   exit 1
 fi
 
-CONFIG_MAP_FILE=$(sh ./kubernetes/scripts/generate_config_map.sh)
+CONFIG_MAP_FILE=$(sh ./kubernetes/scripts/generate-config-map.sh)
 
 sed -e "s/\${VERSION}/${VERSION}/g" -e "s/\${NAMESPACE}/${NAMESPACE}/g" ${CONFIG_MAP_FILE} | kubectl apply -f -
 
