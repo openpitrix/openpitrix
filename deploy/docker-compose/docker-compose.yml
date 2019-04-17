@@ -6,7 +6,7 @@ version: '3'
 
 services:
   openpitrix-im-db-init:
-    image: "kubespheredev/im:flyway"
+    image: "${IM_FLYWAY_IMAGE}"
     environment:
       - PASSWORD=${MYSQL_ROOT_PASSWORD}
     entrypoint: sh
@@ -16,7 +16,7 @@ services:
     container_name: "openpitrix-im-db-init"
 
   openpitrix-am-db-init:
-    image: "openpitrix/iam:flyway"
+    image: "${AM_FLYWAY_IMAGE}"
     environment:
       - PASSWORD=${MYSQL_ROOT_PASSWORD}
     entrypoint: sh
@@ -24,8 +24,9 @@ services:
     depends_on:
       - openpitrix-db
     container_name: "openpitrix-am-db-init"
+
   openpitrix-notification-db-init:
-    image: "openpitrix/notification:flyway"
+    image: "${NOTIFICATION_FLYWAY_IMAGE}"
     environment:
       - PASSWORD=${MYSQL_ROOT_PASSWORD}
     entrypoint: sh
@@ -33,13 +34,16 @@ services:
     depends_on:
       - openpitrix-db
     container_name: "openpitrix-notification-db-init"
+
   openpitrix-db-init:
-    image: "openpitrix/openpitrix:flyway"
+    image: "${FLYWAY_IMAGE}"
     environment:
       - PASSWORD=${MYSQL_ROOT_PASSWORD}
     entrypoint: sh
     command: -c "/flyway/sql/ddl/ddl_init.sh -hopenpitrix-db -uroot --connect-timeout=5"
     depends_on:
+      - openpitrix-im-db-init
+      - openpitrix-am-db-init
       - openpitrix-notification-db-init
     container_name: "openpitrix-db-init"
 
@@ -58,6 +62,7 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-etcd:
     image: "quay.io/coreos/etcd:v3.2.18"
     command: etcd --data-dir /data --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://openpitrix-etcd:2379 --max-snapshots 5 --max-wals 5 --auto-compaction-retention=168
@@ -71,6 +76,7 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-minio:
     image: "minio/minio:RELEASE.2018-09-25T21-34-43Z"
     command: -c "mkdir -p /data/openpitrix-attachment /data/openpitrix-internal-repo/vmbased /data/openpitrix-internal-repo/helm && minio server /data"
@@ -88,17 +94,21 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-dashboard:
-    image: "openpitrix/dashboard:latest"
+    image: "${DASHBOARD_IMAGE}"
     ports:
      - "8000:8000"
+     - "9300:9300"
     container_name: "openpitrix-dashboard"
     environment:
       - serverUrl=http://openpitrix-api-gateway:9100
       - apiVersion=v1
       - socketUrl=ws://openpitrix-api-gateway:9100/v1/io
+      - socketProxyPort=9300
       - clientId=x
       - clientSecret=y
+      - DEBUG=app
     links:
       - openpitrix-api-gateway:openpitrix-api-gateway
     logging:
@@ -106,8 +116,9 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-api-gateway:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "api-gateway"
     ports:
      - "9100:9100"
@@ -138,7 +149,7 @@ services:
 
   # repo service
   openpitrix-repo-manager:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "repo-manager"
     links:
       - openpitrix-db:openpitrix-db
@@ -156,8 +167,9 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-repo-indexer:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "repo-indexer"
     links:
       - openpitrix-db:openpitrix-db
@@ -177,8 +189,9 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-repo-db-ctrl:
-    image: "openpitrix/openpitrix:flyway"
+    image: "${FLYWAY_IMAGE}"
     command: -url=jdbc:mysql://openpitrix-db/repo -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/repo migrate
     links:
       - openpitrix-db:openpitrix-db
@@ -188,7 +201,7 @@ services:
 
   # app service
   openpitrix-app-manager:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "app-manager"
     links:
       - openpitrix-db:openpitrix-db
@@ -207,8 +220,17 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-app-db-ctrl:
+    image: "${FLYWAY_IMAGE}"
+    command: -url=jdbc:mysql://openpitrix-db/app -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/app migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db-init
+    container_name: "openpitrix-app-db-ctrl"
+
   openpitrix-category-manager:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "category-manager"
     links:
       - openpitrix-db:openpitrix-db
@@ -226,18 +248,10 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
-  openpitrix-app-db-ctrl:
-    image: "openpitrix/openpitrix:flyway"
-    command: -url=jdbc:mysql://openpitrix-db/app -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/app migrate
-    links:
-      - openpitrix-db:openpitrix-db
-    depends_on:
-      - openpitrix-db-init
-    container_name: "openpitrix-app-db-ctrl"
 
   # runtime service
   openpitrix-runtime-manager:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "runtime-manager"
     links:
       - openpitrix-db:openpitrix-db
@@ -255,8 +269,9 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-runtime-db-ctrl:
-    image: "openpitrix/openpitrix:flyway"
+    image: "${FLYWAY_IMAGE}"
     command: -url=jdbc:mysql://openpitrix-db/runtime -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/runtime migrate
     links:
       - openpitrix-db:openpitrix-db
@@ -265,7 +280,7 @@ services:
     container_name: "openpitrix-runtime-db-ctrl"
 
   openpitrix-rp-manager:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "runtime-provider-manager"
     links:
       - openpitrix-db:openpitrix-db
@@ -283,7 +298,7 @@ services:
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
   openpitrix-rp-qingcloud:
-    image: "openpitrix/runtime-provider-qingcloud"
+    image: "${RP_QINGCLOUD_IMAGE}"
     command: "runtime-provider"
     links:
       - openpitrix-db:openpitrix-db
@@ -302,7 +317,7 @@ services:
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
   openpitrix-rp-aws:
-    image: "openpitrix/runtime-provider-aws"
+    image: "${RP_AWS_IMAGE}"
     command: "runtime-provider"
     links:
       - openpitrix-db:openpitrix-db
@@ -321,7 +336,7 @@ services:
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
   openpitrix-rp-aliyun:
-    image: "openpitrix/runtime-provider-aliyun"
+    image: "${RP_ALIYUN_IMAGE}"
     command: "runtime-provider"
     links:
       - openpitrix-db:openpitrix-db
@@ -340,7 +355,7 @@ services:
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
   openpitrix-rp-kubernetes:
-    image: "openpitrix/runtime-provider-kubernetes"
+    image: "${RP_K8S_IMAGE}"
     command: "runtime-provider"
     links:
       - openpitrix-db:openpitrix-db
@@ -360,7 +375,7 @@ services:
 
   # job service
   openpitrix-job-manager:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "job-manager"
     links:
       - openpitrix-db:openpitrix-db
@@ -379,7 +394,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-job-db-ctrl:
-    image: "openpitrix/openpitrix:flyway"
+    image: "${FLYWAY_IMAGE}"
     command: -url=jdbc:mysql://openpitrix-db/job -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/job migrate
     links:
       - openpitrix-db:openpitrix-db
@@ -389,7 +404,7 @@ services:
 
   # task service
   openpitrix-task-manager:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "task-manager"
     links:
       - openpitrix-db:openpitrix-db
@@ -408,7 +423,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-task-db-ctrl:
-    image: "openpitrix/openpitrix:flyway"
+    image: "${FLYWAY_IMAGE}"
     command: -url=jdbc:mysql://openpitrix-db/task -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/task migrate
     links:
       - openpitrix-db:openpitrix-db
@@ -418,7 +433,7 @@ services:
 
   # cluster service
   openpitrix-cluster-manager:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "cluster-manager"
     links:
       - openpitrix-db:openpitrix-db
@@ -437,7 +452,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-cluster-db-ctrl:
-    image: "openpitrix/openpitrix:flyway"
+    image: "${FLYWAY_IMAGE}"
     command: -url=jdbc:mysql://openpitrix-db/cluster -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/cluster migrate
     links:
       - openpitrix-db:openpitrix-db
@@ -447,7 +462,7 @@ services:
 
   # account service
   openpitrix-account-service:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "account-service"
     links:
       - openpitrix-db:openpitrix-db
@@ -472,7 +487,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-iam-db-ctrl:
-    image: "openpitrix/openpitrix:flyway"
+    image: "${FLYWAY_IMAGE}"
     command: -url=jdbc:mysql://openpitrix-db/iam -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/iam migrate
     links:
       - openpitrix-db:openpitrix-db
@@ -482,7 +497,7 @@ services:
 
   # im service
   openpitrix-im-service:
-    image: "kubespheredev/im:latest"
+    image: "${IM_IMAGE}"
     command: "im serve"
     links:
       - openpitrix-db:openpitrix-db
@@ -502,7 +517,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-im-db-ctrl:
-    image: kubespheredev/im:flyway
+    image: "${IM_FLYWAY_IMAGE}"
     command: -url=jdbc:mysql://openpitrix-db/im -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     links:
       - openpitrix-db:openpitrix-db
@@ -512,7 +527,7 @@ services:
 
   # am service
   openpitrix-am-service:
-    image: "openpitrix/iam:latest"
+    image: "${AM_IMAGE}"
     command: "am serve"
     links:
       - openpitrix-db:openpitrix-db
@@ -533,7 +548,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-am-db-ctrl:
-    image: openpitrix/iam:flyway
+    image: "${AM_FLYWAY_IMAGE}"
     command: -url=jdbc:mysql://openpitrix-db/am -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     links:
       - openpitrix-db:openpitrix-db
@@ -543,7 +558,7 @@ services:
 
   # pilot service
   openpitrix-pilot-service:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "pilot -config=/opt/openpitrix/conf/pilot-config.json --openpitrix-ca-crt-file=/opt/openpitrix/conf/openpitrix-ca.crt --pilot-server-crt-file=/opt/openpitrix/conf/pilot-server.crt --pilot-server-key-file=/opt/openpitrix/conf/pilot-server.key --pilot-client-crt-file=/opt/openpitrix/conf/pilot-client.crt --pilot-client-key-file=/opt/openpitrix/conf/pilot-client.key serve"
     ports:
       - "9110:9110"
@@ -567,7 +582,7 @@ services:
 
   # attachment service
   openpitrix-attachment-manager:
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "attachment-manager"
     links:
     - openpitrix-db:openpitrix-db
@@ -586,7 +601,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-attachment-db-ctrl:
-    image: "openpitrix/openpitrix:flyway"
+    image: "${FLYWAY_IMAGE}"
     command: -url=jdbc:mysql://openpitrix-db/attachment -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/attachment migrate
     links:
     - openpitrix-db:openpitrix-db
@@ -595,15 +610,15 @@ services:
     container_name: "openpitrix-attachment-db-ctrl"
 
   # isv service
-  openpitrix-vendor-manager:
+  openpitrix-isv-manager:
     build: .
-    image: "openpitrix/openpitrix:latest"
+    image: "${IMAGE}"
     command: "isv-manager"
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
     depends_on:
-      - openpitrix-vendor-db-ctrl
+      - openpitrix-isv-db-ctrl
       - openpitrix-etcd
     container_name: "openpitrix-isv-manager"
     environment:
@@ -615,11 +630,9 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
-  openpitrix-vendor-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
-    command: -url=jdbc:mysql://openpitrix-db/isv -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
-    volumes:
-      - ./pkg/db/schema/isv:/flyway/sql
+  openpitrix-isv-db-ctrl:
+    image: "${FLYWAY_IMAGE}"
+    command: -url=jdbc:mysql://openpitrix-db/isv -user=root -password=${MYSQL_ROOT_PASSWORD} -locations=filesystem:/flyway/sql/isv -validateOnMigrate=false migrate
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
@@ -628,7 +641,7 @@ services:
 
   # notification service
   openpitrix-notification:
-    image: "openpitrix/notification:latest"
+    image: "${NOTIFICATION_IMAGE}"
     command: "notification"
     links:
       - openpitrix-db:openpitrix-db
@@ -649,7 +662,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-notification-db-ctrl:
-    image: openpitrix/notification:flyway
+    image: "${NOTIFICATION_FLYWAY_IMAGE}"
     command: -url=jdbc:mysql://openpitrix-db/notification -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     links:
       - openpitrix-db:openpitrix-db
