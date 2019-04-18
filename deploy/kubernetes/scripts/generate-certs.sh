@@ -9,20 +9,20 @@ NAMESPACE=${DEFAULT_NAMESPACE}
 
 usage() {
   echo "Usage:"
-  echo "  generate-certs.sh [-n NAMESPACE] [-c HOST] -t [TYPE] "
+  echo "  generate-certs.sh [-n NAMESPACE] [-o HOST] -t [TYPE] "
   echo "Description:"
   echo "    -n NAMESPACE : the namespace of kubernetes."
-  echo "    -c HOST      : the hostname used in certificate."
+  echo "    -o HOST      : the hostname used in certificate."
   echo "    -t TYPE      : the type(all/metadata/ingress) of resource that need to generate cert."
   exit -1
 }
 
-while getopts n:c:t: option
+while getopts n:o:t: option
 do
   case "${option}"
   in
     n) NAMESPACE=${OPTARG};;
-    c) HOST=${OPTARG};;
+    o) HOST=${OPTARG};;
     t) TYPE=${OPTARG};;
   esac
 done

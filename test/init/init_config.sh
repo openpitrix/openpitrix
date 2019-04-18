@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 
-mkdir -p ~/.openpitrix/
-cp config.json ~/.openpitrix/
+if [ ! -f "~/.openpitrix/config.json" ];then
+  mkdir -p ~/.openpitrix/
+  cp config.json ~/.openpitrix/
+fi
