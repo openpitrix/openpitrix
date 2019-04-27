@@ -13,8 +13,11 @@ sudo minikube start --vm-driver=none --kubernetes-version=${KUBE_VERSION} --extr
 
 sudo minikube update-context
 
-sudo kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
+sudo chown -R ${USER}:${USER} ${HOME}/.kube
+sudo chown -R ${USER}:${USER} ${HOME}/.minikube
+
+kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
 
 JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'
-until sudo kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True";
+until kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True";
 do sleep 1; done
