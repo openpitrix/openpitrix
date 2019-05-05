@@ -574,7 +574,7 @@ service SkuManager {
 //************************************* Promotion *************************
 //combination
 message Combination {
-    google.protobuf.StringValue combination_id = 1;
+	google.protobuf.StringValue combination_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
 	google.protobuf.StringValue owner = 4;
@@ -633,8 +633,8 @@ message DeleteCombinationsResponse {
 
 //combination_sku
 message CombinationSku {
-    google.protobuf.StringValue combination_sku_id = 1;
-    google.protobuf.StringValue combination_id = 2;
+	google.protobuf.StringValue combination_sku_id = 1;
+	google.protobuf.StringValue combination_id = 2;
 	google.protobuf.StringValue sku_id = 3;
 	google.protobuf.StringValue status = 4;
 	google.protobuf.Timestamp create_time = 5;
@@ -856,18 +856,20 @@ service PromotionSkuManager {
 
 //************************** metering ****************************
 
-message MeteringValue {
-	google.protobuf.StringValue attribute_id = 1;
-	google.protobuf.DoubleValue value = 2;
+message SkuMetering {
+	google.protobuf.StringValue sku_id = 1;
+	map<string, double> value = 2; //{attribute_id: value}
+
 }
 
 message UpdateMeteringValue {
-	MeteringValue metering_value = 1;
+	google.protobuf.StringValue attribute_id = 1;
+	google.protobuf.DoubleValue value = 2;
 	enum UpdateValueTypes {
 		INCREMENTAL = 0;
 		REPLACE = 1;
 	}
-	UpdateValueTypes type = 2;
+	UpdateValueTypes type = 3;
 }
 
 message UpdateSkuMetering {
@@ -876,20 +878,10 @@ message UpdateSkuMetering {
 	repeated UpdateMeteringValue metering_values = 2;
 }
 
-//if sku_ids = [], mean is all skus of the reource
-message Resource {
-	google.protobuf.StringValue resource_id = 1;
-	repeated string sku_ids = 2;
-}
-
 message InitMeteringRequest {
 	google.protobuf.StringValue user_id = 1;
 	google.protobuf.StringValue resource_id = 2;
-	map<string, MeteringValue> sku_meterings = 3; //<skuId, MeteringValue>
-}
-
-message StartMeteringsRequest {
-	repeated Resource resources = 1;
+	repeated SkuMetering sku_meterings = 3;
 }
 
 message UpdateMeteringRequest {
@@ -898,11 +890,18 @@ message UpdateMeteringRequest {
 }
 
 message StopMeteringsRequest {
-	repeated Resource resources = 1;
+	google.protobuf.StringValue resource_id = 1;
+	repeated string sku_ids = 2;
+}
+
+message StartMeteringsRequest {
+	google.protobuf.StringValue resource_id = 1;
+	repeated string sku_ids = 2;
 }
 
 message TerminateMeteringsRequest {
-	repeated Resource resources = 1;
+	google.protobuf.StringValue resource_id = 1;
+	repeated string sku_ids = 2;
 }
 
 message CommonMeteringResponse {
@@ -915,7 +914,6 @@ message CommonMeteringsResponse {
 
 message Leasing {
 	google.protobuf.StringValue LeasingId = 1;
-	google.protobuf.StringValue GroupId = 2;
 	google.protobuf.StringValue UserId = 3;
 	google.protobuf.StringValue ResourceId = 4;
 	google.protobuf.StringValue SkuId = 5;
@@ -931,7 +929,6 @@ message Leasing {
 
 message DescribeLeasingsRequest {
 	google.protobuf.StringValue LeasingId = 1;
-	google.protobuf.StringValue GroupId = 2;
 	google.protobuf.StringValue UserId = 3;
 	google.protobuf.StringValue ResourceId = 4;
 	google.protobuf.StringValue SkuId = 5;
@@ -957,17 +954,6 @@ service MeteringManager {
 		};
 	}
 
-	//start for stopped metering
-	rpc StartMeterings (StartMeteringsRequest) returns (CommonMeteringsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "start metering about the skus"
-		};
-		option (google.api.http) = {
-			put: "/v1/metering/start"
-			body: "*"
-		};
-	}
-
 	rpc UpdateMetering (UpdateMeteringRequest) returns (CommonMeteringResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "update metering value about the sku"
@@ -984,6 +970,17 @@ service MeteringManager {
 		};
 		option (google.api.http) = {
 			put: "/v1/metering/stop"
+			body: "*"
+		};
+	}
+
+	//start for stopped metering
+	rpc StartMeterings (StartMeteringsRequest) returns (CommonMeteringsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "start metering about the skus"
+		};
+		option (google.api.http) = {
+			put: "/v1/metering/start"
 			body: "*"
 		};
 	}

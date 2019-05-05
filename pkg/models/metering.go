@@ -21,7 +21,6 @@ func NewLeasingId() string {
 //SkuMetering
 type Leasing struct {
 	LeasingId          string
-	GroupId            string
 	UserId             string
 	ResourceId         string
 	SkuId              string
@@ -49,7 +48,6 @@ func pbToMeteringValues(pbMeteringValues []*pb.MeteringValue) map[string]float64
 func NewLeasing(req *pb.MeteringValue, groupId, resourceId, skuId, userId string, actionTime, renewalTime time.Time) *Leasing {
 	return &Leasing{
 		LeasingId:          NewLeasingId(),
-		GroupId:            groupId,
 		UserId:             userId,
 		ResourceId:         resourceId,
 		SkuId:              skuId,
@@ -66,7 +64,6 @@ func NewLeasing(req *pb.MeteringValue, groupId, resourceId, skuId, userId string
 
 type Leased struct {
 	LeasedId       string
-	GroupId        string
 	UserId         string
 	ResourceId     string
 	SkuId          string
@@ -79,7 +76,6 @@ type Leased struct {
 func (l *Leasing) ToLeased() *Leased {
 	return &Leased{
 		LeasedId:       l.LeasingId,
-		GroupId:        l.GroupId,
 		UserId:         l.UserId,
 		ResourceId:     l.ResourceId,
 		SkuId:          l.SkuId,

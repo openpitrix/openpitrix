@@ -29,16 +29,3 @@ CREATE TABLE IF NOT EXISTS combination_sku (
 	ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (combination_sku_id)
 );
-
-/** combination_mabinding: combination_metering_attribute_binding **/
-CREATE TABLE IF NOT EXISTS combination_mabinding (
-	combination_binding_id VARCHAR(50) NOT NULL UNIQUE,
-	combination_sku_id     VARCHAR(50) NOT NULL,
-	attribute_id           VARCHAR(50) NOT NULL,
-	status                 VARCHAR(16) DEFAULT 'active'
-	COMMENT 'active, deleted',
-	create_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	status_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
-	ON UPDATE CURRENT_TIMESTAMP,
-	PRIMARY KEY (combination_binding_id)
-);
