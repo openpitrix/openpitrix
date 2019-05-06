@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixClusterClusterLinkSet openpitrix cluster cluster link set
+// OpenpitrixClusterClusterLinkSet list of cluster link
 // swagger:model openpitrixClusterClusterLinkSet
 type OpenpitrixClusterClusterLinkSet []*OpenpitrixClusterLink
 

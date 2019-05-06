@@ -63,24 +63,71 @@ for the describe users operation typically these are written to a http.Request
 */
 type DescribeUsersParams struct {
 
-	/*GroupID*/
+	/*Email
+	  email, eg.op@yunify.com.
+
+	*/
+	Email []string
+	/*GroupID
+	  group ids.
+
+	*/
 	GroupID []string
-	/*Limit*/
+	/*Limit
+	  data limit, default 20, max 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  data offset, default 0.
+
+	*/
 	Offset *int64
-	/*Reverse*/
+	/*PhoneNumber
+	  phone number, string of 11 digital.
+
+	*/
+	PhoneNumber []string
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*Role*/
-	Role []string
-	/*SearchWord*/
+	/*RoleID
+	  role ids.
+
+	*/
+	RoleID []string
+	/*RootGroupID
+	  use root group ids to get all group ids.
+
+	*/
+	RootGroupID []string
+	/*SearchWord
+	  query key, support these fields(user_id, email, phone_number, status).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[active|deleted].
+
+	*/
 	Status []string
-	/*UserID*/
+	/*UserID
+	  user ids.
+
+	*/
 	UserID []string
+	/*Username
+	  username.
+
+	*/
+	Username []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -120,6 +167,17 @@ func (o *DescribeUsersParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithEmail adds the email to the describe users params
+func (o *DescribeUsersParams) WithEmail(email []string) *DescribeUsersParams {
+	o.SetEmail(email)
+	return o
+}
+
+// SetEmail adds the email to the describe users params
+func (o *DescribeUsersParams) SetEmail(email []string) {
+	o.Email = email
+}
+
 // WithGroupID adds the groupID to the describe users params
 func (o *DescribeUsersParams) WithGroupID(groupID []string) *DescribeUsersParams {
 	o.SetGroupID(groupID)
@@ -153,6 +211,17 @@ func (o *DescribeUsersParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithPhoneNumber adds the phoneNumber to the describe users params
+func (o *DescribeUsersParams) WithPhoneNumber(phoneNumber []string) *DescribeUsersParams {
+	o.SetPhoneNumber(phoneNumber)
+	return o
+}
+
+// SetPhoneNumber adds the phoneNumber to the describe users params
+func (o *DescribeUsersParams) SetPhoneNumber(phoneNumber []string) {
+	o.PhoneNumber = phoneNumber
+}
+
 // WithReverse adds the reverse to the describe users params
 func (o *DescribeUsersParams) WithReverse(reverse *bool) *DescribeUsersParams {
 	o.SetReverse(reverse)
@@ -164,15 +233,26 @@ func (o *DescribeUsersParams) SetReverse(reverse *bool) {
 	o.Reverse = reverse
 }
 
-// WithRole adds the role to the describe users params
-func (o *DescribeUsersParams) WithRole(role []string) *DescribeUsersParams {
-	o.SetRole(role)
+// WithRoleID adds the roleID to the describe users params
+func (o *DescribeUsersParams) WithRoleID(roleID []string) *DescribeUsersParams {
+	o.SetRoleID(roleID)
 	return o
 }
 
-// SetRole adds the role to the describe users params
-func (o *DescribeUsersParams) SetRole(role []string) {
-	o.Role = role
+// SetRoleID adds the roleId to the describe users params
+func (o *DescribeUsersParams) SetRoleID(roleID []string) {
+	o.RoleID = roleID
+}
+
+// WithRootGroupID adds the rootGroupID to the describe users params
+func (o *DescribeUsersParams) WithRootGroupID(rootGroupID []string) *DescribeUsersParams {
+	o.SetRootGroupID(rootGroupID)
+	return o
+}
+
+// SetRootGroupID adds the rootGroupId to the describe users params
+func (o *DescribeUsersParams) SetRootGroupID(rootGroupID []string) {
+	o.RootGroupID = rootGroupID
 }
 
 // WithSearchWord adds the searchWord to the describe users params
@@ -219,6 +299,17 @@ func (o *DescribeUsersParams) SetUserID(userID []string) {
 	o.UserID = userID
 }
 
+// WithUsername adds the username to the describe users params
+func (o *DescribeUsersParams) WithUsername(username []string) *DescribeUsersParams {
+	o.SetUsername(username)
+	return o
+}
+
+// SetUsername adds the username to the describe users params
+func (o *DescribeUsersParams) SetUsername(username []string) {
+	o.Username = username
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DescribeUsersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -226,6 +317,14 @@ func (o *DescribeUsersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 	var res []error
+
+	valuesEmail := o.Email
+
+	joinedEmail := swag.JoinByFormat(valuesEmail, "multi")
+	// query array param email
+	if err := r.SetQueryParam("email", joinedEmail...); err != nil {
+		return err
+	}
 
 	valuesGroupID := o.GroupID
 
@@ -267,6 +366,14 @@ func (o *DescribeUsersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	}
 
+	valuesPhoneNumber := o.PhoneNumber
+
+	joinedPhoneNumber := swag.JoinByFormat(valuesPhoneNumber, "multi")
+	// query array param phone_number
+	if err := r.SetQueryParam("phone_number", joinedPhoneNumber...); err != nil {
+		return err
+	}
+
 	if o.Reverse != nil {
 
 		// query param reverse
@@ -283,11 +390,19 @@ func (o *DescribeUsersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	}
 
-	valuesRole := o.Role
+	valuesRoleID := o.RoleID
 
-	joinedRole := swag.JoinByFormat(valuesRole, "multi")
-	// query array param role
-	if err := r.SetQueryParam("role", joinedRole...); err != nil {
+	joinedRoleID := swag.JoinByFormat(valuesRoleID, "multi")
+	// query array param role_id
+	if err := r.SetQueryParam("role_id", joinedRoleID...); err != nil {
+		return err
+	}
+
+	valuesRootGroupID := o.RootGroupID
+
+	joinedRootGroupID := swag.JoinByFormat(valuesRootGroupID, "multi")
+	// query array param root_group_id
+	if err := r.SetQueryParam("root_group_id", joinedRootGroupID...); err != nil {
 		return err
 	}
 
@@ -336,6 +451,14 @@ func (o *DescribeUsersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	joinedUserID := swag.JoinByFormat(valuesUserID, "multi")
 	// query array param user_id
 	if err := r.SetQueryParam("user_id", joinedUserID...); err != nil {
+		return err
+	}
+
+	valuesUsername := o.Username
+
+	joinedUsername := swag.JoinByFormat(valuesUsername, "multi")
+	// query array param username
+	if err := r.SetQueryParam("username", joinedUsername...); err != nil {
 		return err
 	}
 

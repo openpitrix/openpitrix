@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixSuspendAppVersionResponse
 type OpenpitrixSuspendAppVersionResponse struct {
 
-	// version id
+	// id of version suspended
 	VersionID string `json:"version_id,omitempty"`
 }
 

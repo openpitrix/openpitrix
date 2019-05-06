@@ -7,11 +7,14 @@ package account
 import (
 	"context"
 
-	pbam "openpitrix.io/iam/pkg/pb/am"
-	"openpitrix.io/openpitrix/pkg/client/am"
+	pbam "openpitrix.io/iam/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/client/iam/am"
 	"openpitrix.io/openpitrix/pkg/gerr"
+	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 var (
@@ -19,356 +22,171 @@ var (
 	amClient, _                        = am.NewClient()
 )
 
-func pbRole(p *pbam.Role) *pb.Role {
-	if p == nil {
-		return new(pb.Role)
+func validateRoleUser(ctx context.Context, roleId, userId string) bool {
+	response, err := amClient.GetRoleWithUser(ctx, &pbam.GetRoleRequest{
+		RoleId: roleId,
+	})
+	if err != nil {
+		logger.Error(ctx, "Get role with user failed: %+v", err)
+		return false
 	}
-	return &pb.Role{
-		RoleId:      p.RoleId,
-		RoleName:    p.RoleName,
-		Description: p.Description,
-		Portal:      p.Portal,
-		Owner:       p.Owner,
-		OwnerPath:   p.OwnerPath,
-		Status:      p.Status,
-
-		CreateTime: p.CreateTime,
-		UpdateTime: p.UpdateTime,
-		StatusTime: p.StatusTime,
-
-		UserId: p.UserId,
+	if stringutil.StringIn(userId, response.Role.UserIdSet) {
+		return true
+	} else {
+		return false
 	}
-}
-func pbamRole(p *pb.Role) *pbam.Role {
-	if p == nil {
-		return new(pbam.Role)
-	}
-	return &pbam.Role{
-		RoleId:      p.RoleId,
-		RoleName:    p.RoleName,
-		Description: p.Description,
-		Portal:      p.Portal,
-		Owner:       p.Owner,
-		OwnerPath:   p.OwnerPath,
-		Status:      p.Status,
-
-		CreateTime: p.CreateTime,
-		UpdateTime: p.UpdateTime,
-		StatusTime: p.StatusTime,
-
-		UserId: p.UserId,
-	}
-}
-
-func pbamRoleFromCreateRoleRequest(p *pb.CreateRoleRequest) *pbam.Role {
-	if p == nil {
-		return new(pbam.Role)
-	}
-	return &pbam.Role{
-		RoleId:      p.RoleId,
-		RoleName:    p.RoleName,
-		Description: p.Description,
-		Portal:      p.Portal,
-		Owner:       p.Owner,
-		OwnerPath:   p.OwnerPath,
-		Status:      p.Status,
-	}
-}
-
-func pbamRoleFromModifyRoleRequest(p *pb.ModifyRoleRequest) *pbam.Role {
-	if p == nil {
-		return new(pbam.Role)
-	}
-	return &pbam.Role{
-		RoleId:      p.RoleId,
-		RoleName:    p.RoleName,
-		Description: p.Description,
-		Portal:      p.Portal,
-	}
-}
-
-func pbRoleModule(p *pbam.RoleModule) *pb.RoleModule {
-	if p == nil {
-		return new(pb.RoleModule)
-	}
-	return &pb.RoleModule{
-		RoleId: p.RoleId,
-		Module: pbRoleModuleElemList(p.Module),
-	}
-}
-func pbamRoleModule(p *pb.RoleModule) *pbam.RoleModule {
-	if p == nil {
-		return new(pbam.RoleModule)
-	}
-	return &pbam.RoleModule{
-		RoleId: p.RoleId,
-		Module: pbamRoleModuleElemList(p.Module),
-	}
-}
-
-func pbRoleModuleElemList(ps []*pbam.RoleModuleElem) []*pb.RoleModuleElem {
-	var results []*pb.RoleModuleElem
-	for _, p := range ps {
-		results = append(results, &pb.RoleModuleElem{
-			ModuleId:   p.ModuleId,
-			ModuleName: p.ModuleName,
-			Feature:    pbModuleFeatureList(p.Feature),
-			Owner:      p.Owner,
-			DataLevel:  p.DataLevel,
-			IsCheckAll: p.IsCheckAll,
-		})
-	}
-	return results
-}
-func pbamRoleModuleElemList(ps []*pb.RoleModuleElem) []*pbam.RoleModuleElem {
-	var results []*pbam.RoleModuleElem
-	for _, p := range ps {
-		results = append(results, &pbam.RoleModuleElem{
-			ModuleId:   p.ModuleId,
-			ModuleName: p.ModuleName,
-			Feature:    pbamModuleFeatureList(p.Feature),
-			Owner:      p.Owner,
-			DataLevel:  p.DataLevel,
-			IsCheckAll: p.IsCheckAll,
-		})
-	}
-	return results
-}
-
-func pbModuleFeatureList(ps []*pbam.ModuleFeature) []*pb.ModuleFeature {
-	var results []*pb.ModuleFeature
-	for _, p := range ps {
-		results = append(results, &pb.ModuleFeature{
-			FeatureId:       p.FeatureId,
-			FeatureName:     p.FeatureName,
-			ActionBundle:    pbModuleFeatureActionList(p.ActionBundle),
-			CheckedActionId: p.CheckedActionBundleId,
-		})
-	}
-	return results
-}
-
-func pbamModuleFeatureList(ps []*pb.ModuleFeature) []*pbam.ModuleFeature {
-	var results []*pbam.ModuleFeature
-	for _, p := range ps {
-		results = append(results, &pbam.ModuleFeature{
-			FeatureId:             p.FeatureId,
-			FeatureName:           p.FeatureName,
-			ActionBundle:          pbamModuleFeatureActionList(p.ActionBundle),
-			CheckedActionBundleId: p.CheckedActionId,
-		})
-	}
-	return results
-}
-
-func pbModuleFeatureActionList(ps []*pbam.ModuleFeatureActionBundle) []*pb.ModuleFeatureActionBundle {
-	var results []*pb.ModuleFeatureActionBundle
-	for _, p := range ps {
-		results = append(results, &pb.ModuleFeatureActionBundle{
-			RoleId:              p.RoleId,
-			RoleName:            p.RoleName,
-			Portal:              p.Portal,
-			ModuleId:            p.ModuleId,
-			ModuleName:          p.ModuleName,
-			DataLevel:           p.DataLevel,
-			Owner:               p.Owner,
-			FeatureId:           p.FeatureId,
-			FeatureName:         p.FeatureName,
-			ActionBundleId:      p.ActionBundleId,
-			ActionBundleName:    p.ActionBundleName,
-			ActionBundleEnabled: p.ActionBundleEnabled,
-			ApiId:               p.ApiId,
-			ApiMethod:           p.ApiMethod,
-			ApiDescription:      p.ApiDescription,
-			Url:                 p.Url,
-			UrlMethod:           p.UrlMethod,
-		})
-	}
-	return results
-}
-
-func pbamModuleFeatureActionList(ps []*pb.ModuleFeatureActionBundle) []*pbam.ModuleFeatureActionBundle {
-	var results []*pbam.ModuleFeatureActionBundle
-	for _, p := range ps {
-		results = append(results, &pbam.ModuleFeatureActionBundle{
-			RoleId:              p.RoleId,
-			RoleName:            p.RoleName,
-			Portal:              p.Portal,
-			ModuleId:            p.ModuleId,
-			ModuleName:          p.ModuleName,
-			DataLevel:           p.DataLevel,
-			Owner:               p.Owner,
-			FeatureId:           p.FeatureId,
-			FeatureName:         p.FeatureName,
-			ActionBundleId:      p.ActionBundleId,
-			ActionBundleName:    p.ActionBundleName,
-			ActionBundleEnabled: p.ActionBundleEnabled,
-			ApiId:               p.ApiId,
-			ApiMethod:           p.ApiMethod,
-			ApiDescription:      p.ApiDescription,
-			Url:                 p.Url,
-			UrlMethod:           p.UrlMethod,
-		})
-	}
-	return results
 }
 
 func (p *Server) CanDo(ctx context.Context, req *pb.CanDoRequest) (*pb.CanDoResponse, error) {
-	userId := ctxutil.GetSender(ctx).UserId
 	v, err := amClient.CanDo(ctx, &pbam.CanDoRequest{
-		UserId:    userId,
+		UserId:    req.UserId,
 		Url:       req.Url,
 		UrlMethod: req.UrlMethod,
+		ApiMethod: req.ApiMethod,
 	})
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		return nil, err
 	}
 
-	reply := &pb.CanDoResponse{
+	return &pb.CanDoResponse{
 		UserId:     v.UserId,
 		AccessPath: v.AccessPath,
 		OwnerPath:  v.OwnerPath,
-	}
-	return reply, nil
+	}, nil
 }
 
 func (p *Server) GetRoleModule(ctx context.Context, req *pb.GetRoleModuleRequest) (*pb.GetRoleModuleResponse, error) {
-	// TODO: check permission
-
-	v, err := amClient.GetRoleModule(ctx, &pbam.RoleId{
+	response, err := amClient.GetRoleModule(ctx, &pbam.GetRoleModuleRequest{
 		RoleId: req.RoleId,
 	})
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		return nil, err
 	}
 
-	reply := &pb.GetRoleModuleResponse{
-		RoleModule: pbRoleModule(v),
-	}
-	return reply, nil
+	return &pb.GetRoleModuleResponse{
+		RoleId: req.RoleId,
+		Module: models.ToPbModule(response.Module),
+	}, nil
 }
+
 func (p *Server) ModifyRoleModule(ctx context.Context, req *pb.ModifyRoleModuleRequest) (*pb.ModifyRoleModuleResponse, error) {
-	// TODO: check permission
-
-	v, err := amClient.ModifyRoleModule(ctx, pbamRoleModule(req.RoleModule))
+	_, err := amClient.ModifyRoleModule(ctx, &pbam.ModifyRoleModuleRequest{
+		RoleId: req.RoleId,
+		Module: models.ToAmModule(req.Module),
+	})
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		return nil, err
 	}
 
-	reply := &pb.ModifyRoleModuleResponse{
-		RoleModule: pbRoleModule(v),
-	}
-
-	return reply, nil
+	return &pb.ModifyRoleModuleResponse{
+		RoleId: req.RoleId,
+	}, nil
 }
+
 func (p *Server) CreateRole(ctx context.Context, req *pb.CreateRoleRequest) (*pb.CreateRoleResponse, error) {
-	// todo: cando?
-
-	v, err := amClient.CreateRole(ctx, pbamRoleFromCreateRoleRequest(req))
+	s := ctxutil.GetSender(ctx)
+	response, err := amClient.CreateRole(ctx, &pbam.CreateRoleRequest{
+		RoleName:    req.RoleName,
+		Description: req.Description,
+		Portal:      req.Portal,
+		Owner:       s.GetOwnerPath().Owner(),
+		OwnerPath:   string(s.GetOwnerPath()),
+	})
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		return nil, err
 	}
 
-	reply := &pb.CreateRoleResponse{
-		RoleId: v.RoleId,
-	}
-
-	return reply, nil
+	return &pb.CreateRoleResponse{
+		RoleId: response.RoleId,
+	}, nil
 }
+
 func (p *Server) DeleteRoles(ctx context.Context, req *pb.DeleteRolesRequest) (*pb.DeleteRolesResponse, error) {
-	// TODO: check permission
-
-	_, err := amClient.DeleteRoles(ctx, &pbam.RoleIdList{
+	_, err := amClient.DeleteRoles(ctx, &pbam.DeleteRolesRequest{
 		RoleId: req.RoleId,
 	})
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		return nil, err
 	}
 
-	reply := &pb.DeleteRolesResponse{
+	return &pb.DeleteRolesResponse{
 		RoleId: req.RoleId,
-	}
-
-	return reply, nil
+	}, nil
 }
+
 func (p *Server) ModifyRole(ctx context.Context, req *pb.ModifyRoleRequest) (*pb.ModifyRoleResponse, error) {
-	// todo: cando?
-
-	v, err := amClient.ModifyRole(ctx, pbamRoleFromModifyRoleRequest(req))
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-
-	reply := &pb.ModifyRoleResponse{
-		Role: pbRole(v),
-	}
-
-	return reply, nil
-}
-func (p *Server) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.GetRoleResponse, error) {
-	// todo: cando?
-
-	v, err := amClient.GetRole(ctx, &pbam.RoleId{RoleId: req.RoleId})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-
-	reply := &pb.GetRoleResponse{
-		Role: pbRole(v),
-	}
-
-	return reply, nil
-}
-func (p *Server) DescribeRoles(ctx context.Context, req *pb.DescribeRolesRequest) (*pb.DescribeRolesResponse, error) {
-	// todo: cando?
-
-	v, err := amClient.DescribeRoles(ctx, &pbam.DescribeRolesRequest{
-		RoleId:   req.RoleId,
-		RoleName: req.RoleName,
-		Portal:   req.Portal,
-		UserId:   req.UserId,
+	_, err := amClient.ModifyRole(ctx, &pbam.ModifyRoleRequest{
+		RoleId:      req.RoleId,
+		RoleName:    req.RoleName,
+		Description: req.Description,
 	})
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		return nil, err
+	}
+
+	return &pb.ModifyRoleResponse{
+		RoleId: req.RoleId,
+	}, nil
+}
+
+func (p *Server) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.GetRoleResponse, error) {
+	res, err := amClient.GetRole(ctx, &pbam.GetRoleRequest{
+		RoleId: req.RoleId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetRoleResponse{
+		Role: models.ToPbRole(res.Role),
+	}, nil
+}
+
+func (p *Server) DescribeRoles(ctx context.Context, req *pb.DescribeRolesRequest) (*pb.DescribeRolesResponse, error) {
+	response, err := amClient.DescribeRoles(ctx, &pbam.DescribeRolesRequest{
+		SearchWord:     req.SearchWord,
+		SortKey:        req.SortKey,
+		Reverse:        req.Reverse,
+		Offset:         req.Offset,
+		Limit:          req.Limit,
+		RoleId:         req.RoleId,
+		RoleName:       req.RoleName,
+		Portal:         req.Portal,
+		Status:         req.Status,
+		ActionBundleId: req.ActionBundleId,
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	var roles []*pb.Role
-	for _, v := range v.Value {
-		roles = append(roles, pbRole(v))
+	for _, role := range response.RoleSet {
+		roles = append(roles, models.ToPbRole(role))
 	}
 
 	reply := &pb.DescribeRolesResponse{
-		Role: roles,
+		TotalCount: response.Total,
+		RoleSet:    roles,
 	}
 
 	return reply, nil
 }
 
 func (p *Server) BindUserRole(ctx context.Context, req *pb.BindUserRoleRequest) (*pb.BindUserRoleResponse, error) {
-	// todo: cando?
-
 	_, err := amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
 		RoleId: req.RoleId,
 		UserId: req.UserId,
 	})
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		return nil, err
 	}
 
-	reply := &pb.BindUserRoleResponse{}
-	return reply, nil
-}
-func (p *Server) UnbindUserRole(ctx context.Context, req *pb.UnbindUserRoleRequest) (*pb.UnbindUserRoleResponse, error) {
-	// todo: cando?
-
-	_, err := amClient.UnbindUserRole(ctx, &pbam.UnbindUserRoleRequest{
-		RoleId: req.RoleId,
+	return &pb.BindUserRoleResponse{
 		UserId: req.UserId,
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
+		RoleId: req.RoleId,
+	}, nil
+}
 
-	reply := &pb.UnbindUserRoleResponse{}
-	return reply, nil
+func (p *Server) UnbindUserRole(ctx context.Context, req *pb.UnbindUserRoleRequest) (*pb.UnbindUserRoleResponse, error) {
+	return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
 }

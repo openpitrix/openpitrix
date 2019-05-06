@@ -63,45 +63,90 @@ for the describe clusters operation typically these are written to a http.Reques
 */
 type DescribeClustersParams struct {
 
-	/*AppID*/
+	/*AppID
+	  app ids.
+
+	*/
 	AppID []string
-	/*ClusterID*/
+	/*ClusterID
+	  cluster ids.
+
+	*/
 	ClusterID []string
-	/*ClusterType*/
+	/*ClusterType
+	  cluster type, frontgate or normal cluster.
+
+	*/
 	ClusterType *string
-	/*CreatedDate*/
+	/*CreatedDate
+	  cluster created duration eg.[1 day].
+
+	*/
 	CreatedDate *int64
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select column to display.
+
+	*/
 	DisplayColumns []string
-	/*ExternalClusterID*/
+	/*ExternalClusterID
+	  external cluster id.
+
+	*/
 	ExternalClusterID *string
-	/*FrontgateID*/
+	/*FrontgateID
+	  frontgate ids.
+
+	*/
 	FrontgateID []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
-	/*Reverse*/
+	/*Owner
+	  owner.
+
+	*/
+	Owner []string
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*RuntimeID*/
+	/*RuntimeID
+	  runtime ids.
+
+	*/
 	RuntimeID []string
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  cluster status eg.[active|used|enabled|disabled|deleted|stopped|ceased].
+
+	*/
 	Status []string
-	/*VersionID*/
+	/*VersionID
+	  version ids.
+
+	*/
 	VersionID []string
-	/*WithDetail*/
+	/*WithDetail
+	  get cluster detail info or not.
+
+	*/
 	WithDetail *bool
 
 	timeout    time.Duration
@@ -241,15 +286,15 @@ func (o *DescribeClustersParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe clusters params
-func (o *DescribeClustersParams) WithOwnerPath(ownerPath []string) *DescribeClustersParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe clusters params
+func (o *DescribeClustersParams) WithOwner(owner []string) *DescribeClustersParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe clusters params
-func (o *DescribeClustersParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe clusters params
+func (o *DescribeClustersParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithReverse adds the reverse to the describe clusters params
@@ -449,11 +494,11 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

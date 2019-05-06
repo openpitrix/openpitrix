@@ -21,12 +21,12 @@ func NewAppVersionReviewId() string {
 }
 
 type AppVersionReviewPhase struct {
-	Status     string
-	Operator   string
-	Role       string
-	Message    string
-	ReviewTime time.Time
-	StatusTime time.Time
+	Status       string
+	Operator     string
+	OperatorType string
+	Message      string
+	ReviewTime   time.Time
+	StatusTime   time.Time
 }
 type AppVersionReviewPhases map[string]AppVersionReviewPhase
 
@@ -69,8 +69,8 @@ type AppVersionReview struct {
 
 type AppVersionReviews []*AppVersionReview
 
-func (avr *AppVersionReview) UpdatePhase(role, status, operator, message string) {
-	p, ok := avr.Phase[role]
+func (avr *AppVersionReview) UpdatePhase(operatorType, status, operator, message string) {
+	p, ok := avr.Phase[operatorType]
 	if !ok {
 		p = AppVersionReviewPhase{
 			ReviewTime: time.Now(),
@@ -79,11 +79,11 @@ func (avr *AppVersionReview) UpdatePhase(role, status, operator, message string)
 
 	p.Status = status
 	p.Operator = operator
-	p.Role = role
+	p.OperatorType = operatorType
 	p.Message = message
 	p.StatusTime = time.Now()
 
-	avr.Phase[role] = p
+	avr.Phase[operatorType] = p
 }
 
 var AppVersionReviewColumns = db.GetColumnsFromStruct(&AppVersionReview{})
@@ -114,16 +114,16 @@ func AppVersionReviewToPb(versionReview *AppVersionReview) *pb.AppVersionReview 
 	pbAppVersionReview.Reviewer = pbutil.ToProtoString(versionReview.Reviewer)
 
 	pbAppVersionReview.Phase = make(map[string]*pb.AppVersionReviewPhase)
-	for role, p := range versionReview.Phase {
+	for operatorType, p := range versionReview.Phase {
 		pbPhase := pb.AppVersionReviewPhase{}
-		pbPhase.Role = pbutil.ToProtoString(p.Role)
+		pbPhase.OperatorType = pbutil.ToProtoString(p.OperatorType)
 		pbPhase.Status = pbutil.ToProtoString(p.Status)
 		pbPhase.Operator = pbutil.ToProtoString(p.Operator)
 		pbPhase.Message = pbutil.ToProtoString(p.Message)
 		pbPhase.StatusTime = pbutil.ToProtoTimestamp(p.StatusTime)
 		pbPhase.ReviewTime = pbutil.ToProtoTimestamp(p.ReviewTime)
 
-		pbAppVersionReview.Phase[role] = &pbPhase
+		pbAppVersionReview.Phase[operatorType] = &pbPhase
 	}
 	return &pbAppVersionReview
 }

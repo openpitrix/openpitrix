@@ -16,19 +16,19 @@ import (
 // swagger:model openpitrixVendorStatistics
 type OpenpitrixVendorStatistics struct {
 
-	// active app count
-	ActiveAppCount int32 `json:"active_app_count,omitempty"`
+	// number of user's active app
+	ActiveAppCount int64 `json:"active_app_count,omitempty"`
 
-	// cluster count month
-	ClusterCountMonth int32 `json:"cluster_count_month,omitempty"`
+	// total count of cluster last month
+	ClusterCountMonth int64 `json:"cluster_count_month,omitempty"`
 
-	// cluster count total
-	ClusterCountTotal int32 `json:"cluster_count_total,omitempty"`
+	// total count of cluster
+	ClusterCountTotal int64 `json:"cluster_count_total,omitempty"`
 
 	// company name
 	CompanyName string `json:"company_name,omitempty"`
 
-	// user id
+	// use user id to statistic
 	UserID string `json:"user_id,omitempty"`
 }
 

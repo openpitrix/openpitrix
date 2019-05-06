@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteKeyPairsRequest
 type OpenpitrixDeleteKeyPairsRequest struct {
 
-	// key pair id
+	// required, ids of key pairs to delete
 	KeyPairID []string `json:"key_pair_id"`
 }
 

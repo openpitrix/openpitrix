@@ -8,17 +8,20 @@ import (
 	"context"
 	"os"
 
-	pbam "openpitrix.io/iam/pkg/pb/am"
-	pbim "openpitrix.io/iam/pkg/pb/im"
+	pbim "kubesphere.io/im/pkg/pb"
+
+	pbam "openpitrix.io/iam/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/sender"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func initIAMClient() {
 	clientId := os.Getenv("IAM_INIT_CLIENT_ID")
 	clientSecret := os.Getenv("IAM_INIT_CLIENT_SECRET")
-	const userId = "system"
+	const userId = constants.UserSystem
 
 	if clientId == "" || clientSecret == "" {
 		return
@@ -45,42 +48,64 @@ func initIAMAccount() {
 		return
 	}
 	ctx := context.Background()
-	user, b, err := validateUserPassword(ctx, email, password)
 	var userId string
-	if err != nil {
-		logger.Info(ctx, "Validate user password failed, create new user")
+
+	user, isUserExist, isGroupExist := validateUserAndGroupExist(ctx, email)
+	if !isUserExist {
 		// create user
-		user, err = imClient.CreateUser(ctx, &pbim.User{
+		createUserResponse, err := imClient.CreateUser(ctx, &pbim.CreateUserRequest{
 			Email:    email,
 			Username: getUsernameFromEmail(email),
 			Password: password,
-			Status:   constants.StatusActive,
 		})
 		if err != nil {
-			logger.Info(ctx, "Create new user failed, error: %+v", err)
+			panic(err)
+		} else {
+			logger.Info(ctx, "Create new user with email [%s] done", email)
 		}
-
+		userId = createUserResponse.UserId
+	} else {
+		logger.Info(ctx, "User with email [%s] already exist", email)
+		userId = user.UserId
 	}
-	userId = user.UserId
-	if !b {
-		_, err = imClient.ModifyPassword(ctx, &pbim.Password{
+
+	isEmailPasswordMatched := validateUserPassword(ctx, userId, password)
+	if !isEmailPasswordMatched {
+		_, err := imClient.ModifyPassword(ctx, &pbim.ModifyPasswordRequest{
 			UserId:   userId,
 			Password: password,
 		})
 		if err != nil {
 			panic(err)
+		} else {
+			logger.Info(ctx, "Init IAM admin account [%s] done, update [%s] password", email, userId)
 		}
-		logger.Info(ctx, "Init IAM admin account [%s] done, update [%s] password", email, userId)
 	} else {
-		logger.Info(ctx, "Init IAM admin account [%s] done, user is [%s]", email, userId)
+		logger.Info(ctx, "User [%s] with email [%s] password no need to update", userId, email)
 	}
-	_, err = amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
-		UserId: []string{userId},
-		RoleId: []string{constants.RoleGlobalAdmin},
-	})
-	if err != nil {
-		logger.Error(ctx, "Bind user [%s] global admin role failed: %+v", userId, err)
+
+	ctx = ctxutil.ContextWithSender(ctx, sender.GetSystemSender())
+	isRoleBoundUser := validateRoleUser(ctx, constants.RoleGlobalAdmin, userId)
+	if !isRoleBoundUser {
+		_, err := amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
+			UserId: []string{userId},
+			RoleId: []string{constants.RoleGlobalAdmin},
+		})
+		if err != nil {
+			panic(err)
+		} else {
+			logger.Info(ctx, "Bind user [%s] global admin role done", userId)
+		}
 	} else {
-		logger.Info(ctx, "Bind user [%s] global admin role done", userId)
+		logger.Info(ctx, "User [%s] already bound with global admin role", userId)
+	}
+
+	if !isGroupExist {
+		err := createAndJoinRootGroup(ctx, userId)
+		if err != nil {
+			panic(err)
+		} else {
+			logger.Info(ctx, "Create and join root group for user [%s] done", userId)
+		}
 	}
 }

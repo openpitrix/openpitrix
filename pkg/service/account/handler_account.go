@@ -6,11 +6,12 @@ package account
 
 import (
 	"context"
-	"time"
+	"strings"
 
-	pbam "openpitrix.io/iam/pkg/pb/am"
-	pbim "openpitrix.io/iam/pkg/pb/im"
-	"openpitrix.io/openpitrix/pkg/client/im"
+	pbim "kubesphere.io/im/pkg/pb"
+
+	pbam "openpitrix.io/iam/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/client/iam/im"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -21,6 +22,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 var (
@@ -29,180 +31,474 @@ var (
 )
 
 const OwnerKey = "owner"
+const OwnerPathKey = "owner_path"
 
-func formatUsers(pbamUsers []*pbam.UserWithRole) []*pb.User {
-	var users []*pb.User
-	for _, u := range pbamUsers {
-		var rs []*pb.Role
-		for _, r := range u.Role {
-			rs = append(rs, pbRole(r))
-		}
-		users = append(users, &pb.User{
-			UserId:      pbutil.ToProtoString(u.UserId),
-			Username:    pbutil.ToProtoString(u.Username),
-			Email:       pbutil.ToProtoString(u.Email),
-			PhoneNumber: pbutil.ToProtoString(u.PhoneNumber),
-			Description: pbutil.ToProtoString(u.Description),
-			Status:      pbutil.ToProtoString(u.Status),
-			CreateTime:  u.CreateTime,
-			UpdateTime:  u.UpdateTime,
-			StatusTime:  u.StatusTime,
-			Role:        rs,
-			GroupId:     u.GroupId,
-		})
+func getRoleUserIds(ctx context.Context, roleIds, userIds []string) ([]string, error) {
+	var roleUserIds []string
+	res, err := amClient.DescribeRolesWithUser(ctx, &pbam.DescribeRolesRequest{
+		RoleId: roleIds,
+	})
+	if err != nil {
+		return nil, err
 	}
-	return users
+	for _, role := range res.RoleSet {
+		roleUserIds = append(roleUserIds, role.UserIdSet...)
+	}
+
+	var retUserIds []string
+	if len(userIds) == 0 {
+		retUserIds = roleUserIds
+	} else {
+		for _, userId := range roleUserIds {
+			if stringutil.StringIn(userId, userIds) {
+				retUserIds = append(retUserIds, userId)
+			}
+		}
+	}
+
+	return retUserIds, nil
+}
+
+func getUser(ctx context.Context, userId string) (*pbim.User, error) {
+	getUserResponse, err := imClient.GetUser(ctx, &pbim.GetUserRequest{
+		UserId: userId,
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	return getUserResponse.User, err
+}
+
+func createAndJoinRootGroup(ctx context.Context, userId string) error {
+	rep, err := imClient.CreateGroup(ctx, &pbim.CreateGroupRequest{
+		ParentGroupId: "",
+		GroupName:     "root",
+	})
+	if err != nil {
+		return err
+	}
+
+	groupId := rep.GroupId
+	_, err = imClient.ModifyGroup(ctx, &pbim.ModifyGroupRequest{
+		GroupId: groupId,
+		Extra: map[string]string{
+			OwnerKey:     userId,
+			OwnerPathKey: groupId + ":" + userId,
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	_, err = imClient.JoinGroup(ctx, &pbim.JoinGroupRequest{
+		GroupId: []string{groupId},
+		UserId:  []string{userId},
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getSystemUserId(ctx context.Context) (string, error) {
+	var userId string
+	getRoleWithUserResponse, err := amClient.GetRoleWithUser(ctx, &pbam.GetRoleRequest{
+		RoleId: constants.RoleGlobalAdmin,
+	})
+	if err != nil {
+		return userId, err
+	}
+	userIds := getRoleWithUserResponse.Role.UserIdSet
+	if len(userIds) == 0 {
+		logger.Error(ctx, "There is no global admin user")
+		return userId, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
+	}
+	listUsersResponse, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
+		UserId: userIds,
+		Status: []string{constants.StatusActive},
+	})
+	if err != nil {
+		return userId, err
+	}
+	if len(listUsersResponse.UserSet) == 0 {
+		logger.Error(ctx, "There is no active global admin user")
+		return userId, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
+	}
+	userId = listUsersResponse.UserSet[0].UserId
+	return userId, nil
+}
+
+func getRootGroupId(ctx context.Context, userId string) (string, error) {
+	var rootGroupId string
+
+	if userId == constants.UserSystem {
+		var err error
+		userId, err = getSystemUserId(ctx)
+		if err != nil {
+			return rootGroupId, err
+		}
+	}
+
+	getUserWithGroupRes, err := imClient.GetUserWithGroup(ctx, &pbim.GetUserRequest{
+		UserId: userId,
+	})
+	if err != nil {
+		logger.Error(ctx, "Get user [%s] failed: %+v", userId, err)
+		return rootGroupId, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	// root group is same
+	if len(getUserWithGroupRes.User.GroupSet) == 0 || len(getUserWithGroupRes.User.GroupSet[0].GroupPath) == 0 {
+		logger.Error(ctx, "Failed to get root group for user [%s]", userId)
+		return rootGroupId, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	groupPath := getUserWithGroupRes.User.GroupSet[0].GroupPath
+	rootGroupId = strings.Split(groupPath, ".")[0]
+	return rootGroupId, nil
+}
+
+func getUserPortal(ctx context.Context, userId string) (string, error) {
+	if userId == constants.UserSystem {
+		return constants.PortalGlobalAdmin, nil
+	}
+	var portal string
+	response, err := amClient.DescribeRoles(ctx, &pbam.DescribeRolesRequest{
+		UserId: []string{userId},
+	})
+	if err != nil {
+		return portal, err
+	}
+	if len(response.RoleSet) == 0 {
+		logger.Error(ctx, "Failed to get role for user [%s]", userId)
+		return portal, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
+	}
+	portal = response.RoleSet[0].Portal
+	return portal, nil
 }
 
 func (p *Server) DescribeUsers(ctx context.Context, req *pb.DescribeUsersRequest) (*pb.DescribeUsersResponse, error) {
+	s := ctxutil.GetSender(ctx)
 	var (
 		offset = pbutil.GetOffsetFromRequest(req)
 		limit  = pbutil.GetLimitFromRequest(req)
 	)
 
-	res, err := amClient.DescribeUsersWithRole(ctx, &pbam.DescribeUsersWithRoleRequest{
-		Limit:      int32(limit),
-		Offset:     int32(offset),
-		SortKey:    req.GetSortKey().GetValue(),
-		Reverse:    req.GetReverse().GetValue(),
-		SearchWord: req.GetSearchWord().GetValue(),
+	senderPortal, err := getUserPortal(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
 
-		GroupId: req.GetGroupId(),
-		UserId:  req.GetUserId(),
-		Status:  req.GetStatus(),
-		RoleId:  req.GetRole(),
+	var rootGroupIds []string
+	rootGroupId, err := getRootGroupId(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(req.GetRootGroupId()) > 0 {
+		err = CheckRootGroupIds(ctx, req.GetRootGroupId(), rootGroupId)
+		if err != nil {
+			return nil, err
+		}
+		rootGroupIds = append(rootGroupIds, req.GetRootGroupId()...)
+	} else if senderPortal != constants.PortalGlobalAdmin {
+		rootGroupIds = append(rootGroupIds, rootGroupId)
+	}
+
+	if len(req.GetRoleId()) > 0 {
+		userIds, err := getRoleUserIds(ctx, req.GetRoleId(), req.GetUserId())
+		if err != nil {
+			return nil, err
+		}
+		req.UserId = userIds
+		if len(req.UserId) == 0 {
+			return &pb.DescribeUsersResponse{
+				UserSet:    []*pb.User{},
+				TotalCount: 0,
+			}, nil
+		}
+	}
+
+	res, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
+		SortKey:     req.GetSortKey().GetValue(),
+		Reverse:     req.GetReverse().GetValue(),
+		Offset:      uint32(offset),
+		Limit:       uint32(limit),
+		SearchWord:  []string{req.SearchWord.GetValue()},
+		RootGroupId: rootGroupIds,
+		GroupId:     req.GetGroupId(),
+		UserId:      req.GetUserId(),
+		Username:    req.GetUsername(),
+		Email:       req.GetEmail(),
+		PhoneNumber: req.GetPhoneNumber(),
+		Status:      req.GetStatus(),
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
 	reply := &pb.DescribeUsersResponse{
-		UserSet:    formatUsers(res.User),
-		TotalCount: uint32(res.GetTotal()),
+		UserSet:    models.ToPbUsers(res.UserSet),
+		TotalCount: res.GetTotal(),
+	}
+	return reply, nil
+}
+
+func (p *Server) DescribeUsersDetail(ctx context.Context, req *pb.DescribeUsersRequest) (*pb.DescribeUsersDetailResponse, error) {
+	s := ctxutil.GetSender(ctx)
+	var (
+		offset = pbutil.GetOffsetFromRequest(req)
+		limit  = pbutil.GetLimitFromRequest(req)
+	)
+
+	senderPortal, err := getUserPortal(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	var rootGroupIds []string
+	rootGroupId, err := getRootGroupId(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(req.GetRootGroupId()) > 0 {
+		err = CheckRootGroupIds(ctx, req.GetRootGroupId(), rootGroupId)
+		if err != nil {
+			return nil, err
+		}
+		rootGroupIds = append(rootGroupIds, req.GetRootGroupId()...)
+	} else if senderPortal != constants.PortalGlobalAdmin {
+		rootGroupIds = append(rootGroupIds, rootGroupId)
+	}
+
+	if len(req.GetRoleId()) > 0 {
+		userIds, err := getRoleUserIds(ctx, req.GetRoleId(), req.GetUserId())
+		if err != nil {
+			return nil, err
+		}
+		req.UserId = userIds
+		if len(req.UserId) == 0 {
+			return &pb.DescribeUsersDetailResponse{
+				UserDetailSet: []*pb.UserDetail{},
+				TotalCount:    0,
+			}, nil
+		}
+	}
+
+	res, err := imClient.ListUsersWithGroup(ctx, &pbim.ListUsersRequest{
+		SortKey:     req.GetSortKey().GetValue(),
+		Reverse:     req.GetReverse().GetValue(),
+		Offset:      uint32(offset),
+		Limit:       uint32(limit),
+		SearchWord:  []string{req.SearchWord.GetValue()},
+		RootGroupId: rootGroupIds,
+		GroupId:     req.GetGroupId(),
+		UserId:      req.GetUserId(),
+		Status:      req.GetStatus(),
+		Username:    req.GetUsername(),
+		Email:       req.GetEmail(),
+		PhoneNumber: req.GetPhoneNumber(),
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	var userDetails []*pb.UserDetail
+	for _, userWithGroup := range res.UserSet {
+		res, err := amClient.DescribeRoles(ctx, &pbam.DescribeRolesRequest{
+			UserId: []string{userWithGroup.User.UserId},
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		userDetails = append(userDetails, &pb.UserDetail{
+			User:     models.ToPbUser(userWithGroup.User),
+			GroupSet: models.ToPbGroups(userWithGroup.GroupSet),
+			RoleSet:  models.ToPbRoles(res.RoleSet),
+		})
+	}
+
+	reply := &pb.DescribeUsersDetailResponse{
+		UserDetailSet: userDetails,
+		TotalCount:    res.GetTotal(),
 	}
 	return reply, nil
 }
 
 func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsRequest) (*pb.DescribeGroupsResponse, error) {
+	s := ctxutil.GetSender(ctx)
 	var (
 		offset = pbutil.GetOffsetFromRequest(req)
 		limit  = pbutil.GetLimitFromRequest(req)
 	)
-	res, err := imClient.ListGroups(ctx, &pbim.ListGroupsRequest{
-		Limit:      int32(limit),
-		Offset:     int32(offset),
-		SortKey:    req.GetSortKey().GetValue(),
-		Reverse:    req.GetReverse().GetValue(),
-		SearchWord: req.GetSearchWord().GetValue(),
 
-		GroupId: req.GetGroupId(),
-		UserId:  req.GetUserId(),
-		Status:  req.GetStatus(),
+	var rootGroupIds []string
+	rootGroupId, err := getRootGroupId(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(req.GetRootGroupId()) > 0 {
+		err = CheckRootGroupIds(ctx, req.GetRootGroupId(), rootGroupId)
+		if err != nil {
+			return nil, err
+		}
+		rootGroupIds = append(rootGroupIds, req.GetRootGroupId()...)
+	} else {
+		rootGroupIds = append(rootGroupIds, rootGroupId)
+	}
+
+	res, err := imClient.ListGroups(ctx, &pbim.ListGroupsRequest{
+		Limit:         uint32(limit),
+		Offset:        uint32(offset),
+		SortKey:       req.GetSortKey().GetValue(),
+		Reverse:       req.GetReverse().GetValue(),
+		SearchWord:    []string{req.SearchWord.GetValue()},
+		RootGroupId:   rootGroupIds,
+		ParentGroupId: req.GetParentGroupId(),
+		GroupId:       req.GetGroupId(),
+		GroupPath:     req.GetGroupPath(),
+		Status:        req.GetStatus(),
+		GroupName:     req.GetGroupName(),
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	var groups []*pb.Group
-	for _, u := range res.Group {
-		groups = append(groups, &pb.Group{
-			ParentGroupId: pbutil.ToProtoString(u.ParentGroupId),
-			GroupId:       pbutil.ToProtoString(u.GroupId),
-			GroupPath:     pbutil.ToProtoString(u.GroupPath),
-			Name:          pbutil.ToProtoString(u.GroupName),
-			Description:   pbutil.ToProtoString(u.Description),
-			Status:        pbutil.ToProtoString(u.Status),
-			CreateTime:    u.CreateTime,
-			UpdateTime:    u.UpdateTime,
-			StatusTime:    u.StatusTime,
-			UserId:        u.UserId,
+
+	return &pb.DescribeGroupsResponse{
+		GroupSet:   models.ToPbGroups(res.GroupSet),
+		TotalCount: res.GetTotal(),
+	}, nil
+}
+
+func (p *Server) DescribeGroupsDetail(ctx context.Context, req *pb.DescribeGroupsRequest) (*pb.DescribeGroupsDetailResponse, error) {
+	s := ctxutil.GetSender(ctx)
+	var (
+		offset = pbutil.GetOffsetFromRequest(req)
+		limit  = pbutil.GetLimitFromRequest(req)
+	)
+
+	var rootGroupIds []string
+	rootGroupId, err := getRootGroupId(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(req.GetRootGroupId()) > 0 {
+		err = CheckRootGroupIds(ctx, req.GetRootGroupId(), rootGroupId)
+		if err != nil {
+			return nil, err
+		}
+		rootGroupIds = append(rootGroupIds, req.GetRootGroupId()...)
+	} else {
+		rootGroupIds = append(rootGroupIds, rootGroupId)
+	}
+
+	err = CheckRootGroupIds(ctx, req.GetRootGroupId(), rootGroupId)
+	if err != nil {
+		return nil, err
+	}
+	rootGroupIds = append(rootGroupIds, req.GetRootGroupId()...)
+
+	res, err := imClient.ListGroupsWithUser(ctx, &pbim.ListGroupsRequest{
+		Limit:         uint32(limit),
+		Offset:        uint32(offset),
+		SortKey:       req.GetSortKey().GetValue(),
+		Reverse:       req.GetReverse().GetValue(),
+		SearchWord:    []string{req.SearchWord.GetValue()},
+		RootGroupId:   rootGroupIds,
+		ParentGroupId: req.GetParentGroupId(),
+		GroupId:       req.GetGroupId(),
+		GroupPath:     req.GetGroupPath(),
+		Status:        req.GetStatus(),
+		GroupName:     req.GetGroupName(),
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	var groupDetails []*pb.GroupDetail
+	for _, groupWithUser := range res.GroupSet {
+		groupDetails = append(groupDetails, &pb.GroupDetail{
+			Group:   models.ToPbGroup(groupWithUser.Group),
+			UserSet: models.ToPbUsers(groupWithUser.UserSet),
 		})
 	}
 
-	reply := &pb.DescribeGroupsResponse{
-		GroupSet:   groups,
-		TotalCount: uint32(res.GetTotal()),
-	}
-	return reply, nil
-}
-
-func getUser(ctx context.Context, userId string) (*pbim.User, error) {
-	user, err := imClient.GetUser(ctx, &pbim.UserId{
-		UserId: userId,
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-	return user, err
+	return &pb.DescribeGroupsDetailResponse{
+		GroupDetailSet: groupDetails,
+		TotalCount:     res.GetTotal(),
+	}, nil
 }
 
 func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb.ModifyUserResponse, error) {
-	uid := req.GetUserId().GetValue()
-
-	user, err := getUser(ctx, uid)
+	userId := req.GetUserId().GetValue()
+	_, err := CheckUsersPermission(ctx, []string{userId})
 	if err != nil {
 		return nil, err
 	}
 
 	password := req.GetPassword().GetValue()
 	if password != "" {
-		_, err = imClient.ModifyPassword(ctx, &pbim.Password{
-			UserId:   req.GetUserId().GetValue(),
+		_, err := imClient.ModifyPassword(ctx, &pbim.ModifyPasswordRequest{
+			UserId:   userId,
 			Password: password,
 		})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 	}
-	if req.GetDescription() != nil {
-		user.Description = req.GetDescription().GetValue()
-	}
-	if req.GetEmail() != nil {
-		user.Email = req.GetEmail().GetValue()
-	}
-	if req.GetUsername() != nil {
-		user.Username = req.GetUsername().GetValue()
-	}
-	user.UpdateTime = pbutil.ToProtoTimestamp(time.Now())
 
-	user, err = imClient.ModifyUser(ctx, user)
+	_, err = imClient.ModifyUser(ctx, &pbim.ModifyUserRequest{
+		UserId:      userId,
+		Username:    req.GetUsername().GetValue(),
+		Email:       req.GetEmail().GetValue(),
+		PhoneNumber: req.GetPhoneNumber().GetValue(),
+		Description: req.GetDescription().GetValue(),
+	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	reply := &pb.ModifyUserResponse{
+	return &pb.ModifyUserResponse{
 		UserId: req.UserId,
-	}
-
-	return reply, nil
+	}, nil
 }
 
 func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*pb.DeleteUsersResponse, error) {
-	uids := req.GetUserId()
-
-	for _, uid := range uids {
-		user, err := imClient.GetUser(ctx, &pbim.UserId{
-			UserId: uid,
-		})
-		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-		}
-		user.Status = constants.StatusDeleted
-		user.StatusTime = pbutil.ToProtoTimestamp(time.Now())
-
-		user, err = imClient.ModifyUser(ctx, user)
-		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-		}
-	}
-
-	return &pb.DeleteUsersResponse{
-		UserId: uids,
-	}, nil
+	return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
+	//userIds := req.GetUserId()
+	//_, err := CheckUsersPermission(ctx, userIds)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//_, err = amClient.UnbindUserRole(ctx, &pbam.UnbindUserRoleRequest{
+	//	UserId: userIds,
+	//})
+	//if err != nil {
+	//	return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotDeleteUsers)
+	//}
+	//_, err = imClient.DeleteUsers(ctx, &pbim.DeleteUsersRequest{
+	//	UserId: userIds,
+	//})
+	//if err != nil {
+	//	return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotDeleteUsers)
+	//}
+	//
+	//return &pb.DeleteUsersResponse{
+	//	UserId: userIds,
+	//}, nil
 }
 
 func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	s := ctxutil.GetSender(ctx)
 	email := req.GetEmail().GetValue()
+	roleId := req.GetRoleId().GetValue()
+	phoneNumber := req.GetPhoneNumber().GetValue()
+	username := getUsernameFromEmail(email)
+	password := req.GetPassword().GetValue()
+	description := req.GetDescription().GetValue()
 
 	res, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
 		Limit:  1,
@@ -213,62 +509,121 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	if res.Total > 0 {
-		return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorEmailExists, email)
+		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorEmailExists, email)
 	}
 
-	role := req.GetRole().GetValue()
-	user, err := imClient.CreateUser(ctx, &pbim.User{
-		Email:       req.GetEmail().GetValue(),
-		PhoneNumber: req.GetPhoneNumber().GetValue(),
-		Username:    getUsernameFromEmail(req.GetEmail().GetValue()),
-		Password:    req.GetPassword().GetValue(),
-		Description: req.GetDescription().GetValue(),
-		Status:      constants.StatusActive,
+	createUserResponse, err := imClient.CreateUser(ctx, &pbim.CreateUserRequest{
+		Email:       email,
+		PhoneNumber: phoneNumber,
+		Username:    username,
+		Password:    password,
+		Description: description,
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	userId := createUserResponse.UserId
+
+	// get sender portal
+
+	senderPortal, err := getUserPortal(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	// get user portal
+	getRoleResponse, err := amClient.GetRole(ctx, &pbam.GetRoleRequest{
+		RoleId: roleId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	userPortal := getRoleResponse.Role.Portal
+
+	// create group and join group
+	if senderPortal != userPortal {
+		err := createAndJoinRootGroup(ctx, userId)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+	} else {
+		rootGroupId, err := getRootGroupId(ctx, s.UserId)
+		if err != nil {
+			return nil, err
+		}
+		_, err = imClient.JoinGroup(ctx, &pbim.JoinGroupRequest{
+			GroupId: []string{rootGroupId},
+			UserId:  []string{userId},
+		})
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
 	}
 
 	_, err = amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
-		UserId: []string{user.UserId},
-		RoleId: []string{role},
+		UserId: []string{userId},
+		RoleId: []string{roleId},
 	})
 	if err != nil {
+		logger.Error(ctx, "Failed to bind user [%s] with role [%s]: %+v", userId, roleId, err)
+		_, deleteErr := imClient.DeleteUsers(ctx, &pbim.DeleteUsersRequest{
+			UserId: []string{createUserResponse.UserId},
+		})
+		if deleteErr != nil {
+			logger.Error(ctx, "Failed to delete user [%s]: %+v", userId, err)
+		}
+		return nil, err
+	}
+
+	//get the username of current login user.
+	resp, err := imClient.GetUser(ctx, &pbim.GetUserRequest{UserId: s.UserId})
+	if err != nil {
+		logger.Error(ctx, "Failed to get user [%s], %+v", s.UserId, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
+	senderUserName := resp.GetUser().GetUsername()
+	platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+	platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
 
-	var emailNotifications []*models.EmailNotification
+	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
+		var emailNotifications []*models.EmailNotification
+		if roleId == constants.RoleIsv {
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.AdminInviteIsvNotifyTitle.GetDefaultMessage(senderUserName),
+				Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(platformName, username, senderUserName, platformName, platformUrl, platformUrl, platformUrl, email, password),
+				Owner:       s.UserId,
+				ContentType: constants.NfContentTypeInvite,
+				Addresses:   []string{email},
+			})
+		} else {
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.AdminInviteUserNotifyTitle.GetDefaultMessage(senderUserName),
+				Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(platformName, username, senderUserName, platformName, platformUrl, platformUrl, platformUrl, email, password),
+				Owner:       s.UserId,
+				ContentType: constants.NfContentTypeInvite,
+				Addresses:   []string{email},
+			})
+		}
 
-	if role == constants.RoleIsv {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.AdminInviteIsvNotifyTitle.GetDefaultMessage(),
-			Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(user.Username, user.Email, req.GetPassword().GetValue()),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeInvite,
-			Addresses:   []string{user.Email},
-		})
-	} else {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.AdminInviteUserNotifyTitle.GetDefaultMessage(),
-			Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(user.Username, user.Email, req.GetPassword().GetValue()),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeInvite,
-			Addresses:   []string{user.Email},
-		})
+		nfclient.SendEmailNotification(ctx, emailNotifications)
 	}
 
-	nfclient.SendEmailNotification(ctx, emailNotifications)
-
 	reply := &pb.CreateUserResponse{
-		UserId: pbutil.ToProtoString(user.UserId),
+		UserId: pbutil.ToProtoString(createUserResponse.UserId),
 	}
 
 	return reply, nil
 }
 
-func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest) (*pb.IsvCreateUserResponse, error) {
+func (p *Server) IsvCreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	s := ctxutil.GetSender(ctx)
 	email := req.GetEmail().GetValue()
+	roleId := req.GetRoleId().GetValue()
+	phoneNumber := req.GetPhoneNumber().GetValue()
+	username := getUsernameFromEmail(email)
+	password := req.GetPassword().GetValue()
+	description := req.GetDescription().GetValue()
 
 	res, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
 		Limit:  1,
@@ -279,74 +634,112 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	if res.Total > 0 {
-		return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorEmailExists, email)
+		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorEmailExists, email)
 	}
 
-	user, err := imClient.CreateUser(ctx, &pbim.User{
-		Email:       req.GetEmail().GetValue(),
-		PhoneNumber: req.GetPhoneNumber().GetValue(),
-		Username:    getUsernameFromEmail(req.GetEmail().GetValue()),
-		Password:    req.GetPassword().GetValue(),
-		Description: req.GetDescription().GetValue(),
-		Status:      constants.StatusActive,
+	// isv can not create user with role isv
+	if roleId == constants.RoleIsv {
+		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorCannotCreateUserWithRole, roleId)
+	}
+
+	createUserResponse, err := imClient.CreateUser(ctx, &pbim.CreateUserRequest{
+		Email:       email,
+		PhoneNumber: phoneNumber,
+		Username:    username,
+		Password:    password,
+		Description: description,
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
+
+	userId := createUserResponse.UserId
+
+	rootGroupId, err := getRootGroupId(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
+	_, err = imClient.JoinGroup(ctx, &pbim.JoinGroupRequest{
+		GroupId: []string{rootGroupId},
+		UserId:  []string{userId},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
 	_, err = amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
-		UserId: []string{user.UserId},
-		RoleId: []string{constants.RoleUser},
+		UserId: []string{createUserResponse.UserId},
+		RoleId: []string{roleId},
 	})
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-
-	var emailNotifications []*models.EmailNotification
-	listUsersResponse, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
-		UserId: []string{s.UserId},
-	})
-	if err != nil || len(listUsersResponse.User) != 1 {
-		logger.Error(ctx, "Failed to describe users [%s]: %+v", s.UserId, err)
-	} else {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(listUsersResponse.User[0].Username),
-			Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(user.Username, user.Email, req.GetPassword().GetValue()),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeInvite,
-			Addresses:   []string{user.Email},
+		logger.Error(ctx, "Failed to bind user [%s] with role [%s]: %+v", createUserResponse.UserId, roleId, err)
+		_, deleteErr := imClient.DeleteUsers(ctx, &pbim.DeleteUsersRequest{
+			UserId: []string{createUserResponse.UserId},
 		})
+		if deleteErr != nil {
+			logger.Error(ctx, "Failed to delete user [%s]: %+v", createUserResponse.UserId, err)
+		}
+		return nil, err
 	}
-	nfclient.SendEmailNotification(ctx, emailNotifications)
 
-	reply := &pb.IsvCreateUserResponse{
-		UserId: pbutil.ToProtoString(user.UserId),
+	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
+		var emailNotifications []*models.EmailNotification
+		getUserResponse, err := imClient.GetUser(ctx, &pbim.GetUserRequest{
+			UserId: s.UserId,
+		})
+		if err != nil {
+			logger.Error(ctx, "Failed to get user [%s]: %+v", s.UserId, err)
+		} else {
+			senderUserName := getUserResponse.User.Username
+			platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+			platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(senderUserName, platformName),
+				Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(platformName, username, senderUserName, platformName, platformUrl, platformUrl, platformUrl, email, password),
+				Owner:       s.UserId,
+				ContentType: constants.NfContentTypeInvite,
+				Addresses:   []string{email},
+			})
+		}
+		nfclient.SendEmailNotification(ctx, emailNotifications)
+	}
+
+	reply := &pb.CreateUserResponse{
+		UserId: pbutil.ToProtoString(createUserResponse.UserId),
 	}
 
 	return reply, nil
 }
 
 func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePasswordResetRequest) (*pb.CreatePasswordResetResponse, error) {
-	uid := req.GetUserId().GetValue()
-	password := req.GetPassword().GetValue()
+	userId := req.GetUserId().GetValue()
 
-	_, err := imClient.GetUser(ctx, &pbim.UserId{
-		UserId: uid,
+	_, err := CheckUsersPermission(ctx, []string{userId})
+	if err != nil {
+		return nil, err
+	}
+
+	password := req.GetPassword().GetValue()
+	_, err = imClient.GetUser(ctx, &pbim.GetUserRequest{
+		UserId: userId,
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	b, err := imClient.ComparePassword(ctx, &pbim.Password{
-		UserId:   uid,
+
+	b, err := imClient.ComparePassword(ctx, &pbim.ComparePasswordRequest{
+		UserId:   userId,
 		Password: password,
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if !b.Value {
+	if !b.Ok {
 		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPasswordIncorrect)
 	}
 
-	var newUserPasswordReset = models.NewUserPasswordReset(uid)
+	var newUserPasswordReset = models.NewUserPasswordReset(userId)
 
 	_, err = pi.Global().DB(ctx).
 		InsertInto(constants.TableUserPasswordReset).
@@ -358,7 +751,7 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePassword
 	}
 
 	reply := &pb.CreatePasswordResetResponse{
-		UserId:  pbutil.ToProtoString(uid),
+		UserId:  pbutil.ToProtoString(userId),
 		ResetId: pbutil.ToProtoString(newUserPasswordReset.ResetId),
 	}
 
@@ -385,7 +778,7 @@ func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	_, err = imClient.ModifyPassword(ctx, &pbim.Password{
+	_, err = imClient.ModifyPassword(ctx, &pbim.ModifyPasswordRequest{
 		UserId:   resetInfo.UserId,
 		Password: newPassword,
 	})
@@ -432,49 +825,66 @@ func (p *Server) GetPasswordReset(ctx context.Context, req *pb.GetPasswordResetR
 	return reply, nil
 }
 
-func validateUserPassword(ctx context.Context, email, password string) (*pbim.User, bool, error) {
-	res, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
+func validateUserAndGroupExist(ctx context.Context, email string) (user *pbim.User, isUserExist bool, isGroupExist bool) {
+	isUserExist = false
+	isGroupExist = false
+	res, err := imClient.ListUsersWithGroup(ctx, &pbim.ListUsersRequest{
 		Limit:  1,
 		Status: []string{constants.StatusActive},
 		Email:  []string{email},
 	})
 	if err != nil {
-		return nil, false, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-	if res.Total == 0 {
-		return nil, false, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorEmailPasswordNotMatched)
+		logger.Error(ctx, "List users with group failed: %+v", err)
+		return
+	} else if res.Total == 0 {
+		return
 	}
 
-	user := res.User[0]
-	b, err := imClient.ComparePassword(ctx, &pbim.Password{
-		UserId:   user.UserId,
+	isUserExist = true
+	user = res.UserSet[0].User
+
+	if len(res.UserSet[0].GroupSet) > 0 {
+		isGroupExist = true
+	}
+	return
+}
+
+func validateUserPassword(ctx context.Context, userId, password string) bool {
+	b, err := imClient.ComparePassword(ctx, &pbim.ComparePasswordRequest{
+		UserId:   userId,
 		Password: password,
 	})
 	if err != nil {
-		return nil, false, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		logger.Error(ctx, "Compare password failed: %+v", err)
+		return false
 	}
-	return user, b.Value, nil
+	return b.Ok
 }
 
 func (p *Server) ValidateUserPassword(ctx context.Context, req *pb.ValidateUserPasswordRequest) (*pb.ValidateUserPasswordResponse, error) {
-	_, b, err := validateUserPassword(ctx, req.GetEmail(), req.GetPassword())
-	if err != nil {
-		return nil, err
+	user, isUserExist, _ := validateUserAndGroupExist(ctx, req.GetEmail())
+	if !isUserExist {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorEmailNotExists, req.GetEmail())
+	}
+
+	ok := validateUserPassword(ctx, user.UserId, req.GetPassword())
+	if !ok {
+		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorEmailPasswordNotMatched)
 	}
 	return &pb.ValidateUserPasswordResponse{
-		Validated: b,
+		Validated: true,
 	}, nil
 }
 
 func (p *Server) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
 	s := ctxutil.GetSender(ctx)
-	group, err := imClient.CreateGroup(ctx, &pbim.Group{
+	createGroupResponse, err := imClient.CreateGroup(ctx, &pbim.CreateGroupRequest{
 		ParentGroupId: req.GetParentGroupId().GetValue(),
 		GroupName:     req.GetName().GetValue(),
 		Description:   req.GetDescription().GetValue(),
-		Status:        constants.StatusActive,
 		Extra: map[string]string{
-			OwnerKey: s.UserId,
+			OwnerKey:     s.UserId,
+			OwnerPathKey: string(s.OwnerPath),
 		},
 	})
 	if err != nil {
@@ -482,31 +892,25 @@ func (p *Server) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*
 	}
 
 	reply := &pb.CreateGroupResponse{
-		GroupId: pbutil.ToProtoString(group.GroupId),
+		GroupId: pbutil.ToProtoString(createGroupResponse.GroupId),
 	}
 
 	return reply, nil
 }
 
 func (p *Server) ModifyGroup(ctx context.Context, req *pb.ModifyGroupRequest) (*pb.ModifyGroupResponse, error) {
-	gid := req.GetGroupId().GetValue()
-
-	group, err := imClient.GetGroup(ctx, &pbim.GroupId{
-		GroupId: gid,
-	})
+	groupId := req.GetGroupId().GetValue()
+	_, err := CheckGroupsPermission(ctx, []string{groupId})
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		return nil, err
 	}
 
-	if req.GetDescription() != nil {
-		group.Description = req.GetDescription().GetValue()
-	}
-	if req.GetName() != nil {
-		group.GroupName = req.GetName().GetValue()
-	}
-	group.UpdateTime = pbutil.ToProtoTimestamp(time.Now())
-
-	group, err = imClient.ModifyGroup(ctx, group)
+	_, err = imClient.ModifyGroup(ctx, &pbim.ModifyGroupRequest{
+		GroupId:       groupId,
+		ParentGroupId: req.GetParentGroupId().GetValue(),
+		GroupName:     req.GetName().GetValue(),
+		Description:   req.GetDescription().GetValue(),
+	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
@@ -517,84 +921,70 @@ func (p *Server) ModifyGroup(ctx context.Context, req *pb.ModifyGroupRequest) (*
 
 	return reply, nil
 }
+
 func (p *Server) DeleteGroups(ctx context.Context, req *pb.DeleteGroupsRequest) (*pb.DeleteGroupsResponse, error) {
-	gids := req.GetGroupId()
+	groupIds := req.GetGroupId()
 
-	for _, gid := range gids {
-		group, err := imClient.GetGroup(ctx, &pbim.GroupId{
-			GroupId: gid,
-		})
-		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-		}
-		if len(group.UserId) > 0 {
-			return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorGroupHadMembers)
-		}
-		group.Status = constants.StatusDeleted
-		group.StatusTime = pbutil.ToProtoTimestamp(time.Now())
+	_, err := CheckGroupsPermission(ctx, groupIds)
+	if err != nil {
+		return nil, err
+	}
 
-		group, err = imClient.ModifyGroup(ctx, group)
-		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-		}
+	_, err = imClient.DeleteGroups(ctx, &pbim.DeleteGroupsRequest{
+		GroupId: groupIds,
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotDeleteGroups)
 	}
 
 	return &pb.DeleteGroupsResponse{
-		GroupId: gids,
+		GroupId: groupIds,
 	}, nil
 }
 
 func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.JoinGroupResponse, error) {
-	_, err := imClient.JoinGroup(ctx, &pbim.JoinGroupRequest{
-		GroupId: req.GetGroupId(),
-		UserId:  req.GetUserId(),
+	groupIds := req.GetGroupId()
+	userIds := req.GetUserId()
+	_, err := CheckGroupsPermission(ctx, groupIds)
+	if err != nil {
+		return nil, err
+	}
+	userWithGroups, err := CheckUsersPermission(ctx, userIds)
+	if err != nil {
+		return nil, err
+	}
+
+	var oldGroupIds []string
+	for _, userWithGroup := range userWithGroups {
+		for _, group := range userWithGroup.GroupSet {
+			if !stringutil.StringIn(group.GroupId, oldGroupIds) {
+				oldGroupIds = append(oldGroupIds, group.GroupId)
+			}
+		}
+	}
+
+	_, err = imClient.LeaveGroup(ctx, &pbim.LeaveGroupRequest{
+		GroupId: oldGroupIds,
+		UserId:  userIds,
 	})
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotJoinGroup)
+	}
+
+	_, err = imClient.JoinGroup(ctx, &pbim.JoinGroupRequest{
+		GroupId: groupIds,
+		UserId:  userIds,
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotJoinGroup)
 	}
 
 	return &pb.JoinGroupResponse{
-		GroupId: req.GetGroupId(),
-		UserId:  req.GetUserId(),
+		GroupId: groupIds,
+		UserId:  userIds,
 	}, nil
 }
 
 func (p *Server) LeaveGroup(ctx context.Context, req *pb.LeaveGroupRequest) (*pb.LeaveGroupResponse, error) {
-	_, err := imClient.LeaveGroup(ctx, &pbim.LeaveGroupRequest{
-		GroupId: req.GetGroupId(),
-		UserId:  req.GetUserId(),
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-
-	return &pb.LeaveGroupResponse{
-		GroupId: req.GetGroupId(),
-		UserId:  req.GetUserId(),
-	}, nil
-}
-
-func (p *Server) GetUserGroupOwner(ctx context.Context, req *pb.GetUserGroupOwnerRequest) (*pb.GetUserGroupOwnerResponse, error) {
-	res, err := imClient.ListGroups(ctx, &pbim.ListGroupsRequest{
-		Limit:  1,
-		UserId: []string{req.GetUserId()},
-		Status: []string{constants.StatusActive},
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-	reply := &pb.GetUserGroupOwnerResponse{
-		UserId: req.GetUserId(),
-	}
-	if res.Total == 0 {
-		return reply, nil
-	}
-	owner, ok := res.Group[0].Extra[OwnerKey]
-	if !ok {
-		return reply, nil
-	}
-
-	reply.Owner = owner
-
-	return reply, nil
+	return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
 }

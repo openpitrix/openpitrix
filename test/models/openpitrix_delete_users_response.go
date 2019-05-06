@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteUsersResponse
 type OpenpitrixDeleteUsersResponse struct {
 
-	// user id
+	// ids of deleted user
 	UserID []string `json:"user_id"`
 }
 

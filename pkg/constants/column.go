@@ -64,51 +64,47 @@ const (
 	ColumnVisibility               = "visibility"
 	ColumnVolumeId                 = "volume_id"
 	ColumnZone                     = "zone"
+	ColumnVpcId                    = "vpc_id"
+	ColumnEnv                      = "env"
+	ColumnLoadbalancerListenerId   = "loadbalancer_listener_id"
+	ColumnResult                   = "result"
+	ColumnDirective                = "directive"
 	ColumnRuntimeCredentialContent = "runtime_credential_content"
 
-	ColumnUserId       = "user_id"
-	ColumnGroupId      = "group_id"
-	ColumnResetId      = "reset_id"
-	ColumnPassword     = "password"
-	ColumnEmail        = "email"
-	ColumnClientId     = "client_id"
-	ColumnClientSecret = "client_secret"
-	ColumnRefreshToken = "refresh_token"
-	ColumnAccessToken  = "access_token"
-	ColumnTokenId      = "token_id"
-	ColumnScope        = "scope"
-	ColumnUsername     = "username"
-
-	ColumnAttachmentId = "attachment_id"
-
-	ColumnMessage = "message"
-
-	ColumnAppDefaultStatus = "app_default_status"
-
-	ColumnMarketId = "market_id"
-
-	ColumnController = "controller"
-
-	ColumnActive = "active"
-
-	ColumnOperator = "operator"
-	ColumnReviewId = "review_id"
-	ColumnPhase    = "phase"
-	ColumnReviewer = "reviewer"
-
-	//vendor_verify_info
-	ColumnCompanyName       = "company_name"
-	ColumnCompanyWebsite    = "company_website"
-	ColumnCompanyProfile    = "company_profile"
-	ColumnAuthorizerName    = "authorizer_name"
-	ColumnAuthorizerEmail   = "authorizer_email"
-	ColumnAuthorizerPhone   = "authorizer_phone"
-	ColumnBankName          = "bank_name"
-	ColumnBankAccountName   = "bank_account_name"
-	ColumnBankAccountNumber = "bank_account_number"
-	ColumnRejectMessage     = "reject_message"
-	ColumnSubmitTime        = "submit_time"
-	ColumnApprover          = "approver"
+	ColumnUserId                   = "user_id"
+	ColumnGroupId                  = "group_id"
+	ColumnResetId                  = "reset_id"
+	ColumnPassword                 = "password"
+	ColumnEmail                    = "email"
+	ColumnClientId                 = "client_id"
+	ColumnClientSecret             = "client_secret"
+	ColumnRefreshToken             = "refresh_token"
+	ColumnAccessToken              = "access_token"
+	ColumnTokenId                  = "token_id"
+	ColumnScope                    = "scope"
+	ColumnUsername                 = "username"
+	ColumnAttachmentId             = "attachment_id"
+	ColumnMessage                  = "message"
+	ColumnAppDefaultStatus         = "app_default_status"
+	ColumnMarketId                 = "market_id"
+	ColumnController               = "controller"
+	ColumnActive                   = "active"
+	ColumnOperator                 = "operator"
+	ColumnReviewId                 = "review_id"
+	ColumnPhase                    = "phase"
+	ColumnReviewer                 = "reviewer"
+	ColumnCompanyName              = "company_name"
+	ColumnCompanyWebsite           = "company_website"
+	ColumnCompanyProfile           = "company_profile"
+	ColumnAuthorizerName           = "authorizer_name"
+	ColumnAuthorizerEmail          = "authorizer_email"
+	ColumnAuthorizerPhone          = "authorizer_phone"
+	ColumnBankName                 = "bank_name"
+	ColumnBankAccountName          = "bank_account_name"
+	ColumnBankAccountNumber        = "bank_account_number"
+	ColumnRejectMessage            = "reject_message"
+	ColumnSubmitTime               = "submit_time"
+	ColumnApprover                 = "approver"
 
 	//mbing
 	ColumnAttributeNameId          = "attribute_name_id"
@@ -116,9 +112,7 @@ const (
 	ColumnAttributeId              = "attribute_id"
 	ColumnValue                    = "value"
 	ColumnSpuId                    = "spu_id"
-	ColumnResourceVersionId        = "resource_version_id"
 	ColumnAttributeNameIds         = "attribute_name_ids"
-	ColumnMeteringAttributeNameIds = "metering_attribute_name_ids"
 	ColumnSkuId                    = "sku_id"
 	ColumnAttributeIds             = "attribute_ids"
 	ColumnMeteringAttributeIds     = "metering_attribute_ids"
@@ -214,8 +208,7 @@ var IndexedColumns = map[string][]string{
 		ColumnAttributeId, ColumnAttributeNameId, ColumnAttributeUnitId, ColumnValue,
 	},
 	TableSpu: {
-		ColumnSpuId, ColumnResourceVersionId, ColumnAttributeNameIds,
-		ColumnMeteringAttributeNameIds,
+		ColumnSpuId, ColumnAttributeNameIds,
 	},
 	TableSku: {
 		ColumnSkuId, ColumnSpuId, ColumnAttributeIds, ColumnMeteringAttributeIds,

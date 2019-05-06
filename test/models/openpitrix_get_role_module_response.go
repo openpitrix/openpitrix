@@ -16,15 +16,18 @@ import (
 // swagger:model openpitrixGetRoleModuleResponse
 type OpenpitrixGetRoleModuleResponse struct {
 
-	// role module
-	RoleModule *OpenpitrixRoleModule `json:"role_module,omitempty"`
+	// module info of role
+	Module *OpenpitrixModule `json:"module,omitempty"`
+
+	// role id
+	RoleID string `json:"role_id,omitempty"`
 }
 
 // Validate validates this openpitrix get role module response
 func (m *OpenpitrixGetRoleModuleResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateRoleModule(formats); err != nil {
+	if err := m.validateModule(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -35,17 +38,17 @@ func (m *OpenpitrixGetRoleModuleResponse) Validate(formats strfmt.Registry) erro
 	return nil
 }
 
-func (m *OpenpitrixGetRoleModuleResponse) validateRoleModule(formats strfmt.Registry) error {
+func (m *OpenpitrixGetRoleModuleResponse) validateModule(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.RoleModule) { // not required
+	if swag.IsZero(m.Module) { // not required
 		return nil
 	}
 
-	if m.RoleModule != nil {
+	if m.Module != nil {
 
-		if err := m.RoleModule.Validate(formats); err != nil {
+		if err := m.Module.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("role_module")
+				return ve.ValidateName("module")
 			}
 			return err
 		}

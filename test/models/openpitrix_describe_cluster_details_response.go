@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDescribeClusterDetailsResponse
 type OpenpitrixDescribeClusterDetailsResponse struct {
 
-	// cluster
+	// cluster info
 	Cluster *OpenpitrixCluster `json:"cluster,omitempty"`
 }
 

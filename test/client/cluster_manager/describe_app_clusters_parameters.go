@@ -63,33 +63,60 @@ for the describe app clusters operation typically these are written to a http.Re
 */
 type DescribeAppClustersParams struct {
 
-	/*AppID*/
+	/*AppID
+	  app ids.
+
+	*/
 	AppID []string
-	/*CreatedDate*/
+	/*CreatedDate
+	  cluster created duration eg.[1 day].
+
+	*/
 	CreatedDate *int64
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
-	/*Reverse*/
+	/*Owner
+	  owner.
+
+	*/
+	Owner []string
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[active|used|enabled|disabled|deleted|stopped|ceased].
+
+	*/
 	Status []string
-	/*WithDetail*/
+	/*WithDetail
+	  get cluster with detail.
+
+	*/
 	WithDetail *bool
 
 	timeout    time.Duration
@@ -185,15 +212,15 @@ func (o *DescribeAppClustersParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe app clusters params
-func (o *DescribeAppClustersParams) WithOwnerPath(ownerPath []string) *DescribeAppClustersParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe app clusters params
+func (o *DescribeAppClustersParams) WithOwner(owner []string) *DescribeAppClustersParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe app clusters params
-func (o *DescribeAppClustersParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe app clusters params
+func (o *DescribeAppClustersParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithReverse adds the reverse to the describe app clusters params
@@ -323,11 +350,11 @@ func (o *DescribeAppClustersParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

@@ -16,41 +16,17 @@ import (
 // swagger:model openpitrixModifyRoleResponse
 type OpenpitrixModifyRoleResponse struct {
 
-	// role
-	Role *OpenpitrixRole `json:"role,omitempty"`
+	// id of role modified
+	RoleID string `json:"role_id,omitempty"`
 }
 
 // Validate validates this openpitrix modify role response
 func (m *OpenpitrixModifyRoleResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateRole(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixModifyRoleResponse) validateRole(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Role) { // not required
-		return nil
-	}
-
-	if m.Role != nil {
-
-		if err := m.Role.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("role")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

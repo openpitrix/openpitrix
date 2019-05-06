@@ -19,7 +19,7 @@ type OpenpitrixDescribeSubnetsResponse struct {
 	// subnet set
 	SubnetSet OpenpitrixDescribeSubnetsResponseSubnetSet `json:"subnet_set"`
 
-	// total count
+	// total count of subnet
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

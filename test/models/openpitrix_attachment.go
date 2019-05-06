@@ -16,13 +16,13 @@ import (
 // swagger:model openpitrixAttachment
 type OpenpitrixAttachment struct {
 
-	// filename => content
+	// filename map to content
 	AttachmentContent map[string]strfmt.Base64 `json:"attachment_content,omitempty"`
 
 	// attachment id
 	AttachmentID string `json:"attachment_id,omitempty"`
 
-	// create time
+	// the time attachment create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 }
 

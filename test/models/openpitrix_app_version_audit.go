@@ -16,35 +16,38 @@ import (
 // swagger:model openpitrixAppVersionAudit
 type OpenpitrixAppVersionAudit struct {
 
-	// app id
+	// id of specific version app
 	AppID string `json:"app_id,omitempty"`
 
-	// app name
+	// name of specific version app
 	AppName string `json:"app_name,omitempty"`
 
-	// message
+	// audit message
 	Message string `json:"message,omitempty"`
 
-	// operator
+	// user of auditer
 	Operator string `json:"operator,omitempty"`
+
+	// operator of auditer eg.[global_admin|developer|business|technical|isv]
+	OperatorType string `json:"operator_type,omitempty"`
 
 	// review id
 	ReviewID string `json:"review_id,omitempty"`
 
-	// role
-	Role string `json:"role,omitempty"`
-
-	// status
+	// audit status, eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
-	// version id
+	// id of version to audit
 	VersionID string `json:"version_id,omitempty"`
 
 	// version name
 	VersionName string `json:"version_name,omitempty"`
+
+	// version type
+	VersionType string `json:"version_type,omitempty"`
 }
 
 // Validate validates this openpitrix app version audit

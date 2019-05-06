@@ -82,6 +82,35 @@ func (a *Client) SetServiceConfig(params *SetServiceConfigParams, authInfo runti
 
 }
 
+/*
+ValidateEmailService validates email service
+*/
+func (a *Client) ValidateEmailService(params *ValidateEmailServiceParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateEmailServiceOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewValidateEmailServiceParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ValidateEmailService",
+		Method:             "POST",
+		PathPattern:        "/v1/service_configs/validate_email_service",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ValidateEmailServiceReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ValidateEmailServiceOK), nil
+
+}
+
 // SetTransport changes the transport on the client
 func (a *Client) SetTransport(transport runtime.ClientTransport) {
 	a.transport = transport

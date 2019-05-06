@@ -19,7 +19,7 @@ type OpenpitrixDescribeRuntimeCredentialsResponse struct {
 	// runtime credential set
 	RuntimeCredentialSet OpenpitrixDescribeRuntimeCredentialsResponseRuntimeCredentialSet `json:"runtime_credential_set"`
 
-	// total count
+	// total count of runtime credential
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

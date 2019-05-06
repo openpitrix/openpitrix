@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixHandleSubtaskResponse
 type OpenpitrixHandleSubtaskResponse struct {
 
-	// task
+	// task handled
 	Task *OpenpitrixTask `json:"task,omitempty"`
 }
 

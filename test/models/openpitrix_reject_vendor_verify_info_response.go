@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixRejectVendorVerifyInfoResponse
 type OpenpitrixRejectVendorVerifyInfoResponse struct {
 
-	// user id
+	// id of user rejected
 	UserID string `json:"user_id,omitempty"`
 }
 

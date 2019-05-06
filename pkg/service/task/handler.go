@@ -68,9 +68,9 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 		From(constants.TableTask).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableTask)).
-		OrderDir("create_time", true)
+		OrderDir(constants.ColumnCreateTime, true)
 
 	if len(displayColumns) > 0 {
 		_, err := query.Load(&tasks)

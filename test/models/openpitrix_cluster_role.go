@@ -22,40 +22,40 @@ type OpenpitrixClusterRole struct {
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
-	// cpu
+	// number of cpu
 	CPU int64 `json:"cpu,omitempty"`
 
-	// env
+	// env of cluster
 	Env string `json:"env,omitempty"`
 
-	// file system
+	// file system eg.[ext|ext4|...]
 	FileSystem string `json:"file_system,omitempty"`
 
-	// gpu
+	// number of gpu
 	Gpu int64 `json:"gpu,omitempty"`
 
-	// instance size
+	// size of instance
 	InstanceSize int64 `json:"instance_size,omitempty"`
 
-	// memory
+	// size of memory
 	Memory int64 `json:"memory,omitempty"`
 
-	// mount options
+	// mount_options
 	MountOptions string `json:"mount_options,omitempty"`
 
-	// mount point
+	// mount point, a dir.eg.[/data]
 	MountPoint string `json:"mount_point,omitempty"`
 
-	// ready replicas
+	// number of replica on ready
 	ReadyReplicas int64 `json:"ready_replicas,omitempty"`
 
-	// replicas
+	// number of replica
 	Replicas int64 `json:"replicas,omitempty"`
 
-	// role
+	// role.eg.[wordpress|mysql|...]
 	Role string `json:"role,omitempty"`
 
-	// storage size
+	// size of storage
 	StorageSize int64 `json:"storage_size,omitempty"`
 }
 

@@ -51,7 +51,7 @@ type CreateClientOK struct {
 }
 
 func (o *CreateClientOK) Error() string {
-	return fmt.Sprintf("[POST /v1/oauth2/{user_id}/client][%d] createClientOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/oauth2/client][%d] createClientOK  %+v", 200, o.Payload)
 }
 
 func (o *CreateClientOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

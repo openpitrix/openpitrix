@@ -6,7 +6,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-notification
-    version: ${VERSION}
+    version: ${NOTIFICATION_VERSION}
 spec:
   selector:
     app: openpitrix
@@ -25,7 +25,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-notification
-    version: ${VERSION}
+    version: ${NOTIFICATION_VERSION}
 spec:
   selector:
     matchLabels:
@@ -37,7 +37,7 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-notification
-        version: ${VERSION}
+        version: ${NOTIFICATION_VERSION}
     spec:
       initContainers:
       - name: wait-mysql
@@ -53,18 +53,22 @@ spec:
         image: ${NOTIFICATION_IMAGE}
         imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
-          - notification-manager
+          - notification
         ports:
         - containerPort: 9201
           name: notification
         env:
-        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
-          value: 'true'
-        - name: OPENPITRIX_LOG_LEVEL
+        - name: NOTIFICATION_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
-        - name: OPENPITRIX_MYSQL_DATABASE
+        - name: NOTIFICATION_GRPC_SHOW_ERROR_CAUSE
+          value: "${GRPC_SHOW_ERROR_CAUSE}"
+        - name: NOTIFICATION_ETCD_ENDPOINTS
+          value: "openpitrix-etcd:2379"
+        - name: NOTIFICATION_MYSQL_HOST
+          value: "openpitrix-db"
+        - name: NOTIFICATION_MYSQL_DATABASE
           value: "notification"
-        - name: OPENPITRIX_MYSQL_PASSWORD
+        - name: NOTIFICATION_MYSQ_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password.txt

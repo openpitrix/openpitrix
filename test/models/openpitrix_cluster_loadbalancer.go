@@ -19,16 +19,16 @@ type OpenpitrixClusterLoadbalancer struct {
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
-	// loadbalancer listener id
+	// listener id
 	LoadbalancerListenerID string `json:"loadbalancer_listener_id,omitempty"`
 
-	// loadbalancer policy id
+	// policy id
 	LoadbalancerPolicyID string `json:"loadbalancer_policy_id,omitempty"`
 
-	// loadbalancer port
+	// port
 	LoadbalancerPort int64 `json:"loadbalancer_port,omitempty"`
 
-	// role
+	// role of balancer
 	Role string `json:"role,omitempty"`
 }
 

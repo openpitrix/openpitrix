@@ -19,7 +19,7 @@ type OpenpitrixDescribeAppVersionAuditsResponse struct {
 	// app version audit set
 	AppVersionAuditSet OpenpitrixDescribeAppVersionAuditsResponseAppVersionAuditSet `json:"app_version_audit_set"`
 
-	// total count
+	// total count of audits of app with specific version
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

@@ -65,8 +65,8 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
 	logger.Info(nil, "Attachment service http://%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort)
-	logger.Info(nil, "Vendor service http://%s:%d", constants.VendorManagerHost, constants.VendorManagerPort)
-	logger.Info(nil, "Service config http://%s:%d", constants.ApiGatewayHost, constants.ServiceConfigPort)
+	logger.Info(nil, "Isv service http://%s:%d", constants.IsvManagerHost, constants.IsvManagerPort)
+	logger.Info(nil, "Service config http://localhost:%d", constants.ServiceConfigPort)
 
 	cfg.Mysql.Disable = true
 	pi.SetGlobal(cfg)
@@ -216,11 +216,11 @@ func (s *Server) mainHandler() http.Handler {
 		pb.RegisterAttachmentServiceHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort),
 	}, {
-		pb.RegisterAppVendorManagerHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.VendorManagerHost, constants.VendorManagerPort),
+		pb.RegisterIsvManagerHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.IsvManagerHost, constants.IsvManagerPort),
 	}, {
 		pb.RegisterServiceConfigHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.ApiGatewayHost, constants.ServiceConfigPort),
+		fmt.Sprintf("localhost:%d", constants.ServiceConfigPort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {

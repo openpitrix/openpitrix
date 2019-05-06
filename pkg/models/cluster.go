@@ -75,6 +75,7 @@ func ClusterToPb(cluster *Cluster) *pb.Cluster {
 		TransitionStatus:   pbutil.ToProtoString(cluster.TransitionStatus),
 		MetadataRootAccess: pbutil.ToProtoBool(cluster.MetadataRootAccess),
 		OwnerPath:          cluster.OwnerPath.ToProtoString(),
+		Owner:              pbutil.ToProtoString(cluster.Owner),
 		GlobalUuid:         pbutil.ToProtoString(cluster.GlobalUuid),
 		UpgradeStatus:      pbutil.ToProtoString(cluster.UpgradeStatus),
 		RuntimeId:          pbutil.ToProtoString(cluster.RuntimeId),

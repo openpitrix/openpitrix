@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixCreateKeyPairResponse
 type OpenpitrixCreateKeyPairResponse struct {
 
-	// key pair id
+	// id of key pair created
 	KeyPairID string `json:"key_pair_id,omitempty"`
 }
 

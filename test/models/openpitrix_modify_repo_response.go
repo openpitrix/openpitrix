@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixModifyRepoResponse
 type OpenpitrixModifyRepoResponse struct {
 
-	// repo id
+	// id of repository modified
 	RepoID string `json:"repo_id,omitempty"`
 }
 

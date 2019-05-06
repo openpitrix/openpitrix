@@ -35,7 +35,7 @@ type VendorVerifyInfo struct {
 	StatusTime        time.Time
 }
 
-func (vendor *VendorVerifyInfo) ParseReq2Vendor(ctx context.Context, req *pb.SubmitVendorVerifyInfoRequest) *VendorVerifyInfo {
+func ReqToVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendorVerifyInfoRequest) *VendorVerifyInfo {
 	Vendor := VendorVerifyInfo{}
 	Vendor.UserId = req.GetUserId()
 	Vendor.CompanyName = req.GetCompanyName().GetValue()
@@ -56,17 +56,15 @@ func (vendor *VendorVerifyInfo) ParseReq2Vendor(ctx context.Context, req *pb.Sub
 	return &Vendor
 }
 
-func (vendor *VendorVerifyInfo) ParseVendorSet2PbSet(ctx context.Context, inVendors []*VendorVerifyInfo) []*pb.VendorVerifyInfo {
+func VendorVerifyInfoSetToPbSet(inVendors []*VendorVerifyInfo) []*pb.VendorVerifyInfo {
 	var pbVendors []*pb.VendorVerifyInfo
 	for _, inVendor := range inVendors {
-		var pbVendor *pb.VendorVerifyInfo
-		pbVendor = vendor.ParseVendor2Pb(ctx, inVendor)
-		pbVendors = append(pbVendors, pbVendor)
+		pbVendors = append(pbVendors, VendorVerifyInfoToPb(inVendor))
 	}
 	return pbVendors
 }
 
-func (vendor *VendorVerifyInfo) ParseVendor2Pb(ctx context.Context, inVendor *VendorVerifyInfo) *pb.VendorVerifyInfo {
+func VendorVerifyInfoToPb(inVendor *VendorVerifyInfo) *pb.VendorVerifyInfo {
 	pbVendor := pb.VendorVerifyInfo{}
 	pbVendor.UserId = pbutil.ToProtoString(inVendor.UserId)
 	pbVendor.CompanyName = pbutil.ToProtoString(inVendor.CompanyName)
@@ -85,33 +83,33 @@ func (vendor *VendorVerifyInfo) ParseVendor2Pb(ctx context.Context, inVendor *Ve
 		pbVendor.SubmitTime = pbutil.ToProtoTimestamp(*inVendor.SubmitTime)
 	}
 	pbVendor.StatusTime = pbutil.ToProtoTimestamp(inVendor.StatusTime)
+	pbVendor.Owner = pbutil.ToProtoString(inVendor.Owner)
+	pbVendor.OwnerPath = inVendor.OwnerPath.ToProtoString()
 	return &pbVendor
 }
 
 type VendorStatistics struct {
 	UserId            string
 	CompanyName       string
-	ActiveAppCount    int32
-	ClusterCountMonth int32
-	ClusterCountTotal int32
+	ActiveAppCount    uint32
+	ClusterCountMonth uint32
+	ClusterCountTotal uint32
 }
 
-func (vendor *VendorStatistics) ParseVendorStatistics2Pb(ctx context.Context, inVendor *VendorStatistics) *pb.VendorStatistics {
+func VendorStatisticsToPb(vendorStatistics *VendorStatistics) *pb.VendorStatistics {
 	pbVendor := pb.VendorStatistics{}
-	pbVendor.UserId = pbutil.ToProtoString(inVendor.UserId)
-	pbVendor.CompanyName = pbutil.ToProtoString(inVendor.CompanyName)
-	pbVendor.ActiveAppCount = pbutil.ToProtoInt32(inVendor.ActiveAppCount)
-	pbVendor.ClusterCountMonth = pbutil.ToProtoInt32(inVendor.ClusterCountMonth)
-	pbVendor.ClusterCountTotal = pbutil.ToProtoInt32(inVendor.ClusterCountTotal)
+	pbVendor.UserId = pbutil.ToProtoString(vendorStatistics.UserId)
+	pbVendor.CompanyName = pbutil.ToProtoString(vendorStatistics.CompanyName)
+	pbVendor.ActiveAppCount = vendorStatistics.ActiveAppCount
+	pbVendor.ClusterCountMonth = vendorStatistics.ClusterCountMonth
+	pbVendor.ClusterCountTotal = vendorStatistics.ClusterCountTotal
 	return &pbVendor
 }
 
-func (vendor *VendorStatistics) ParseVendorStatisticsSet2PbSet(ctx context.Context, inVendors []*VendorStatistics) []*pb.VendorStatistics {
-	var pbVendorStatisticses []*pb.VendorStatistics
-	for _, inVendor := range inVendors {
-		var pbVendor *pb.VendorStatistics
-		pbVendor = vendor.ParseVendorStatistics2Pb(ctx, inVendor)
-		pbVendorStatisticses = append(pbVendorStatisticses, pbVendor)
+func VendorStatisticsSetToPbSet(vendorStatisticsSet []*VendorStatistics) []*pb.VendorStatistics {
+	var pbVendorStatisticsSet []*pb.VendorStatistics
+	for _, vendorStatistics := range vendorStatisticsSet {
+		pbVendorStatisticsSet = append(pbVendorStatisticsSet, VendorStatisticsToPb(vendorStatistics))
 	}
-	return pbVendorStatisticses
+	return pbVendorStatisticsSet
 }

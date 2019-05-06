@@ -16,19 +16,22 @@ import (
 // swagger:model openpitrixModifyUserRequest
 type OpenpitrixModifyUserRequest struct {
 
-	// description
+	// user description
 	Description string `json:"description,omitempty"`
 
-	// email
+	// user email, eg.op@yunify.com
 	Email string `json:"email,omitempty"`
 
-	// password
+	// user password
 	Password string `json:"password,omitempty"`
 
-	// user id
+	// user phone number, string of 11 digital
+	PhoneNumber string `json:"phone_number,omitempty"`
+
+	// required, id of user to be modify
 	UserID string `json:"user_id,omitempty"`
 
-	// username
+	// user name
 	Username string `json:"username,omitempty"`
 }
 

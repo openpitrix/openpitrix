@@ -7,6 +7,7 @@ package categoryutil
 import (
 	"context"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
 	categoryclient "openpitrix.io/openpitrix/pkg/client/category"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -51,7 +52,8 @@ func GetResourcesCategories(ctx context.Context, d *db.Conn, resourceIds []strin
 	descParams := pb.DescribeCategoriesRequest{
 		CategoryId: stringutil.Unique(categoryIds),
 	}
-	resp, err := c.DescribeCategories(ctx, &descParams)
+	systemCtx := clientutil.SetSystemUserToContext(ctx)
+	resp, err := c.DescribeCategories(systemCtx, &descParams)
 	if err != nil {
 		return rcmap, err
 	}

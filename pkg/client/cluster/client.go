@@ -159,35 +159,3 @@ func (c *Client) DescribeClustersWithFrontgateId(ctx context.Context, frontgateI
 
 	return response.ClusterSet, nil
 }
-
-func (c *Client) DescribeClustersWithAppId(ctx context.Context, appId string, isMonthData bool, limit uint32, offset uint32) ([]*pb.Cluster, int32, error) {
-	var appIds []string
-	appIds = append(appIds, appId)
-	var displayCols []string
-	displayCols = append(displayCols, "")
-
-	var req pb.DescribeAppClustersRequest
-	if isMonthData {
-		req = pb.DescribeAppClustersRequest{
-			AppId:          appIds,
-			CreatedDate:    pbutil.ToProtoUInt32(30),
-			Limit:          limit,
-			Offset:         offset,
-			DisplayColumns: displayCols,
-		}
-	} else {
-		req = pb.DescribeAppClustersRequest{
-			AppId:          appIds,
-			Limit:          limit,
-			Offset:         offset,
-			DisplayColumns: displayCols,
-		}
-
-	}
-	response, err := c.DescribeAppClusters(ctx, &req)
-	if err != nil {
-		logger.Error(ctx, "DescribeAppClusters with appId [%s] failed: %+v", appId, err)
-		return nil, 0, err
-	}
-	return response.ClusterSet, int32(response.TotalCount), nil
-}

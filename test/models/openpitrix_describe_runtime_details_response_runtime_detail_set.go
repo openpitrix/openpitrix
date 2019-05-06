@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeRuntimeDetailsResponseRuntimeDetailSet openpitrix describe runtime details response runtime detail set
+// OpenpitrixDescribeRuntimeDetailsResponseRuntimeDetailSet list of runtime detail info
 // swagger:model openpitrixDescribeRuntimeDetailsResponseRuntimeDetailSet
 type OpenpitrixDescribeRuntimeDetailsResponseRuntimeDetailSet []*OpenpitrixRuntimeDetail
 

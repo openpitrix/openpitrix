@@ -63,31 +63,55 @@ for the describe runtime credentials operation typically these are written to a 
 */
 type DescribeRuntimeCredentialsParams struct {
 
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
-	/*Provider*/
+	/*Owner
+	  owner.
+
+	*/
+	Owner []string
+	/*Provider
+	  runtime provider eg.[qingcloud|aliyun|aws|kubernetes].
+
+	*/
 	Provider []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*RuntimeCredentialID*/
+	/*RuntimeCredentialID
+	  runtime credential ids.
+
+	*/
 	RuntimeCredentialID []string
-	/*SearchWord*/
+	/*SearchWord
+	  query key.
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[active|deleted].
+
+	*/
 	Status []string
 
 	timeout    time.Duration
@@ -161,15 +185,15 @@ func (o *DescribeRuntimeCredentialsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe runtime credentials params
-func (o *DescribeRuntimeCredentialsParams) WithOwnerPath(ownerPath []string) *DescribeRuntimeCredentialsParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe runtime credentials params
+func (o *DescribeRuntimeCredentialsParams) WithOwner(owner []string) *DescribeRuntimeCredentialsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe runtime credentials params
-func (o *DescribeRuntimeCredentialsParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe runtime credentials params
+func (o *DescribeRuntimeCredentialsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithProvider adds the provider to the describe runtime credentials params
@@ -286,11 +310,11 @@ func (o *DescribeRuntimeCredentialsParams) WriteToRequest(r runtime.ClientReques
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

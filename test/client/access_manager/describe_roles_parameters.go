@@ -63,14 +63,56 @@ for the describe roles operation typically these are written to a http.Request
 */
 type DescribeRolesParams struct {
 
-	/*Portal*/
+	/*ActionBundleID
+	  action bundle ids.
+
+	*/
+	ActionBundleID []string
+	/*Limit
+	  data limit per page, default value 20, max value 200.
+
+	*/
+	Limit *int64
+	/*Offset
+	  data offset, default 0.
+
+	*/
+	Offset *int64
+	/*Portal
+	  portal eg.[global_admin|user|isv].
+
+	*/
 	Portal []string
-	/*RoleID*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
+	Reverse *bool
+	/*RoleID
+	  role ids.
+
+	*/
 	RoleID []string
-	/*RoleName*/
+	/*RoleName
+	  name.
+
+	*/
 	RoleName []string
-	/*UserID*/
-	UserID []string
+	/*SearchWord
+	  query key, support these fields(role_id, portal, status).
+
+	*/
+	SearchWord *string
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
+	SortKey *string
+	/*Status
+	  status eg.[active|deleted].
+
+	*/
+	Status []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -110,6 +152,39 @@ func (o *DescribeRolesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithActionBundleID adds the actionBundleID to the describe roles params
+func (o *DescribeRolesParams) WithActionBundleID(actionBundleID []string) *DescribeRolesParams {
+	o.SetActionBundleID(actionBundleID)
+	return o
+}
+
+// SetActionBundleID adds the actionBundleId to the describe roles params
+func (o *DescribeRolesParams) SetActionBundleID(actionBundleID []string) {
+	o.ActionBundleID = actionBundleID
+}
+
+// WithLimit adds the limit to the describe roles params
+func (o *DescribeRolesParams) WithLimit(limit *int64) *DescribeRolesParams {
+	o.SetLimit(limit)
+	return o
+}
+
+// SetLimit adds the limit to the describe roles params
+func (o *DescribeRolesParams) SetLimit(limit *int64) {
+	o.Limit = limit
+}
+
+// WithOffset adds the offset to the describe roles params
+func (o *DescribeRolesParams) WithOffset(offset *int64) *DescribeRolesParams {
+	o.SetOffset(offset)
+	return o
+}
+
+// SetOffset adds the offset to the describe roles params
+func (o *DescribeRolesParams) SetOffset(offset *int64) {
+	o.Offset = offset
+}
+
 // WithPortal adds the portal to the describe roles params
 func (o *DescribeRolesParams) WithPortal(portal []string) *DescribeRolesParams {
 	o.SetPortal(portal)
@@ -119,6 +194,17 @@ func (o *DescribeRolesParams) WithPortal(portal []string) *DescribeRolesParams {
 // SetPortal adds the portal to the describe roles params
 func (o *DescribeRolesParams) SetPortal(portal []string) {
 	o.Portal = portal
+}
+
+// WithReverse adds the reverse to the describe roles params
+func (o *DescribeRolesParams) WithReverse(reverse *bool) *DescribeRolesParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe roles params
+func (o *DescribeRolesParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
 }
 
 // WithRoleID adds the roleID to the describe roles params
@@ -143,15 +229,37 @@ func (o *DescribeRolesParams) SetRoleName(roleName []string) {
 	o.RoleName = roleName
 }
 
-// WithUserID adds the userID to the describe roles params
-func (o *DescribeRolesParams) WithUserID(userID []string) *DescribeRolesParams {
-	o.SetUserID(userID)
+// WithSearchWord adds the searchWord to the describe roles params
+func (o *DescribeRolesParams) WithSearchWord(searchWord *string) *DescribeRolesParams {
+	o.SetSearchWord(searchWord)
 	return o
 }
 
-// SetUserID adds the userId to the describe roles params
-func (o *DescribeRolesParams) SetUserID(userID []string) {
-	o.UserID = userID
+// SetSearchWord adds the searchWord to the describe roles params
+func (o *DescribeRolesParams) SetSearchWord(searchWord *string) {
+	o.SearchWord = searchWord
+}
+
+// WithSortKey adds the sortKey to the describe roles params
+func (o *DescribeRolesParams) WithSortKey(sortKey *string) *DescribeRolesParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe roles params
+func (o *DescribeRolesParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
+}
+
+// WithStatus adds the status to the describe roles params
+func (o *DescribeRolesParams) WithStatus(status []string) *DescribeRolesParams {
+	o.SetStatus(status)
+	return o
+}
+
+// SetStatus adds the status to the describe roles params
+func (o *DescribeRolesParams) SetStatus(status []string) {
+	o.Status = status
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -162,12 +270,68 @@ func (o *DescribeRolesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	}
 	var res []error
 
+	valuesActionBundleID := o.ActionBundleID
+
+	joinedActionBundleID := swag.JoinByFormat(valuesActionBundleID, "multi")
+	// query array param action_bundle_id
+	if err := r.SetQueryParam("action_bundle_id", joinedActionBundleID...); err != nil {
+		return err
+	}
+
+	if o.Limit != nil {
+
+		// query param limit
+		var qrLimit int64
+		if o.Limit != nil {
+			qrLimit = *o.Limit
+		}
+		qLimit := swag.FormatInt64(qrLimit)
+		if qLimit != "" {
+			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Offset != nil {
+
+		// query param offset
+		var qrOffset int64
+		if o.Offset != nil {
+			qrOffset = *o.Offset
+		}
+		qOffset := swag.FormatInt64(qrOffset)
+		if qOffset != "" {
+			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	valuesPortal := o.Portal
 
 	joinedPortal := swag.JoinByFormat(valuesPortal, "multi")
 	// query array param portal
 	if err := r.SetQueryParam("portal", joinedPortal...); err != nil {
 		return err
+	}
+
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	valuesRoleID := o.RoleID
@@ -186,11 +350,43 @@ func (o *DescribeRolesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 
-	valuesUserID := o.UserID
+	if o.SearchWord != nil {
 
-	joinedUserID := swag.JoinByFormat(valuesUserID, "multi")
-	// query array param user_id
-	if err := r.SetQueryParam("user_id", joinedUserID...); err != nil {
+		// query param search_word
+		var qrSearchWord string
+		if o.SearchWord != nil {
+			qrSearchWord = *o.SearchWord
+		}
+		qSearchWord := qrSearchWord
+		if qSearchWord != "" {
+			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	valuesStatus := o.Status
+
+	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
+	// query array param status
+	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err
 	}
 

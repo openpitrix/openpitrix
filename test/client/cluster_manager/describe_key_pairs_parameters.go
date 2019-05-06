@@ -63,23 +63,50 @@ for the describe key pairs operation typically these are written to a http.Reque
 */
 type DescribeKeyPairsParams struct {
 
-	/*Description*/
+	/*Description
+	  key pair description.
+
+	*/
 	Description *string
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
-	/*KeyPairID*/
+	/*KeyPairID
+	  key pair id.
+
+	*/
 	KeyPairID *string
-	/*Limit*/
+	/*Limit
+	  data limit per page, default value 20, max value 200.
+
+	*/
 	Limit *int64
-	/*Name*/
+	/*Name
+	  key pair name.
+
+	*/
 	Name *string
-	/*Offset*/
+	/*Offset
+	  data offset, default 0.
+
+	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
-	/*PubKey*/
+	/*Owner
+	  owner.
+
+	*/
+	Owner []string
+	/*PubKey
+	  public key.
+
+	*/
 	PubKey *string
-	/*SearchWord*/
+	/*SearchWord
+	  query key, can filter with these fields(key_pair_id, name, owner).
+
+	*/
 	SearchWord *string
 
 	timeout    time.Duration
@@ -186,15 +213,15 @@ func (o *DescribeKeyPairsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe key pairs params
-func (o *DescribeKeyPairsParams) WithOwnerPath(ownerPath []string) *DescribeKeyPairsParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe key pairs params
+func (o *DescribeKeyPairsParams) WithOwner(owner []string) *DescribeKeyPairsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe key pairs params
-func (o *DescribeKeyPairsParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe key pairs params
+func (o *DescribeKeyPairsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithPubKey adds the pubKey to the describe key pairs params
@@ -315,11 +342,11 @@ func (o *DescribeKeyPairsParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

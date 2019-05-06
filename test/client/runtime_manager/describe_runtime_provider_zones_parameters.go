@@ -62,7 +62,10 @@ for the describe runtime provider zones operation typically these are written to
 */
 type DescribeRuntimeProviderZonesParams struct {
 
-	/*RuntimeCredentialID*/
+	/*RuntimeCredentialID
+	  required, use runtime credential id to get run time provider zones.
+
+	*/
 	RuntimeCredentialID *string
 
 	timeout    time.Duration

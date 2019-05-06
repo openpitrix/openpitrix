@@ -19,7 +19,7 @@ type OpenpitrixDescribeAppVersionReviewsResponse struct {
 	// app version review set
 	AppVersionReviewSet OpenpitrixDescribeAppVersionReviewsResponseAppVersionReviewSet `json:"app_version_review_set"`
 
-	// total count
+	// total count of reviews of app with specific version
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

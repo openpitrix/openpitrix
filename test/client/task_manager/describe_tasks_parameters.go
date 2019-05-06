@@ -63,35 +63,65 @@ for the describe tasks operation typically these are written to a http.Request
 */
 type DescribeTasksParams struct {
 
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
-	/*Executor*/
+	/*Executor
+	  host name of server.
+
+	*/
 	Executor *string
-	/*JobID*/
+	/*JobID
+	  job ids.
+
+	*/
 	JobID []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
-	/*Reverse*/
+	/*Owner
+	  owner.
+
+	*/
+	Owner []string
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(job_id, task_id, executor, status, owner).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  task status eg.[running|successful|failed|pending].
+
+	*/
 	Status []string
-	/*Target*/
+	/*Target
+	  target eg.[runtime|pilot].
+
+	*/
 	Target *string
-	/*TaskID*/
+	/*TaskID
+	  task ids.
+
+	*/
 	TaskID []string
 
 	timeout    time.Duration
@@ -187,15 +217,15 @@ func (o *DescribeTasksParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe tasks params
-func (o *DescribeTasksParams) WithOwnerPath(ownerPath []string) *DescribeTasksParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe tasks params
+func (o *DescribeTasksParams) WithOwner(owner []string) *DescribeTasksParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe tasks params
-func (o *DescribeTasksParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe tasks params
+func (o *DescribeTasksParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithReverse adds the reverse to the describe tasks params
@@ -336,11 +366,11 @@ func (o *DescribeTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteReposResponse
 type OpenpitrixDeleteReposResponse struct {
 
-	// repo id
+	// ids of repository deleted
 	RepoID []string `json:"repo_id"`
 }
 

@@ -16,16 +16,16 @@ import (
 // swagger:model openpitrixModifyRuntimeCredentialRequest
 type OpenpitrixModifyRuntimeCredentialRequest struct {
 
-	// description
+	// runtime credential description
 	Description string `json:"description,omitempty"`
 
-	// name
+	// runtime credential name
 	Name string `json:"name,omitempty"`
 
-	// runtime credential content
+	// runtime credential content, a json file
 	RuntimeCredentialContent string `json:"runtime_credential_content,omitempty"`
 
-	// runtime credential id
+	// required, id of runtime credential to modify
 	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
 }
 

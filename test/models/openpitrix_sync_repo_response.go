@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixSyncRepoResponse
 type OpenpitrixSyncRepoResponse struct {
 
-	// failed
+	// synchronized ok or not
 	Failed bool `json:"failed,omitempty"`
 
 	// result

@@ -16,8 +16,8 @@ import (
 // swagger:model openpitrixEmailServiceConfig
 type OpenpitrixEmailServiceConfig struct {
 
-	// display email
-	DisplayEmail string `json:"display_email,omitempty"`
+	// display sender
+	DisplaySender string `json:"display_sender,omitempty"`
 
 	// email
 	Email string `json:"email,omitempty"`
@@ -29,12 +29,12 @@ type OpenpitrixEmailServiceConfig struct {
 	Password string `json:"password,omitempty"`
 
 	// port
-	Port string `json:"port,omitempty"`
+	Port int64 `json:"port,omitempty"`
 
 	// protocol
 	Protocol string `json:"protocol,omitempty"`
 
-	// ssl enable
+	// use ssl or not
 	SslEnable bool `json:"ssl_enable,omitempty"`
 }
 

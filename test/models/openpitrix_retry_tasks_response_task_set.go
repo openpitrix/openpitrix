@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRetryTasksResponseTaskSet openpitrix retry tasks response task set
+// OpenpitrixRetryTasksResponseTaskSet list of task retried
 // swagger:model openpitrixRetryTasksResponseTaskSet
 type OpenpitrixRetryTasksResponseTaskSet []*OpenpitrixTask
 

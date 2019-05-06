@@ -63,39 +63,75 @@ for the describe active app versions operation typically these are written to a 
 */
 type DescribeActiveAppVersionsParams struct {
 
-	/*AppID*/
+	/*AppID
+	  app ids.
+
+	*/
 	AppID []string
-	/*Description*/
+	/*Description
+	  description.
+
+	*/
 	Description []string
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
-	/*Name*/
+	/*Name
+	  app version name.
+
+	*/
 	Name []string
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
-	/*PackageName*/
+	/*Owner
+	  owner.
+
+	*/
+	Owner []string
+	/*PackageName
+	  app version package name.
+
+	*/
 	PackageName []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(version_id, app_id, name, owner, description, package_name, status, type).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  app version status eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended].
+
+	*/
 	Status []string
-	/*Type*/
+	/*Type
+	  app version type.
+
+	*/
 	Type []string
-	/*VersionID*/
+	/*VersionID
+	  app version ids.
+
+	*/
 	VersionID []string
 
 	timeout    time.Duration
@@ -202,15 +238,15 @@ func (o *DescribeActiveAppVersionsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe active app versions params
-func (o *DescribeActiveAppVersionsParams) WithOwnerPath(ownerPath []string) *DescribeActiveAppVersionsParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe active app versions params
+func (o *DescribeActiveAppVersionsParams) WithOwner(owner []string) *DescribeActiveAppVersionsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe active app versions params
-func (o *DescribeActiveAppVersionsParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe active app versions params
+func (o *DescribeActiveAppVersionsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithPackageName adds the packageName to the describe active app versions params
@@ -362,11 +398,11 @@ func (o *DescribeActiveAppVersionsParams) WriteToRequest(r runtime.ClientRequest
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

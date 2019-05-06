@@ -6,7 +6,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-am-service
-    version: ${VERSION}
+    version: ${AM_VERSION}
 spec:
   selector:
     app: openpitrix
@@ -25,7 +25,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-am-service
-    version: ${VERSION}
+    version: ${AM_VERSION}
 spec:
   selector:
     matchLabels:
@@ -37,7 +37,7 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-am-service
-        version: ${VERSION}
+        version: ${AM_VERSION}
     spec:
       initContainers:
       - name: wait-mysql
@@ -50,7 +50,7 @@ spec:
         command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
       - name: openpitrix-am-service
-        image: ${IAM_IMAGE}
+        image: ${AM_IMAGE}
         imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
           - am
@@ -58,13 +58,19 @@ spec:
         - containerPort: 9120
           name: am-service
         env:
-        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
-          value: 'true'
-        - name: OPENPITRIX_LOG_LEVEL
+        - name: AM_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
-        - name: OPENPITRIX_MYSQL_DATABASE
+        - name: AM_IM_HOST
+          value: "openpitrix-im-service"
+        - name: AM_IM_PORT
+          value: "9119"
+        - name: AM_DB_LOG_MODE_ENABLE
+          value: "${DB_LOG_MODE_ENABLE}"
+        - name: AM_DB_HOST
+          value: "openpitrix-db"
+        - name: AM_DB_DATABASE
           value: "am"
-        - name: OPENPITRIX_MYSQL_PASSWORD
+        - name: AM_DB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password.txt

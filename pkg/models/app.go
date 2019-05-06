@@ -38,6 +38,7 @@ type App struct {
 	ChartName   string
 	Tos         string
 	Abstraction string
+	Isv         string
 	CreateTime  time.Time
 	StatusTime  time.Time
 	UpdateTime  *time.Time
@@ -45,7 +46,7 @@ type App struct {
 
 var AppColumns = db.GetColumnsFromStruct(&App{})
 
-func NewApp(name string, ownerPath sender.OwnerPath) *App {
+func NewApp(name string, ownerPath sender.OwnerPath, isv string) *App {
 	return &App{
 		AppId:      NewAppId(),
 		Active:     false,
@@ -53,6 +54,7 @@ func NewApp(name string, ownerPath sender.OwnerPath) *App {
 		Status:     constants.StatusDraft,
 		Owner:      ownerPath.Owner(),
 		OwnerPath:  ownerPath,
+		Isv:        isv,
 		CreateTime: time.Now(),
 		StatusTime: time.Now(),
 	}
@@ -74,6 +76,8 @@ func AppToPb(app *App) *pb.App {
 	pbApp.Readme = pbutil.ToProtoString(app.Readme)
 	pbApp.ChartName = pbutil.ToProtoString(app.ChartName)
 	pbApp.OwnerPath = app.OwnerPath.ToProtoString()
+	pbApp.Owner = pbutil.ToProtoString(app.Owner)
+	pbApp.Isv = pbutil.ToProtoString(app.Isv)
 	pbApp.Keywords = pbutil.ToProtoString(app.Keywords)
 	pbApp.Abstraction = pbutil.ToProtoString(app.Abstraction)
 	pbApp.Tos = pbutil.ToProtoString(app.Tos)

@@ -1,5 +1,0 @@
-apiVersion: v1
-appVersion: "v0.3.1"
-description: OpenPitrix is an open-source system to package, deploy and manage different types of applications including traditional application, microservice application and serverless applications into multiple cloud environment such as AWS, Azure, Kubernetes, QingCloud, OpenStack, VMWare etc.
-name: openpitrix
-version: 0.1.0

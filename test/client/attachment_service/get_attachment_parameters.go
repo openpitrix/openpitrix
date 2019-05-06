@@ -62,10 +62,16 @@ for the get attachment operation typically these are written to a http.Request
 */
 type GetAttachmentParams struct {
 
-	/*AttachmentID*/
-	AttachmentID string
-	/*Filename*/
-	Filename string
+	/*AttachmentID
+	  required, use attachment id to get attachment.
+
+	*/
+	AttachmentID *string
+	/*Filename
+	  filename, attachment contain one more file.
+
+	*/
+	Filename *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -106,24 +112,24 @@ func (o *GetAttachmentParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithAttachmentID adds the attachmentID to the get attachment params
-func (o *GetAttachmentParams) WithAttachmentID(attachmentID string) *GetAttachmentParams {
+func (o *GetAttachmentParams) WithAttachmentID(attachmentID *string) *GetAttachmentParams {
 	o.SetAttachmentID(attachmentID)
 	return o
 }
 
 // SetAttachmentID adds the attachmentId to the get attachment params
-func (o *GetAttachmentParams) SetAttachmentID(attachmentID string) {
+func (o *GetAttachmentParams) SetAttachmentID(attachmentID *string) {
 	o.AttachmentID = attachmentID
 }
 
 // WithFilename adds the filename to the get attachment params
-func (o *GetAttachmentParams) WithFilename(filename string) *GetAttachmentParams {
+func (o *GetAttachmentParams) WithFilename(filename *string) *GetAttachmentParams {
 	o.SetFilename(filename)
 	return o
 }
 
 // SetFilename adds the filename to the get attachment params
-func (o *GetAttachmentParams) SetFilename(filename string) {
+func (o *GetAttachmentParams) SetFilename(filename *string) {
 	o.Filename = filename
 }
 
@@ -135,14 +141,36 @@ func (o *GetAttachmentParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	}
 	var res []error
 
-	// path param attachment_id
-	if err := r.SetPathParam("attachment_id", o.AttachmentID); err != nil {
-		return err
+	if o.AttachmentID != nil {
+
+		// query param attachment_id
+		var qrAttachmentID string
+		if o.AttachmentID != nil {
+			qrAttachmentID = *o.AttachmentID
+		}
+		qAttachmentID := qrAttachmentID
+		if qAttachmentID != "" {
+			if err := r.SetQueryParam("attachment_id", qAttachmentID); err != nil {
+				return err
+			}
+		}
+
 	}
 
-	// path param filename
-	if err := r.SetPathParam("filename", o.Filename); err != nil {
-		return err
+	if o.Filename != nil {
+
+		// query param filename
+		var qrFilename string
+		if o.Filename != nil {
+			qrFilename = *o.Filename
+		}
+		qFilename := qrFilename
+		if qFilename != "" {
+			if err := r.SetQueryParam("filename", qFilename); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {

@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-isv-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-isv-manager
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-isv-manager
+  ports:
+  - name: openpitrix-isv-manager
+    protocol: TCP
+    port: 9118
+    targetPort: 9118
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: openpitrix-isv-manager-deployment
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-isv-manager
+    version: ${VERSION}
+spec:
+  selector:
+    matchLabels:
+      app: openpitrix
+      component: openpitrix-isv-manager
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        component: openpitrix-isv-manager
+        version: ${VERSION}
+    spec:
+      initContainers:
+      - name: wait-mysql
+        image: busybox:1.28.4
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z openpitrix-db.${NAMESPACE}.svc 3306; do echo "waiting for mysql"; sleep 2; done;']
+      - name: wait-etcd
+        image: busybox:1.28.4
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
+      containers:
+      - name: openpitrix-isv-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - isv-manager
+        ports:
+        - containerPort: 9118
+          name: isv-manager
+        env:
+        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+          value: "${GRPC_SHOW_ERROR_CAUSE}"
+        - name: OPENPITRIX_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
+        - name: OPENPITRIX_MYSQL_DATABASE
+          value: "isv"
+        - name: OPENPITRIX_MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password.txt
+              name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi

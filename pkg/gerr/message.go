@@ -67,6 +67,11 @@ var (
 		en:   "runtime credential exists",
 		zhCN: "环境授权信息已存在",
 	}
+	ErrorUnsupportedRuntimeProvider = ErrorMessage{
+		Name: "unsupported_runtime_provider",
+		en:   "unsupported runtime provider [%s]",
+		zhCN: "不支持云环境服务商[%s]",
+	}
 	ErrorRuntimeExists = ErrorMessage{
 		Name: "runtime_exists",
 		en:   "runtime exists",
@@ -76,6 +81,11 @@ var (
 		Name: "email_exists",
 		en:   "email [%s] exists",
 		zhCN: "邮箱[%s]已存在",
+	}
+	ErrorEmailNotExists = ErrorMessage{
+		Name: "email_not_exists",
+		en:   "email [%s] not exists",
+		zhCN: "邮箱[%s]不存在",
 	}
 	ErrorCreateResourcesFailed = ErrorMessage{
 		Name: "create_resources_failed",
@@ -96,6 +106,11 @@ var (
 		Name: "delete_resource_failed",
 		en:   "delete resource [%s] failed",
 		zhCN: "删除资源[%s]失败",
+	}
+	ErrorDeleteFrontgateWithClustersFailed = ErrorMessage{
+		Name: "delete_frontgate_with_clusters_failed",
+		en:   "delete frontgate [%s] with clusters [%s] failed",
+		zhCN: "删除代理[%s]失败，仍有[%s]依赖",
 	}
 	ErrorUpgradeResourceFailed = ErrorMessage{
 		Name: "upgrade_resource_failed",
@@ -191,6 +206,11 @@ var (
 		Name: "subnet_not_found",
 		en:   "subnet [%s] not found or vpc not bind eip",
 		zhCN: "没有找到子网[%s]或者VPC没有绑定公网IP",
+	}
+	ErrorThereAreNoAvailableSubnet = ErrorMessage{
+		Name: "there_are_no_available_subnet",
+		en:   "there are no available subnet",
+		zhCN: "没有可用的子网",
 	}
 	ErrorProviderNotFound = ErrorMessage{
 		Name: "provider_not_found",
@@ -317,6 +337,11 @@ var (
 		en:   "app version [%s:%s] exists",
 		zhCN: "应用版本[%s:%s]已存在",
 	}
+	ErrorCompanyNameExists = ErrorMessage{
+		Name: "company_name_exists",
+		en:   "company name [%s] exists",
+		zhCN: "公司名称[%s]已存在",
+	}
 	ErrorCannotAccessRepo = ErrorMessage{
 		Name: "cannot_access_repo",
 		en:   "cannot access repo",
@@ -387,10 +412,10 @@ var (
 		en:   "illegal Email format [%s]",
 		zhCN: "非法的Email格式[%s]",
 	}
-	ErrorIllegalPhoneFormat = ErrorMessage{
-		Name: "illegal_phone_format",
-		en:   "illegal Phone format [%s]",
-		zhCN: "非法的Phone格式[%s]",
+	ErrorIllegalPhoneNumFormat = ErrorMessage{
+		Name: "illegal_phone_num_format",
+		en:   "illegal phone number format [%s]",
+		zhCN: "非法的电话号码格式[%s]",
 	}
 	ErrorIllegalBankAccountNumberFormat = ErrorMessage{
 		Name: "illegal_bankAccountNumber_format",
@@ -419,12 +444,62 @@ var (
 	}
 	ErrorNotExist = ErrorMessage{
 		Name: "%s_not_exist",
-		en: "%s(%s) not exist",
+		en:   "%s(%s) not exist",
 		zhCN: "%s(%s)不存在",
 	}
 	ErrorNotExistInOther = ErrorMessage{
 		Name: "%s_not_exist",
-		en: "%s not exist in %s",
+		en:   "%s not exist in %s",
 		zhCN: "%s里%s不存在",
+	}
+	ErrorCannotDeleteUsers = ErrorMessage{
+		Name: "error_cannot_delete_users",
+		en:   "cannot delete users",
+		zhCN: "无法删除用户",
+	}
+	ErrorCannotDeleteGroups = ErrorMessage{
+		Name: "error_cannot_delete_groups",
+		en:   "cannot delete groups",
+		zhCN: "无法删除用户组",
+	}
+	ErrorGroupNotFound = ErrorMessage{
+		Name: "error_group_not_found",
+		en:   "group [%s] not found",
+		zhCN: "没有找到用户组[%s]",
+	}
+	ErrorGroupAccessDenied = ErrorMessage{
+		Name: "error_group_access_denied",
+		en:   "access denied for group [%s]",
+		zhCN: "拒绝访问用户组[%s]",
+	}
+	ErrorUserNotFound = ErrorMessage{
+		Name: "error_user_not_found",
+		en:   "user [%s] not found",
+		zhCN: "没有找到用户[%s]",
+	}
+	ErrorUserAccessDenied = ErrorMessage{
+		Name: "error_user_access_denied",
+		en:   "access denied for user [%s]",
+		zhCN: "拒绝访问用户[%s]",
+	}
+	ErrorCannotJoinGroup = ErrorMessage{
+		Name: "error_cannot_join_group",
+		en:   "cannot join group",
+		zhCN: "无法加入用户组",
+	}
+	ErrorCannotLeaveGroup = ErrorMessage{
+		Name: "error_cannot_leave_group",
+		en:   "cannot leave group",
+		zhCN: "无法离开用户组",
+	}
+	ErrorCannotCreateUserWithRole = ErrorMessage{
+		Name: "error_cannot_create_user_with_role",
+		en:   "cannot create user with role [%s]",
+		zhCN: "无法创建[%s]角色的用户",
+	}
+	ErrorValidateEmailService = ErrorMessage{
+		Name: "error_validate_email_service",
+		en:   "validate email service failed",
+		zhCN: "验证邮件服务配置失败",
 	}
 )

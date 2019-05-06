@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDescribeZonesResponse
 type OpenpitrixDescribeZonesResponse struct {
 
-	// zones
+	// list of zones in runtime provider
 	Zones []string `json:"zones"`
 }
 

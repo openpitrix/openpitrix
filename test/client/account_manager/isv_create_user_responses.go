@@ -47,7 +47,7 @@ func NewIsvCreateUserOK() *IsvCreateUserOK {
 A successful response.
 */
 type IsvCreateUserOK struct {
-	Payload *models.OpenpitrixIsvCreateUserResponse
+	Payload *models.OpenpitrixCreateUserResponse
 }
 
 func (o *IsvCreateUserOK) Error() string {
@@ -56,7 +56,7 @@ func (o *IsvCreateUserOK) Error() string {
 
 func (o *IsvCreateUserOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.OpenpitrixIsvCreateUserResponse)
+	o.Payload = new(models.OpenpitrixCreateUserResponse)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

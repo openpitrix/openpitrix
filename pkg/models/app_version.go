@@ -109,6 +109,7 @@ func AppVersionToPb(appVersion *AppVersion) *pb.AppVersion {
 	pbAppVersion.Status = pbutil.ToProtoString(appVersion.Status)
 	pbAppVersion.PackageName = pbutil.ToProtoString(appVersion.PackageName)
 	pbAppVersion.OwnerPath = appVersion.OwnerPath.ToProtoString()
+	pbAppVersion.Owner = pbutil.ToProtoString(appVersion.Owner)
 	pbAppVersion.CreateTime = pbutil.ToProtoTimestamp(appVersion.CreateTime)
 	pbAppVersion.StatusTime = pbutil.ToProtoTimestamp(appVersion.StatusTime)
 	pbAppVersion.Sequence = pbutil.ToProtoUInt32(appVersion.Sequence)

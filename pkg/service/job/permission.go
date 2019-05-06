@@ -32,7 +32,7 @@ func CheckJobsPermission(ctx context.Context, resourceIds []string) ([]*models.J
 	}
 	if sender != nil {
 		for _, job := range jobs {
-			if !job.OwnerPath.CheckPermission(sender) {
+			if !job.OwnerPath.CheckPermission(sender) && job.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, job.JobId)
 			}
 		}

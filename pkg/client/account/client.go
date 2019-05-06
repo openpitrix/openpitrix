@@ -7,6 +7,7 @@ package account
 import (
 	"context"
 	"fmt"
+	"math"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -63,76 +64,79 @@ func (c *Client) GetUsers(ctx context.Context, userIds []string) ([]*pb.User, er
 	return response.UserSet, nil
 }
 
+func (c *Client) GetUser(ctx context.Context, userId string) (*pb.User, error) {
+	users, err := c.GetUsers(ctx, []string{userId})
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		return nil, fmt.Errorf("not found user [%s]", userId)
+	}
+	return users[0], nil
+}
+
 func (c *Client) GetUserGroupPath(ctx context.Context, userId string) (string, error) {
 	var userGroupPath string
 
-	var userIds []string
-	userIds = append(userIds, userId)
-
-	response, err := c.DescribeGroups(ctx, &pb.DescribeGroupsRequest{
-		UserId: userIds,
+	response, err := c.DescribeUsersDetail(ctx, &pb.DescribeUsersRequest{
+		UserId: []string{userId},
 	})
-	if err != nil {
-		logger.Error(ctx, "Describe groups %s failed: %+v", userIds, err)
+	if err != nil || len(response.UserDetailSet) == 0 {
+		logger.Error(ctx, "Describe user [%s] failed: %+v", userId, err)
 		return "", err
 	}
 
-	respGroupSet := response.GroupSet
+	groups := response.UserDetailSet[0].GroupSet
 
-	//If one uer under different Group, get the highest Group Path.
-	if len(respGroupSet) > 1 {
-		minLevel := len(strings.Split(respGroupSet[0].GroupPath.GetValue(), "."))
-		for _, group := range response.GroupSet {
-			if len(strings.Split(group.GroupPath.GetValue(), ".")) < minLevel {
-				minLevel = len(strings.Split(group.GroupPath.GetValue(), "."))
-				userGroupPath = group.GroupPath.GetValue()
-			}
+	//If one user under different groups, get the highest group path.
+	minLevel := math.MaxInt32
+	for _, group := range groups {
+		level := len(strings.Split(group.GroupPath.GetValue(), "."))
+		if level < minLevel {
+			minLevel = level
+			userGroupPath = group.GetGroupPath().GetValue()
 		}
-
-	} else if len(respGroupSet) == 1 {
-		userGroupPath = response.GroupSet[0].GetGroupPath().GetValue()
-	} else {
-		return "", nil
 	}
 
 	return userGroupPath, nil
 
 }
 
-func GetUsers(ctx context.Context, userIds []string) ([]*pb.User, error) {
-	client, err := NewClient()
+func (c *Client) GetRoleUsers(ctx context.Context, roleIds []string) ([]*pb.User, error) {
+	response, err := c.DescribeUsers(ctx, &pb.DescribeUsersRequest{
+		RoleId: roleIds,
+		Status: []string{constants.StatusActive},
+	})
 	if err != nil {
-		logger.Error(ctx, "Failed to create im client: %+v", err)
+		logger.Error(ctx, "Describe users failed: %+v", err)
 		return nil, err
 	}
-	response, err := client.GetUsers(ctx, userIds)
-	if err != nil {
-		return nil, err
-	}
-	return response, err
+
+	return response.UserSet, nil
 }
 
-func GetIsvFromUsers(ctx context.Context, userIds []string) ([]*pb.User, error) {
-	client, err := NewClient()
-	if err != nil {
-		logger.Error(ctx, "Failed to create im client: %+v", err)
-		return nil, err
-	}
-
-	var owners []string
-	for _, userId := range userIds {
-		response, err := client.GetUserGroupOwner(ctx, &pb.GetUserGroupOwnerRequest{
-			UserId: userId,
-		})
-		if err != nil {
-			return nil, err
-		}
-		owners = append(owners, response.Owner)
-	}
-
-	response, err := client.GetUsers(ctx, owners)
+func (c *Client) GetIsvFromUser(ctx context.Context, userId string) (*pb.User, error) {
+	groupPath, err := c.GetUserGroupPath(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
-	return response, err
+
+	rootGroupId := strings.Split(groupPath, ".")[0]
+
+	describeUsersResponse, err := c.DescribeUsers(ctx, &pb.DescribeUsersRequest{
+		RootGroupId: []string{rootGroupId},
+		Status:      []string{constants.StatusActive},
+		RoleId:      []string{constants.RoleIsv},
+	})
+	if err != nil {
+		logger.Error(ctx, "Failed to describe users: %+v", err)
+		return nil, err
+	}
+
+	if len(describeUsersResponse.UserSet) == 0 {
+		logger.Error(ctx, "Isv not exist with root group id [%s]", rootGroupId)
+		return nil, fmt.Errorf("isv not exist")
+	}
+
+	return describeUsersResponse.UserSet[0], nil
 }

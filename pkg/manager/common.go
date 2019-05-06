@@ -5,6 +5,7 @@
 package manager
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"strings"
@@ -18,6 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
@@ -37,9 +39,9 @@ type RequestWithReverse interface {
 	RequestWithSortKey
 	GetReverse() *wrappers.BoolValue
 }
-type RequestWithOwnerPath interface {
+type RequestWithOwner interface {
 	Request
-	GetOwnerPath() []string
+	GetOwner() []string
 }
 
 const (
@@ -230,4 +232,16 @@ func AddQueryJoinWithMap(query *db.SelectQuery, table, joinTable, primaryKey, ke
 		query = query.Where(db.And(whereCondition...))
 	}
 	return query
+}
+
+func BuildPermissionFilter(ctx context.Context) dbr.Builder {
+	s := ctxutil.GetSender(ctx)
+	if s == nil {
+		return nil
+	}
+	ops := []dbr.Builder{
+		db.Prefix(constants.ColumnOwnerPath, string(s.GetAccessPath())),
+		db.Eq(constants.ColumnOwner, s.UserId),
+	}
+	return db.Or(ops...)
 }

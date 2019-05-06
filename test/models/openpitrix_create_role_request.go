@@ -16,26 +16,14 @@ import (
 // swagger:model openpitrixCreateRoleRequest
 type OpenpitrixCreateRoleRequest struct {
 
-	// description
+	// role description
 	Description string `json:"description,omitempty"`
 
-	// owner
-	Owner string `json:"owner,omitempty"`
-
-	// owner path
-	OwnerPath string `json:"owner_path,omitempty"`
-
-	// portal
+	// required, portal of role eg.[global_admin|user|isv]
 	Portal string `json:"portal,omitempty"`
 
-	// role id
-	RoleID string `json:"role_id,omitempty"`
-
-	// role name
+	// required, role name
 	RoleName string `json:"role_name,omitempty"`
-
-	// status
-	Status string `json:"status,omitempty"`
 }
 
 // Validate validates this openpitrix create role request

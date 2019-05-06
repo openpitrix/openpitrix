@@ -6,7 +6,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-im-service
-    version: ${VERSION}
+    version: ${IM_VERSION}
 spec:
   selector:
     app: openpitrix
@@ -25,7 +25,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-im-service
-    version: ${VERSION}
+    version: ${IM_VERSION}
 spec:
   selector:
     matchLabels:
@@ -37,7 +37,7 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-im-service
-        version: ${VERSION}
+        version: ${IM_VERSION}
     spec:
       initContainers:
       - name: wait-mysql
@@ -50,7 +50,7 @@ spec:
         command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
       - name: openpitrix-im-service
-        image: ${IAM_IMAGE}
+        image: ${IM_IMAGE}
         imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
           - im
@@ -58,13 +58,15 @@ spec:
         - containerPort: 9119
           name: im-service
         env:
-        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
-          value: 'true'
-        - name: OPENPITRIX_LOG_LEVEL
+        - name: IM_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
-        - name: OPENPITRIX_MYSQL_DATABASE
+        - name: IM_DB_LOG_MODE_ENABLE
+          value: "${DB_LOG_MODE_ENABLE}"
+        - name: IM_DB_HOST
+          value: "openpitrix-db"
+        - name: IM_DB_DATABASE
           value: "im"
-        - name: OPENPITRIX_MYSQL_PASSWORD
+        - name: IM_DB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password.txt

@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixCreateGroupResponse
 type OpenpitrixCreateGroupResponse struct {
 
-	// group id
+	// id of group created
 	GroupID string `json:"group_id,omitempty"`
 }
 

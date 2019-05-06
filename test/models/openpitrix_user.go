@@ -16,37 +16,31 @@ import (
 // swagger:model openpitrixUser
 type OpenpitrixUser struct {
 
-	// create time
+	// the time when user create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// description
+	// user description
 	Description string `json:"description,omitempty"`
 
-	// email
+	// user email
 	Email string `json:"email,omitempty"`
 
-	// group id
-	GroupID []string `json:"group_id"`
-
-	// phone number
+	// user phone number
 	PhoneNumber string `json:"phone_number,omitempty"`
 
-	// role
-	Role OpenpitrixUserRole `json:"role"`
-
-	// status
+	// user status eg.[active|deleted]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record changed time of status
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
-	// update time
+	// the time when user update
 	UpdateTime strfmt.DateTime `json:"update_time,omitempty"`
 
-	// user id
+	// user id, user belong to different group and role, has different permissions
 	UserID string `json:"user_id,omitempty"`
 
-	// username
+	// user name
 	Username string `json:"username,omitempty"`
 }
 
@@ -54,23 +48,9 @@ type OpenpitrixUser struct {
 func (m *OpenpitrixUser) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateGroupID(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixUser) validateGroupID(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.GroupID) { // not required
-		return nil
-	}
-
 	return nil
 }
 

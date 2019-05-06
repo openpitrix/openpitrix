@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-DescribeTasks describes tasks with filter
+DescribeTasks gets tasks can filter with these fields job id task id executor status owner default return all tasks
 */
 func (a *Client) DescribeTasks(params *DescribeTasksParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeTasksOK, error) {
 	// TODO: Validate the params before sending

@@ -63,41 +63,80 @@ for the describe jobs operation typically these are written to a http.Request
 */
 type DescribeJobsParams struct {
 
-	/*AppID*/
+	/*AppID
+	  app id.
+
+	*/
 	AppID *string
-	/*ClusterID*/
+	/*ClusterID
+	  cluster id.
+
+	*/
 	ClusterID *string
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select column to display.
+
+	*/
 	DisplayColumns []string
-	/*Executor*/
+	/*Executor
+	  host name of server.
+
+	*/
 	Executor *string
-	/*JobID*/
+	/*JobID
+	  job ids.
+
+	*/
 	JobID []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
-	/*Provider*/
+	/*Owner
+	  owner.
+
+	*/
+	Owner []string
+	/*Provider
+	  runtime provider eg.[qingcloud|aliyun|aws|kubernetes].
+
+	*/
 	Provider *string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*RuntimeID*/
+	/*RuntimeID
+	  runtime id.
+
+	*/
 	RuntimeID *string
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(job_id, cluster_id, app_id, version_id, executor, provider, status, owner).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[successful|failed|running|pending].
+
+	*/
 	Status []string
-	/*VersionID*/
+	/*VersionID
+	  specific app version id to filter result.
+
+	*/
 	VersionID *string
 
 	timeout    time.Duration
@@ -215,15 +254,15 @@ func (o *DescribeJobsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe jobs params
-func (o *DescribeJobsParams) WithOwnerPath(ownerPath []string) *DescribeJobsParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe jobs params
+func (o *DescribeJobsParams) WithOwner(owner []string) *DescribeJobsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe jobs params
-func (o *DescribeJobsParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe jobs params
+func (o *DescribeJobsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithProvider adds the provider to the describe jobs params
@@ -407,11 +446,11 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

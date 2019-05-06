@@ -67,11 +67,7 @@ func (p *Server) createRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 
 	err = ValidateRuntime(ctx, runtimeId, zone, runtimeCredential, true)
 	if err != nil {
-		if gerr.IsGRPCError(err) {
-			return nil, err
-		} else {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
-		}
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	query := pi.Global().DB(ctx).
@@ -79,6 +75,7 @@ func (p *Server) createRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		From(constants.TableRuntime).
 		Where(db.Eq(constants.ColumnRuntimeCredentialId, runtimeCredentialId)).
 		Where(db.Eq(constants.ColumnZone, req.GetZone().GetValue())).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
 		Where(db.Eq(constants.ColumnProvider, req.GetProvider().GetValue())).
 		Where(db.Eq(constants.ColumnDebug, debug)).
 		Where(db.Eq(constants.ColumnOwner, s.GetOwnerPath().Owner())).
@@ -135,9 +132,9 @@ func (p *Server) describeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
-	query = query.Where(db.Eq("debug", debug))
+	query = query.Where(db.Eq(constants.ColumnDebug, debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	if len(displayColumns) > 0 {
 		_, err := query.Load(&runtimes)
@@ -168,7 +165,7 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&runtimes)
@@ -219,11 +216,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 
 		err = ValidateRuntime(ctx, runtime.RuntimeId, runtime.Zone, runtimeCredential, false)
 		if err != nil {
-			if gerr.IsGRPCError(err) {
-				return nil, err
-			} else {
-				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
-			}
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorModifyResourceFailed, runtimeId)
 		}
 
 		attributes[constants.ColumnRuntimeCredentialId] = runtimeCredentialId
@@ -325,11 +318,7 @@ func (p *Server) createRuntimeCredential(ctx context.Context, req *pb.CreateRunt
 	}
 	err := ValidateRuntime(ctx, "", "", runtimeCredential, false)
 	if err != nil {
-		if gerr.IsGRPCError(err) {
-			return nil, err
-		} else {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
-		}
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	content, err := decodeRuntimeCredentialContent(provider, runtimeCredentialContent)
@@ -399,9 +388,9 @@ func (p *Server) describeRuntimeCredentials(ctx context.Context, req *pb.Describ
 		From(constants.TableRuntimeCredential).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntimeCredential))
-	query = query.Where(db.Eq("debug", debug))
+	query = query.Where(db.Eq(constants.ColumnDebug, debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&runtimeCredentials)
 	if err != nil {
@@ -506,11 +495,7 @@ func (p *Server) ModifyRuntimeCredential(ctx context.Context, req *pb.ModifyRunt
 			}
 			err = ValidateRuntime(ctx, runtime.RuntimeId, runtime.Zone, newRuntimeCredential, false)
 			if err != nil {
-				if gerr.IsGRPCError(err) {
-					return nil, err
-				} else {
-					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
-				}
+				return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorModifyResourceFailed, runtimeCredentialId)
 			}
 		}
 
@@ -545,15 +530,9 @@ func (p *Server) ValidateRuntimeCredential(ctx context.Context, req *pb.Validate
 	}
 	err := ValidateRuntime(ctx, "", "", runtimeCredential, false)
 	if err != nil {
-		if gerr.IsGRPCError(err) {
-			return &pb.ValidateRuntimeCredentialResponse{
-				Ok: pbutil.ToProtoBool(false),
-			}, err
-		} else {
-			return &pb.ValidateRuntimeCredentialResponse{
-				Ok: pbutil.ToProtoBool(false),
-			}, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
-		}
+		return &pb.ValidateRuntimeCredentialResponse{
+			Ok: pbutil.ToProtoBool(false),
+		}, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 	return &pb.ValidateRuntimeCredentialResponse{
 		Ok: pbutil.ToProtoBool(true),

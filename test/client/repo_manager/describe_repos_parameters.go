@@ -63,50 +63,95 @@ for the describe repos operation typically these are written to a http.Request
 */
 type DescribeReposParams struct {
 
-	/*AppDefaultStatus*/
+	/*AppDefaultStatus
+	  app default status eg.[draft|active].
+
+	*/
 	AppDefaultStatus []string
-	/*CategoryID*/
+	/*CategoryID
+	  category ids.
+
+	*/
 	CategoryID []string
 	/*Controller
-	  0 for self resource; 1 for openpitrix resource.
+	  controller, value 0 for self resource, value1 for openpitrix resource.
 
 	*/
 	Controller *int32
-	/*Label*/
+	/*Label
+	  a kv string, tags of server.
+
+	*/
 	Label *string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
-	/*Name*/
+	/*Name
+	  repository name.
+
+	*/
 	Name []string
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
-	/*Provider*/
+	/*Owner
+	  owner.
+
+	*/
+	Owner []string
+	/*Provider
+	  runtime provider eg.[qingcloud|aliyun|aws|kubernetes].
+
+	*/
 	Provider []string
-	/*RepoID*/
+	/*RepoID
+	  repository ids.
+
+	*/
 	RepoID []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(repo_id, name, type, visibility, status, app_default_status, owner, controller).
+
+	*/
 	SearchWord *string
-	/*Selector*/
+	/*Selector
+	  selector of label.
+
+	*/
 	Selector *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[active|deleted].
+
+	*/
 	Status []string
-	/*Type*/
+	/*Type
+	  repository type.
+
+	*/
 	Type []string
-	/*UserID*/
+	/*UserID
+	  user id.
+
+	*/
 	UserID *string
-	/*Visibility*/
+	/*Visibility
+	  visibility eg:[public|private].
+
+	*/
 	Visibility []string
 
 	timeout    time.Duration
@@ -224,15 +269,15 @@ func (o *DescribeReposParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe repos params
-func (o *DescribeReposParams) WithOwnerPath(ownerPath []string) *DescribeReposParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe repos params
+func (o *DescribeReposParams) WithOwner(owner []string) *DescribeReposParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe repos params
-func (o *DescribeReposParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe repos params
+func (o *DescribeReposParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithProvider adds the provider to the describe repos params
@@ -441,11 +486,11 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

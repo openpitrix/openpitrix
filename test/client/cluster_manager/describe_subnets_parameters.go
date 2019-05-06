@@ -63,19 +63,40 @@ for the describe subnets operation typically these are written to a http.Request
 */
 type DescribeSubnetsParams struct {
 
-	/*AdvancedParam*/
+	/*AdvancedParam
+	  advanced param.
+
+	*/
 	AdvancedParam []string
-	/*Limit*/
+	/*Limit
+	  data limit per page, default value 20, max value 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  data offset, default 0.
+
+	*/
 	Offset *int64
-	/*RuntimeID*/
+	/*RuntimeID
+	  required, id of runtime that contain subnet.
+
+	*/
 	RuntimeID *string
-	/*SubnetID*/
+	/*SubnetID
+	  subnet ids.
+
+	*/
 	SubnetID []string
-	/*SubnetType*/
+	/*SubnetType
+	  subnet type.
+
+	*/
 	SubnetType *int64
-	/*Zone*/
+	/*Zone
+	  zone eg.[pek3a|pek3b|...].
+
+	*/
 	Zone []string
 
 	timeout    time.Duration

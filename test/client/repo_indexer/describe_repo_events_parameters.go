@@ -64,22 +64,34 @@ for the describe repo events operation typically these are written to a http.Req
 type DescribeRepoEventsParams struct {
 
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
-	/*RepoEventID*/
+	/*Owner
+	  owner.
+
+	*/
+	Owner []string
+	/*RepoEventID
+	  repository event ids.
+
+	*/
 	RepoEventID []string
-	/*RepoID*/
+	/*RepoID
+	  repository ids.
+
+	*/
 	RepoID []string
-	/*Status*/
+	/*Status
+	  repository event status eg.[failed|successful|working|pending].
+
+	*/
 	Status []string
 
 	timeout    time.Duration
@@ -142,15 +154,15 @@ func (o *DescribeRepoEventsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe repo events params
-func (o *DescribeRepoEventsParams) WithOwnerPath(ownerPath []string) *DescribeRepoEventsParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe repo events params
+func (o *DescribeRepoEventsParams) WithOwner(owner []string) *DescribeRepoEventsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe repo events params
-func (o *DescribeRepoEventsParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe repo events params
+func (o *DescribeRepoEventsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithRepoEventID adds the repoEventID to the describe repo events params
@@ -226,11 +238,11 @@ func (o *DescribeRepoEventsParams) WriteToRequest(r runtime.ClientRequest, reg s
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

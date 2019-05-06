@@ -141,7 +141,7 @@ func (a *Client) CreateRuntimeCredential(params *CreateRuntimeCredentialParams, 
 }
 
 /*
-DeleteRuntimeCredentials deletes runtime credentials
+DeleteRuntimeCredentials batches delete runtime credentials
 */
 func (a *Client) DeleteRuntimeCredentials(params *DeleteRuntimeCredentialsParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteRuntimeCredentialsOK, error) {
 	// TODO: Validate the params before sending
@@ -199,7 +199,7 @@ func (a *Client) DeleteRuntimes(params *DeleteRuntimesParams, authInfo runtime.C
 }
 
 /*
-DescribeDebugRuntimeCredentials describes debug runtime credentials
+DescribeDebugRuntimeCredentials gets debug runtime credentials filter with these fields runtime credential id status provider owner default return all debug runtime credentials
 */
 func (a *Client) DescribeDebugRuntimeCredentials(params *DescribeDebugRuntimeCredentialsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeDebugRuntimeCredentialsOK, error) {
 	// TODO: Validate the params before sending
@@ -228,7 +228,7 @@ func (a *Client) DescribeDebugRuntimeCredentials(params *DescribeDebugRuntimeCre
 }
 
 /*
-DescribeDebugRuntimes describes debug runtime
+DescribeDebugRuntimes gets debug runtimes can filter with these fields runtime id provider zone status owner default return all debug runtimes
 */
 func (a *Client) DescribeDebugRuntimes(params *DescribeDebugRuntimesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeDebugRuntimesOK, error) {
 	// TODO: Validate the params before sending
@@ -257,7 +257,7 @@ func (a *Client) DescribeDebugRuntimes(params *DescribeDebugRuntimesParams, auth
 }
 
 /*
-DescribeRuntimeCredentials describes runtime credentials
+DescribeRuntimeCredentials gets runtime credentials filter with these fields runtime credential id status provider owner default return all runtime credentials
 */
 func (a *Client) DescribeRuntimeCredentials(params *DescribeRuntimeCredentialsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeRuntimeCredentialsOK, error) {
 	// TODO: Validate the params before sending
@@ -286,7 +286,7 @@ func (a *Client) DescribeRuntimeCredentials(params *DescribeRuntimeCredentialsPa
 }
 
 /*
-DescribeRuntimeProviderZones describes runtime provider zones
+DescribeRuntimeProviderZones gets runtime provider zones
 */
 func (a *Client) DescribeRuntimeProviderZones(params *DescribeRuntimeProviderZonesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeRuntimeProviderZonesOK, error) {
 	// TODO: Validate the params before sending
@@ -315,7 +315,7 @@ func (a *Client) DescribeRuntimeProviderZones(params *DescribeRuntimeProviderZon
 }
 
 /*
-DescribeRuntimes describes runtime
+DescribeRuntimes gets runtimes can filter with these fields runtime id provider zone status owner default return all runtimes
 */
 func (a *Client) DescribeRuntimes(params *DescribeRuntimesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeRuntimesOK, error) {
 	// TODO: Validate the params before sending
@@ -344,7 +344,7 @@ func (a *Client) DescribeRuntimes(params *DescribeRuntimesParams, authInfo runti
 }
 
 /*
-GetRuntimeStatistics gets runtime statistics
+GetRuntimeStatistics gets statistics of runtime
 */
 func (a *Client) GetRuntimeStatistics(params *GetRuntimeStatisticsParams, authInfo runtime.ClientAuthInfoWriter) (*GetRuntimeStatisticsOK, error) {
 	// TODO: Validate the params before sending

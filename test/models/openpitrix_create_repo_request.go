@@ -16,37 +16,37 @@ import (
 // swagger:model openpitrixCreateRepoRequest
 type OpenpitrixCreateRepoRequest struct {
 
-	// app default status
+	// required app default status.eg:[draft|active]
 	AppDefaultStatus string `json:"app_default_status,omitempty"`
 
 	// category id
 	CategoryID string `json:"category_id,omitempty"`
 
-	// credential
+	// required, credential of visiting the repository
 	Credential string `json:"credential,omitempty"`
 
-	// description
+	// repository description
 	Description string `json:"description,omitempty"`
 
-	// labels
+	// a kv string, tags of server
 	Labels string `json:"labels,omitempty"`
 
-	// name
+	// required, repository name
 	Name string `json:"name,omitempty"`
 
-	// providers
+	// required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	Providers []string `json:"providers"`
 
-	// selectors
+	// selectors of label
 	Selectors string `json:"selectors,omitempty"`
 
-	// type
+	// repository type
 	Type string `json:"type,omitempty"`
 
-	// url
+	// required, url of visiting the repository
 	URL string `json:"url,omitempty"`
 
-	// visibility
+	// required, visibility eg:[public|private]
 	Visibility string `json:"visibility,omitempty"`
 }
 

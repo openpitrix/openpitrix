@@ -6,7 +6,7 @@ metadata:
   labels:
     app: openpitrix
     job: openpitrix-notification-db-init
-    version: ${VERSION}
+    version: ${NOTIFICATION_VERSION}
 spec:
   backoffLimit: 6
   completions: 1
@@ -16,7 +16,7 @@ spec:
       labels:
         app: openpitrix
         job: openpitrix-notification-db-init
-        version: ${VERSION}
+        version: ${NOTIFICATION_VERSION}
       name: openpitrix-notification-db-init
     spec:
       initContainers:

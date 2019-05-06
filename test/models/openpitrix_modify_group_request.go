@@ -16,14 +16,17 @@ import (
 // swagger:model openpitrixModifyGroupRequest
 type OpenpitrixModifyGroupRequest struct {
 
-	// description
+	// group description
 	Description string `json:"description,omitempty"`
 
-	// group id
+	// required, id of group to modify
 	GroupID string `json:"group_id,omitempty"`
 
-	// name
+	// group name
 	Name string `json:"name,omitempty"`
+
+	// parent group id
+	ParentGroupID string `json:"parent_group_id,omitempty"`
 }
 
 // Validate validates this openpitrix modify group request

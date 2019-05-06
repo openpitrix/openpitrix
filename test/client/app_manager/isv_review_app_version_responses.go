@@ -51,7 +51,7 @@ type IsvReviewAppVersionOK struct {
 }
 
 func (o *IsvReviewAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /v1/app_version/action/isv/review][%d] isvReviewAppVersionOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/app_version/action/review/isv][%d] isvReviewAppVersionOK  %+v", 200, o.Payload)
 }
 
 func (o *IsvReviewAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

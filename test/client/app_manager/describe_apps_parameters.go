@@ -63,37 +63,70 @@ for the describe apps operation typically these are written to a http.Request
 */
 type DescribeAppsParams struct {
 
-	/*AppID*/
+	/*AppID
+	  app ids.
+
+	*/
 	AppID []string
-	/*CategoryID*/
+	/*CategoryID
+	  app category ids.
+
+	*/
 	CategoryID []string
-	/*ChartName*/
+	/*ChartName
+	  app chart name.
+
+	*/
 	ChartName []string
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select column to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default is 20, max value is 200.
 
 	*/
 	Limit *int64
-	/*Name*/
+	/*Name
+	  app name.
+
+	*/
 	Name []string
 	/*Offset
-	  default is 0.
+	  data offset, default is 0.
 
 	*/
 	Offset *int64
-	/*OwnerPath*/
-	OwnerPath []string
-	/*RepoID*/
+	/*Owner
+	  app owner.
+
+	*/
+	Owner []string
+	/*RepoID
+	  app repository ids.
+
+	*/
 	RepoID []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  app status eg.[modify|submit|review|cancel|release|delete|pass|reject|suspend|recover].
+
+	*/
 	Status []string
 
 	timeout    time.Duration
@@ -211,15 +244,15 @@ func (o *DescribeAppsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwnerPath adds the ownerPath to the describe apps params
-func (o *DescribeAppsParams) WithOwnerPath(ownerPath []string) *DescribeAppsParams {
-	o.SetOwnerPath(ownerPath)
+// WithOwner adds the owner to the describe apps params
+func (o *DescribeAppsParams) WithOwner(owner []string) *DescribeAppsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwnerPath adds the ownerPath to the describe apps params
-func (o *DescribeAppsParams) SetOwnerPath(ownerPath []string) {
-	o.OwnerPath = ownerPath
+// SetOwner adds the owner to the describe apps params
+func (o *DescribeAppsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithRepoID adds the repoID to the describe apps params
@@ -357,11 +390,11 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	}
 
-	valuesOwnerPath := o.OwnerPath
+	valuesOwner := o.Owner
 
-	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
-	// query array param owner_path
-	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 

@@ -63,22 +63,61 @@ for the describe groups operation typically these are written to a http.Request
 */
 type DescribeGroupsParams struct {
 
-	/*GroupID*/
+	/*GroupID
+	  group ids.
+
+	*/
 	GroupID []string
-	/*Limit*/
+	/*GroupName
+	  group name.
+
+	*/
+	GroupName []string
+	/*GroupPath
+	  group path, a concat string gid-xxx.gid-xxx.gid...
+
+	*/
+	GroupPath []string
+	/*Limit
+	  data limit per page, default value 20, max value 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  data offset, default 0.
+
+	*/
 	Offset *int64
-	/*Reverse*/
+	/*ParentGroupID
+	  parent group ids.
+
+	*/
+	ParentGroupID []string
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*RootGroupID
+	  use root group ids to get all groups.
+
+	*/
+	RootGroupID []string
+	/*SearchWord
+	  query key, support these fields(group_id, parent_group_id, group_path, status).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[active|deleted].
+
+	*/
 	Status []string
-	/*UserID*/
-	UserID []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -129,6 +168,28 @@ func (o *DescribeGroupsParams) SetGroupID(groupID []string) {
 	o.GroupID = groupID
 }
 
+// WithGroupName adds the groupName to the describe groups params
+func (o *DescribeGroupsParams) WithGroupName(groupName []string) *DescribeGroupsParams {
+	o.SetGroupName(groupName)
+	return o
+}
+
+// SetGroupName adds the groupName to the describe groups params
+func (o *DescribeGroupsParams) SetGroupName(groupName []string) {
+	o.GroupName = groupName
+}
+
+// WithGroupPath adds the groupPath to the describe groups params
+func (o *DescribeGroupsParams) WithGroupPath(groupPath []string) *DescribeGroupsParams {
+	o.SetGroupPath(groupPath)
+	return o
+}
+
+// SetGroupPath adds the groupPath to the describe groups params
+func (o *DescribeGroupsParams) SetGroupPath(groupPath []string) {
+	o.GroupPath = groupPath
+}
+
 // WithLimit adds the limit to the describe groups params
 func (o *DescribeGroupsParams) WithLimit(limit *int64) *DescribeGroupsParams {
 	o.SetLimit(limit)
@@ -151,6 +212,17 @@ func (o *DescribeGroupsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithParentGroupID adds the parentGroupID to the describe groups params
+func (o *DescribeGroupsParams) WithParentGroupID(parentGroupID []string) *DescribeGroupsParams {
+	o.SetParentGroupID(parentGroupID)
+	return o
+}
+
+// SetParentGroupID adds the parentGroupId to the describe groups params
+func (o *DescribeGroupsParams) SetParentGroupID(parentGroupID []string) {
+	o.ParentGroupID = parentGroupID
+}
+
 // WithReverse adds the reverse to the describe groups params
 func (o *DescribeGroupsParams) WithReverse(reverse *bool) *DescribeGroupsParams {
 	o.SetReverse(reverse)
@@ -160,6 +232,17 @@ func (o *DescribeGroupsParams) WithReverse(reverse *bool) *DescribeGroupsParams 
 // SetReverse adds the reverse to the describe groups params
 func (o *DescribeGroupsParams) SetReverse(reverse *bool) {
 	o.Reverse = reverse
+}
+
+// WithRootGroupID adds the rootGroupID to the describe groups params
+func (o *DescribeGroupsParams) WithRootGroupID(rootGroupID []string) *DescribeGroupsParams {
+	o.SetRootGroupID(rootGroupID)
+	return o
+}
+
+// SetRootGroupID adds the rootGroupId to the describe groups params
+func (o *DescribeGroupsParams) SetRootGroupID(rootGroupID []string) {
+	o.RootGroupID = rootGroupID
 }
 
 // WithSearchWord adds the searchWord to the describe groups params
@@ -195,17 +278,6 @@ func (o *DescribeGroupsParams) SetStatus(status []string) {
 	o.Status = status
 }
 
-// WithUserID adds the userID to the describe groups params
-func (o *DescribeGroupsParams) WithUserID(userID []string) *DescribeGroupsParams {
-	o.SetUserID(userID)
-	return o
-}
-
-// SetUserID adds the userId to the describe groups params
-func (o *DescribeGroupsParams) SetUserID(userID []string) {
-	o.UserID = userID
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *DescribeGroupsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -219,6 +291,22 @@ func (o *DescribeGroupsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	joinedGroupID := swag.JoinByFormat(valuesGroupID, "multi")
 	// query array param group_id
 	if err := r.SetQueryParam("group_id", joinedGroupID...); err != nil {
+		return err
+	}
+
+	valuesGroupName := o.GroupName
+
+	joinedGroupName := swag.JoinByFormat(valuesGroupName, "multi")
+	// query array param group_name
+	if err := r.SetQueryParam("group_name", joinedGroupName...); err != nil {
+		return err
+	}
+
+	valuesGroupPath := o.GroupPath
+
+	joinedGroupPath := swag.JoinByFormat(valuesGroupPath, "multi")
+	// query array param group_path
+	if err := r.SetQueryParam("group_path", joinedGroupPath...); err != nil {
 		return err
 	}
 
@@ -254,6 +342,14 @@ func (o *DescribeGroupsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 
 	}
 
+	valuesParentGroupID := o.ParentGroupID
+
+	joinedParentGroupID := swag.JoinByFormat(valuesParentGroupID, "multi")
+	// query array param parent_group_id
+	if err := r.SetQueryParam("parent_group_id", joinedParentGroupID...); err != nil {
+		return err
+	}
+
 	if o.Reverse != nil {
 
 		// query param reverse
@@ -268,6 +364,14 @@ func (o *DescribeGroupsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 			}
 		}
 
+	}
+
+	valuesRootGroupID := o.RootGroupID
+
+	joinedRootGroupID := swag.JoinByFormat(valuesRootGroupID, "multi")
+	// query array param root_group_id
+	if err := r.SetQueryParam("root_group_id", joinedRootGroupID...); err != nil {
+		return err
 	}
 
 	if o.SearchWord != nil {
@@ -307,14 +411,6 @@ func (o *DescribeGroupsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
-		return err
-	}
-
-	valuesUserID := o.UserID
-
-	joinedUserID := swag.JoinByFormat(valuesUserID, "multi")
-	// query array param user_id
-	if err := r.SetQueryParam("user_id", joinedUserID...); err != nil {
 		return err
 	}
 

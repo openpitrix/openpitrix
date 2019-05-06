@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixAddClusterNodesResponse
 type OpenpitrixAddClusterNodesResponse struct {
 
-	// cluster id
+	// id of cluster added node
 	ClusterID string `json:"cluster_id,omitempty"`
 
-	// job id
+	// id of job of add node to cluster
 	JobID string `json:"job_id,omitempty"`
 }
 

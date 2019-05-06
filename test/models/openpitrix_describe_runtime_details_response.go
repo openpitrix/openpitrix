@@ -19,7 +19,7 @@ type OpenpitrixDescribeRuntimeDetailsResponse struct {
 	// runtime detail set
 	RuntimeDetailSet OpenpitrixDescribeRuntimeDetailsResponseRuntimeDetailSet `json:"runtime_detail_set"`
 
-	// total count
+	// total count of runtime
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

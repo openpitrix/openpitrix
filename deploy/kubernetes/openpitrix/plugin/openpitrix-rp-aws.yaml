@@ -6,7 +6,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-rp-aws
-    version: ${VERSION}
+    version: ${RP_AWS_VERSION}
 spec:
   selector:
     app: openpitrix
@@ -25,7 +25,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-rp-aws
-    version: ${VERSION}
+    version: ${RP_AWS_VERSION}
 spec:
   selector:
     matchLabels:
@@ -37,16 +37,20 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-rp-aws
-        version: ${VERSION}
+        version: ${RP_AWS_VERSION}
     spec:
       initContainers:
       - name: wait-etcd
         image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
         command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
+      - name: wait-runtime-manager
+        image: busybox:1.28.4
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z openpitrix-rp-manager.${NAMESPACE}.svc 9121; do echo "waiting for runtime-manager"; sleep 2; done;']
       containers:
       - name: openpitrix-rp-aws
-        image: openpitrix/runtime-provider-aws
+        image: ${RP_AWS_IMAGE}
         imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
           - runtime-provider
@@ -55,7 +59,7 @@ spec:
           name: rp-aws
         env:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
-          value: 'true'
+          value: "${GRPC_SHOW_ERROR_CAUSE}"
         - name: OPENPITRIX_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
         resources:

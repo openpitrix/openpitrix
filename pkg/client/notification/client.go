@@ -36,6 +36,7 @@ func SendEmailNotification(ctx context.Context, emailNotifications []*models.Ema
 		logger.Error(ctx, "Failed to create notification client: %+v", err)
 		return err
 	}
+	emailNotifications = models.UniqueEmailNotifications(emailNotifications)
 	for _, notification := range emailNotifications {
 		_, err := client.CreateNotification(ctx, &nfpb.CreateNotificationRequest{
 			ContentType: pbutil.ToProtoString(notification.ContentType),

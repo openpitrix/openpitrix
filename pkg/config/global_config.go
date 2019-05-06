@@ -15,13 +15,14 @@ import (
 )
 
 type GlobalConfig struct {
-	App     AppServiceConfig                 `json:"app"`
-	Repo    RepoServiceConfig                `json:"repo"`
-	Cluster ClusterServiceConfig             `json:"cluster"`
-	Runtime map[string]RuntimeProviderConfig `json:"runtime"`
-	Pilot   PilotServiceConfig               `json:"pilot"`
-	Job     JobServiceConfig                 `json:"job"`
-	Task    TaskServiceConfig                `json:"task"`
+	App      AppServiceConfig                  `json:"app"`
+	Repo     RepoServiceConfig                 `json:"repo"`
+	Cluster  ClusterServiceConfig              `json:"cluster"`
+	Runtime  map[string]*RuntimeProviderConfig `json:"runtime"`
+	Pilot    PilotServiceConfig                `json:"pilot"`
+	Job      JobServiceConfig                  `json:"job"`
+	Task     TaskServiceConfig                 `json:"task"`
+	BasicCfg BasicConfig                       `json:"basic_config"`
 }
 
 type AppServiceConfig struct {
@@ -53,16 +54,23 @@ type TaskServiceConfig struct {
 	MaxWorkingTasks int32 `json:"max_working_tasks"`
 }
 
+type BasicConfig struct {
+	PlatformName string `json:"platform_name"`
+	PlatformUrl  string `json:"platform_url"`
+}
+
 type RuntimeProviderConfig struct {
-	ApiServer     string `json:"api_server"`
-	Zone          string `json:"zone"`
-	ImageId       string `json:"image_id"`
-	ImageUrl      string `json:"image_url"`
-	ImageName     string `json:"image_name"`
-	FrontgateConf string `json:"frontgate_conf"`
-	ProviderType  string `json:"provider_type"`
-	Host          string `json:"host"`
-	Port          int    `json:"port"`
+	ApiServer       string                 `json:"api_server"`
+	Zone            string                 `json:"zone"`
+	ImageId         string                 `json:"image_id"`
+	ImageUrl        string                 `json:"image_url"`
+	ImageName       string                 `json:"image_name"`
+	FrontgateConf   string                 `json:"frontgate_conf"`
+	ProviderType    string                 `json:"provider_type"`
+	Host            string                 `json:"host"`
+	Port            int                    `json:"port"`
+	Enable          bool                   `json:"enable"`
+	AdvancedOptions map[string]interface{} `json:"advanced_options"`
 }
 
 func (r *RuntimeProviderConfig) GetPort() int {
@@ -81,6 +89,10 @@ func (r *RuntimeProviderConfig) GetHost(provider string) string {
 	}
 }
 
+func (r *RuntimeProviderConfig) GetEnable() bool {
+	return r.Enable
+}
+
 func (g *GlobalConfig) GetAppDefaultStatus() string {
 	if g.App.DefaultDraftStatus {
 		return constants.StatusDraft
@@ -95,26 +107,26 @@ func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*Runtime
 
 	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == zone {
-			return &imageConfig, nil
+			return imageConfig, nil
 		}
 	}
 	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == ".*" {
-			return &imageConfig, nil
+			return imageConfig, nil
 		}
 	}
 	for _, imageConfig := range g.Runtime {
 		matched, _ := regexp.MatchString(imageConfig.ApiServer, apiServer)
 
 		if matched && imageConfig.Zone == zone {
-			return &imageConfig, nil
+			return imageConfig, nil
 		}
 	}
 	for _, imageConfig := range g.Runtime {
 		matched, _ := regexp.MatchString(imageConfig.ApiServer, apiServer)
 
 		if matched && imageConfig.Zone == ".*" {
-			return &imageConfig, nil
+			return imageConfig, nil
 		}
 	}
 
@@ -129,9 +141,16 @@ func (g *GlobalConfig) RegisterRuntimeProviderConfig(provider, config string) er
 	}
 
 	if len(g.Runtime) == 0 {
-		g.Runtime = make(map[string]RuntimeProviderConfig)
+		g.Runtime = make(map[string]*RuntimeProviderConfig)
 	}
-	g.Runtime[provider] = runtimeProviderConfig
+	_, ok := g.Runtime[provider]
+	if !ok {
+		g.Runtime[provider] = runtimeProviderConfig
+	} else {
+		oldEnable := g.Runtime[provider].Enable
+		g.Runtime[provider] = runtimeProviderConfig
+		g.Runtime[provider].Enable = oldEnable
+	}
 	return nil
 }
 
@@ -144,8 +163,8 @@ func ParseGlobalConfig(data []byte) (GlobalConfig, error) {
 	return globalConfig, nil
 }
 
-func ParseRuntimeProviderConfig(data []byte) (RuntimeProviderConfig, error) {
-	var runtimeProviderConfig RuntimeProviderConfig
+func ParseRuntimeProviderConfig(data []byte) (*RuntimeProviderConfig, error) {
+	var runtimeProviderConfig *RuntimeProviderConfig
 	err := yamlutil.Decode(data, &runtimeProviderConfig)
 	if err != nil {
 		return runtimeProviderConfig, err

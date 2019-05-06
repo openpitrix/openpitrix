@@ -66,8 +66,6 @@ type CreateClientParams struct {
 
 	/*Body*/
 	Body *models.OpenpitrixCreateClientRequest
-	/*UserID*/
-	UserID string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -118,17 +116,6 @@ func (o *CreateClientParams) SetBody(body *models.OpenpitrixCreateClientRequest)
 	o.Body = body
 }
 
-// WithUserID adds the userID to the create client params
-func (o *CreateClientParams) WithUserID(userID string) *CreateClientParams {
-	o.SetUserID(userID)
-	return o
-}
-
-// SetUserID adds the userId to the create client params
-func (o *CreateClientParams) SetUserID(userID string) {
-	o.UserID = userID
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *CreateClientParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -141,11 +128,6 @@ func (o *CreateClientParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
 		}
-	}
-
-	// path param user_id
-	if err := r.SetPathParam("user_id", o.UserID); err != nil {
-		return err
 	}
 
 	if len(res) > 0 {

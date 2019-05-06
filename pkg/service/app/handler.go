@@ -11,9 +11,10 @@ import (
 	"strings"
 	"time"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
+	accessclient "openpitrix.io/openpitrix/pkg/client/access"
 	accountclient "openpitrix.io/openpitrix/pkg/client/account"
-	amclient "openpitrix.io/openpitrix/pkg/client/am"
-	attachmentclient "openpitrix.io/openpitrix/pkg/client/attachment"
+	"openpitrix.io/openpitrix/pkg/client/attachment"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -31,6 +32,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/imageutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 var (
@@ -97,7 +99,7 @@ func (p *Server) describeApps(ctx context.Context, req *pb.DescribeAppsRequest, 
 		Where(db.Eq(constants.ColumnActive, active))
 
 	if !active {
-		query = query.Where(manager.BuildOwnerPathFilter(ctx, req))
+		query = query.Where(manager.BuildPermissionFilter(ctx))
 	}
 
 	if len(categoryIds) > 0 {
@@ -152,6 +154,11 @@ func (p *Server) ValidatePackage(ctx context.Context, req *pb.ValidatePackageReq
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
 	name := req.GetName().GetValue()
 
+	err := checkAppName(ctx, name)
+	if err != nil {
+		return nil, err
+	}
+
 	pkg := req.GetVersionPackage().GetValue()
 
 	v, err := repoiface.LoadPackage(ctx, req.GetVersionType().GetValue(), pkg)
@@ -197,10 +204,25 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 
 	attachmentId := uploadAttachmentRes.AttachmentId
 
+	accountClient, err := accountclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
 	s := ctxutil.GetSender(ctx)
-	newApp := models.NewApp(
-		name,
-		s.GetOwnerPath())
+
+	var isv string
+	if s.UserId == constants.UserSystem {
+		isv = constants.UserSystem
+	} else {
+		isvUser, err := accountClient.GetIsvFromUser(ctx, s.UserId)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		isv = isvUser.GetUserId().GetValue()
+	}
+
+	newApp := models.NewApp(name, s.GetOwnerPath(), isv)
 
 	if len(iconAttachmentId) > 0 {
 		newApp.Icon = iconAttachmentId
@@ -423,6 +445,17 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
 	}
 
+	name := req.GetName().GetValue()
+	if name == "" {
+		name = v.GetVersionName()
+	}
+
+	appId := req.GetAppId().GetValue()
+	err = checkAppVersionName(ctx, appId, name)
+	if err != nil {
+		return nil, err
+	}
+
 	attachmentContent, err := archiveutil.Load(bytes.NewReader(pkg))
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
@@ -442,14 +475,9 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 
 	attachmentId := uploadAttachmentRes.AttachmentId
 
-	name := req.GetName().GetValue()
-	if name == "" {
-		name = v.GetVersionName()
-	}
-
 	s := ctxutil.GetSender(ctx)
 	newAppVersion := models.NewAppVersion(
-		req.GetAppId().GetValue(),
+		appId,
 		name,
 		req.GetDescription().GetValue(),
 		s.GetOwnerPath())
@@ -479,7 +507,7 @@ func (p *Server) DescribeAppVersionReviews(ctx context.Context, req *pb.Describe
 		From(constants.TableAppVersionReview).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
+		Where(manager.BuildPermissionFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersionReview))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
@@ -512,13 +540,20 @@ func (p *Server) DescribeAppVersionAudits(ctx context.Context, req *pb.DescribeA
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
+	if _, err := CheckAppsPermission(ctx, req.AppId); err != nil {
+		return nil, err
+	}
+
+	if _, err := CheckAppVersionsPermission(ctx, req.VersionId); err != nil {
+		return nil, err
+	}
+
 	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.AppVersionAuditColumns)
 	query := pi.Global().DB(ctx).
 		Select(displayColumns...).
 		From(constants.TableAppVersionAudit).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersionAudit))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
@@ -569,7 +604,7 @@ func (p *Server) describeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 		Where(db.Eq(constants.ColumnActive, active))
 
 	if !active {
-		query = query.Where(manager.BuildOwnerPathFilter(ctx, req))
+		query = query.Where(manager.BuildPermissionFilter(ctx))
 	}
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnSequence)
@@ -608,7 +643,7 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 
 	if version.Status == constants.StatusRejected {
 		attributes[constants.ColumnStatus] = constants.StatusDraft
-		defer addAppVersionAudit(ctx, version, constants.StatusDraft, constants.RoleDeveloper, "")
+		defer addAppVersionAudit(ctx, version, constants.StatusDraft, constants.OperatorTypeDeveloper, "")
 	}
 
 	err = updateVersion(ctx, versionId, attributes)
@@ -775,40 +810,107 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 		return nil, err
 	}
 
+	accountClient, err := accountclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	accessClient, err := accessclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
 	err = submitAppVersionReview(ctx, version)
 	if err != nil {
 		return nil, err
 	}
 
-	var emailNotifications []*models.EmailNotification
-
-	users, err := accountclient.GetUsers(ctx, []string{s.UserId})
-	if err != nil || len(users) != 1 {
-		logger.Error(ctx, "Failed to get user [%s], %+v", s.UserId, err)
-	} else {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.SubmitAppVersionNotifySubmitterTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.SubmitAppVersionNotifySubmitterContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeVerify,
-			Addresses:   []string{users[0].GetEmail().GetValue()},
-		})
+	noNeedIsvReview := accessClient.CheckActionBundleUser(ctx, []string{constants.ActionBundleIsvReview}, s.UserId)
+	if noNeedIsvReview {
+		// When DescribeAppVersionReviews, need sort by create time
+		time.Sleep(1 * time.Second)
+		operatorType := constants.OperatorTypeIsv
+		version, _ = CheckAppVersionPermission(ctx, versionId)
+		err = startAppVersionReview(ctx, version, operatorType)
+		if err != nil {
+			return nil, err
+		}
+		time.Sleep(1 * time.Second)
+		version, _ = CheckAppVersionPermission(ctx, versionId)
+		err = passAppVersionReview(ctx, version, constants.OperatorTypeIsv)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	isvs, err := accountclient.GetIsvFromUsers(ctx, []string{s.UserId})
-	if err != nil || len(isvs) != 1 {
-		logger.Error(ctx, "Failed to get isv from user [%s], %+v", s.UserId, err)
-	} else {
+	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
+
+		var emailNotifications []*models.EmailNotification
+
+		// notify version owner
+		versionOwner, err := accountClient.GetUser(ctx, version.Owner)
+		if err != nil {
+			logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(isvs[0].GetUsername().GetValue(), app.Name, version.Name),
+			Title:       constants.SubmitAppVersionNotifySubmitterTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.SubmitAppVersionNotifySubmitterContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeVerify,
-			Addresses:   []string{isvs[0].GetEmail().GetValue()},
+			Addresses:   []string{versionOwner.GetEmail().GetValue()},
 		})
-	}
 
-	nfclient.SendEmailNotification(ctx, emailNotifications)
+		// notify isv reviewers
+		if noNeedIsvReview {
+			systemCtx := clientutil.SetSystemUserToContext(ctx)
+			isv, err := accountClient.GetIsvFromUser(systemCtx, s.UserId)
+			if err != nil {
+				logger.Error(ctx, "Failed to get isv from user [%s], %+v", s.UserId, err)
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			isvCtx, err := clientutil.SetUserToContext(ctx, isv.GetUserId().GetValue(), "DescribeUsers")
+			if err != nil {
+				logger.Error(ctx, "Failed to set [%s] as sender: %+v", isv.GetUserId().GetValue(), err)
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			isvUsers, err := accessClient.GetActionBundleUsers(isvCtx, []string{constants.ActionBundleIsvReview})
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			for _, user := range isvUsers {
+				emailNotifications = append(emailNotifications, &models.EmailNotification{
+					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(platformName, user.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+					Owner:       s.UserId,
+					ContentType: constants.NfContentTypeVerify,
+					Addresses:   []string{user.GetEmail().GetValue()},
+				})
+			}
+		} else {
+			// notify business reviewers
+			systemCtx := clientutil.SetSystemUserToContext(ctx)
+			businessUsers, err := accessClient.GetActionBundleUsers(systemCtx, []string{constants.ActionBundleBusinessReview})
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			for _, user := range businessUsers {
+				emailNotifications = append(emailNotifications, &models.EmailNotification{
+					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(platformName, user.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+					Owner:       s.UserId,
+					ContentType: constants.NfContentTypeVerify,
+					Addresses:   []string{user.GetEmail().GetValue()},
+				})
+			}
+		}
+
+		nfclient.SendEmailNotification(ctx, emailNotifications)
+	}
 
 	res := pb.SubmitAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
@@ -822,7 +924,7 @@ func (p *Server) CancelAppVersion(ctx context.Context, req *pb.CancelAppVersionR
 	if err != nil {
 		return nil, err
 	}
-	err = cancelAppVersionReview(ctx, version, constants.RoleDeveloper)
+	err = cancelAppVersionReview(ctx, version, constants.OperatorTypeDeveloper)
 	if err != nil {
 		return nil, err
 	}
@@ -855,58 +957,68 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 	if err != nil {
 		return nil, err
 	}
-	err = addAppVersionAudit(ctx, version, constants.StatusActive, constants.RoleDeveloper, "")
+	err = addAppVersionAudit(ctx, version, constants.StatusActive, constants.OperatorTypeDeveloper, "")
 	if err != nil {
 		return nil, err
 	}
 
-	var emailNotifications []*models.EmailNotification
-
-	// notify owner
-	users, err := accountclient.GetUsers(ctx, []string{version.Owner})
-	if err != nil || len(users) != 1 {
-		logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
-	} else {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeVerify,
-			Addresses:   []string{users[0].GetEmail().GetValue()},
-		})
-	}
-
-	// notify isv
-	isvs, err := accountclient.GetIsvFromUsers(ctx, []string{s.UserId})
-	if err != nil || len(isvs) != 1 {
-		logger.Error(ctx, "Failed to get isv from user [%s], %+v", s.UserId, err)
-	} else {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(isvs[0].GetUsername().GetValue(), app.Name, version.Name),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeVerify,
-			Addresses:   []string{isvs[0].GetEmail().GetValue()},
-		})
-	}
-
-	// notify admin
-	adminUsers, err := amclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
+	accountClient, err := accountclient.NewClient()
 	if err != nil {
-		logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
-	} else {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
+		var emailNotifications []*models.EmailNotification
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+		// notify version owner
+		versionOwner, err := accountClient.GetUser(ctx, version.Owner)
+		if err != nil {
+			logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+			Owner:       s.UserId,
+			ContentType: constants.NfContentTypeVerify,
+			Addresses:   []string{versionOwner.GetEmail().GetValue()},
+		})
+
+		// notify isv
+		systemCtx := clientutil.SetSystemUserToContext(ctx)
+		isv, err := accountClient.GetIsvFromUser(systemCtx, version.Owner)
+		if err != nil {
+			logger.Error(ctx, "Failed to get isv from user [%s], %+v", version.Owner, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(platformName, isv.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+			Owner:       s.UserId,
+			ContentType: constants.NfContentTypeVerify,
+			Addresses:   []string{isv.GetEmail().GetValue()},
+		})
+
+		// notify admin
+		adminUsers, err := accountClient.GetRoleUsers(systemCtx, []string{constants.RoleGlobalAdmin})
+		if err != nil {
+			logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
 		for _, adminUser := range adminUsers {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(adminUser.Username, app.Name, version.Name),
+				Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(platformName, adminUser.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{adminUser.Email},
+				Addresses:   []string{adminUser.GetEmail().GetValue()},
 			})
 		}
-	}
 
-	nfclient.SendEmailNotification(ctx, emailNotifications)
+		nfclient.SendEmailNotification(ctx, emailNotifications)
+	}
 
 	res := pb.ReleaseAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
@@ -930,7 +1042,7 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 	if err != nil {
 		return nil, err
 	}
-	err = addAppVersionAudit(ctx, version, constants.StatusDeleted, constants.RoleDeveloper, "")
+	err = addAppVersionAudit(ctx, version, constants.StatusDeleted, constants.OperatorTypeDeveloper, "")
 	if err != nil {
 		return nil, err
 	}
@@ -940,14 +1052,14 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 	return &res, nil
 }
 
-func reviewAppVersion(ctx context.Context, role string, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+func reviewAppVersion(ctx context.Context, operatorType string, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
 	if err != nil {
 		return nil, err
 	}
 
-	err = startAppVersionReview(ctx, version, role)
+	err = startAppVersionReview(ctx, version, operatorType)
 	if err != nil {
 		return nil, err
 	}
@@ -958,7 +1070,7 @@ func reviewAppVersion(ctx context.Context, role string, req *pb.ReviewAppVersion
 	return &res, nil
 }
 
-func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+func passAppVersion(ctx context.Context, operatorType string, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
 	s := ctxutil.GetSender(ctx)
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
@@ -971,67 +1083,97 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 		return nil, err
 	}
 
-	err = passAppVersionReview(ctx, version, role)
+	err = passAppVersionReview(ctx, version, operatorType)
 	if err != nil {
 		return nil, err
 	}
 
-	var emailNotifications []*models.EmailNotification
-	adminUsers, err := amclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
+	accountClient, err := accountclient.NewClient()
 	if err != nil {
-		logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
-	} else {
-		switch role {
-		case constants.RoleIsv, constants.RoleBusinessAdmin:
-			for _, adminUser := range adminUsers {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	accessClient, err := accessclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
+		var emailNotifications []*models.EmailNotification
+		versionOwner, err := accountClient.GetUser(ctx, version.Owner)
+		if err != nil {
+			logger.Error(ctx, "Failed to get version owner [%s], %+v", version.Owner, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+
+		switch operatorType {
+		case constants.OperatorTypeIsv:
+			// notify business reviewers
+			systemCtx := clientutil.SetSystemUserToContext(ctx)
+			businessUsers, err := accessClient.GetActionBundleUsers(systemCtx, []string{constants.ActionBundleBusinessReview})
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+
+			for _, user := range businessUsers {
 				emailNotifications = append(emailNotifications, &models.EmailNotification{
-					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
-					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(adminUser.Username, app.Name, version.Name),
+					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(platformName, user.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 					Owner:       s.UserId,
 					ContentType: constants.NfContentTypeVerify,
-					Addresses:   []string{adminUser.Email},
+					Addresses:   []string{user.GetEmail().GetValue()},
 				})
 			}
-		default:
-			logger.Debug(ctx, "No need to notify role [%s]", role)
-		}
-	}
 
-	users, err := accountclient.GetUsers(ctx, []string{version.Owner})
-	if err != nil || len(users) != 1 {
-		logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
-	} else {
-		switch role {
-		case constants.RoleIsv:
+			// notify app version owner
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.PassAppVersionInfoNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.PassAppVersionInfoNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
+				Title:       constants.PassAppVersionInfoNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.PassAppVersionInfoNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{users[0].GetEmail().GetValue()},
+				Addresses:   []string{versionOwner.GetEmail().GetValue()},
 			})
-		case constants.RoleBusinessAdmin:
+		case constants.OperatorTypeBusiness:
+			// notify technical reviewers
+			systemCtx := clientutil.SetSystemUserToContext(ctx)
+			technicalUsers, err := accessClient.GetActionBundleUsers(systemCtx, []string{constants.ActionBundleTechnicalReview})
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			for _, user := range technicalUsers {
+				emailNotifications = append(emailNotifications, &models.EmailNotification{
+					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(platformName, user.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+					Owner:       s.UserId,
+					ContentType: constants.NfContentTypeVerify,
+					Addresses:   []string{user.GetEmail().GetValue()},
+				})
+			}
+			// notify app version owner
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.PassAppVersionBusinessNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.PassAppVersionBusinessNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
+				Title:       constants.PassAppVersionBusinessNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.PassAppVersionBusinessNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{users[0].GetEmail().GetValue()},
+				Addresses:   []string{versionOwner.GetEmail().GetValue()},
 			})
-		case constants.RoleDevelopAdmin:
+		case constants.OperatorTypeTechnical:
+			// notify app version owner
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.PassAppVersionTechnicalNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.PassAppVersionTechnicalNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
+				Title:       constants.PassAppVersionTechnicalNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.PassAppVersionTechnicalNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{users[0].GetEmail().GetValue()},
+				Addresses:   []string{versionOwner.GetEmail().GetValue()},
 			})
 		default:
-			logger.Debug(ctx, "No need to notify role [%s]", role)
+			logger.Debug(ctx, "No need to notify users with operator type [%s]", operatorType)
 		}
-	}
 
-	nfclient.SendEmailNotification(ctx, emailNotifications)
+		nfclient.SendEmailNotification(ctx, emailNotifications)
+	}
 
 	res := pb.PassAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
@@ -1039,7 +1181,7 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 	return &res, nil
 }
 
-func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+func rejectAppVersion(ctx context.Context, operatorType string, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
 	s := ctxutil.GetSender(ctx)
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
@@ -1052,47 +1194,55 @@ func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersion
 		return nil, err
 	}
 
-	err = rejectAppVersionReview(ctx, version, role, req.GetMessage().GetValue())
+	err = rejectAppVersionReview(ctx, version, operatorType, req.GetMessage().GetValue())
 	if err != nil {
 		return nil, err
 	}
 
-	var emailNotifications []*models.EmailNotification
-	users, err := accountclient.GetUsers(ctx, []string{version.Owner})
-	if err != nil || len(users) != 1 {
-		logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
-	} else {
-		switch role {
-		case constants.RoleIsv:
-			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.RejectAppVersionInfoNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.RejectAppVersionInfoNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
-				Owner:       s.UserId,
-				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{users[0].GetEmail().GetValue()},
-			})
-		case constants.RoleBusinessAdmin:
-			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.RejectAppVersionBusinessNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.RejectAppVersionBusinessNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
-				Owner:       s.UserId,
-				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{users[0].GetEmail().GetValue()},
-			})
-		case constants.RoleDevelopAdmin:
-			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.RejectAppVersionTechnicalNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.RejectAppVersionTechnicalNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
-				Owner:       s.UserId,
-				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{users[0].GetEmail().GetValue()},
-			})
-		default:
-			logger.Debug(ctx, "No need to notify role [%s]", role)
-		}
+	accountClient, err := accountclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	nfclient.SendEmailNotification(ctx, emailNotifications)
+	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
+		var emailNotifications []*models.EmailNotification
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+		versionOwner, err := accountClient.GetUser(ctx, version.Owner)
+		if err != nil {
+			logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		switch operatorType {
+		case constants.OperatorTypeIsv:
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.RejectAppVersionInfoNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.RejectAppVersionInfoNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+				Owner:       s.UserId,
+				ContentType: constants.NfContentTypeVerify,
+				Addresses:   []string{versionOwner.GetEmail().GetValue()},
+			})
+		case constants.OperatorTypeBusiness:
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.RejectAppVersionBusinessNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.RejectAppVersionBusinessNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+				Owner:       s.UserId,
+				ContentType: constants.NfContentTypeVerify,
+				Addresses:   []string{versionOwner.GetEmail().GetValue()},
+			})
+		case constants.OperatorTypeTechnical:
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.RejectAppVersionTechnicalNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.RejectAppVersionTechnicalNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+				Owner:       s.UserId,
+				ContentType: constants.NfContentTypeVerify,
+				Addresses:   []string{versionOwner.GetEmail().GetValue()},
+			})
+		default:
+			logger.Debug(ctx, "No need to notify users with operator type [%s]", operatorType)
+		}
+		nfclient.SendEmailNotification(ctx, emailNotifications)
+	}
 
 	res := pb.RejectAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
@@ -1101,39 +1251,39 @@ func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersion
 }
 
 func (p *Server) IsvReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
-	return reviewAppVersion(ctx, constants.RoleIsv, req)
+	return reviewAppVersion(ctx, constants.OperatorTypeIsv, req)
 }
 
 func (p *Server) IsvPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
-	return passAppVersion(ctx, constants.RoleIsv, req)
+	return passAppVersion(ctx, constants.OperatorTypeIsv, req)
 }
 
 func (p *Server) IsvRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
-	return rejectAppVersion(ctx, constants.RoleIsv, req)
+	return rejectAppVersion(ctx, constants.OperatorTypeIsv, req)
 }
 
-func (p *Server) BusinessAdminReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
-	return reviewAppVersion(ctx, constants.RoleBusinessAdmin, req)
+func (p *Server) BusinessReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+	return reviewAppVersion(ctx, constants.OperatorTypeBusiness, req)
 }
 
-func (p *Server) BusinessAdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
-	return passAppVersion(ctx, constants.RoleBusinessAdmin, req)
+func (p *Server) BusinessPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+	return passAppVersion(ctx, constants.OperatorTypeBusiness, req)
 }
 
-func (p *Server) BusinessAdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
-	return rejectAppVersion(ctx, constants.RoleBusinessAdmin, req)
+func (p *Server) BusinessRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+	return rejectAppVersion(ctx, constants.OperatorTypeBusiness, req)
 }
 
-func (p *Server) DevelopAdminReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
-	return reviewAppVersion(ctx, constants.RoleDevelopAdmin, req)
+func (p *Server) TechnicalReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+	return reviewAppVersion(ctx, constants.OperatorTypeTechnical, req)
 }
 
-func (p *Server) DevelopAdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
-	return passAppVersion(ctx, constants.RoleDevelopAdmin, req)
+func (p *Server) TechnicalPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+	return passAppVersion(ctx, constants.OperatorTypeTechnical, req)
 }
 
-func (p *Server) DevelopAdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
-	return rejectAppVersion(ctx, constants.RoleDevelopAdmin, req)
+func (p *Server) TechnicalRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+	return rejectAppVersion(ctx, constants.OperatorTypeTechnical, req)
 }
 
 func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersionRequest) (*pb.SuspendAppVersionResponse, error) {
@@ -1159,58 +1309,68 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 	if err != nil {
 		return nil, err
 	}
-	err = addAppVersionAudit(ctx, version, constants.StatusSuspended, constants.RoleGlobalAdmin, "")
+	err = addAppVersionAudit(ctx, version, constants.StatusSuspended, constants.OperatorTypeGlobalAdmin, "")
 	if err != nil {
 		return nil, err
 	}
 
-	var emailNotifications []*models.EmailNotification
-
-	// notify owner
-	users, err := accountclient.GetUsers(ctx, []string{version.Owner})
-	if err != nil || len(users) != 1 {
-		logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
-	} else {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeVerify,
-			Addresses:   []string{users[0].GetEmail().GetValue()},
-		})
-	}
-
-	// notify isv
-	isvs, err := accountclient.GetIsvFromUsers(ctx, []string{s.UserId})
-	if err != nil || len(isvs) != 1 {
-		logger.Error(ctx, "Failed to get isv from user [%s], %+v", s.UserId, err)
-	} else {
-		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-			Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(isvs[0].GetUsername().GetValue(), app.Name, version.Name),
-			Owner:       s.UserId,
-			ContentType: constants.NfContentTypeVerify,
-			Addresses:   []string{isvs[0].GetEmail().GetValue()},
-		})
-	}
-
-	// notify admin
-	adminUsers, err := amclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
+	accountClient, err := accountclient.NewClient()
 	if err != nil {
-		logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
-	} else {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
+		var emailNotifications []*models.EmailNotification
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+
+		// notify owner
+		versionOwner, err := accountClient.GetUser(ctx, version.Owner)
+		if err != nil {
+			logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+			Owner:       s.UserId,
+			ContentType: constants.NfContentTypeVerify,
+			Addresses:   []string{versionOwner.GetEmail().GetValue()},
+		})
+
+		// notify isv
+		systemCtx := clientutil.SetSystemUserToContext(ctx)
+		isv, err := accountClient.GetIsvFromUser(systemCtx, version.Owner)
+		if err != nil {
+			logger.Error(ctx, "Failed to get isv from user [%s], %+v", version.Owner, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(platformName, isv.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+			Owner:       s.UserId,
+			ContentType: constants.NfContentTypeVerify,
+			Addresses:   []string{isv.GetEmail().GetValue()},
+		})
+
+		// notify admin
+		adminUsers, err := accountClient.GetRoleUsers(systemCtx, []string{constants.RoleGlobalAdmin})
+		if err != nil {
+			logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
 		for _, adminUser := range adminUsers {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
-				Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(adminUser.Username, app.Name, version.Name),
+				Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(platformName, adminUser.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{adminUser.Email},
+				Addresses:   []string{adminUser.GetEmail().GetValue()},
 			})
 		}
-	}
 
-	nfclient.SendEmailNotification(ctx, emailNotifications)
+		nfclient.SendEmailNotification(ctx, emailNotifications)
+	}
 
 	res := pb.SuspendAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
@@ -1219,8 +1379,13 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 }
 
 func (p *Server) RecoverAppVersion(ctx context.Context, req *pb.RecoverAppVersionRequest) (*pb.RecoverAppVersionResponse, error) {
+	s := ctxutil.GetSender(ctx)
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
+	if err != nil {
+		return nil, err
+	}
+	app, err := getApp(ctx, version.AppId)
 	if err != nil {
 		return nil, err
 	}
@@ -1240,6 +1405,65 @@ func (p *Server) RecoverAppVersion(ctx context.Context, req *pb.RecoverAppVersio
 	if err != nil {
 		return nil, err
 	}
+
+	accountClient, err := accountclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	if !stringutil.StringIn(s.UserId, constants.InternalUsers) {
+		var emailNotifications []*models.EmailNotification
+		platformName := pi.Global().GlobalConfig().BasicCfg.PlatformName
+		platformUrl := pi.Global().GlobalConfig().BasicCfg.PlatformUrl
+		// notify version owner
+		versionOwner, err := accountClient.GetUser(ctx, version.Owner)
+		if err != nil {
+			logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(platformName, versionOwner.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+			Owner:       s.UserId,
+			ContentType: constants.NfContentTypeVerify,
+			Addresses:   []string{versionOwner.GetEmail().GetValue()},
+		})
+
+		// notify isv
+		systemCtx := clientutil.SetSystemUserToContext(ctx)
+		isv, err := accountClient.GetIsvFromUser(systemCtx, version.Owner)
+		if err != nil {
+			logger.Error(ctx, "Failed to get isv from user [%s], %+v", version.Owner, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+			Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(platformName, isv.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+			Owner:       s.UserId,
+			ContentType: constants.NfContentTypeVerify,
+			Addresses:   []string{isv.GetEmail().GetValue()},
+		})
+
+		// notify admin
+		adminUsers, err := accountClient.GetRoleUsers(systemCtx, []string{constants.RoleGlobalAdmin})
+		if err != nil {
+			logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		for _, adminUser := range adminUsers {
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(platformName, app.Name, version.Name),
+				Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(platformName, adminUser.GetUsername().GetValue(), app.Name, version.Name, platformUrl, platformUrl, platformUrl),
+				Owner:       s.UserId,
+				ContentType: constants.NfContentTypeVerify,
+				Addresses:   []string{adminUser.GetEmail().GetValue()},
+			})
+		}
+
+		nfclient.SendEmailNotification(ctx, emailNotifications)
+	}
+
 	res := pb.RecoverAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
 	}

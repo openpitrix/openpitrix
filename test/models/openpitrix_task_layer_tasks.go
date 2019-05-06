@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixTaskLayerTasks openpitrix task layer tasks
+// OpenpitrixTaskLayerTasks task in task layer, a task layer contain one more task
 // swagger:model openpitrixTaskLayerTasks
 type OpenpitrixTaskLayerTasks []*OpenpitrixTask
 

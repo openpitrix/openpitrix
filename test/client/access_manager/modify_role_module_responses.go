@@ -51,7 +51,7 @@ type ModifyRoleModuleOK struct {
 }
 
 func (o *ModifyRoleModuleOK) Error() string {
-	return fmt.Sprintf("[PATCH /v1/roles:module][%d] modifyRoleModuleOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/roles:module][%d] modifyRoleModuleOK  %+v", 200, o.Payload)
 }
 
 func (o *ModifyRoleModuleOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

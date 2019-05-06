@@ -11,9 +11,10 @@ import (
 	"io"
 	"sync"
 
-	grpc "google.golang.org/grpc"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 )
@@ -31,65 +32,37 @@ type FrameChannel struct {
 	mu sync.Mutex // only for update r reader
 }
 
-func NewFrameChannel(
-	recv func() ([]byte, error), send func(data []byte) error,
-	close func() error,
-) *FrameChannel {
-	return &FrameChannel{
-		RecvMsgFunc: recv, SendMsgFunc: send,
-		CloseFunc: close,
-	}
-}
-
-func _DialFrontgateChannel(
-	ctx context.Context, target string,
+func DialPilotChannelTLS(
+	ctx context.Context,
+	target string,
+	tlsConfig *tls.Config,
 	opts ...grpc.DialOption,
-) (
-	ch *FrameChannel, conn *grpc.ClientConn,
-	err error,
-) {
-	conn, err = grpc.Dial(target, opts...)
-	if err != nil {
-		return
-	}
-
-	channel, err := pbpilot.NewPilotServiceForFrontgateClient(conn).FrontgateChannel(ctx)
-	if err != nil {
-		conn.Close()
-		conn = nil
-		return
-	}
-
-	ch = NewFrontgateChannelFromClient(channel)
-	return
-}
-
-func DialFrontgateChannelTLS(
-	ctx context.Context, target string, tlsConfig *tls.Config,
-	opts ...grpc.DialOption,
-) (
-	ch *FrameChannel, conn *grpc.ClientConn,
-	err error,
-) {
+) (*FrameChannel, *grpc.ClientConn, error) {
 	creds := credentials.NewTLS(tlsConfig)
 	opts = append([]grpc.DialOption{
 		grpc.WithTransportCredentials(creds),
 	}, opts...)
 
-	conn, err = grpc.Dial(target, opts...)
+	logger.Info(nil, "Dial [%s] begin.", target)
+	conn, err := grpc.DialContext(ctx, target, opts...)
 	if err != nil {
-		return
+		logger.Error(nil, "Dial [%s] failed: %+v", target, err)
+		return nil, conn, err
 	}
+	logger.Info(nil, "Dial [%s] finished, create channel begin.", target)
 
 	channel, err := pbpilot.NewPilotServiceForFrontgateClient(conn).FrontgateChannel(ctx)
 	if err != nil {
+		logger.Error(nil, "Create channel failed: %+v", err)
 		conn.Close()
 		conn = nil
-		return
+		return nil, conn, err
 	}
 
-	ch = NewFrontgateChannelFromClient(channel)
-	return
+	logger.Info(nil, "Create channel finished.")
+
+	ch := NewFrontgateChannelFromClient(channel)
+	return ch, conn, nil
 }
 
 func NewFrontgateChannelFromServer(ch pbpilot.PilotServiceForFrontgate_FrontgateChannelServer) *FrameChannel {
@@ -97,6 +70,7 @@ func NewFrontgateChannelFromServer(ch pbpilot.PilotServiceForFrontgate_Frontgate
 		RecvMsgFunc: func() ([]byte, error) {
 			msg, err := ch.Recv()
 			if err != nil {
+				logger.Error(nil, "Receive error is: %+v", err)
 				return nil, err
 			}
 			return msg.GetValue(), nil
@@ -115,6 +89,7 @@ func NewFrontgateChannelFromClient(ch pbpilot.PilotServiceForFrontgate_Frontgate
 		RecvMsgFunc: func() ([]byte, error) {
 			msg, err := ch.Recv()
 			if err != nil {
+				logger.Error(nil, "Receive error is: %+v", err)
 				return nil, err
 			}
 			return msg.GetValue(), nil
@@ -151,8 +126,7 @@ func (p *FrameChannel) Read(data []byte) (n int, err error) {
 		return 0, err
 	}
 
-	n, err = r.Read(data)
-	return n, nil
+	return r.Read(data)
 }
 
 func (p *FrameChannel) Write(data []byte) (n int, err error) {

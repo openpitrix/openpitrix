@@ -57,12 +57,13 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 	}
 	// if grant_type is password, switch user
 	if req.GrantType == constants.GrantTypePassword {
-		var b bool
-		user, b, err = validateUserPassword(ctx, req.Username, req.Password)
-		if err != nil {
-			return nil, err
+		var isUserExist bool
+		user, isUserExist, _ = validateUserAndGroupExist(ctx, req.Username)
+		if !isUserExist {
+			return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorEmailNotExists, req.Username)
 		}
-		if !b {
+		isEmailPasswordMatched := validateUserPassword(ctx, user.UserId, req.Password)
+		if !isEmailPasswordMatched {
 			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorEmailPasswordNotMatched)
 		}
 	}
@@ -92,15 +93,12 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 		}
 	}
 
-	accessToken, err := jwtutil.Generate(
-		p.IAMConfig.SecretKey, p.IAMConfig.ExpireTime, userId, user.Extra["role"],
-	)
+	userId = token.UserId
+	accessToken, err := jwtutil.Generate(p.IAMConfig.SecretKey, p.IAMConfig.ExpireTime, userId)
 	if err != nil {
 		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
 	}
-	idToken, err := jwtutil.Generate(
-		"", p.IAMConfig.ExpireTime, userId, user.Extra["role"],
-	)
+	idToken, err := jwtutil.Generate("", p.IAMConfig.ExpireTime, userId)
 	if err != nil {
 		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
 	}

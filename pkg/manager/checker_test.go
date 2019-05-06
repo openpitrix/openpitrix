@@ -60,6 +60,6 @@ func TestChecker(t *testing.T) {
 
 	//req = &pb.CreateRepoRequest{}
 	//ctx := ctxutil.ContextWithSender(context.Background(), sender.GetSystemSender())
-	//err = NewChecker(ctx, req).Role([]string{"developer"}).Exec()
+	//err = NewChecker(ctx, req).OperatorType([]string{"developer"}).Exec()
 	//assert.Error(t, err)
 }

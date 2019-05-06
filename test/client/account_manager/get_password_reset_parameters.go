@@ -62,8 +62,11 @@ for the get password reset operation typically these are written to a http.Reque
 */
 type GetPasswordResetParams struct {
 
-	/*ResetID*/
-	ResetID string
+	/*ResetID
+	  required, reset id.
+
+	*/
+	ResetID *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -104,13 +107,13 @@ func (o *GetPasswordResetParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithResetID adds the resetID to the get password reset params
-func (o *GetPasswordResetParams) WithResetID(resetID string) *GetPasswordResetParams {
+func (o *GetPasswordResetParams) WithResetID(resetID *string) *GetPasswordResetParams {
 	o.SetResetID(resetID)
 	return o
 }
 
 // SetResetID adds the resetId to the get password reset params
-func (o *GetPasswordResetParams) SetResetID(resetID string) {
+func (o *GetPasswordResetParams) SetResetID(resetID *string) {
 	o.ResetID = resetID
 }
 
@@ -122,9 +125,20 @@ func (o *GetPasswordResetParams) WriteToRequest(r runtime.ClientRequest, reg str
 	}
 	var res []error
 
-	// path param reset_id
-	if err := r.SetPathParam("reset_id", o.ResetID); err != nil {
-		return err
+	if o.ResetID != nil {
+
+		// query param reset_id
+		var qrResetID string
+		if o.ResetID != nil {
+			qrResetID = *o.ResetID
+		}
+		qResetID := qrResetID
+		if qResetID != "" {
+			if err := r.SetQueryParam("reset_id", qResetID); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {

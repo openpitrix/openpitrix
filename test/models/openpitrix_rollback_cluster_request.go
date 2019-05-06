@@ -19,7 +19,7 @@ type OpenpitrixRollbackClusterRequest struct {
 	// advanced param
 	AdvancedParam []string `json:"advanced_param"`
 
-	// cluster id
+	// required, id of cluster to rollback
 	ClusterID string `json:"cluster_id,omitempty"`
 }
 

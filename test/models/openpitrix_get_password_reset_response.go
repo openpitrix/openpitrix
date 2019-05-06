@@ -19,7 +19,7 @@ type OpenpitrixGetPasswordResetResponse struct {
 	// reset id
 	ResetID string `json:"reset_id,omitempty"`
 
-	// user id
+	// id of user changed password
 	UserID string `json:"user_id,omitempty"`
 }
 

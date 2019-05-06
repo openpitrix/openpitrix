@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteAppsResponse
 type OpenpitrixDeleteAppsResponse struct {
 
-	// app id
+	// ids of app deleted
 	AppID []string `json:"app_id"`
 }
 

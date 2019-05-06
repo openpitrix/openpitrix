@@ -32,7 +32,7 @@ func CheckRuntimesPermission(ctx context.Context, resourceIds []string) ([]*mode
 	}
 	if sender != nil {
 		for _, runtime := range runtimes {
-			if !runtime.OwnerPath.CheckPermission(sender) {
+			if !runtime.OwnerPath.CheckPermission(sender) && runtime.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, runtime.RuntimeId)
 			}
 		}
@@ -84,7 +84,7 @@ func CheckRuntimeCredentialsPermission(ctx context.Context, resourceIds []string
 	}
 	if sender != nil {
 		for _, runtimecredential := range runtimecredentials {
-			if !runtimecredential.OwnerPath.CheckPermission(sender) {
+			if !runtimecredential.OwnerPath.CheckPermission(sender) && runtimecredential.Owner != sender.UserId {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, runtimecredential.RuntimeCredentialId)
 			}
 		}

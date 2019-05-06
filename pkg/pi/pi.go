@@ -77,16 +77,11 @@ func (p *Pi) GlobalConfig() (globalCfg *config.GlobalConfig) {
 	return
 }
 
-func (p *Pi) RegisterRuntimeProvider(provider, providerConfig string) error {
-	ctx := context.Background()
+func (p *Pi) SetGlobalCfg(ctx context.Context) error {
 	etcdClient := p.Etcd(ctx)
 	err := etcdClient.Dlock(ctx, DlockKey, func() error {
-		err := p.GlobalConfig().RegisterRuntimeProviderConfig(provider, providerConfig)
-		if err != nil {
-			return err
-		}
 		globalConfig := config.EncodeGlobalConfig(*p.GlobalConfig())
-		_, err = etcdClient.Put(ctx, GlobalConfigKey, globalConfig)
+		_, err := etcdClient.Put(ctx, GlobalConfigKey, globalConfig)
 		if err != nil {
 			return err
 		}
@@ -94,6 +89,15 @@ func (p *Pi) RegisterRuntimeProvider(provider, providerConfig string) error {
 		return nil
 	})
 	return err
+}
+
+func (p *Pi) RegisterRuntimeProvider(provider, providerConfig string) error {
+	ctx := context.Background()
+	err := p.GlobalConfig().RegisterRuntimeProviderConfig(provider, providerConfig)
+	if err != nil {
+		return err
+	}
+	return p.SetGlobalCfg(ctx)
 }
 
 func (p *Pi) setGlobalCfg(globalCfg *config.GlobalConfig) {

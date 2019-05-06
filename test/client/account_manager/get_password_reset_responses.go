@@ -51,7 +51,7 @@ type GetPasswordResetOK struct {
 }
 
 func (o *GetPasswordResetOK) Error() string {
-	return fmt.Sprintf("[GET /v1/users/password/reset/{reset_id}][%d] getPasswordResetOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/users/password:reset][%d] getPasswordResetOK  %+v", 200, o.Payload)
 }
 
 func (o *GetPasswordResetOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

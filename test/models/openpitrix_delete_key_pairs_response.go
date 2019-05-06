@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteKeyPairsResponse
 type OpenpitrixDeleteKeyPairsResponse struct {
 
-	// key pair id
+	// ids of key pairs deleted
 	KeyPairID []string `json:"key_pair_id"`
 }
 

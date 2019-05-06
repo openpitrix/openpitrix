@@ -16,19 +16,19 @@ import (
 // swagger:model openpitrixCreateRuntimeCredentialRequest
 type OpenpitrixCreateRuntimeCredentialRequest struct {
 
-	// description
+	// runtime credential description
 	Description string `json:"description,omitempty"`
 
-	// name
+	// runtime credential name
 	Name string `json:"name,omitempty"`
 
-	// provider
+	// required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	Provider string `json:"provider,omitempty"`
 
-	// runtime credential content
+	// required, runtime credential content, a json file
 	RuntimeCredentialContent string `json:"runtime_credential_content,omitempty"`
 
-	// runtime url
+	// required, runtime url
 	RuntimeURL string `json:"runtime_url,omitempty"`
 }
 

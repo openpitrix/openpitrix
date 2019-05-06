@@ -240,6 +240,30 @@ func (p *Processor) Pre(ctx context.Context) error {
 		// write back
 		p.Task.Directive = jsonutil.ToString(meta)
 
+	case vmbased.ActionDeregisterMetadataMapping:
+		meta, err := models.NewMeta(p.Task.Directive)
+		if err != nil {
+			return err
+		}
+		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{meta.ClusterId})
+		if err != nil {
+			return err
+		}
+		runtimeId := pbClusterWrappers[0].Cluster.RuntimeId
+		runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
+		if err != nil {
+			logger.Error(ctx, "Get runtime [%s] failed: %+v", runtimeId, err)
+			return err
+		}
+		metadata := &vmbased.Metadata{
+			ClusterWrapper: pbClusterWrappers[0],
+			RuntimeDetails: runtime,
+		}
+		meta.Cnodes = jsonutil.ToString(metadata.GetEmptyClusterMappingCnodes())
+
+		// write back
+		p.Task.Directive = jsonutil.ToString(meta)
+
 	case vmbased.ActionRegisterNodesMetadata, vmbased.ActionRegisterEnvMetadata:
 		p.Task.TaskAction = vmbased.ActionRegisterMetadata
 
@@ -365,12 +389,12 @@ func (p *Processor) Pre(ctx context.Context) error {
 	// update directive when changed
 	if oldDirective != p.Task.Directive {
 		attributes := map[string]interface{}{
-			"directive": p.Task.Directive,
+			constants.ColumnDirective: p.Task.Directive,
 		}
 		_, err := pi.Global().DB(ctx).
 			Update(constants.TableTask).
 			SetMap(attributes).
-			Where(db.Eq("task_id", p.Task.TaskId)).
+			Where(db.Eq(constants.ColumnTaskId, p.Task.TaskId)).
 			Exec()
 		if err != nil {
 			logger.Error(ctx, "Failed to update task [%s]: %+v", p.Task.TaskId, err)

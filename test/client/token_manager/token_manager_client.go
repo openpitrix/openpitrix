@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-CreateClient create client API
+CreateClient creates client
 */
 func (a *Client) CreateClient(params *CreateClientParams, authInfo runtime.ClientAuthInfoWriter) (*CreateClientOK, error) {
 	// TODO: Validate the params before sending
@@ -36,7 +36,7 @@ func (a *Client) CreateClient(params *CreateClientParams, authInfo runtime.Clien
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "CreateClient",
 		Method:             "POST",
-		PathPattern:        "/v1/oauth2/{user_id}/client",
+		PathPattern:        "/v1/oauth2/client",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -54,7 +54,7 @@ func (a *Client) CreateClient(params *CreateClientParams, authInfo runtime.Clien
 }
 
 /*
-Token token API
+Token gets users include user info of role and group filter with fields user id email phone number status default return all users
 */
 func (a *Client) Token(params *TokenParams) (*TokenOK, error) {
 	// TODO: Validate the params before sending

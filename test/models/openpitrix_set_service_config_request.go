@@ -16,15 +16,31 @@ import (
 // swagger:model openpitrixSetServiceConfigRequest
 type OpenpitrixSetServiceConfigRequest struct {
 
+	// basic config
+	BasicConfig *OpenpitrixBasicConfig `json:"basic_config,omitempty"`
+
 	// notification config
 	NotificationConfig *OpenpitrixNotificationConfig `json:"notification_config,omitempty"`
+
+	// runtime config
+	RuntimeConfig *OpenpitrixRuntimeConfig `json:"runtime_config,omitempty"`
 }
 
 // Validate validates this openpitrix set service config request
 func (m *OpenpitrixSetServiceConfigRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateBasicConfig(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if err := m.validateNotificationConfig(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateRuntimeConfig(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -32,6 +48,25 @@ func (m *OpenpitrixSetServiceConfigRequest) Validate(formats strfmt.Registry) er
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixSetServiceConfigRequest) validateBasicConfig(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.BasicConfig) { // not required
+		return nil
+	}
+
+	if m.BasicConfig != nil {
+
+		if err := m.BasicConfig.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("basic_config")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -46,6 +81,25 @@ func (m *OpenpitrixSetServiceConfigRequest) validateNotificationConfig(formats s
 		if err := m.NotificationConfig.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("notification_config")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *OpenpitrixSetServiceConfigRequest) validateRuntimeConfig(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RuntimeConfig) { // not required
+		return nil
+	}
+
+	if m.RuntimeConfig != nil {
+
+		if err := m.RuntimeConfig.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("runtime_config")
 			}
 			return err
 		}

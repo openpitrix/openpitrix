@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixSetServiceConfigResponse
 type OpenpitrixSetServiceConfigResponse struct {
 
-	// is succ
+	// set service config ok or not
 	IsSucc bool `json:"is_succ,omitempty"`
 }
 

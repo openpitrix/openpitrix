@@ -9,6 +9,10 @@ TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 DOCKER_TAGS=latest
 BUILDER_IMAGE=openpitrix/openpitrix-builder:release-v0.2.3
 RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
+RUN_IN_DOCKER_WITHOUT_GOPATH:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
+GO_BUILD_DARWIN:=CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -tags netgo
+GO_BUILD_LINUX:=CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags netgo
+GO_BUILD_WINDOWS:=CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -tags netgo
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
 GO_RACE:=go build -race
 GO_VET:=go vet
@@ -25,11 +29,12 @@ define get_build_flags
 	$(eval DATE=$(shell date +'%Y-%m-%dT%H:%M:%S'))
 	$(eval BUILD_FLAG= -X $(TRAG.Version).ShortVersion="$(SHORT_VERSION)" \
 		-X $(TRAG.Version).GitSha1Version="$(SHA1_VERSION)" \
-		-X $(TRAG.Version).BuildDate="$(DATE)")
+		-X $(TRAG.Version).BuildDate="$(DATE)" \
+		-w -s)
 endef
 
-COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-vendor-manager openpitrix-notification
-COMPOSE_DB_CTRL=openpitrix-db-init openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-market-db-ctrl openpitrix-attachment-db-ctrl openpitrix-vendor-db-ctrl openpitrix-notification-db-ctrl
+COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-isv-manager openpitrix-notification openpitrix-im-service openpitrix-am-service
+COMPOSE_DB_CTRL=openpitrix-db-init openpitrix-im-db-init openpitrix-am-db-init openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-attachment-db-ctrl openpitrix-isv-db-ctrl openpitrix-notification-db-ctrl openpitrix-im-db-ctrl openpitrix-am-db-ctrl
 CMD?=...
 WITH_METADATA?=yes
 WITH_K8S=no
@@ -124,8 +129,13 @@ endif
 	docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
 
+.PHONY: pull-images
+pull-images: ## Pull images
+	docker-compose pull --ignore-pull-failures
+	@echo "pull-images done"
+
 .PHONY: compose-update
-compose-update: build compose-up compose-migrate-db ## Update service in docker compose
+compose-update: build pull-images compose-up ## Update service in docker compose
 	@echo "compose-update done"
 
 .PHONY: compose-update-service-without-deps
@@ -153,6 +163,10 @@ compose-put-global-config: ## Put global config in docker compose
 	cat deploy/config/global_config.yaml | docker run -i --rm openpitrix opctl validate_global_config
 	cat deploy/config/global_config.yaml | docker-compose exec -T openpitrix-etcd /bin/sh -c "export ETCDCTL_API=3 && etcdctl put openpitrix/global_config"
 
+.PHONY: compose-get-global-config
+compose-get-global-config: ## Get global config in docker compose
+	docker-compose exec -T openpitrix-etcd /bin/sh -c "export ETCDCTL_API=3 && etcdctl get openpitrix/global_config --print-value-only" > deploy/config/global_config.yaml
+
 .PHONY: generate-certs
 generate-certs: ## Generate tls certificates
 	cd ./deploy/kubernetes/tls-config && make
@@ -160,9 +174,8 @@ generate-certs: ## Generate tls certificates
 .PHONY: compose-up
 compose-up: generate-certs ## Launch openpitrix in docker compose
 	docker-compose up -d openpitrix-db
-	until docker-compose exec openpitrix-db bash -c "echo 'SELECT VERSION();' | mysql -uroot -ppassword"; do echo "waiting for mysql"; sleep 2; done;
 	make compose-migrate-db
-	docker-compose up -d
+	docker-compose up --remove-orphans -d
 	@echo "compose-up done"
 
 .PHONY: compose-down
@@ -173,24 +186,51 @@ compose-down: ## Shutdown docker compose
 release-%: ## Release version
 	@if [ "`echo "$*" | grep -E "^openpitrix-v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
 	mkdir deploy/$*-kubernetes; \
-	cp -r deploy/config deploy/kubernetes deploy/$*-kubernetes/; \
+	cp -r deploy/config deploy/kubernetes deploy/*.sh deploy/$*-kubernetes/; \
 	cd deploy/ && tar -czvf $*-kubernetes.tar.gz $*-kubernetes; \
 	cd ../; \
+	rm -rf deploy/$*-docker-compose*; \
 	mkdir deploy/$*-docker-compose; \
 	cp -r deploy/docker-compose/. deploy/$*-docker-compose; \
+	echo `./deploy/version.sh $*` >> deploy/$*-docker-compose/.env; \
+	sed -i 's/ /\n/g' deploy/$*-docker-compose/.env; \
 	cp -r deploy/config/global_config.init.yaml deploy/$*-docker-compose/global_config.yaml; \
 	cd deploy/ && tar -czvf $*-docker-compose.tar.gz $*-docker-compose; \
 	fi
 
 bin-release-%: ## Bin release version
+	$(call get_build_flags)
 	@if [ "`echo "$*" | grep -E "^openpitrix-v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
-	mkdir deploy/$*-bin; \
-	docker cp openpitrix-api-gateway:/usr/local/bin/op deploy/$*-bin; \
-	docker cp openpitrix-api-gateway:/usr/local/bin/opctl deploy/$*-bin; \
-	docker cp openpitrix-api-gateway:/usr/local/bin/frontgate deploy/$*-bin; \
-	docker cp openpitrix-api-gateway:/usr/local/bin/drone deploy/$*-bin; \
-	docker cp openpitrix:metadata:/usr/local/bin/metad deploy/$*-bin; \
-	cd deploy/ && tar -czvf $*-bin.tar.gz $*-bin; \
+	echo "Release linux version ..."; \
+	mkdir -p deploy/$*-linux-bin; \
+	$(RUN_IN_DOCKER_WITHOUT_GOPATH) sh -c "\
+	$(GO_BUILD_LINUX) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/op $(TRAG.Gopkg)/cmd/op; \
+	$(GO_BUILD_LINUX) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/opctl $(TRAG.Gopkg)/cmd/opctl; \
+	$(GO_BUILD_LINUX) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/drone $(TRAG.Gopkg)/metadata/cmd/drone; \
+	$(GO_BUILD_LINUX) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/frontgate $(TRAG.Gopkg)/metadata/cmd/frontgate; \
+	"; \
+	cp tmp/bin/op tmp/bin/opctl tmp/bin/frontgate tmp/bin/drone deploy/$*-linux-bin; \
+	cd deploy/ && tar -czvf $*-linux-bin.tar.gz $*-linux-bin; cd ../; \
+	echo "Release darwin version ..."; \
+	mkdir -p deploy/$*-darwin-bin; \
+	$(RUN_IN_DOCKER_WITHOUT_GOPATH) sh -c "\
+	$(GO_BUILD_DARWIN) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/op $(TRAG.Gopkg)/cmd/op; \
+	$(GO_BUILD_DARWIN) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/opctl $(TRAG.Gopkg)/cmd/opctl; \
+	$(GO_BUILD_DARWIN) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/drone $(TRAG.Gopkg)/metadata/cmd/drone; \
+	$(GO_BUILD_DARWIN) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/frontgate $(TRAG.Gopkg)/metadata/cmd/frontgate; \
+	"; \
+	cp tmp/bin/op tmp/bin/opctl tmp/bin/frontgate tmp/bin/drone deploy/$*-darwin-bin; \
+	cd deploy/ && tar -czvf $*-darwin-bin.tar.gz $*-darwin-bin; cd ../; \
+	echo "Release windows version ..."; \
+	mkdir -p deploy/$*-windows-bin; \
+	$(RUN_IN_DOCKER_WITHOUT_GOPATH) sh -c "\
+	$(GO_BUILD_WINDOWS) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/op.exe $(TRAG.Gopkg)/cmd/op; \
+	$(GO_BUILD_WINDOWS) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/opctl.exe $(TRAG.Gopkg)/cmd/opctl; \
+	$(GO_BUILD_WINDOWS) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/drone.exe $(TRAG.Gopkg)/metadata/cmd/drone; \
+	$(GO_BUILD_WINDOWS) -ldflags '$(BUILD_FLAG)' -o /go/src/$(TRAG.Gopkg)/tmp/bin/frontgate.exe $(TRAG.Gopkg)/metadata/cmd/frontgate; \
+	"; \
+	cp tmp/bin/op.exe tmp/bin/opctl.exe tmp/bin/frontgate.exe tmp/bin/drone.exe deploy/$*-windows-bin; \
+	cd deploy/ && tar -czvf $*-windows-bin.tar.gz $*-windows-bin; cd ../; \
 	fi
 
 .PHONY: test

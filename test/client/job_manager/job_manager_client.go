@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-DescribeJobs describes jobs with filter
+DescribeJobs gets job filter with these fields job id cluster id app id version id executor provider status owner default return all jobs
 */
 func (a *Client) DescribeJobs(params *DescribeJobsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeJobsOK, error) {
 	// TODO: Validate the params before sending

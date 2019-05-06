@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixClusterClusterCommonSet openpitrix cluster cluster common set
+// OpenpitrixClusterClusterCommonSet list of cluster common
 // swagger:model openpitrixClusterClusterCommonSet
 type OpenpitrixClusterClusterCommonSet []*OpenpitrixClusterCommon
 
