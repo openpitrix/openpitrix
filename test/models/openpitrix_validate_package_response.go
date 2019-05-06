@@ -16,16 +16,16 @@ import (
 // swagger:model openpitrixValidatePackageResponse
 type OpenpitrixValidatePackageResponse struct {
 
-	// error
+	// error eg.[json error]
 	Error string `json:"error,omitempty"`
 
-	// filename => detail
+	// filename map to detail
 	ErrorDetails map[string]string `json:"error_details,omitempty"`
 
-	// name
+	// app name eg.[wordpress|mysql|...]
 	Name string `json:"name,omitempty"`
 
-	// version name
+	// app version name.eg.[0.1.0]
 	VersionName string `json:"version_name,omitempty"`
 }
 

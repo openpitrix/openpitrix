@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixRejectAppVersionRequest
 type OpenpitrixRejectAppVersionRequest struct {
 
-	// message
+	// reject message
 	Message string `json:"message,omitempty"`
 
-	// version id
+	// required, id of version to reject
 	VersionID string `json:"version_id,omitempty"`
 }
 

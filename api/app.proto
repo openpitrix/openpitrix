@@ -16,51 +16,70 @@ import "types.proto";
 
 
 message CreateAppRequest {
+	// required, app name
 	google.protobuf.StringValue name = 1;
-	// optional: vmbased/helm
+	// optional, vmbased/helm
 	google.protobuf.StringValue version_type = 2;
-	// create app version with specify package
+	// required, version with specific app package
 	google.protobuf.BytesValue version_package = 3;
-	// create app version with specify name
+	// required, version name of the app
 	google.protobuf.StringValue version_name = 5;
-	// set the app icon
+	// app icon
 	google.protobuf.BytesValue icon = 6;
 }
 
 message CreateAppResponse {
+	// app id
 	google.protobuf.StringValue app_id = 1;
+	// version id of the app
 	google.protobuf.StringValue version_id = 2;
 }
 
 message ValidatePackageRequest {
-	// optional: vmbased/helm
+	// optional, vmbased/helm
 	string version_type = 2;
+	// required, version package eg.[the wordpress-0.0.1.tgz will be encoded to bytes]
 	bytes version_package = 3;
 }
 
 message ValidatePackageResponse {
-	// filename => detail
+	// filename map to detail
 	map<string, string> error_details = 1;
+	// error eg.[json error]
 	google.protobuf.StringValue error = 2;
+	// app name eg.[wordpress|mysql|...]
 	google.protobuf.StringValue name = 3;
+	// app version name.eg.[0.1.0]
 	google.protobuf.StringValue version_name = 4;
 }
 
 message ModifyAppRequest {
+	// required, id of app to modify
 	google.protobuf.StringValue app_id = 1;
+	// name of the app
 	google.protobuf.StringValue name = 2;
+	// description of the app
 	google.protobuf.StringValue description = 3;
+	// home page of the app
 	google.protobuf.StringValue home = 4;
+	// maintainers who maintainer the app
 	google.protobuf.StringValue maintainers = 7;
+	// sources of app
 	google.protobuf.StringValue sources = 8;
+	// instructions of the app
 	google.protobuf.StringValue readme = 9;
+	// abstraction of app
 	google.protobuf.StringValue abstraction = 10;
+	// tos of app
 	google.protobuf.StringValue tos = 11;
+	// category id of the app
 	google.protobuf.StringValue category_id = 12;
+	// key words of the app
 	google.protobuf.StringValue keywords = 13;
 }
 
 message ModifyAppResponse {
+	// id of app modified
 	google.protobuf.StringValue app_id = 1;
 }
 
@@ -69,260 +88,404 @@ message UploadAppAttachmentRequest {
 		icon = 0;
 		screenshot = 1;
 	}
+	// required, id of app to upload attachment
 	google.protobuf.StringValue app_id = 1;
 	// optional: icon/screenshot
 	Type type = 2;
+	// required, content of attachment
 	google.protobuf.BytesValue attachment_content = 3;
 	// only for screenshot, range: [0, 5]
 	google.protobuf.UInt32Value sequence = 4;
 }
 
 message UploadAppAttachmentResponse {
+	// id of app to upload attachment
 	google.protobuf.StringValue app_id = 1;
 }
 
 message DeleteAppsRequest {
+	// required, ids of app to delete
 	repeated string app_id = 1;
 }
 
 message DeleteAppsResponse {
+	// ids of app deleted
 	repeated string app_id = 1;
 }
 
 message App {
+	// app id
 	google.protobuf.StringValue app_id = 1;
+	// whether there is a released version in the app
 	google.protobuf.BoolValue active = 2;
+	// app name
 	google.protobuf.StringValue name = 3;
+	// repository(store app package) id
 	google.protobuf.StringValue repo_id = 4;
+	// app description
 	google.protobuf.StringValue description = 5;
+	// status eg.[modify|submit|review|cancel|release|delete|pass|reject|suspend|recover]
 	google.protobuf.StringValue status = 6;
+	// app home page
 	google.protobuf.StringValue home = 7;
+	// app icon
 	google.protobuf.StringValue icon = 8;
+	// app screenshots
 	google.protobuf.StringValue screenshots = 9;
+	// app maintainers
 	google.protobuf.StringValue maintainers = 10;
+	// app key words
 	google.protobuf.StringValue keywords = 11;
+	// sources of app
 	google.protobuf.StringValue sources = 12;
+	// app instructions
 	google.protobuf.StringValue readme = 13;
+	// chart name of app
 	google.protobuf.StringValue chart_name = 14;
+	// abstraction of app
 	google.protobuf.StringValue abstraction = 15;
+	// tos of app
 	google.protobuf.StringValue tos = 16;
+	// owner of app
 	google.protobuf.StringValue owner = 17;
+	// the time when app create
 	google.protobuf.Timestamp create_time = 18;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 19;
+	// the time when app update
 	google.protobuf.Timestamp update_time = 20;
-
+	// list of category, the app may belong to one more category
 	repeated ResourceCategory category_set = 21;
+	// latest version of app
 	AppVersion latest_app_version = 22;
+	// app version types eg.[vmbased|helm]
 	google.protobuf.StringValue app_version_types = 23;
-
+	// company name
 	google.protobuf.StringValue company_name = 24;
+	// company website
 	google.protobuf.StringValue company_website = 25;
+	// company profile
 	google.protobuf.StringValue company_profile = 26;
+	// company join time
 	google.protobuf.Timestamp company_join_time = 27;
+	// owner path of the app, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 28;
+	// the isv user who create the app
 	google.protobuf.StringValue isv = 29;
 }
 
 message DescribeAppsRequest {
+	// query key, support these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name)
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
+	// data limit per page, default is 20, max value is 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default is 0
 	uint32 offset = 5;
-
+	// app ids
 	repeated string app_id = 11;
+	// app name
 	repeated string name = 12;
+	// app repository ids
 	repeated string repo_id = 13;
+	// app status eg.[modify|submit|review|cancel|release|delete|pass|reject|suspend|recover]
 	repeated string status = 14;
+	// app owner
 	repeated string owner = 15;
+	// app chart name
 	repeated string chart_name = 16;
+	// app category ids
 	repeated string category_id = 17;
+	// select column to display
 	repeated string display_columns = 18;
 }
 
 message DescribeAppsResponse {
+	// total count of qualified app
 	uint32 total_count = 1;
+	// list of app
 	repeated App app_set = 2;
 }
 
 message CreateAppVersionRequest {
+	// required, id of app to create new version
 	google.protobuf.StringValue app_id = 1;
+	// required, version name eg.[0.1.0|0.1.3|...]
 	google.protobuf.StringValue name = 2;
+	// description of app of specific version
 	google.protobuf.StringValue description = 3;
 	// optional: vmbased/helm
 	google.protobuf.StringValue type = 4;
+	// package of app of specific version
 	google.protobuf.BytesValue package = 5;
 }
 
 message CreateAppVersionResponse {
+	// version id
 	google.protobuf.StringValue version_id = 1;
 }
 
 message ModifyAppVersionRequest {
+	// required, version id of app to modify
 	google.protobuf.StringValue version_id = 1;
+	// app name
 	google.protobuf.StringValue name = 2;
+	// app description
 	google.protobuf.StringValue description = 3;
+	// package of app to replace other
 	google.protobuf.BytesValue package = 4;
-	// filename => file_content
+	// filename map to file_content
 	map<string, bytes> package_files = 5;
 }
 
 message ModifyAppVersionResponse {
+	// required, version id
 	google.protobuf.StringValue version_id = 1;
 }
 
 message AppVersion {
+	// version id of app
 	google.protobuf.StringValue version_id = 1;
+	// active or not
 	google.protobuf.BoolValue active = 2;
+	// app id
 	google.protobuf.StringValue app_id = 3;
+	// owner
 	google.protobuf.StringValue owner = 4;
+	// version name
 	google.protobuf.StringValue name = 5;
+	// description of app of specific version
 	google.protobuf.StringValue description = 6;
+	// home of app of specific version
 	google.protobuf.StringValue home = 7;
+	// icon of app of specific version
 	google.protobuf.StringValue icon = 8;
+	// screenshots of app of specific version
 	google.protobuf.StringValue screenshots = 9;
+	// maintainers of app of specific version
 	google.protobuf.StringValue maintainers = 10;
+	// keywords of app of specific version
 	google.protobuf.StringValue keywords = 11;
+	// sources of app of specific version
 	google.protobuf.StringValue sources = 12;
+	// readme of app of specific version
 	google.protobuf.StringValue readme = 13;
+	// package name of app of specific version
 	google.protobuf.StringValue package_name = 14;
+	// status of app of specific version eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended]
 	google.protobuf.StringValue status = 15;
+	// review id of app of specific version
 	google.protobuf.StringValue review_id = 16;
+	// the time when app version create
 	google.protobuf.Timestamp create_time = 17;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 18;
+	// the time when app version update
 	google.protobuf.Timestamp update_time = 19;
+	// sequence of app of specific version
 	google.protobuf.UInt32Value sequence = 20;
+	// message path of app of specific version
 	google.protobuf.StringValue message = 21;
+	// type of app of specific version
 	google.protobuf.StringValue type = 22;
+	// owner path of app of specific version, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 23;
 }
 
 message AppVersionAudit {
+	// id of version to audit
 	google.protobuf.StringValue version_id = 1;
+	// id of specific version app
 	google.protobuf.StringValue app_id = 2;
+	// audit status, eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended]
 	google.protobuf.StringValue status = 3;
+	// version name
 	google.protobuf.StringValue version_name = 4;
+	// name of specific version app
 	google.protobuf.StringValue app_name = 5;
+	// user of auditer
 	google.protobuf.StringValue operator = 6;
+	// operator of auditer eg.[global_admin|developer|business|technical|isv]
 	google.protobuf.StringValue operator_type = 7;
+	// audit message
 	google.protobuf.StringValue message = 8;
+	// review id
 	google.protobuf.StringValue review_id = 9;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 10;
+	// version type
 	google.protobuf.StringValue version_type = 11;
 }
 
 message AppVersionReviewPhase {
+	// review status of app version eg.[isv-in-review|isv-passed|isv-rejected|isv-draft|business-in-review|business-passed|business-rejected|develop-draft|develop-in-review|develop-passed|develop-rejected|develop-draft]
 	google.protobuf.StringValue status = 1;
+	// user of reviewer
 	google.protobuf.StringValue operator = 2;
+	// operator type of reviewer eg.[global_admin|developer|business|technical|isv]
 	google.protobuf.StringValue operator_type = 3;
+	// review message
 	google.protobuf.StringValue message = 4;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 5;
+	// app version review time
 	google.protobuf.Timestamp review_time = 6;
 }
 
 message AppVersionReview {
+	// review id
 	google.protobuf.StringValue review_id = 1;
+	// id of app version
 	google.protobuf.StringValue version_id = 2;
+	// app id
 	google.protobuf.StringValue app_id = 3;
+	// version name of specific app version
 	google.protobuf.StringValue version_name = 4;
+	// app name
 	google.protobuf.StringValue app_name = 5;
+	// review status eg.[isv-in-review|isv-passed|isv-rejected|isv-draft|business-in-review|business-passed|business-rejected|develop-draft|develop-in-review|develop-passed|develop-rejected|develop-draft]
 	google.protobuf.StringValue status = 6;
+	// review phase, app need one more reviewer to review, when reviewer reviewed, status changed
 	map<string, AppVersionReviewPhase> phase = 7;
-
+	// record status changed time
 	google.protobuf.Timestamp status_time = 8;
+	// user who review the app version
 	google.protobuf.StringValue reviewer = 9;
+	// version type
 	google.protobuf.StringValue version_type = 10;
 }
 
 message DescribeAppVersionReviewsRequest {
+	// query key, support these fields(review_id, version_id, app_id, status, reviewer)
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
+	// data limit per page, default is 20, max value is 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default is 0
 	uint32 offset = 5;
-
+	// app ids
 	repeated string app_id = 10;
+	// app version ids
 	repeated string version_id = 11;
-
+	// app version review ids
 	repeated string review_id = 12;
+	// app version status eg.[isv-in-review|isv-passed|isv-rejected|isv-draft|business-in-review|business-passed|business-rejected|develop-draft|develop-in-review|develop-passed|develop-rejected|develop-draft]
 	repeated string status = 13;
+	// select columns to display
 	repeated string display_columns = 14;
+	// reviewer of app version eg.[global_admin|developer|business|technical|isv]
 	repeated string reviewer = 15;
 }
 
 message DescribeAppVersionReviewsResponse {
+	// total count of reviews of app with specific version
 	uint32 total_count = 1;
+	// list of reviews of app with specific version
 	repeated AppVersionReview app_version_review_set = 2;
 }
 
 message DescribeAppVersionAuditsRequest {
+	// query key, support these fields(version_id, app_id, status, operator, role)
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
+	// data limit per page, default is 20, max value is 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default is 0
 	uint32 offset = 5;
 
+	// app ids
 	repeated string app_id = 10;
+	// app version ids
 	repeated string version_id = 11;
 
+	// app version audit status eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended]
 	repeated string status = 12;
+	// auditer of app version
 	repeated string operator = 13;
+	// operator type eg.[global_admin|developer|business|technical|isv]
 	repeated string operator_type = 14;
+	// select columns to display
 	repeated string display_columns = 15;
 }
 
 message DescribeAppVersionAuditsResponse {
+	// total count of audits of app with specific version
 	uint32 total_count = 1;
+	// list of audit
 	repeated AppVersionAudit app_version_audit_set = 2;
 }
 
 message DescribeAppVersionsRequest {
+	// query key, support these fields(version_id, app_id, name, owner, description, package_name, status, type)
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 5;
-
+	// app version ids
 	repeated string version_id = 10;
+	// app ids
 	repeated string app_id = 11;
+	// app version name
 	repeated string name = 12;
+	// owner
 	repeated string owner = 13;
+	// description
 	repeated string description = 14;
+	// app version package name
 	repeated string package_name = 15;
+	// app version status eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended]
 	repeated string status = 16;
+	// app version type
 	repeated string type = 17;
+	// select columns to display
 	repeated string display_columns = 18;
 }
 
 message DescribeAppVersionsResponse {
+	// total count of qualified app version
 	uint32 total_count = 1;
+	// list of app vaesion
 	repeated AppVersion app_version_set = 2;
 }
 
 message GetAppVersionPackageRequest {
+	// required, use version id to get package
 	google.protobuf.StringValue version_id = 1;
 }
 message GetAppVersionPackageResponse {
+	// package of specific app version
 	bytes package = 1;
+	// app id of package
 	google.protobuf.StringValue app_id = 2;
+	// version id of package
 	google.protobuf.StringValue version_id = 3;
 }
 
 message GetAppVersionPackageFilesRequest {
+	// use version id to get file of package
 	google.protobuf.StringValue version_id = 1;
+	// files
 	repeated string files = 2;
 }
 
 message GetAppVersionPackageFilesResponse {
+	// filename map to content
 	map<string, bytes> files = 1;
+	// version id
 	google.protobuf.StringValue version_id = 2;
 }
 
@@ -330,348 +493,400 @@ message GetAppStatisticsRequest {
 }
 
 message GetAppStatisticsResponse {
-	// app create time range -> app count, max length is 14
+	// range of app created time map to app count, max length is 14
 	map<string, uint32> last_two_week_created = 1;
-	// repo id -> app count, max length is 10
+	// repo id map to app count, max length is 10
 	map<string, uint32> top_ten_repos = 2;
+	// total app count
 	uint32 app_count = 3;
+	// total repository count
 	uint32 repo_count = 4;
 }
 
 message SubmitAppVersionRequest {
+	// required, id of version to submit
 	google.protobuf.StringValue version_id = 1;
 }
 message SubmitAppVersionResponse {
+	// required, id of version submitted
 	google.protobuf.StringValue version_id = 1;
 }
 message CancelAppVersionRequest {
+	// required, id of version to cancel
 	google.protobuf.StringValue version_id = 1;
 }
 message CancelAppVersionResponse {
+	// required, id of version canceled
 	google.protobuf.StringValue version_id = 1;
 }
 message ReleaseAppVersionRequest {
+	// required, id of version to release
 	google.protobuf.StringValue version_id = 1;
 }
 message ReleaseAppVersionResponse {
+	// required, id of version released
 	google.protobuf.StringValue version_id = 1;
 }
 message DeleteAppVersionRequest {
+	// required, id of version to delete
 	google.protobuf.StringValue version_id = 1;
 }
 message DeleteAppVersionResponse {
+	// required, id of version deleted
 	google.protobuf.StringValue version_id = 1;
 }
 message ReviewAppVersionRequest {
+	// required, id of version to review
 	google.protobuf.StringValue version_id = 1;
 }
 message ReviewAppVersionResponse {
+	// id of version reviewed
 	google.protobuf.StringValue version_id = 1;
 }
 message PassAppVersionRequest {
+	// required, id of version to pass
 	google.protobuf.StringValue version_id = 1;
 }
 message PassAppVersionResponse {
+	// id of version passed
 	google.protobuf.StringValue version_id = 1;
 }
 message RejectAppVersionRequest {
+	// required, id of version to reject
 	google.protobuf.StringValue version_id = 1;
+	// reject message
 	google.protobuf.StringValue message = 2;
 }
 message RejectAppVersionResponse {
+	// id of version rejected
 	google.protobuf.StringValue version_id = 1;
 }
 message SuspendAppVersionRequest {
+	// required, id of version to suspend
 	google.protobuf.StringValue version_id = 1;
 }
 message SuspendAppVersionResponse {
+	// id of version suspended
 	google.protobuf.StringValue version_id = 1;
 }
 message RecoverAppVersionRequest {
+	// required, id of version to recover
 	google.protobuf.StringValue version_id = 1;
 }
 message RecoverAppVersionResponse {
+	// id of version recovered
 	google.protobuf.StringValue version_id = 1;
 }
 
 message SyncRepoRequest {
+	// required, id of repository to synchronize
 	string repo_id = 1;
 }
 message SyncRepoResponse {
+	// synchronized ok or not
 	bool failed = 1;
+	// result
 	string result = 2;
 }
 
 service AppManager {
 	rpc SyncRepo (SyncRepoRequest) returns (SyncRepoResponse) {
 	}
+	// Create app, user of isv can create app on the platform
 	rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create app"
+			summary: "Create app, user of isv can create app on the platform"
 		};
 		option (google.api.http) = {
 			post: "/v1/apps"
 			body: "*"
 		};
 	}
+	// Validate format of package(pack by op tool)
 	rpc ValidatePackage (ValidatePackageRequest) returns (ValidatePackageResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "ValidatePackage"
+			summary: "Validate format of package(pack by op tool)"
 		};
 		option (google.api.http) = {
 			post: "/v1/apps/validate_package"
 			body: "*"
 		};
 	}
+	// Get statistics info of apps
 	rpc GetAppStatistics (GetAppStatisticsRequest) returns (GetAppStatisticsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get app statistics"
+			summary: "Get statistics info of apps"
 		};
 		option (google.api.http) = {
 			get: "/v1/apps/statistics"
 		};
 	}
+	// Get apps, can filter with these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name), default return all apps
 	rpc DescribeApps (DescribeAppsRequest) returns (DescribeAppsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe apps with filter"
+			summary: "Get apps, can filter with these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name), default return all apps"
 		};
 		option (google.api.http) = {
 			get: "/v1/apps"
 		};
 	}
+	// Get active apps, can filter with these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name), default return all apps
 	rpc DescribeActiveApps (DescribeAppsRequest) returns (DescribeAppsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe apps with filter"
+			summary: "Get active apps, can filter with these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name), default return all apps"
 		};
 		option (google.api.http) = {
 			get: "/v1/active_apps"
 		};
 	}
+	// Modify app info
 	rpc ModifyApp (ModifyAppRequest) returns (ModifyAppResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify app"
+			summary: "Modify app info"
 		};
 		option (google.api.http) = {
 			patch: "/v1/apps"
 			body: "*"
 		};
 	}
+	// Upload app attachment
 	rpc UploadAppAttachment (UploadAppAttachmentRequest) returns (UploadAppAttachmentResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "UploadAppAttachment"
+			summary: "Upload app attachment"
 		};
 		option (google.api.http) = {
 			patch: "/v1/app/attachment"
 			body: "*"
 		};
 	}
+	// Batch delete apps
 	rpc DeleteApps (DeleteAppsRequest) returns (DeleteAppsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete apps"
+			summary: "Batch delete apps"
 		};
 		option (google.api.http) = {
 			delete: "/v1/apps"
 			body: "*"
 		};
 	}
-
+	// Create app of specific version
 	rpc CreateAppVersion (CreateAppVersionRequest) returns (CreateAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create app version"
+			summary: "Create app of specific version"
 		};
 		option (google.api.http) = {
 			post: "/v1/app_versions"
 			body: "*"
 		};
 	}
+	// Get versions of app, can filter with these fields(version_id, app_id, name, owner, description, package_name, status, type), default return all app versions
 	rpc DescribeAppVersions (DescribeAppVersionsRequest) returns (DescribeAppVersionsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe app versions with filter"
+			summary: "Get versions of app, can filter with these fields(version_id, app_id, name, owner, description, package_name, status, type), default return all app versions"
 		};
 		option (google.api.http) = {
 			get: "/v1/app_versions"
 		};
 	}
+	// Get active versions of app, can filter with these fields(version_id, app_id, name, owner, description, package_name, status, type), default return all active app versions
 	rpc DescribeActiveAppVersions (DescribeAppVersionsRequest) returns (DescribeAppVersionsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe app versions with filter"
+			summary: "Get active versions of app, can filter with these fields(version_id, app_id, name, owner, description, package_name, status, type), default return all active app versions"
 		};
 		option (google.api.http) = {
 			get: "/v1/active_app_versions"
 		};
 	}
+	// Get audits information of version-specific app, can filter with these fields(version_id, app_id, status, operator, role), default return all app version audits
 	rpc DescribeAppVersionAudits (DescribeAppVersionAuditsRequest) returns (DescribeAppVersionAuditsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "DescribeAppVersionAudits"
+			summary: "Get audits information of version-specific app, can filter with these fields(version_id, app_id, status, operator, role), default return all app version audits"
 		};
 		option (google.api.http) = {
 			get: "/v1/app_version_audits"
 		};
 	}
+	// Get reviews of version-specific app, can filter with these fields(review_id, version_id, app_id, status, reviewer), default return all app version reviews
 	rpc DescribeAppVersionReviews (DescribeAppVersionReviewsRequest) returns (DescribeAppVersionReviewsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "DescribeAppVersionReviews"
+			summary: "Get reviews of version-specific app, can filter with these fields(review_id, version_id, app_id, status, reviewer)"
 		};
 		option (google.api.http) = {
 			get: "/v1/app_version_reviews"
 		};
 	}
+	// Modify version info of the app
 	rpc ModifyAppVersion (ModifyAppVersionRequest) returns (ModifyAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify app version"
+			summary: "Modify version info of the app"
 		};
 		option (google.api.http) = {
 			patch: "/v1/app_versions"
 			body: "*"
 		};
 	}
+	// Get packages of version-specific app
 	rpc GetAppVersionPackage (GetAppVersionPackageRequest) returns (GetAppVersionPackageResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get the package content of app version"
+			summary: "Get packages of version-specific app"
 		};
 		option (google.api.http) = {
 			get: "/v1/app_version/package"
 		};
 	}
+	// Get app package files
 	rpc GetAppVersionPackageFiles (GetAppVersionPackageFilesRequest) returns (GetAppVersionPackageFilesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get the package files content of app version"
+			summary: "Get app package files"
 		};
 		option (google.api.http) = {
 			get: "/v1/app_version/package/files"
 		};
 	}
-
+	// Submit version of the app
 	rpc SubmitAppVersion (SubmitAppVersionRequest) returns (SubmitAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "submit app version"
+            summary: "Submit version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/submit"
             body: "*"
         };
 	}
+	// Cancel version of the app
 	rpc CancelAppVersion (CancelAppVersionRequest) returns (CancelAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "cancel app version"
+            summary: "Cancel version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/cancel"
             body: "*"
         };
 	}
+	// Release version of the app
 	rpc ReleaseAppVersion (ReleaseAppVersionRequest) returns (ReleaseAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "release app version"
+            summary: "Release version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/release"
             body: "*"
         };
 	}
+	// Delete version of the app
 	rpc DeleteAppVersion (DeleteAppVersionRequest) returns (DeleteAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "delete app version"
+            summary: "Delete version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/delete"
             body: "*"
         };
 	}
-
+	// Operator of isv review version of the app
 	rpc IsvReviewAppVersion (ReviewAppVersionRequest) returns (ReviewAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "operator type isv start review app version"
+            summary: "Operator of isv review version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/review/isv"
             body: "*"
         };
 	}
+	// Operator of isv pass version of the app
 	rpc IsvPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "operator type isv pass app version"
+            summary: "Operator of isv pass version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/pass/isv"
             body: "*"
         };
 	}
+	// Operator of isv reject version of the app
 	rpc IsvRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "operator type isv reject app version"
+            summary: "Operator of isv reject version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/reject/isv"
             body: "*"
         };
 	}
+	// Operator of business review version of the app
 	rpc BusinessReviewAppVersion (ReviewAppVersionRequest) returns (ReviewAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "operator type business start review app version"
+            summary: "Operator of business review version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/review/business"
             body: "*"
         };
 	}
+	// Operator of business pass version of the app
 	rpc BusinessPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "operator type business pass app version"
+            summary: "Operator of business pass version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/pass/business"
             body: "*"
         };
 	}
+	// Operator of business reject version of the app
 	rpc BusinessRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "operator type business reject app version"
+            summary: "Operator of business reject version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/reject/business"
             body: "*"
         };
 	}
+	// Operator of technical review version of the app
 	rpc TechnicalReviewAppVersion (ReviewAppVersionRequest) returns (ReviewAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "operator type technical start review app version"
+            summary: "Operator of technical review version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/review/technical"
             body: "*"
         };
 	}
+	// Operator of technical pass version of the app
 	rpc TechnicalPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "operator type technical pass app version"
+            summary: "Operator of technical pass version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/pass/technical"
             body: "*"
         };
 	}
+	// Operator of technical reject version of the app
 	rpc TechnicalRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "operator type reject app version"
+            summary: "Operator of technical reject version of the app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/reject/technical"
             body: "*"
         };
 	}
+	// Suspend app version
 	rpc SuspendAppVersion (SuspendAppVersionRequest) returns (SuspendAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "suspend app version"
+            summary: "Suspend app version"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/suspend"
             body: "*"
         };
 	}
+	// Recover version of app
 	rpc RecoverAppVersion (RecoverAppVersionRequest) returns (RecoverAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "recover app version"
+            summary: "Recover version of app"
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/recover"

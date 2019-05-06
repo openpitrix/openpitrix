@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-AddClusterNodes adds cluster nodes
+AddClusterNodes batches add nodes to cluster
 */
 func (a *Client) AddClusterNodes(params *AddClusterNodesParams, authInfo runtime.ClientAuthInfoWriter) (*AddClusterNodesOK, error) {
 	// TODO: Validate the params before sending
@@ -54,7 +54,7 @@ func (a *Client) AddClusterNodes(params *AddClusterNodesParams, authInfo runtime
 }
 
 /*
-AttachKeyPairs attaches key pairs
+AttachKeyPairs batches attach key pairs to node
 */
 func (a *Client) AttachKeyPairs(params *AttachKeyPairsParams, authInfo runtime.ClientAuthInfoWriter) (*AttachKeyPairsOK, error) {
 	// TODO: Validate the params before sending
@@ -83,7 +83,7 @@ func (a *Client) AttachKeyPairs(params *AttachKeyPairsParams, authInfo runtime.C
 }
 
 /*
-CeaseClusters ceases clusters
+CeaseClusters batches cease clusters
 */
 func (a *Client) CeaseClusters(params *CeaseClustersParams, authInfo runtime.ClientAuthInfoWriter) (*CeaseClustersOK, error) {
 	// TODO: Validate the params before sending
@@ -199,7 +199,7 @@ func (a *Client) CreateKeyPair(params *CreateKeyPairParams, authInfo runtime.Cli
 }
 
 /*
-DeleteClusterNodes deletes cluster nodes
+DeleteClusterNodes batches delete nodes from cluster
 */
 func (a *Client) DeleteClusterNodes(params *DeleteClusterNodesParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteClusterNodesOK, error) {
 	// TODO: Validate the params before sending
@@ -228,7 +228,7 @@ func (a *Client) DeleteClusterNodes(params *DeleteClusterNodesParams, authInfo r
 }
 
 /*
-DeleteClusters deletes clusters
+DeleteClusters batches delete clusters
 */
 func (a *Client) DeleteClusters(params *DeleteClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteClustersOK, error) {
 	// TODO: Validate the params before sending
@@ -257,7 +257,7 @@ func (a *Client) DeleteClusters(params *DeleteClustersParams, authInfo runtime.C
 }
 
 /*
-DeleteKeyPairs deletes key pairs
+DeleteKeyPairs batches delete key pairs
 */
 func (a *Client) DeleteKeyPairs(params *DeleteKeyPairsParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteKeyPairsOK, error) {
 	// TODO: Validate the params before sending
@@ -286,7 +286,7 @@ func (a *Client) DeleteKeyPairs(params *DeleteKeyPairsParams, authInfo runtime.C
 }
 
 /*
-DescribeAppClusters describes app clusters
+DescribeAppClusters gets app clusters can filter with these fields cluster id app id version id status runtime id frontgate id owner cluster type default return all app clusters
 */
 func (a *Client) DescribeAppClusters(params *DescribeAppClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppClustersOK, error) {
 	// TODO: Validate the params before sending
@@ -315,7 +315,7 @@ func (a *Client) DescribeAppClusters(params *DescribeAppClustersParams, authInfo
 }
 
 /*
-DescribeClusterNodes describes cluster nodes
+DescribeClusterNodes gets nodes in cluster can filter with these fields cluster id node id status owner
 */
 func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeClusterNodesOK, error) {
 	// TODO: Validate the params before sending
@@ -344,7 +344,7 @@ func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams, authIn
 }
 
 /*
-DescribeClusters describes clusters
+DescribeClusters gets clusters can filter with these fields cluster id app id version id status runtime id frontgate id owner cluster type default return all clusters
 */
 func (a *Client) DescribeClusters(params *DescribeClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeClustersOK, error) {
 	// TODO: Validate the params before sending
@@ -373,7 +373,7 @@ func (a *Client) DescribeClusters(params *DescribeClustersParams, authInfo runti
 }
 
 /*
-DescribeDebugAppClusters describes debug app clusters
+DescribeDebugAppClusters gets debug app clusters can filter with these fields cluster id app id version id status runtime id frontgate id owner cluster type default return all debug app clusters
 */
 func (a *Client) DescribeDebugAppClusters(params *DescribeDebugAppClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeDebugAppClustersOK, error) {
 	// TODO: Validate the params before sending
@@ -402,7 +402,7 @@ func (a *Client) DescribeDebugAppClusters(params *DescribeDebugAppClustersParams
 }
 
 /*
-DescribeDebugClusters describes debug clusters
+DescribeDebugClusters gets debug clusters can filter with these fields cluster id app id version id status runtime id frontgate id owner cluster type default return all debug clusters
 */
 func (a *Client) DescribeDebugClusters(params *DescribeDebugClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeDebugClustersOK, error) {
 	// TODO: Validate the params before sending
@@ -431,7 +431,7 @@ func (a *Client) DescribeDebugClusters(params *DescribeDebugClustersParams, auth
 }
 
 /*
-DescribeKeyPairs describes key pairs
+DescribeKeyPairs gets key pairs support filter with these fields key pair id name owner default return all key pairs
 */
 func (a *Client) DescribeKeyPairs(params *DescribeKeyPairsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeKeyPairsOK, error) {
 	// TODO: Validate the params before sending
@@ -460,7 +460,7 @@ func (a *Client) DescribeKeyPairs(params *DescribeKeyPairsParams, authInfo runti
 }
 
 /*
-DescribeSubnets describes subnets
+DescribeSubnets gets subnets
 */
 func (a *Client) DescribeSubnets(params *DescribeSubnetsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeSubnetsOK, error) {
 	// TODO: Validate the params before sending
@@ -489,7 +489,7 @@ func (a *Client) DescribeSubnets(params *DescribeSubnetsParams, authInfo runtime
 }
 
 /*
-DetachKeyPairs detaches key pairs
+DetachKeyPairs batches detach key pairs from node
 */
 func (a *Client) DetachKeyPairs(params *DetachKeyPairsParams, authInfo runtime.ClientAuthInfoWriter) (*DetachKeyPairsOK, error) {
 	// TODO: Validate the params before sending
@@ -518,7 +518,7 @@ func (a *Client) DetachKeyPairs(params *DetachKeyPairsParams, authInfo runtime.C
 }
 
 /*
-GetClusterStatistics gets cluster statistics
+GetClusterStatistics gets statistics of cluster
 */
 func (a *Client) GetClusterStatistics(params *GetClusterStatisticsParams, authInfo runtime.ClientAuthInfoWriter) (*GetClusterStatisticsOK, error) {
 	// TODO: Validate the params before sending
@@ -576,7 +576,7 @@ func (a *Client) ModifyClusterAttributes(params *ModifyClusterAttributesParams, 
 }
 
 /*
-ModifyClusterNodeAttributes modifies cluster node attributes
+ModifyClusterNodeAttributes modifies node attributes in the cluster
 */
 func (a *Client) ModifyClusterNodeAttributes(params *ModifyClusterNodeAttributesParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyClusterNodeAttributesOK, error) {
 	// TODO: Validate the params before sending
@@ -605,7 +605,7 @@ func (a *Client) ModifyClusterNodeAttributes(params *ModifyClusterNodeAttributes
 }
 
 /*
-RecoverClusters recovers clusters
+RecoverClusters batches recover clusters
 */
 func (a *Client) RecoverClusters(params *RecoverClustersParams, authInfo runtime.ClientAuthInfoWriter) (*RecoverClustersOK, error) {
 	// TODO: Validate the params before sending
@@ -692,7 +692,7 @@ func (a *Client) RollbackCluster(params *RollbackClusterParams, authInfo runtime
 }
 
 /*
-StartClusters starts clusters
+StartClusters batches start clusters
 */
 func (a *Client) StartClusters(params *StartClustersParams, authInfo runtime.ClientAuthInfoWriter) (*StartClustersOK, error) {
 	// TODO: Validate the params before sending
@@ -721,7 +721,7 @@ func (a *Client) StartClusters(params *StartClustersParams, authInfo runtime.Cli
 }
 
 /*
-StopClusters stops clusters
+StopClusters batches stop clusters
 */
 func (a *Client) StopClusters(params *StopClustersParams, authInfo runtime.ClientAuthInfoWriter) (*StopClustersOK, error) {
 	// TODO: Validate the params before sending
@@ -750,7 +750,7 @@ func (a *Client) StopClusters(params *StopClustersParams, authInfo runtime.Clien
 }
 
 /*
-UpdateClusterEnv updates cluster env
+UpdateClusterEnv updates env of cluster
 */
 func (a *Client) UpdateClusterEnv(params *UpdateClusterEnvParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateClusterEnvOK, error) {
 	// TODO: Validate the params before sending

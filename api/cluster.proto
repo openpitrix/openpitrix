@@ -15,406 +15,649 @@ import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
 message DescribeSubnetsRequest {
+	// required, id of runtime that contain subnet
 	google.protobuf.StringValue runtime_id = 1;
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 2;
+	// data offset, default 0
 	uint32 offset = 3;
+	// subnet type
 	google.protobuf.UInt32Value subnet_type = 4;
+	// subnet ids
 	repeated string subnet_id = 5;
+	// zone eg.[pek3a|pek3b|...]
 	repeated string zone = 6;
+	// advanced param
 	repeated string advanced_param = 7;
 }
 
 message Subnet {
+	// subnet id
 	google.protobuf.StringValue subnet_id = 1;
+	// subnet name
 	google.protobuf.StringValue name = 2;
+	// subnet zone
 	google.protobuf.StringValue zone = 3;
+	// the time when subnet create
 	google.protobuf.Timestamp create_time = 4;
+	// subnet description
 	google.protobuf.StringValue description = 5;
+	// instance ids, subnet belong to one more instance
 	repeated string instance_id = 6;
+	// vpc id, a vpc contain one more subnet
 	google.protobuf.StringValue vpc_id = 7;
+	// subnet type
 	google.protobuf.UInt32Value subnet_type = 8;
 }
 
 message DescribeSubnetsResponse {
+	// total count of subnet
 	uint32 total_count = 1;
+	// list of subnet
 	repeated Subnet subnet_set = 2;
 }
 
 message CreateClusterRequest {
+	// required, id of app to run in cluster
 	google.protobuf.StringValue app_id = 1;
+	// required, id of app version
 	google.protobuf.StringValue version_id = 2;
+	// required, id of runtime
 	google.protobuf.StringValue runtime_id = 3;
+	// required, conf a json string, include cpu, memory info of cluster
 	google.protobuf.StringValue conf = 4;
+	// advanced param
 	repeated string advanced_param = 5;
 }
 
 message CreateClusterResponse {
+	// id of cluster created
 	google.protobuf.StringValue cluster_id = 1;
+	// id of job
 	google.protobuf.StringValue job_id = 2;
 }
 
 message ModifyClusterRequest {
+	// required, cluster to modify
 	Cluster cluster = 1;
+	// list of cluster node
 	repeated ClusterNode cluster_node_set = 2;
+	// list of cluster role
 	repeated ClusterRole cluster_role_set = 3;
+	// list of cluster link
 	repeated ClusterLink cluster_link_set = 4;
+	// list of cluster common
 	repeated ClusterCommon cluster_common_set = 5;
+	// list of cluster loadbalancer
 	repeated ClusterLoadbalancer cluster_loadbalancer_set = 6;
 }
 
 message ModifyClusterResponse {
+	// id of cluster modified
 	google.protobuf.StringValue cluster_id = 1;
 }
 
 message ModifyClusterNodeRequest {
+	// required, cluster node to modify
 	ClusterNode cluster_node = 1;
 }
 
 message ModifyClusterNodeResponse {
+	// id of cluster node modified
 	google.protobuf.StringValue node_id = 1;
 }
 
 message ModifyClusterAttributesRequest {
+	// required, id of cluster to modify
 	google.protobuf.StringValue cluster_id = 1;
+	// cluster name
 	google.protobuf.StringValue name = 2;
+	// cluster description
 	google.protobuf.StringValue description = 3;
 }
 
 message ModifyClusterAttributesResponse {
+	// id of cluster modified
 	google.protobuf.StringValue cluster_id = 1;
 }
 
 message ModifyClusterNodeAttributesRequest {
+	// required, id of cluster node to modify
 	google.protobuf.StringValue node_id = 1;
+	// node name
 	google.protobuf.StringValue name = 2;
 }
 
 message ModifyClusterNodeAttributesResponse {
+	// id of cluster node modified
 	google.protobuf.StringValue node_id = 1;
 }
 
 message AddTableClusterNodesRequest {
+	// required, list of node to add to cluster
 	repeated ClusterNode cluster_node_set = 1;
 }
 
 message DeleteTableClusterNodesRequest {
+	// required, list of node to delete from cluster
 	repeated string node_id = 1;
 }
 
 message DeleteClustersRequest {
+	// required, ids of clusters to delete
 	repeated string cluster_id = 1;
+	// advanced param
 	repeated string advanced_param = 2;
 }
 
 message DeleteClustersResponse {
+	// ids of clusters deleted
 	repeated string cluster_id = 1;
+	// ids of jobs
 	repeated string job_id = 2;
 }
 
 message UpgradeClusterRequest {
+	// required, id of cluster to upgrade
 	google.protobuf.StringValue cluster_id = 1;
+	// app version id
 	google.protobuf.StringValue version_id = 2;
+	// advanced param
 	repeated string advanced_param = 3;
 }
 
 message UpgradeClusterResponse {
+	// id of cluster upgraded
 	google.protobuf.StringValue cluster_id = 1;
+	// job id
 	google.protobuf.StringValue job_id = 2;
 }
 
 message RollbackClusterRequest {
+	// required, id of cluster to rollback
 	google.protobuf.StringValue cluster_id = 1;
+	// advanced param
 	repeated string advanced_param = 2;
 }
 
 message RollbackClusterResponse {
+	// id of cluster to rollbacked
 	google.protobuf.StringValue cluster_id = 1;
+	// job id
 	google.protobuf.StringValue job_id = 2;
 }
 
 message RoleResource {
+	// role.eg:[mysql|wordpress]
 	google.protobuf.StringValue role = 1;
+	// number of cpu
 	google.protobuf.UInt32Value cpu = 2;
+	// number of gpu
 	google.protobuf.UInt32Value gpu = 3;
+	// size of memory
 	google.protobuf.UInt32Value memory = 4;
+	// size of instance
 	google.protobuf.UInt32Value instance_size = 5;
+	// size of storage
 	google.protobuf.UInt32Value storage_size = 6;
 }
 
 message ResizeClusterRequest {
+	// required, id of cluster to resize
 	google.protobuf.StringValue cluster_id = 1;
+	// list of role resource
 	repeated RoleResource role_resource = 2;
+	// advanced param
 	repeated string advanced_param = 5;
 }
 
 message ResizeClusterResponse {
+	// id of cluster resized
 	google.protobuf.StringValue cluster_id = 1;
+	// job id
 	google.protobuf.StringValue job_id = 2;
 }
 
 message AddClusterNodesRequest {
+	// required, id of cluster to add node
 	google.protobuf.StringValue cluster_id = 1;
+	// required, role eg:[mysql|wordpress|...]
 	google.protobuf.StringValue role = 2;
+	// number of node added to cluster
 	google.protobuf.UInt32Value node_count = 3;
+	// advanced param
 	repeated string advanced_param = 4;
 }
 
 message AddClusterNodesResponse {
+	// id of cluster added node
 	google.protobuf.StringValue cluster_id = 1;
+	// id of job of add node to cluster
 	google.protobuf.StringValue job_id = 2;
 }
 
 message DeleteClusterNodesRequest {
+	// required, id of cluster to delete node
 	google.protobuf.StringValue cluster_id = 1;
+	// required, node ids
 	repeated string node_id = 2;
+	// advanced param
 	repeated string advanced_param = 3;
 }
 
 message DeleteClusterNodesResponse {
+	// id of cluster deleted node
 	google.protobuf.StringValue cluster_id = 1;
+	// job id
 	google.protobuf.StringValue job_id = 2;
 }
 
 message UpdateClusterEnvRequest {
+	// id of cluster to update env
 	google.protobuf.StringValue cluster_id = 1;
+	// env
 	google.protobuf.StringValue env = 2;
+	// advanced param
 	repeated string advanced_param = 3;
 }
 
 message UpdateClusterEnvResponse {
+	// id of cluster to updated env
 	google.protobuf.StringValue cluster_id = 1;
+	// job id
 	google.protobuf.StringValue job_id = 2;
 }
 
 message ClusterCommon {
+	// cluster id
 	google.protobuf.StringValue cluster_id = 1;
+	// cluster role
 	google.protobuf.StringValue role = 2;
+	// bound of server id(index number), some service(zookeeper) need the index to be bounded
 	google.protobuf.UInt32Value server_id_upper_bound = 3;
+	// action of cluster support.eg.[change_vxnet|scale_horizontal]
 	google.protobuf.StringValue advanced_actions = 4;
+	// init service config, a json string
 	google.protobuf.StringValue init_service = 5;
+	// start service config, a json string
 	google.protobuf.StringValue start_service = 6;
+	// stop service config, a json string
 	google.protobuf.StringValue stop_service = 7;
+	// scale out service config, a json string
 	google.protobuf.StringValue scale_out_service = 8;
+	// scale in service config, a json string
 	google.protobuf.StringValue scale_in_service = 9;
+	// restart service config, a json string
 	google.protobuf.StringValue restart_service = 10;
+	// destroy service config, a json string
 	google.protobuf.StringValue destroy_service = 11;
+	// upgrade service config, a json string
 	google.protobuf.StringValue upgrade_service = 12;
+	// custom service config, a json string
 	google.protobuf.StringValue custom_service = 13;
+	// backup service config, a json string
 	google.protobuf.StringValue backup_service = 14;
+	// restore service config, a json string
 	google.protobuf.StringValue restore_service = 15;
+	// delete snapshot service config, a json string
 	google.protobuf.StringValue delete_snapshot_service = 16;
+	// health check config,a json string
 	google.protobuf.StringValue health_check = 17;
+	// monitor config,a json string
 	google.protobuf.StringValue monitor = 18;
 	google.protobuf.StringValue passphraseless = 19;
+	// vertical scaling policy.eg.[parallel|sequential]
 	google.protobuf.StringValue vertical_scaling_policy = 20;
+	// agent install or not
 	google.protobuf.BoolValue agent_installed = 21;
+	// custom metadata script, a json string
 	google.protobuf.StringValue custom_metadata_script = 22;
+	// image id
 	google.protobuf.StringValue image_id = 23;
+	// policy of backup
 	google.protobuf.StringValue backup_policy = 24;
+	// support incremental backup or not
 	google.protobuf.BoolValue incremental_backup_supported = 25;
+	// hypervisor.eg.[docker|kvm|...]
 	google.protobuf.StringValue hypervisor = 26;
 }
 
 message ClusterNode {
+	// cluster node(cluster contain one more node) id
 	google.protobuf.StringValue node_id = 1;
+	// cluster id
 	google.protobuf.StringValue cluster_id = 2;
+	// name, default empty
 	google.protobuf.StringValue name = 3;
+	// instance id
 	google.protobuf.StringValue instance_id = 4;
+	// volume id, if mount volume
 	google.protobuf.StringValue volume_id = 5;
+	// device
 	google.protobuf.StringValue device = 6;
+	// subnet id
 	google.protobuf.StringValue subnet_id = 7;
+	// private ip
 	google.protobuf.StringValue private_ip = 8;
+	// elastic ip, if attach ip
 	google.protobuf.StringValue eip = 9;
+	// server id
 	google.protobuf.UInt32Value server_id = 10;
+	// role eg.[wordpress|mysql|...]
 	google.protobuf.StringValue role = 11;
+	// status eg.[active|used|enabled|disabled|deleted|stopped|ceased|successful|failed]
 	google.protobuf.StringValue status = 12;
+	// transition status eg.[creating|deleting|upgrading|updating|rollbacking|stopping|starting|recovering|ceasing|resizing|scaling]
 	google.protobuf.StringValue transition_status = 13;
+	// group id
 	google.protobuf.UInt32Value group_id = 14;
+	// own path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 15;
+	// global server id
 	google.protobuf.UInt32Value global_server_id = 16;
+	// custom metadata
 	google.protobuf.StringValue custom_metadata = 17;
+	// public key
 	google.protobuf.StringValue pub_key = 18;
+	// health status default empty eg.[healthy|unhealthy|""]
 	google.protobuf.StringValue health_status = 19;
+	// backup or not
 	google.protobuf.BoolValue is_backup = 20;
+	// auto backup or not
 	google.protobuf.BoolValue auto_backup = 21;
+	// the time when cluster node create
 	google.protobuf.Timestamp create_time = 22;
+	// record cluster node status changed time
 	google.protobuf.Timestamp status_time = 23;
+	// host id
 	google.protobuf.StringValue host_id = 24;
+	// host ip
 	google.protobuf.StringValue host_ip = 25;
+	// cluster role
 	ClusterRole cluster_role = 26;
+	// cluster common info
 	ClusterCommon cluster_common = 27;
+	// list of ssh key pair id
 	repeated string key_pair_id = 28;
+	// owner
 	google.protobuf.StringValue owner = 29;
 }
 
 message ClusterRole {
+	// cluster id
 	google.protobuf.StringValue cluster_id = 1;
+	// role.eg.[wordpress|mysql|...]
 	google.protobuf.StringValue role = 2;
+	// number of cpu
 	google.protobuf.UInt32Value cpu = 3;
+	// number of gpu
 	google.protobuf.UInt32Value gpu = 4;
+	// size of memory
 	google.protobuf.UInt32Value memory = 5;
+	// size of instance
 	google.protobuf.UInt32Value instance_size = 6;
+	// size of storage
 	google.protobuf.UInt32Value storage_size = 7;
+	// mount point, a dir.eg.[/data]
 	google.protobuf.StringValue mount_point = 8;
+	// mount_options
 	google.protobuf.StringValue mount_options = 9;
+	// file system eg.[ext|ext4|...]
 	google.protobuf.StringValue file_system = 10;
+	// env of cluster
 	google.protobuf.StringValue env = 11;
+	// number of replica
 	google.protobuf.UInt32Value replicas = 12;
+	// number of replica on ready
 	google.protobuf.UInt32Value ready_replicas = 13;
+	// api version
 	google.protobuf.StringValue api_version = 14;
 }
 
 message ClusterLoadbalancer {
+	// cluster id
 	google.protobuf.StringValue cluster_id = 1;
+	// role of balancer
 	google.protobuf.StringValue role = 2;
+	// listener id
 	google.protobuf.StringValue loadbalancer_listener_id = 3;
+	// port
 	google.protobuf.UInt32Value loadbalancer_port = 4;
+	// policy id
 	google.protobuf.StringValue loadbalancer_policy_id = 5;
 }
 
 message ClusterLink {
+	// cluster id
 	google.protobuf.StringValue cluster_id = 1;
+	// cluster link name eg.[mysql|wordpress|...]
 	google.protobuf.StringValue name = 2;
+	// external cluster id
 	google.protobuf.StringValue external_cluster_id = 3;
+	// owner path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 4;
+	// owner
 	google.protobuf.StringValue owner = 5;
 }
 
 message Cluster {
+	// cluster id
 	google.protobuf.StringValue cluster_id = 1;
+	// cluster name
 	google.protobuf.StringValue name = 2;
+	// cluster description
 	google.protobuf.StringValue description = 3;
+	// id of app run in cluster
 	google.protobuf.StringValue app_id = 4;
+	// id of version of app run in cluster
 	google.protobuf.StringValue version_id = 5;
+	// subnet id, cluster run in a subnet
 	google.protobuf.StringValue subnet_id = 6;
+	// vpc id, a vpc contain one more subnet
 	google.protobuf.StringValue vpc_id = 7;
+	// frontgate id, a proxy for vpc to communicate
 	google.protobuf.StringValue frontgate_id = 8;
+	// cluster type, frontgate or normal cluster
 	google.protobuf.UInt32Value cluster_type = 9;
+	// endpoint of cluster
 	google.protobuf.StringValue endpoints = 10;
+	// cluster status eg.[active|used|enabled|disabled|deleted|stopped|ceased]
 	google.protobuf.StringValue status = 11;
+	// cluster transition status eg.[creating|deleting|upgrading|updating|rollbacking|stopping|starting|recovering|ceasing|resizing|scaling]
 	google.protobuf.StringValue transition_status = 12;
+	// metadata root access
 	google.protobuf.BoolValue metadata_root_access = 13;
+	// owner path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 14;
+	// global uuid
 	google.protobuf.StringValue global_uuid = 15;
+	// upgrade status, unused
 	google.protobuf.StringValue upgrade_status = 16;
+	// cluster upgraded time
 	google.protobuf.Timestamp upgrade_time = 17;
+	// cluster runtime id
 	google.protobuf.StringValue runtime_id = 18;
+	// the time when cluster create
 	google.protobuf.Timestamp create_time = 19;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 20;
 	google.protobuf.StringValue additional_info = 21;
+	// cluster env
 	google.protobuf.StringValue env = 22;
+	// cluster used to debug or not
 	google.protobuf.BoolValue debug = 23;
+	// zone of cluster eg.[pek3a|pek3b]
 	google.protobuf.StringValue zone = 24;
+	// list of cluster node
 	repeated ClusterNode cluster_node_set = 25;
+	// list of cluster role
 	repeated ClusterRole cluster_role_set = 26;
+	// list of cluster link
 	repeated ClusterLink cluster_link_set = 27;
+	// list of cluster common
 	repeated ClusterCommon cluster_common_set = 28;
+	// lister of cluster loadbalancer
 	repeated ClusterLoadbalancer cluster_loadbalancer_set = 29;
+	// owner
 	google.protobuf.StringValue owner = 30;
 }
 
 message DescribeClustersRequest {
+	// cluster ids
 	repeated string cluster_id = 1;
+	// app ids
 	repeated string app_id = 2;
+	// version ids
 	repeated string version_id = 3;
+	// cluster status eg.[active|used|enabled|disabled|deleted|stopped|ceased]
 	repeated string status = 4;
+	// runtime ids
 	repeated string runtime_id = 5;
+	// frontgate ids
 	repeated string frontgate_id = 6;
+	// external cluster id
 	google.protobuf.StringValue external_cluster_id = 7;
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 8;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 9;
+	// query key, support these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type)
 	google.protobuf.StringValue search_word = 10;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 11;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 12;
+	// owner
 	repeated string owner = 13;
+	// cluster type, frontgate or normal cluster
 	google.protobuf.StringValue cluster_type = 14;
+	// get cluster detail info or not
 	google.protobuf.BoolValue with_detail = 15;
+	// cluster created duration eg.[1 day]
 	google.protobuf.UInt32Value created_date = 16;
+	// select column to display
 	repeated string display_columns = 17;
 }
 message DescribeClustersResponse {
+	// total count of qualified cluster
 	uint32 total_count = 1;
+	// list of cluster
 	repeated Cluster cluster_set = 2;
 }
 
 message DescribeAppClustersRequest {
+	// app ids
 	repeated string app_id = 1;
+	// status eg.[active|used|enabled|disabled|deleted|stopped|ceased]
 	repeated string status = 2;
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 3;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 4;
+	// query key, support these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type)
 	google.protobuf.StringValue search_word = 5;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 6;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 7;
+	// owner
 	repeated string owner = 8;
+	// get cluster with detail
 	google.protobuf.BoolValue with_detail = 9;
+	// cluster created duration eg.[1 day]
 	google.protobuf.UInt32Value created_date = 10;
+	// select columns to display
 	repeated string display_columns = 11;
 }
 message DescribeAppClustersResponse {
+	// total count of cluster of app
 	uint32 total_count = 1;
+	// list of cluster
 	repeated Cluster cluster_set = 2;
 }
 
 message DescribeClusterNodesRequest {
+	// cluster id
 	google.protobuf.StringValue cluster_id = 1;
+	// node ids
 	repeated string node_id = 2;
+	// status eg.[active|used|enabled|disabled|deleted|stopped|ceased]
 	repeated string status = 3;
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 5;
+	// query key, support these fields(cluster_id, node_id, status, owner)
 	google.protobuf.StringValue search_word = 6;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 7;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 8;
+	// owner
 	repeated string owner = 9;
+	// select columns to display
 	repeated string display_columns = 10;
 }
 message DescribeClusterNodesResponse {
+	// total count of node in the cluster
 	uint32 total_count = 1;
+	// list of cluster node
 	repeated ClusterNode cluster_node_set = 2;
 }
 
 message StopClustersRequest {
+	// required, ids of cluster to stop
 	repeated string cluster_id = 1;
+	// advanced param
 	repeated string advanced_param = 2;
 }
 
 message StopClustersResponse {
+	// ids of clusters stopped
 	repeated string cluster_id = 1;
+	// job ids
 	repeated string job_id = 2;
 }
 
 message StartClustersRequest {
+	// required, ids of cluster to start
 	repeated string cluster_id = 1;
+	// advanced param
 	repeated string advanced_param = 2;
 }
 
 message StartClustersResponse {
+	// ids of clusters started
 	repeated string cluster_id = 1;
+	// job ids
 	repeated string job_id = 2;
 }
 
 message RecoverClustersRequest {
+	// required, ids of clusters to recover
 	repeated string cluster_id = 1;
+	// advanced param
 	repeated string advanced_param = 2;
 }
 
 message RecoverClustersResponse {
+	// ids of cluster recovered
 	repeated string cluster_id = 1;
+	// ids of job of recover cluster
 	repeated string job_id = 2;
 }
 
 message CeaseClustersRequest {
+	// required, ids of cluster to cease
 	repeated string cluster_id = 1;
+	// advanced param
 	repeated string advanced_param = 2;
 }
 
 message CeaseClustersResponse {
+	// ids of cluster ceased
 	repeated string cluster_id = 1;
+	// ids of job of cease cluster
 	repeated string job_id = 2;
 }
 
@@ -423,87 +666,124 @@ message GetClusterStatisticsRequest {
 }
 
 message GetClusterStatisticsResponse {
-	// cluster create time range -> cluster count, max length is 14
+	// cluster create time range map to cluster count, max length is 14
 	map<string, uint32> last_two_week_created = 1;
-	// runtime id -> cluster count, max length is 10
+	// runtime id map to cluster count, max length is 10
 	map<string, uint32> top_ten_runtimes = 2;
+	// number of cluster
 	uint32 cluster_count = 3;
+	// number of runtime
 	uint32 runtime_count = 4;
-	// app id -> cluster count, max length is 10
+	// app id map to cluster count, max length is 10
 	map<string, uint32> top_ten_apps = 5;
 }
 
 message KeyPair {
+	// ssh key pair id
 	google.protobuf.StringValue key_pair_id = 1;
+	// key pair name
 	google.protobuf.StringValue name = 2;
+	// key pair description
 	google.protobuf.StringValue description = 3;
+	// public key
 	google.protobuf.StringValue pub_key = 4;
+	// owner path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 5;
+	// the time when key pair create
 	google.protobuf.Timestamp create_time = 6;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 7;
+	// list of node used the keypair
 	repeated string node_id = 8;
+	// owner
 	google.protobuf.StringValue owner = 9;
 }
 
 message CreateKeyPairRequest {
+	// keypair name
 	google.protobuf.StringValue name = 1;
+	// keypair description
 	google.protobuf.StringValue description = 2;
+	// public key
 	google.protobuf.StringValue pub_key = 3;
 }
 
 message CreateKeyPairResponse {
+	// id of key pair created
 	google.protobuf.StringValue key_pair_id = 1;
 }
 
 message DescribeKeyPairsRequest {
+	// key pair id
 	google.protobuf.StringValue key_pair_id = 1;
+	// key pair name
 	google.protobuf.StringValue name = 2;
+	// key pair description
 	google.protobuf.StringValue description = 3;
+	// public key
 	google.protobuf.StringValue pub_key = 4;
+	// owner
 	repeated string owner = 5;
+	// query key, can filter with these fields(key_pair_id, name, owner)
 	google.protobuf.StringValue search_word = 6;
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 7;
+	// data offset, default 0
 	uint32 offset = 8;
+	// select columns to display
 	repeated string display_columns = 9;
 }
 
 message DescribeKeyPairsResponse {
+	// total count of qualified key pair
 	uint32 total_count = 1;
+	// list of key pair
 	repeated KeyPair key_pair_set = 2;
 }
 
 message DeleteKeyPairsRequest {
+	// required, ids of key pairs to delete
 	repeated string key_pair_id = 1;
 }
 
 message DeleteKeyPairsResponse {
+	// ids of key pairs deleted
 	repeated string key_pair_id = 1;
 }
 
 message AttachKeyPairsRequest {
+	// ids of key pairs to attach
 	repeated string key_pair_id = 1;
+	// ids of node to attached
 	repeated string node_id = 2;
 }
 
 message AttachKeyPairsResponse {
+	// ids of jobs of attach key pair
 	repeated string job_id = 1;
 }
 
 message DetachKeyPairsRequest {
+	// ids of key pairs to detach
 	repeated string key_pair_id = 1;
+	// ids of nodes to detached
 	repeated string node_id = 2;
 }
 
 message DetachKeyPairsResponse {
+	// ids of jobs of detach key pair
 	repeated string job_id = 1;
 }
 
 message NodeKeyPair {
+	// id of node with key pair
 	google.protobuf.StringValue node_id = 1;
+	// id of key pair in node
 	google.protobuf.StringValue key_pair_id = 2;
 }
 
 message AddNodeKeyPairsRequest {
+	// list of node with key pair to add
 	repeated NodeKeyPair node_key_pair = 1;
 }
 
@@ -512,6 +792,7 @@ message AddNodeKeyPairsResponse {
 }
 
 message DeleteNodeKeyPairsRequest {
+	// list of node with key pair to delete
 	repeated NodeKeyPair node_key_pair = 1;
 }
 
@@ -522,73 +803,78 @@ message DeleteNodeKeyPairsResponse {
 service ClusterManager {
 	rpc AddNodeKeyPairs (AddNodeKeyPairsRequest) returns (AddNodeKeyPairsResponse);
 	rpc DeleteNodeKeyPairs (DeleteNodeKeyPairsRequest) returns (DeleteNodeKeyPairsResponse);
+	// Create key pair
 	rpc CreateKeyPair (CreateKeyPairRequest) returns (CreateKeyPairResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create key pair"
+			summary: "Create key pair"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/key_pairs"
 			body: "*"
 		};
 	}
+	// Get key pairs, support filter with these fields(key_pair_id, name, owner), default return all key pairs
 	rpc DescribeKeyPairs (DescribeKeyPairsRequest) returns (DescribeKeyPairsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe key pairs"
+			summary: "Get key pairs, support filter with these fields(key_pair_id, name, owner), default return all key pairs"
 		};
 		option (google.api.http) = {
 			get: "/v1/clusters/key_pairs"
 		};
 	}
+	// Batch delete key pairs
 	rpc DeleteKeyPairs (DeleteKeyPairsRequest) returns (DeleteKeyPairsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete key pairs"
+			summary: "Batch delete key pairs"
 		};
 		option (google.api.http) = {
 			delete: "/v1/clusters/key_pairs"
 			body: "*"
 		};
 	}
-
+	// Batch attach key pairs to node
 	rpc AttachKeyPairs (AttachKeyPairsRequest) returns (AttachKeyPairsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "attach key pairs"
+			summary: "Batch attach key pairs to node"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/key_pair/attach"
 			body: "*"
 		};
 	}
-
+	//Batch detach key pairs from node
 	rpc DetachKeyPairs (DetachKeyPairsRequest) returns (DetachKeyPairsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "detach key pairs"
+			summary: "Batch detach key pairs from node"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/key_pair/detach"
 			body: "*"
 		};
 	}
-
+	// Get subnets
 	rpc DescribeSubnets (DescribeSubnetsRequest) returns (DescribeSubnetsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe subnets"
+			summary: "Get subnets"
 		};
 		option (google.api.http) = {
 			get: "/v1/clusters/subnets"
 		};
 	}
+	// Create cluster
 	rpc CreateCluster (CreateClusterRequest) returns (CreateClusterResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create cluster"
+			summary: "Create cluster"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/create"
 			body: "*"
 		};
 	}
+	// Create debug cluster
 	rpc CreateDebugCluster (CreateClusterRequest) returns (CreateClusterResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create debug cluster"
+			summary: "Create debug cluster"
 		};
 		option (google.api.http) = {
 			post: "/v1/debug_clusters/create"
@@ -597,18 +883,20 @@ service ClusterManager {
 	}
 	rpc ModifyCluster (ModifyClusterRequest) returns (ModifyClusterResponse);
 	rpc ModifyClusterNode (ModifyClusterNodeRequest) returns (ModifyClusterNodeResponse);
+	// Modify cluster attributes
 	rpc ModifyClusterAttributes (ModifyClusterAttributesRequest) returns (ModifyClusterAttributesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify cluster attributes"
+			summary: "Modify cluster attributes"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/modify"
 			body: "*"
 		};
 	}
+	// Modify node attributes in the cluster
 	rpc ModifyClusterNodeAttributes (ModifyClusterNodeAttributesRequest) returns (ModifyClusterNodeAttributesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify cluster node attributes"
+			summary: "Modify node attributes in the cluster"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/modify_nodes"
@@ -617,148 +905,165 @@ service ClusterManager {
 	}
 	rpc AddTableClusterNodes (AddTableClusterNodesRequest) returns (google.protobuf.Empty);
 	rpc DeleteTableClusterNodes (DeleteTableClusterNodesRequest) returns (google.protobuf.Empty);
+	// Batch delete clusters
 	rpc DeleteClusters (DeleteClustersRequest) returns (DeleteClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete clusters"
+			summary: "Batch delete clusters"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/delete"
 			body: "*"
 		};
 	}
+	// Upgrade cluster
 	rpc UpgradeCluster (UpgradeClusterRequest) returns (UpgradeClusterResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "upgrade cluster"
+			summary: "Upgrade cluster"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/upgrade"
 			body: "*"
 		};
 	}
+	// Rollback cluster
 	rpc RollbackCluster (RollbackClusterRequest) returns (RollbackClusterResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "rollback cluster"
+			summary: "Rollback cluster"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/rollback"
 			body: "*"
 		};
 	}
+	// Resize cluster
 	rpc ResizeCluster (ResizeClusterRequest) returns (ResizeClusterResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "resize cluster"
+			summary: "Resize cluster"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/resize"
 			body: "*"
 		};
 	}
+	// Batch add nodes to cluster
 	rpc AddClusterNodes (AddClusterNodesRequest) returns (AddClusterNodesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "add cluster nodes"
+			summary: "Batch add nodes to cluster"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/add_nodes"
 			body: "*"
 		};
 	}
+	// Batch delete nodes from cluster
 	rpc DeleteClusterNodes (DeleteClusterNodesRequest) returns (DeleteClusterNodesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete cluster nodes"
+			summary: "Batch delete nodes from cluster"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/delete_nodes"
 			body: "*"
 		};
 	}
+	// Update env of cluster
 	rpc UpdateClusterEnv (UpdateClusterEnvRequest) returns (UpdateClusterEnvResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "update cluster env"
+			summary: "Update env of cluster"
 		};
 		option (google.api.http) = {
 			patch: "/v1/clusters/update_env"
 			body: "*"
 		};
 	}
+	// Get clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all clusters
 	rpc DescribeClusters (DescribeClustersRequest) returns (DescribeClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe clusters"
+			summary: "Get clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all clusters"
 		};
 		option (google.api.http) = {
 			get: "/v1/clusters"
 		};
 	}
+	// Get debug clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all debug clusters
 	rpc DescribeDebugClusters (DescribeClustersRequest) returns (DescribeClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe debug clusters"
+			summary: "Get debug clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all debug clusters"
 		};
 		option (google.api.http) = {
 			get: "/v1/debug_clusters"
 		};
 	}
+	// Get app clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all app clusters
 	rpc DescribeAppClusters (DescribeAppClustersRequest) returns (DescribeAppClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe app clusters"
+			summary: "Get app clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all app clusters"
 		};
 		option (google.api.http) = {
 			get: "/v1/clusters/apps"
 		};
 	}
+	// Get debug app clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all debug app clusters
 	rpc DescribeDebugAppClusters (DescribeAppClustersRequest) returns (DescribeAppClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe debug app clusters"
+			summary: "Get debug app clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all debug app clusters"
 		};
 		option (google.api.http) = {
 			get: "/v1/debug_clusters/apps"
 		};
 	}
+	// Get nodes in cluster, can filter with these fields(cluster_id, node_id, status, owner)
 	rpc DescribeClusterNodes (DescribeClusterNodesRequest) returns (DescribeClusterNodesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe cluster nodes"
+			summary: "Get nodes in cluster, can filter with these fields(cluster_id, node_id, status, owner)"
 		};
 		option (google.api.http) = {
 			get: "/v1/clusters/nodes"
 		};
 	}
+	// Batch stop clusters
 	rpc StopClusters (StopClustersRequest) returns (StopClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "stop clusters"
+			summary: "Batch stop clusters"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/stop"
 			body: "*"
 		};
 	}
+	// Batch start cluster
 	rpc StartClusters (StartClustersRequest) returns (StartClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "start clusters"
+			summary: "Batch start clusters"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/start"
 			body: "*"
 		};
 	}
+	// Batch recover clusters
 	rpc RecoverClusters (RecoverClustersRequest) returns (RecoverClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "recover clusters"
+			summary: "Batch recover clusters"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/recover"
 			body: "*"
 		};
 	}
+	// Batch cease clusters
 	rpc CeaseClusters (CeaseClustersRequest) returns (CeaseClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "cease clusters"
+			summary: "Batch cease clusters"
 		};
 		option (google.api.http) = {
 			post: "/v1/clusters/cease"
 			body: "*"
 		};
 	}
+	// Get statistics of cluster
 	rpc GetClusterStatistics (GetClusterStatisticsRequest) returns (GetClusterStatisticsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get cluster statistics"
+			summary: "Get statistics of cluster"
 		};
 		option (google.api.http) = {
 			get: "/v1/clusters/statistics"

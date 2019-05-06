@@ -19,7 +19,7 @@ type OpenpitrixDescribeClusterNodesResponse struct {
 	// cluster node set
 	ClusterNodeSet OpenpitrixDescribeClusterNodesResponseClusterNodeSet `json:"cluster_node_set"`
 
-	// total count
+	// total count of node in the cluster
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

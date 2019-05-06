@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-CreateClient create client API
+CreateClient creates client
 */
 func (a *Client) CreateClient(params *CreateClientParams, authInfo runtime.ClientAuthInfoWriter) (*CreateClientOK, error) {
 	// TODO: Validate the params before sending
@@ -54,7 +54,7 @@ func (a *Client) CreateClient(params *CreateClientParams, authInfo runtime.Clien
 }
 
 /*
-Token token API
+Token gets users include user info of role and group filter with fields user id email phone number status default return all users
 */
 func (a *Client) Token(params *TokenParams) (*TokenOK, error) {
 	// TODO: Validate the params before sending

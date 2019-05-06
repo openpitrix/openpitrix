@@ -19,7 +19,7 @@ type OpenpitrixDescribeCategoriesResponse struct {
 	// category set
 	CategorySet OpenpitrixDescribeCategoriesResponseCategorySet `json:"category_set"`
 
-	// total count
+	// total count of qualified category
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

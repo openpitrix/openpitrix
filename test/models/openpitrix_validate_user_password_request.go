@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixValidateUserPasswordRequest
 type OpenpitrixValidateUserPasswordRequest struct {
 
-	// email
+	// required, user email
 	Email string `json:"email,omitempty"`
 
-	// password
+	// required, user password
 	Password string `json:"password,omitempty"`
 }
 

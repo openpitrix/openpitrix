@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteGroupsResponse
 type OpenpitrixDeleteGroupsResponse struct {
 
-	// group id
+	// ids of group deleted
 	GroupID []string `json:"group_id"`
 }
 

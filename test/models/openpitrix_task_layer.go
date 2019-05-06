@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixTaskLayer
 type OpenpitrixTaskLayer struct {
 
-	// child
+	// a task layer point to another task layer
 	Child *OpenpitrixTaskLayer `json:"child,omitempty"`
 
 	// tasks

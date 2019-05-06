@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixClusterNode
 type OpenpitrixClusterNode struct {
 
-	// auto backup
+	// auto backup or not
 	AutoBackup bool `json:"auto_backup,omitempty"`
 
-	// cluster common
+	// cluster common info
 	ClusterCommon *OpenpitrixClusterCommon `json:"cluster_common,omitempty"`
 
 	// cluster id
@@ -28,7 +28,7 @@ type OpenpitrixClusterNode struct {
 	// cluster role
 	ClusterRole *OpenpitrixClusterRole `json:"cluster_role,omitempty"`
 
-	// create time
+	// the time when cluster node create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
 	// custom metadata
@@ -37,7 +37,7 @@ type OpenpitrixClusterNode struct {
 	// device
 	Device string `json:"device,omitempty"`
 
-	// eip
+	// elastic ip, if attach ip
 	Eip string `json:"eip,omitempty"`
 
 	// global server id
@@ -46,7 +46,7 @@ type OpenpitrixClusterNode struct {
 	// group id
 	GroupID int64 `json:"group_id,omitempty"`
 
-	// health status
+	// health status default empty eg.[healthy|unhealthy|""]
 	HealthStatus string `json:"health_status,omitempty"`
 
 	// host id
@@ -58,49 +58,49 @@ type OpenpitrixClusterNode struct {
 	// instance id
 	InstanceID string `json:"instance_id,omitempty"`
 
-	// is backup
+	// backup or not
 	IsBackup bool `json:"is_backup,omitempty"`
 
-	// key pair id
+	// list of ssh key pair id
 	KeyPairID []string `json:"key_pair_id"`
 
-	// name
+	// name, default empty
 	Name string `json:"name,omitempty"`
 
-	// node id
+	// cluster node(cluster contain one more node) id
 	NodeID string `json:"node_id,omitempty"`
 
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// own path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
 	// private ip
 	PrivateIP string `json:"private_ip,omitempty"`
 
-	// pub key
+	// public key
 	PubKey string `json:"pub_key,omitempty"`
 
-	// role
+	// role eg.[wordpress|mysql|...]
 	Role string `json:"role,omitempty"`
 
 	// server id
 	ServerID int64 `json:"server_id,omitempty"`
 
-	// status
+	// status eg.[active|used|enabled|disabled|deleted|stopped|ceased|successful|failed]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record cluster node status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
 	// subnet id
 	SubnetID string `json:"subnet_id,omitempty"`
 
-	// transition status
+	// transition status eg.[creating|deleting|upgrading|updating|rollbacking|stopping|starting|recovering|ceasing|resizing|scaling]
 	TransitionStatus string `json:"transition_status,omitempty"`
 
-	// volume id
+	// volume id, if mount volume
 	VolumeID string `json:"volume_id,omitempty"`
 }
 

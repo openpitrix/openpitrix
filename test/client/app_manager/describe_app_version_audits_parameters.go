@@ -63,33 +63,60 @@ for the describe app version audits operation typically these are written to a h
 */
 type DescribeAppVersionAuditsParams struct {
 
-	/*AppID*/
+	/*AppID
+	  app ids.
+
+	*/
 	AppID []string
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default is 20, max value is 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default is 0.
 
 	*/
 	Offset *int64
-	/*Operator*/
+	/*Operator
+	  auditer of app version.
+
+	*/
 	Operator []string
-	/*OperatorType*/
+	/*OperatorType
+	  operator type eg.[global_admin|developer|business|technical|isv].
+
+	*/
 	OperatorType []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(version_id, app_id, status, operator, role).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  app version audit status eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended].
+
+	*/
 	Status []string
-	/*VersionID*/
+	/*VersionID
+	  app version ids.
+
+	*/
 	VersionID []string
 
 	timeout    time.Duration

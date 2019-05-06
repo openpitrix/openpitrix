@@ -63,31 +63,70 @@ for the describe users detail operation typically these are written to a http.Re
 */
 type DescribeUsersDetailParams struct {
 
-	/*Email*/
+	/*Email
+	  email, eg.op@yunify.com.
+
+	*/
 	Email []string
-	/*GroupID*/
+	/*GroupID
+	  group ids.
+
+	*/
 	GroupID []string
-	/*Limit*/
+	/*Limit
+	  data limit, default 20, max 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  data offset, default 0.
+
+	*/
 	Offset *int64
-	/*PhoneNumber*/
+	/*PhoneNumber
+	  phone number, string of 11 digital.
+
+	*/
 	PhoneNumber []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*RoleID*/
+	/*RoleID
+	  role ids.
+
+	*/
 	RoleID []string
-	/*RootGroupID*/
+	/*RootGroupID
+	  use root group ids to get all group ids.
+
+	*/
 	RootGroupID []string
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(user_id, email, phone_number, status).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[active|deleted].
+
+	*/
 	Status []string
-	/*UserID*/
+	/*UserID
+	  user ids.
+
+	*/
 	UserID []string
-	/*Username*/
+	/*Username
+	  username.
+
+	*/
 	Username []string
 
 	timeout    time.Duration

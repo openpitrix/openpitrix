@@ -19,7 +19,7 @@ type OpenpitrixCeaseClustersRequest struct {
 	// advanced param
 	AdvancedParam []string `json:"advanced_param"`
 
-	// cluster id
+	// required, ids of cluster to cease
 	ClusterID []string `json:"cluster_id"`
 }
 

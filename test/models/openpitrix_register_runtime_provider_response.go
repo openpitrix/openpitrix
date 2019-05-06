@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixRegisterRuntimeProviderResponse
 type OpenpitrixRegisterRuntimeProviderResponse struct {
 
-	// ok
+	// register ok or not
 	Ok bool `json:"ok,omitempty"`
 }
 

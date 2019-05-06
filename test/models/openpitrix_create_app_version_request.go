@@ -16,16 +16,16 @@ import (
 // swagger:model openpitrixCreateAppVersionRequest
 type OpenpitrixCreateAppVersionRequest struct {
 
-	// app id
+	// required, id of app to create new version
 	AppID string `json:"app_id,omitempty"`
 
-	// description
+	// description of app of specific version
 	Description string `json:"description,omitempty"`
 
-	// name
+	// required, version name eg.[0.1.0|0.1.3|...]
 	Name string `json:"name,omitempty"`
 
-	// package
+	// package of app of specific version
 	Package strfmt.Base64 `json:"package,omitempty"`
 
 	// optional: vmbased/helm

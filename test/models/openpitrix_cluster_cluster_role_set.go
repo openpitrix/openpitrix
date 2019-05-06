@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixClusterClusterRoleSet openpitrix cluster cluster role set
+// OpenpitrixClusterClusterRoleSet list of cluster role
 // swagger:model openpitrixClusterClusterRoleSet
 type OpenpitrixClusterClusterRoleSet []*OpenpitrixClusterRole
 

@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixRuntimeItemConfig
 type OpenpitrixRuntimeItemConfig struct {
 
-	// enable
+	// whether runtime is available
 	Enable bool `json:"enable,omitempty"`
 
-	// name
+	// runtime name eg.[qingcloud|aliyun|aws|kubernetes]
 	Name string `json:"name,omitempty"`
 }
 

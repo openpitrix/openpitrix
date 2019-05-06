@@ -19,7 +19,7 @@ type OpenpitrixDescribeReposResponse struct {
 	// repo set
 	RepoSet OpenpitrixDescribeReposResponseRepoSet `json:"repo_set"`
 
-	// total count
+	// total count of repository
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

@@ -63,29 +63,50 @@ for the describe vendor verify infos operation typically these are written to a 
 */
 type DescribeVendorVerifyInfosParams struct {
 
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select column to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*Owner*/
+	/*Owner
+	  owner.
+
+	*/
 	Owner []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(user_id, status).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[draft|submitted|passed|rejected|suspended|in-review|new].
+
+	*/
 	Status []string
-	/*UserID*/
+	/*UserID
+	  user ids.
+
+	*/
 	UserID []string
 
 	timeout    time.Duration

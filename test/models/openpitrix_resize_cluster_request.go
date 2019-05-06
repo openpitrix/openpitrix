@@ -19,7 +19,7 @@ type OpenpitrixResizeClusterRequest struct {
 	// advanced param
 	AdvancedParam []string `json:"advanced_param"`
 
-	// cluster id
+	// required, id of cluster to resize
 	ClusterID string `json:"cluster_id,omitempty"`
 
 	// role resource

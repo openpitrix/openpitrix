@@ -19,16 +19,16 @@ type OpenpitrixCreateClusterRequest struct {
 	// advanced param
 	AdvancedParam []string `json:"advanced_param"`
 
-	// app id
+	// required, id of app to run in cluster
 	AppID string `json:"app_id,omitempty"`
 
-	// conf
+	// required, conf a json string, include cpu, memory info of cluster
 	Conf string `json:"conf,omitempty"`
 
-	// runtime id
+	// required, id of runtime
 	RuntimeID string `json:"runtime_id,omitempty"`
 
-	// version id
+	// required, id of app version
 	VersionID string `json:"version_id,omitempty"`
 }
 

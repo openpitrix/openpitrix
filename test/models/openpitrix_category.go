@@ -19,28 +19,28 @@ type OpenpitrixCategory struct {
 	// category id
 	CategoryID string `json:"category_id,omitempty"`
 
-	// create time
+	// the time when category create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// description
+	// category description
 	Description string `json:"description,omitempty"`
 
-	// icon
+	// category icon
 	Icon string `json:"icon,omitempty"`
 
-	// locale
+	// the i18n of this category, json format, sample: {"zh_cn": "数据库", "en": "database"}
 	Locale string `json:"locale,omitempty"`
 
-	// name
+	// category name,app belong to a category,eg.[AI|Firewall|cache|...]
 	Name string `json:"name,omitempty"`
 
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// owner path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// update time
+	// the time when category update
 	UpdateTime strfmt.DateTime `json:"update_time,omitempty"`
 }
 

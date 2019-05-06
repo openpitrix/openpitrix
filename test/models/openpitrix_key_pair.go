@@ -16,31 +16,31 @@ import (
 // swagger:model openpitrixKeyPair
 type OpenpitrixKeyPair struct {
 
-	// create time
+	// the time when key pair create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// description
+	// key pair description
 	Description string `json:"description,omitempty"`
 
-	// key pair id
+	// ssh key pair id
 	KeyPairID string `json:"key_pair_id,omitempty"`
 
-	// name
+	// key pair name
 	Name string `json:"name,omitempty"`
 
-	// node id
+	// list of node used the keypair
 	NodeID []string `json:"node_id"`
 
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// owner path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// pub key
+	// public key
 	PubKey string `json:"pub_key,omitempty"`
 
-	// status time
+	// record status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 }
 

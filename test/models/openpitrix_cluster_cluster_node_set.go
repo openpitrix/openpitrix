@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixClusterClusterNodeSet openpitrix cluster cluster node set
+// OpenpitrixClusterClusterNodeSet list of cluster node
 // swagger:model openpitrixClusterClusterNodeSet
 type OpenpitrixClusterClusterNodeSet []*OpenpitrixClusterNode
 

@@ -16,13 +16,13 @@ import (
 // swagger:model openpitrixSubmitVendorVerifyInfoRequest
 type OpenpitrixSubmitVendorVerifyInfoRequest struct {
 
-	// authorizer email
+	// required, authorizer email eg. xxx@yunify.com
 	AuthorizerEmail string `json:"authorizer_email,omitempty"`
 
-	// authorizer name
+	// required, authorizer name
 	AuthorizerName string `json:"authorizer_name,omitempty"`
 
-	// authorizer phone
+	// authorizer phone, string of 11 digit
 	AuthorizerPhone string `json:"authorizer_phone,omitempty"`
 
 	// bank account name
@@ -34,7 +34,7 @@ type OpenpitrixSubmitVendorVerifyInfoRequest struct {
 	// bank name
 	BankName string `json:"bank_name,omitempty"`
 
-	// company name
+	// required, company name
 	CompanyName string `json:"company_name,omitempty"`
 
 	// company profile
@@ -43,7 +43,7 @@ type OpenpitrixSubmitVendorVerifyInfoRequest struct {
 	// company website
 	CompanyWebsite string `json:"company_website,omitempty"`
 
-	// user id
+	// required, id of user to submit
 	UserID string `json:"user_id,omitempty"`
 }
 

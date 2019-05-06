@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixBindUserRoleResponse
 type OpenpitrixBindUserRoleResponse struct {
 
-	// role id
+	// ids of role for user to bind with
 	RoleID []string `json:"role_id"`
 
-	// user id
+	// ids of user bind
 	UserID []string `json:"user_id"`
 }
 

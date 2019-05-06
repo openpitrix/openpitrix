@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixModifyClusterAttributesResponse
 type OpenpitrixModifyClusterAttributesResponse struct {
 
-	// cluster id
+	// id of cluster modified
 	ClusterID string `json:"cluster_id,omitempty"`
 }
 

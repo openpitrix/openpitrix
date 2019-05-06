@@ -63,33 +63,60 @@ for the describe app version reviews operation typically these are written to a 
 */
 type DescribeAppVersionReviewsParams struct {
 
-	/*AppID*/
+	/*AppID
+	  app ids.
+
+	*/
 	AppID []string
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default is 20, max value is 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default is 0.
 
 	*/
 	Offset *int64
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*ReviewID*/
+	/*ReviewID
+	  app version review ids.
+
+	*/
 	ReviewID []string
-	/*Reviewer*/
+	/*Reviewer
+	  reviewer of app version eg.[global_admin|developer|business|technical|isv].
+
+	*/
 	Reviewer []string
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(review_id, version_id, app_id, status, reviewer).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  app version status eg.[isv-in-review|isv-passed|isv-rejected|isv-draft|business-in-review|business-passed|business-rejected|develop-draft|develop-in-review|develop-passed|develop-rejected|develop-draft].
+
+	*/
 	Status []string
-	/*VersionID*/
+	/*VersionID
+	  app version ids.
+
+	*/
 	VersionID []string
 
 	timeout    time.Duration

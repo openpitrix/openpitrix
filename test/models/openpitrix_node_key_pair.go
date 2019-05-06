@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixNodeKeyPair
 type OpenpitrixNodeKeyPair struct {
 
-	// key pair id
+	// id of key pair in node
 	KeyPairID string `json:"key_pair_id,omitempty"`
 
-	// node id
+	// id of node with key pair
 	NodeID string `json:"node_id,omitempty"`
 }
 

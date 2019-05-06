@@ -16,58 +16,58 @@ import (
 // swagger:model openpitrixRepo
 type OpenpitrixRepo struct {
 
-	// app default status
+	// app default status eg[active|draft]
 	AppDefaultStatus string `json:"app_default_status,omitempty"`
 
 	// category set
 	CategorySet OpenpitrixRepoCategorySet `json:"category_set"`
 
-	// 0 for self resource; 1 for openpitrix resource
+	// controller, value 0 for self resource, value 1 for openpitrix resource
 	Controller int32 `json:"controller,omitempty"`
 
-	// create time
+	// the time when repository create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// credential
+	// credential of visiting the repository
 	Credential string `json:"credential,omitempty"`
 
-	// description
+	// repository description
 	Description string `json:"description,omitempty"`
 
 	// labels
 	Labels OpenpitrixRepoLabels `json:"labels"`
 
-	// name
+	// repository name
 	Name string `json:"name,omitempty"`
 
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// owner path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// providers
+	// runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	Providers []string `json:"providers"`
 
-	// repo id
+	// repository id
 	RepoID string `json:"repo_id,omitempty"`
 
 	// selectors
 	Selectors OpenpitrixRepoSelectors `json:"selectors"`
 
-	// status
+	// status eg.[active|deleted]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
-	// type
+	// type of repository eg.[http|https|s3]
 	Type string `json:"type,omitempty"`
 
-	// url
+	// url of visiting the repository
 	URL string `json:"url,omitempty"`
 
-	// visibility
+	// visibility.eg:[public|private]
 	Visibility string `json:"visibility,omitempty"`
 }
 

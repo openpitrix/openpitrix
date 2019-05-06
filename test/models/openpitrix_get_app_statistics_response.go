@@ -16,16 +16,16 @@ import (
 // swagger:model openpitrixGetAppStatisticsResponse
 type OpenpitrixGetAppStatisticsResponse struct {
 
-	// app count
+	// total app count
 	AppCount int64 `json:"app_count,omitempty"`
 
-	// app create time range -> app count, max length is 14
+	// range of app created time map to app count, max length is 14
 	LastTwoWeekCreated map[string]int64 `json:"last_two_week_created,omitempty"`
 
-	// repo count
+	// total repository count
 	RepoCount int64 `json:"repo_count,omitempty"`
 
-	// repo id -> app count, max length is 10
+	// repo id map to app count, max length is 10
 	TopTenRepos map[string]int64 `json:"top_ten_repos,omitempty"`
 }
 

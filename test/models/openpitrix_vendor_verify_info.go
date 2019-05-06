@@ -16,22 +16,22 @@ import (
 // swagger:model openpitrixVendorVerifyInfo
 type OpenpitrixVendorVerifyInfo struct {
 
-	// approver
+	// approver who approve the vendor verify
 	Approver string `json:"approver,omitempty"`
 
-	// authorizer email
+	// authorizer email eg.***@yunify.com
 	AuthorizerEmail string `json:"authorizer_email,omitempty"`
 
 	// authorizer name
 	AuthorizerName string `json:"authorizer_name,omitempty"`
 
-	// authorizer phone
+	// authorizer phone, string of 11 digit
 	AuthorizerPhone string `json:"authorizer_phone,omitempty"`
 
-	// bank account name
+	// name of bank account
 	BankAccountName string `json:"bank_account_name,omitempty"`
 
-	// bank account number
+	// number of bank account
 	BankAccountNumber string `json:"bank_account_number,omitempty"`
 
 	// bank name
@@ -46,22 +46,22 @@ type OpenpitrixVendorVerifyInfo struct {
 	// company website
 	CompanyWebsite string `json:"company_website,omitempty"`
 
-	// owner
+	// owner who own the vendor verify
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// owner path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
 	// reject message
 	RejectMessage string `json:"reject_message,omitempty"`
 
-	// status
+	// status eg.[draft|submitted|passed|rejected|suspended|in-review|new]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
-	// submit time
+	// submit time of vendor verify
 	SubmitTime strfmt.DateTime `json:"submit_time,omitempty"`
 
 	// user id

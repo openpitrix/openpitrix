@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixRecoverAppVersionResponse
 type OpenpitrixRecoverAppVersionResponse struct {
 
-	// version id
+	// id of version recovered
 	VersionID string `json:"version_id,omitempty"`
 }
 

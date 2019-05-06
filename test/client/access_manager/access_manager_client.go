@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-BindUserRole bind user role API
+BindUserRole binds role and user a user belong to a role
 */
 func (a *Client) BindUserRole(params *BindUserRoleParams, authInfo runtime.ClientAuthInfoWriter) (*BindUserRoleOK, error) {
 	// TODO: Validate the params before sending
@@ -54,7 +54,7 @@ func (a *Client) BindUserRole(params *BindUserRoleParams, authInfo runtime.Clien
 }
 
 /*
-CanDo can do API
+CanDo validates whether the user user id have permission to visit resource url method url
 */
 func (a *Client) CanDo(params *CanDoParams, authInfo runtime.ClientAuthInfoWriter) (*CanDoOK, error) {
 	// TODO: Validate the params before sending
@@ -83,7 +83,7 @@ func (a *Client) CanDo(params *CanDoParams, authInfo runtime.ClientAuthInfoWrite
 }
 
 /*
-CreateRole create role API
+CreateRole creates role different role has different permissions
 */
 func (a *Client) CreateRole(params *CreateRoleParams, authInfo runtime.ClientAuthInfoWriter) (*CreateRoleOK, error) {
 	// TODO: Validate the params before sending
@@ -112,7 +112,7 @@ func (a *Client) CreateRole(params *CreateRoleParams, authInfo runtime.ClientAut
 }
 
 /*
-DeleteRoles delete roles API
+DeleteRoles batches delete roles
 */
 func (a *Client) DeleteRoles(params *DeleteRolesParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteRolesOK, error) {
 	// TODO: Validate the params before sending
@@ -141,7 +141,7 @@ func (a *Client) DeleteRoles(params *DeleteRolesParams, authInfo runtime.ClientA
 }
 
 /*
-DescribeRoles admins permission
+DescribeRoles gets roles
 */
 func (a *Client) DescribeRoles(params *DescribeRolesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeRolesOK, error) {
 	// TODO: Validate the params before sending
@@ -170,7 +170,7 @@ func (a *Client) DescribeRoles(params *DescribeRolesParams, authInfo runtime.Cli
 }
 
 /*
-GetRole get role API
+GetRole gets role info
 */
 func (a *Client) GetRole(params *GetRoleParams, authInfo runtime.ClientAuthInfoWriter) (*GetRoleOK, error) {
 	// TODO: Validate the params before sending
@@ -199,7 +199,7 @@ func (a *Client) GetRole(params *GetRoleParams, authInfo runtime.ClientAuthInfoW
 }
 
 /*
-GetRoleModule get role module API
+GetRoleModule gets role module different role has different permission to access different module
 */
 func (a *Client) GetRoleModule(params *GetRoleModuleParams, authInfo runtime.ClientAuthInfoWriter) (*GetRoleModuleOK, error) {
 	// TODO: Validate the params before sending
@@ -228,7 +228,7 @@ func (a *Client) GetRoleModule(params *GetRoleModuleParams, authInfo runtime.Cli
 }
 
 /*
-ModifyRole modify role API
+ModifyRole batches modify role info
 */
 func (a *Client) ModifyRole(params *ModifyRoleParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyRoleOK, error) {
 	// TODO: Validate the params before sending
@@ -257,7 +257,7 @@ func (a *Client) ModifyRole(params *ModifyRoleParams, authInfo runtime.ClientAut
 }
 
 /*
-ModifyRoleModule modify role module API
+ModifyRoleModule modifies role module that can be visited
 */
 func (a *Client) ModifyRoleModule(params *ModifyRoleModuleParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyRoleModuleOK, error) {
 	// TODO: Validate the params before sending
@@ -286,7 +286,7 @@ func (a *Client) ModifyRoleModule(params *ModifyRoleModuleParams, authInfo runti
 }
 
 /*
-UnbindUserRole unbind user role API
+UnbindUserRole unbinds user and role
 */
 func (a *Client) UnbindUserRole(params *UnbindUserRoleParams, authInfo runtime.ClientAuthInfoWriter) (*UnbindUserRoleOK, error) {
 	// TODO: Validate the params before sending

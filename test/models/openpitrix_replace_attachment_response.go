@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixReplaceAttachmentResponse
 type OpenpitrixReplaceAttachmentResponse struct {
 
-	// attachment id
+	// id of attachment replaced
 	AttachmentID string `json:"attachment_id,omitempty"`
 
-	// filename
+	// filename, attachment contain one more file
 	Filename []string `json:"filename"`
 }
 

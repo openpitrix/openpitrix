@@ -19,7 +19,7 @@ type OpenpitrixStartClustersRequest struct {
 	// advanced param
 	AdvancedParam []string `json:"advanced_param"`
 
-	// cluster id
+	// required, ids of cluster to start
 	ClusterID []string `json:"cluster_id"`
 }
 

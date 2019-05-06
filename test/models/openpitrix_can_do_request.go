@@ -16,16 +16,16 @@ import (
 // swagger:model openpitrixCanDoRequest
 type OpenpitrixCanDoRequest struct {
 
-	// api method
+	// rpc method eg.[Token|CanDo|...]
 	APIMethod string `json:"api_method,omitempty"`
 
-	// url
+	// required, request uri
 	URL string `json:"url,omitempty"`
 
-	// url method
+	// required, url method, http verb
 	URLMethod string `json:"url_method,omitempty"`
 
-	// user id
+	// required, id of user to check whether has permission
 	UserID string `json:"user_id,omitempty"`
 }
 

@@ -19,10 +19,10 @@ type OpenpitrixUpgradeClusterRequest struct {
 	// advanced param
 	AdvancedParam []string `json:"advanced_param"`
 
-	// cluster id
+	// required, id of cluster to upgrade
 	ClusterID string `json:"cluster_id,omitempty"`
 
-	// version id
+	// app version id
 	VersionID string `json:"version_id,omitempty"`
 }
 

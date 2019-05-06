@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixStopClustersResponse
 type OpenpitrixStopClustersResponse struct {
 
-	// cluster id
+	// ids of clusters stopped
 	ClusterID []string `json:"cluster_id"`
 
-	// job id
+	// job ids
 	JobID []string `json:"job_id"`
 }
 

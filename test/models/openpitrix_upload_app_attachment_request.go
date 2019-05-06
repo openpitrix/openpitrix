@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixUploadAppAttachmentRequest
 type OpenpitrixUploadAppAttachmentRequest struct {
 
-	// app id
+	// required, id of app to upload attachment
 	AppID string `json:"app_id,omitempty"`
 
-	// attachment content
+	// required, content of attachment
 	AttachmentContent strfmt.Base64 `json:"attachment_content,omitempty"`
 
 	// only for screenshot, range: [0, 5]

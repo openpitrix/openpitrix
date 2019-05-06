@@ -22,13 +22,13 @@ type OpenpitrixClusterLink struct {
 	// external cluster id
 	ExternalClusterID string `json:"external_cluster_id,omitempty"`
 
-	// name
+	// cluster link name eg.[mysql|wordpress|...]
 	Name string `json:"name,omitempty"`
 
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// owner path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 }
 

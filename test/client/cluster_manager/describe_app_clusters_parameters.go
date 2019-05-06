@@ -63,33 +63,60 @@ for the describe app clusters operation typically these are written to a http.Re
 */
 type DescribeAppClustersParams struct {
 
-	/*AppID*/
+	/*AppID
+	  app ids.
+
+	*/
 	AppID []string
-	/*CreatedDate*/
+	/*CreatedDate
+	  cluster created duration eg.[1 day].
+
+	*/
 	CreatedDate *int64
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*Owner*/
+	/*Owner
+	  owner.
+
+	*/
 	Owner []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[active|used|enabled|disabled|deleted|stopped|ceased].
+
+	*/
 	Status []string
-	/*WithDetail*/
+	/*WithDetail
+	  get cluster with detail.
+
+	*/
 	WithDetail *bool
 
 	timeout    time.Duration

@@ -15,106 +15,222 @@ import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
 service AccountManager {
+	// Get users, filter with fields(user_id, email, phone_number, status), default return all users
 	rpc DescribeUsers (DescribeUsersRequest) returns (DescribeUsersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Get users, filter with fields(user_id, email, phone_number, status), default return all users"
+		};
 		option (google.api.http) = { get: "/v1/users" };
 	};
+
+	// Get users, include user info of role and group, filter with fields(user_id, email, phone_number, status), default return all users
 	rpc DescribeUsersDetail (DescribeUsersRequest) returns (DescribeUsersDetailResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Get users, include user info of role and group, filter with fields(user_id, email, phone_number, status), default return all users"
+		};
 		option (google.api.http) = { get: "/v1/users_detail" };
 	};
+
+	// Modify user info
 	rpc ModifyUser (ModifyUserRequest) returns (ModifyUserResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Modify user info"
+		};
 		option (google.api.http) = { patch: "/v1/users" body: "*" };
 	};
+
+	// Delete users by user_ids
 	rpc DeleteUsers (DeleteUsersRequest) returns (DeleteUsersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Delete user by user_id"
+		};
 		option (google.api.http) = { delete: "/v1/users" body: "*" };
 	};
 
+	// Change user password
 	rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Change user password"
+		};
 		option (google.api.http) = { post: "/v1/users/password:change" body: "*" };
 	};
+
+	// Create a request to reset user password
 	rpc CreatePasswordReset (CreatePasswordResetRequest) returns (CreatePasswordResetResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Create a request to reset user's passwo"
+		};
 		option (google.api.http) = { post: "/v1/users/password:reset" body: "*" };
 	};
+
+	// Isv of platform create user
 	rpc IsvCreateUser (CreateUserRequest) returns (CreateUserResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Isv of platform create user"
+		};
 		option (google.api.http) = { post: "/v1/isv_users" body: "*" };
 	};
 
-	// admin permission
+	// Create user, if user have admin permission
 	rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Create user, if user have admin permission"
+		};
 		option (google.api.http) = { post: "/v1/users" body: "*" };
 	};
+	// Get a request of reset user's password
 	rpc GetPasswordReset (GetPasswordResetRequest) returns (GetPasswordResetResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Get a request of reset user's password"
+		};
 		option (google.api.http) = { get: "/v1/users/password:reset" };
 	};
+
+	// Validate user and password
 	rpc ValidateUserPassword (ValidateUserPasswordRequest) returns (ValidateUserPasswordResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Validate user and password"
+		};
 		option (google.api.http) = { post: "/v1/users/password:validate" body: "*" };
 	};
 
-	// group
+	// Create group, a group contain one more user
 	rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Create group, a group contain one more user"
+		};
 		option (google.api.http) = { post: "/v1/groups" body: "*" };
 	};
+
+	// Get groups, can filter with these fields(group_id, parent_group_id, group_path, status), default return all groups
 	rpc DescribeGroups (DescribeGroupsRequest) returns (DescribeGroupsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Get groups, can filter with these fields(group_id, parent_group_id, group_path, status), default return all groups"
+		};
 		option (google.api.http) = { get: "/v1/groups" };
 	};
+
+	// Get groups, include all user in this group, can filter with these fields(group_id, parent_group_id, group_path, status), default return all groups
 	rpc DescribeGroupsDetail (DescribeGroupsRequest) returns (DescribeGroupsDetailResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Get groups, include all user in this group, can filter with these fields(group_id, parent_group_id, group_path, status), default return all groups"
+		};
 		option (google.api.http) = { get: "/v1/groups_detail" };
 	};
+
+	//Modify group info
 	rpc ModifyGroup (ModifyGroupRequest) returns (ModifyGroupResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Modify group info"
+		};
 		option (google.api.http) = { patch: "/v1/groups" body: "*" };
 	};
+
+	// Delete groups
 	rpc DeleteGroups (DeleteGroupsRequest) returns (DeleteGroupsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Delete groups"
+		};
 		option (google.api.http) = { delete: "/v1/groups" body: "*" };
 	};
+
+	// Join groups, user can join in groups
 	rpc JoinGroup (JoinGroupRequest) returns (JoinGroupResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Join groups, user can join in groups"
+		};
 		option (google.api.http) = { post: "/v1/groups:join" body: "*" };
 	};
+
+	// Leave groups, user can leave from groups
 	rpc LeaveGroup (LeaveGroupRequest) returns (LeaveGroupResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Leave groups, user can leave from groups"
+		};
 		option (google.api.http) = { post: "/v1/groups:leave" body: "*" };
 	};
 }
 
 service AccessManager {
+	// Validate whether the user[user_id] have permission to visit resource[url_method:url]
 	rpc CanDo (CanDoRequest) returns (CanDoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Validates whether the user[user_id] have permission to visit resource[url_method:url]"
+		};
 		option (google.api.http) = { post: "/v1/cando" body: "*" };
 	}
-
-	// role module
+	// Get role module, different role has different permission to access different module
 	rpc GetRoleModule (GetRoleModuleRequest) returns (GetRoleModuleResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Get role module, different role has different permission to access different module"
+		};
 		option (google.api.http) = { get: "/v1/roles:module" };
 	}
+	// Modify role module that can be visited
 	rpc ModifyRoleModule (ModifyRoleModuleRequest) returns (ModifyRoleModuleResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Modify role module that can be visited"
+		};
 		option (google.api.http) = { post: "/v1/roles:module" body: "*" };
 	}
-
-	// role
+	// Create role, different role has different permissions
 	rpc CreateRole (CreateRoleRequest) returns (CreateRoleResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Create role, different role has different permissions"
+		};
 		option (google.api.http) = { post: "/v1/roles" body: "*" };
 	}
+	// Batch delete roles
 	rpc DeleteRoles (DeleteRolesRequest) returns (DeleteRolesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Batch delete roles"
+		};
 		option (google.api.http) = { delete: "/v1/roles" body: "*" };
 	}
+	// Modify role info
 	rpc ModifyRole (ModifyRoleRequest) returns (ModifyRoleResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Batch modify role info"
+		};
 		option (google.api.http) = { patch: "/v1/roles" body: "*" };
 	}
+	// Get role info
 	rpc GetRole (GetRoleRequest) returns (GetRoleResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Get role info"
+		};
 		option (google.api.http) = { get: "/v1/role" };
 	}
+	// Get roles, filter with these fields(role_id, portal, status)
 	rpc DescribeRoles (DescribeRolesRequest) returns (DescribeRolesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Get roles"
+		};
 		option (google.api.http) = { get: "/v1/roles" };
 	}
-
-	// role/user
+	// Bind role and user, a user belong to a role
 	rpc BindUserRole (BindUserRoleRequest) returns (BindUserRoleResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Bind role and user, a user belong to a role"
+		};
 		option (google.api.http) = { post: "/v1/user:role" body: "*" };
 	}
+	// Unbind user and role
 	rpc UnbindUserRole (UnbindUserRoleRequest) returns (UnbindUserRoleResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Unbind user and role"
+		};
 		option (google.api.http) = { delete: "/v1/user:role" body: "*" };
 	}
 }
 
 
 service TokenManager {
+	// Create client
 	rpc CreateClient (CreateClientRequest) returns (CreateClientResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Create client"
+		};
 		option (google.api.http) = { post: "/v1/oauth2/client" body: "*" };
 	};
 
@@ -129,390 +245,583 @@ service TokenManager {
 	//
 	// Ref: https://tools.ietf.org/html/rfc6749#section-6
 	//
+	// Get token
 	rpc Token (TokenRequest) returns (TokenResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			security: {} };
+			security: {};
+		};
 		option (google.api.http) = { post: "/v1/oauth2/token" body: "*" };
 	};
 }
 
 message User {
+	// user id, user belong to different group and role, has different permissions
 	google.protobuf.StringValue user_id = 1;
+	// user name
 	google.protobuf.StringValue username = 2;
+	// user email
 	google.protobuf.StringValue email = 3;
+	// user phone number
 	google.protobuf.StringValue phone_number = 4;
+	// user description
 	google.protobuf.StringValue description = 5;
+	// user status eg.[active|deleted]
 	google.protobuf.StringValue status = 6;
+	// the time when user create
 	google.protobuf.Timestamp create_time = 7;
+	// the time when user update
 	google.protobuf.Timestamp update_time = 8;
+	// record changed time of status
 	google.protobuf.Timestamp status_time = 9;
 }
 
 message UserDetail {
+	// user info
 	User user = 1;
+	// list of user's role
 	repeated Role role_set = 2;
+	// list of user's group
 	repeated Group group_set = 3;
 }
 
 message Group {
+	// parent group id
 	google.protobuf.StringValue parent_group_id = 1;
+	// group id
 	google.protobuf.StringValue group_id = 2;
+	// group path, a concat string gid-xxx.gid-xxx.gid...
 	google.protobuf.StringValue group_path = 3;
+	// group name
 	google.protobuf.StringValue name = 4;
+	// group status eg.[active|deleted]
 	google.protobuf.StringValue status = 5;
+	// group description
 	google.protobuf.StringValue description = 6;
 
+	// the time when user create
 	google.protobuf.Timestamp create_time = 7;
+	// the time when group update
 	google.protobuf.Timestamp update_time = 8;
+	// record group status changed time
 	google.protobuf.Timestamp status_time = 9;
 }
 
 message GroupDetail {
+	// group base info
 	Group group = 1;
+	// users in group
 	repeated User user_set = 2;
 }
 
 message DescribeUsersRequest {
+	// query key, support these fields(user_id, email, phone_number, status)
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
+	// data limit, default 20, max 200
 	uint32 limit = 4;
+	// data offset, default 0
 	uint32 offset = 5;
 
+	// use root group ids to get all group ids
 	repeated string root_group_id = 6;
+	// group ids
 	repeated string group_id = 7;
+	// user ids
 	repeated string user_id = 8;
+	// status eg.[active|deleted]
 	repeated string status = 9;
+	// role ids
 	repeated string role_id = 10;
+	// username
 	repeated string username = 11;
+	// email, eg.op@yunify.com
 	repeated string email = 12;
+	// phone number, string of 11 digital
 	repeated string phone_number = 13;
 }
 
 message DescribeUsersResponse {
+	// total count of qualified user
 	uint32 total_count = 1;
+	// list of user
 	repeated User user_set = 2;
 }
 
 message DescribeUsersDetailResponse {
+	// total count of qualified user
 	uint32 total_count = 1;
+	// list of user with detail info
 	repeated UserDetail user_detail_set = 2;
 }
 
 message ModifyUserRequest {
+	// required, id of user to be modify
 	google.protobuf.StringValue user_id = 1;
-	google.protobuf.StringValue email = 2; // for admin
+	// user email, eg.op@yunify.com
+	google.protobuf.StringValue email = 2;
+	// user name
 	google.protobuf.StringValue username = 3;
+	// user description
 	google.protobuf.StringValue description = 4;
+	// user password
 	google.protobuf.StringValue password = 5;
+	// user phone number, string of 11 digital
 	google.protobuf.StringValue phone_number = 6;
 }
 
 message ModifyUserResponse {
+	// id of user modified
 	google.protobuf.StringValue user_id = 1;
 }
 
 message DeleteUsersRequest {
+	// required, ids of user to delete
 	repeated string user_id = 1;
 }
 
 message DeleteUsersResponse {
+	// ids of deleted user
 	repeated string user_id = 1;
 }
 
 message CreatePasswordResetRequest {
+	// required, id of user to create reset password action
 	google.protobuf.StringValue user_id = 1;
+	// required, user password
 	google.protobuf.StringValue password = 2;
 }
 
 message CreatePasswordResetResponse {
+	// id of user that reset password
 	google.protobuf.StringValue user_id = 1;
+	// reset id, used to change password
 	google.protobuf.StringValue reset_id = 2;
 }
 
 message ChangePasswordRequest {
+	// required, new password for reset
 	google.protobuf.StringValue new_password = 1;
+	// required, reset id
 	google.protobuf.StringValue reset_id = 2;
 }
 
 message ChangePasswordResponse {
+	// id of user that changed password
 	google.protobuf.StringValue user_id = 1;
 }
 
 message GetPasswordResetRequest {
+	// required, reset id
 	string reset_id = 1;
 }
 
 message GetPasswordResetResponse {
+	// reset id
 	string reset_id = 1;
+	// id of user changed password
 	string user_id = 2;
 }
 
 message CreateUserRequest {
+	// required, user email
 	google.protobuf.StringValue email = 1;
+	// user phone number
 	google.protobuf.StringValue phone_number = 2;
+	// required, user password
 	google.protobuf.StringValue password = 3;
+	// required, user role_id
 	google.protobuf.StringValue role_id = 4;
+	// user description
 	google.protobuf.StringValue description = 5;
 }
 
 message CreateUserResponse {
+	// id of user created
 	google.protobuf.StringValue user_id = 1;
 }
 
 message ValidateUserPasswordRequest {
+	// required, user email
 	string email = 1;
+	// required, user password
 	string password = 2;
 }
 
 message ValidateUserPasswordResponse {
+	// validate password ok or not
 	bool validated = 1;
 }
 
 message CreateGroupRequest {
+	// required, parent group id
 	google.protobuf.StringValue parent_group_id = 1;
+	// required, group name
 	google.protobuf.StringValue name = 2;
+	// group description
 	google.protobuf.StringValue description = 3;
 }
 
 message CreateGroupResponse {
+	// id of group created
 	google.protobuf.StringValue group_id = 1;
 }
 
 
 message DescribeGroupsRequest {
+	// query key, support these fields(group_id, parent_group_id, group_path, status)
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 4;
+	// data offset, default 0
 	uint32 offset = 5;
 
+	// use root group ids to get all groups
 	repeated string root_group_id = 6;
+	// parent group ids
 	repeated string parent_group_id = 7;
+	// group ids
 	repeated string group_id = 8;
+	// group path, a concat string gid-xxx.gid-xxx.gid...
 	repeated string group_path = 9;
+	// group name
 	repeated string group_name = 10;
+	// status eg.[active|deleted]
 	repeated string status = 11;
 }
 
 message DescribeGroupsResponse {
+	// total count of qualified group
 	uint32 total_count = 1;
+	// list of group
 	repeated Group group_set = 2;
 }
 
 message DescribeGroupsDetailResponse {
+	// total count of group with detail info
 	uint32 total_count = 1;
+	// list of group with detail info
 	repeated GroupDetail group_detail_set = 2;
 }
 
 message ModifyGroupRequest {
+	// required, id of group to modify
 	google.protobuf.StringValue group_id = 1;
+	// group name
 	google.protobuf.StringValue name = 2;
+	// group description
 	google.protobuf.StringValue description = 3;
+	// parent group id
 	google.protobuf.StringValue parent_group_id = 4;
 }
 
 message ModifyGroupResponse {
+	// id of group modified
 	google.protobuf.StringValue group_id = 1;
 }
 
 message DeleteGroupsRequest {
+	// required, ids of group to delete
 	repeated string group_id = 1;
 }
 message DeleteGroupsResponse {
+	// ids of group deleted
 	repeated string group_id = 1;
 }
 
 message JoinGroupRequest {
+	// required, ids of group for user to join in
 	repeated string group_id = 1;
+	// required, ids of user to join
 	repeated string user_id = 2;
 }
 message JoinGroupResponse {
+	// ids of group for user to join in
 	repeated string group_id = 1;
+	// ids of user to join
 	repeated string user_id = 2;
 }
 
 message LeaveGroupRequest {
+	// required, ids of group for user to leave from
 	repeated string group_id = 1;
+	// required, ids of user to leave
 	repeated string user_id = 2;
 }
 message LeaveGroupResponse {
+	// ids of group for user to leave from
 	repeated string group_id = 1;
+	// ids of user to leave
 	repeated string user_id = 2;
 }
 
 message Role {
+	// role id
 	string role_id = 1;
+	// role name
 	string role_name = 2;
+	// role description
 	string description = 3;
+	// portal eg.[global_admin|user|isv]
 	string portal = 4;
+	// own
 	string owner = 5;
+	// owner path, concat string group_path:user_id
 	string owner_path = 6;
+	// status eg.[active|deleted]
 	string status = 7;
+	// controller eg.[self|pitrix]
 	string controller = 8;
 
+	// the time when role create
 	google.protobuf.Timestamp create_time = 9;
+	// the time when role update
 	google.protobuf.Timestamp update_time = 10;
+	// record change time of status
 	google.protobuf.Timestamp status_time = 11;
 }
 
 message Api {
+	// api id
 	string api_id = 1;
+	// api method, rpc method eg.[Token|CanDo|...]
 	string api_method = 2;
+	// url method, http verb
 	string url_method = 3;
+	// request url
 	string url = 4;
 }
 
 message ActionBundle {
+	// bundle of action, bundle contain one more api
 	string action_bundle_id = 1;
+	// name of bundle
 	string action_bundle_name = 2;
+	// list of api in bundle
 	repeated Api api_set = 3;
 }
 
 message Feature {
+	// feature id
 	string feature_id = 1;
+	// feature name
 	string feature_name = 2;
+	// list of action bundle
 	repeated ActionBundle action_bundle_set = 3;
+	// list of checked action bundle
 	repeated string checked_action_bundle_id_set = 4;
 }
 
 message ModuleElem {
+	// module id
 	string module_id = 1;
+	// module name
 	string module_name = 2;
+	// list of feature
 	repeated Feature feature_set = 3;
+	// access level of visiting data
 	string data_level = 4;
+	// is all feature in module elem checked
 	bool is_check_all = 5;
 }
 
 message Module {
+	// list of module elem
 	repeated ModuleElem module_elem_set = 1;
 }
 
 message CanDoRequest {
+	// required, id of user to check whether has permission
 	string user_id = 1;
+	// required, request uri
 	string url = 2;
+	// required, url method, http verb
 	string url_method = 3;
+	// rpc method eg.[Token|CanDo|...]
 	string api_method = 4;
 }
 
 message CanDoResponse {
+	// id of user to check whether has permission
 	string user_id = 1;
+	// access path of user
 	string access_path = 2;
+	// owner path of user, concat string group_path:user_id
 	string owner_path = 3;
 }
 
 message GetRoleModuleRequest {
+	// required, use role id to get role's module
 	string role_id = 1;
 }
 message GetRoleModuleResponse {
+	// role id
 	string role_id = 1;
+	// module info of role
 	Module module = 2;
 }
 
 message ModifyRoleModuleRequest {
+	// required, use role id to modify role module
 	string role_id = 1;
+	// required, module info
 	Module module = 2;
 }
 
 message ModifyRoleModuleResponse {
+	// role id used to modify role module
 	string role_id = 1;
 }
 
 message CreateRoleRequest {
+	// required, role name
 	string role_name = 1;
+	// role description
 	string description = 2;
+	// required, portal of role eg.[global_admin|user|isv]
 	string portal = 3;
 }
 
 message CreateRoleResponse {
+	// id of role created
 	string role_id = 1;
 }
 
 message DeleteRolesRequest {
+	// required, ids of role to delete
 	repeated string role_id = 1;
 }
 message DeleteRolesResponse {
+	// ids of roles deleted
 	repeated string role_id = 1;
 }
 
 message ModifyRoleRequest {
+	// required, id of role to modify
 	string role_id = 1;
-	string role_name = 2; // enable modify
-	string description = 3; // enable modify
+	// role name
+	string role_name = 2;
+	// role description
+	string description = 3;
 }
 
 message ModifyRoleResponse {
+	// id of role modified
 	string role_id = 1;
 }
 
 message GetRoleRequest {
+	// required, use role id to get role info
 	string role_id = 1;
 }
 
 message GetRoleResponse {
+	// role info
 	Role role = 1;
 }
 
 message DescribeRolesRequest {
+	// query key, support these fields(role_id, portal, status)
 	string search_word = 1;
+	// sort key, order by sort_key, default create_time
 	string sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	bool reverse = 3;
+	// data offset, default 0
 	uint32 offset = 4;
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 5;
 
+	// role ids
 	repeated string role_id = 6;
+	// name
 	repeated string role_name = 7;
+	// portal eg.[global_admin|user|isv]
 	repeated string portal = 8;
+	// status eg.[active|deleted]
 	repeated string status = 9;
+	// action bundle ids
 	repeated string action_bundle_id = 10;
 }
 
 message DescribeRolesResponse {
+	// total count of roles
 	uint32 total_count = 1;
+	// list of role
 	repeated Role role_set = 2;
 }
 
 message BindUserRoleRequest {
+	// required, ids of user to bind
 	repeated string user_id = 1;
+	// required, ids of role for user to bind with
 	repeated string role_id = 2;
 }
 
 message BindUserRoleResponse {
+	// ids of user bind
 	repeated string user_id = 1;
+	// ids of role for user to bind with
 	repeated string role_id = 2;
 }
 
 message UnbindUserRoleRequest {
+	// ids of user to unbind
 	repeated string user_id = 1;
+	// ids of role for user to unbind with
 	repeated string role_id = 2;
 }
 message UnbindUserRoleResponse {
+	// ids of user to unbind
 	repeated string user_id = 1;
+	// ids of role for user to unbind with
 	repeated string role_id = 2;
 }
 
 message CreateClientRequest {
+	// required, user id for create client
 	string user_id = 1;
 }
 message CreateClientResponse {
+	// user id of client
 	string user_id = 1;
+	// client id of user
 	string client_id = 2;
+	// client secret,used for validate client credentials
 	string client_secret = 3;
 }
 
 message TokenRequest {
-	string grant_type = 1; // client_credentials or password or refresh_token
+	// required, type of client request verification.eg.[client_credentials or password or refresh_token]
+	string grant_type = 1;
+	// required, client id
 	string client_id = 2;
+	// required, used for validate client credentials
 	string client_secret = 3;
+	// scope
 	string scope = 4;
+	// required or not depend on grant_type, user's name
 	string username = 5;
+	// required or not depend on grant_type, user's password
 	string password = 6;
+	// required or not depend on grant_type, refresh token to check whether token expired
 	string refresh_token = 7;
 }
 message TokenResponse {
+	// token type.eg.[sender,bearer]
 	string token_type = 1;
+	// default 2h
 	int32 expires_in = 2;
+	//access token, generator by jwt(key=secrete key)
 	string access_token = 3;
+	//refresh token, timeliness,default expired after 2 weeks
 	string refresh_token = 4;
+	//id token, generator by jwt(key="")
 	string id_token = 5;
 }

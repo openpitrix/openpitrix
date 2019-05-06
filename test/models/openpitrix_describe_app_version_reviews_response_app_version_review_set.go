@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeAppVersionReviewsResponseAppVersionReviewSet openpitrix describe app version reviews response app version review set
+// OpenpitrixDescribeAppVersionReviewsResponseAppVersionReviewSet list of reviews of app with specific version
 // swagger:model openpitrixDescribeAppVersionReviewsResponseAppVersionReviewSet
 type OpenpitrixDescribeAppVersionReviewsResponseAppVersionReviewSet []*OpenpitrixAppVersionReview
 

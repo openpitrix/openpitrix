@@ -62,7 +62,10 @@ for the get vendor verify info operation typically these are written to a http.R
 */
 type GetVendorVerifyInfoParams struct {
 
-	/*UserID*/
+	/*UserID
+	  required, use user id to get vendor verify info.
+
+	*/
 	UserID *string
 
 	timeout    time.Duration

@@ -16,25 +16,25 @@ import (
 // swagger:model openpitrixVpc
 type OpenpitrixVpc struct {
 
-	// create time
+	// the time when vpc create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// description
+	// vpc description
 	Description string `json:"description,omitempty"`
 
-	// eip
+	// elastic ip, a vpc has a eip
 	Eip *OpenpitrixEip `json:"eip,omitempty"`
 
-	// name
+	// vpc name
 	Name string `json:"name,omitempty"`
 
-	// status
+	// cluster status eg.[pending|running|stopped|suspended|terminated|ceased]
 	Status string `json:"status,omitempty"`
 
-	// subnets
+	// list subnet, a vpc contain one more subnet
 	Subnets []string `json:"subnets"`
 
-	// transition status
+	// cluster transition status eg.[creating|starting|stopping|restarting|suspending|resuming|terminating|recovering|resetting]
 	TransitionStatus string `json:"transition_status,omitempty"`
 
 	// vpc id

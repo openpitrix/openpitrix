@@ -62,11 +62,20 @@ for the validate repo operation typically these are written to a http.Request
 */
 type ValidateRepoParams struct {
 
-	/*Credential*/
+	/*Credential
+	  required, credential of visiting the repository.
+
+	*/
 	Credential *string
-	/*Type*/
+	/*Type
+	  required, type of repository.
+
+	*/
 	Type *string
-	/*URL*/
+	/*URL
+	  required, url of visiting the repository.
+
+	*/
 	URL *string
 
 	timeout    time.Duration

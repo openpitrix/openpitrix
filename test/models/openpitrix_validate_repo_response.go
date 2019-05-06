@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixValidateRepoResponse
 type OpenpitrixValidateRepoResponse struct {
 
-	// error code
+	// if validate error,return error code
 	ErrorCode int64 `json:"errorCode,omitempty"`
 
-	// ok
+	// validate repository ok or not
 	Ok bool `json:"ok,omitempty"`
 }
 

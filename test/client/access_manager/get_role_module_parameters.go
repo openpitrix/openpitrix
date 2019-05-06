@@ -62,7 +62,10 @@ for the get role module operation typically these are written to a http.Request
 */
 type GetRoleModuleParams struct {
 
-	/*RoleID*/
+	/*RoleID
+	  required, use role id to get role's module.
+
+	*/
 	RoleID *string
 
 	timeout    time.Duration

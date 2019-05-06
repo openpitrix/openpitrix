@@ -15,166 +15,242 @@ import "protoc-gen-swagger/options/annotations.proto";
 import "types.proto";
 
 message CreateRepoRequest {
+	// required, repository name
 	google.protobuf.StringValue name = 1;
+	// repository description
 	google.protobuf.StringValue description = 2;
+	// repository type
 	google.protobuf.StringValue type = 3;
+	// required, url of visiting the repository
 	google.protobuf.StringValue url = 4;
+	// required, credential of visiting the repository
 	google.protobuf.StringValue credential = 5;
+	// required, visibility eg:[public|private]
 	google.protobuf.StringValue visibility = 6;
+	// required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	repeated string providers = 7;
+	// a kv string, tags of server
 	google.protobuf.StringValue labels = 8;
+	// selectors of label
 	google.protobuf.StringValue selectors = 9;
+	// category id
 	google.protobuf.StringValue category_id = 10;
+	// required app default status.eg:[draft|active]
 	google.protobuf.StringValue app_default_status = 11;
 }
 
 message CreateRepoResponse {
+	// id of repository created
 	google.protobuf.StringValue repo_id = 1;
 }
 
 message ModifyRepoRequest {
+	// required, id of repository to modify
 	google.protobuf.StringValue repo_id = 1;
+	// repository name
 	google.protobuf.StringValue name = 2;
+	// repository description
 	google.protobuf.StringValue description = 3;
+	// repository type
 	google.protobuf.StringValue type = 4;
+	// url of visiting the repository
 	google.protobuf.StringValue url = 5;
+	// credential of visiting the repository
 	google.protobuf.StringValue credential = 6;
+	// visibility eg:[public|private]
 	google.protobuf.StringValue visibility = 7;
+	// runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	repeated string providers = 8;
+	// a kv string, tags of server
 	google.protobuf.StringValue labels = 9;
+	// selectors of label
 	google.protobuf.StringValue selectors = 10;
+	// category id
 	google.protobuf.StringValue category_id = 11;
+	// app default status eg:[draft|active]
 	google.protobuf.StringValue app_default_status = 12;
 }
 
 message ModifyRepoResponse {
+	// id of repository modified
 	google.protobuf.StringValue repo_id = 1;
 }
 
 message DeleteReposRequest {
+	// required, ids of repository to delete
 	repeated string repo_id = 1;
 }
 
 message DeleteReposResponse {
+	// ids of repository deleted
 	repeated string repo_id = 1;
 }
 
 message RepoLabel {
+	// label key
 	google.protobuf.StringValue label_key = 1;
+	// label value
 	google.protobuf.StringValue label_value = 2;
+	// the time when repository label create
 	google.protobuf.Timestamp create_time = 3;
 }
 
 message RepoSelector {
+	// selector key
 	google.protobuf.StringValue selector_key = 1;
+	// selector value
 	google.protobuf.StringValue selector_value = 2;
+	// the time when repository selector create
 	google.protobuf.Timestamp create_time = 3;
 }
 
 message Repo {
+	// repository id
 	google.protobuf.StringValue repo_id = 1;
+	// repository name
 	google.protobuf.StringValue name = 2;
+	// repository description
 	google.protobuf.StringValue description = 3;
+	// type of repository eg.[http|https|s3]
 	google.protobuf.StringValue type = 4;
+	// url of visiting the repository
 	google.protobuf.StringValue url = 5;
+	// credential of visiting the repository
 	google.protobuf.StringValue credential = 6;
+	// visibility.eg:[public|private]
 	google.protobuf.StringValue visibility = 7;
+	// owner path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 8;
+	// runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	repeated string providers = 9;
+	// labels
 	repeated RepoLabel labels = 10;
+	// selectors of label
 	repeated RepoSelector selectors = 11;
 
+	// status eg.[active|deleted]
 	google.protobuf.StringValue status = 12;
+	// the time when repository create
 	google.protobuf.Timestamp create_time = 13;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 14;
+	// list category
 	repeated ResourceCategory category_set = 15;
-
+	// app default status eg[active|draft]
 	google.protobuf.StringValue app_default_status = 16;
-	// 0 for self resource; 1 for openpitrix resource
+	// controller, value 0 for self resource, value 1 for openpitrix resource
 	google.protobuf.Int32Value controller = 17;
+	// owner
 	google.protobuf.StringValue owner = 18;
 }
 
 message DescribeReposRequest {
+	// query key, support these fields(repo_id, name, type, visibility, status, app_default_status, owner, controller)
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 5;
 
+	// repository ids
 	repeated string repo_id = 11;
+	// repository name
 	repeated string name = 12;
+	// repository type
 	repeated string type = 13;
+	// visibility eg:[public|private]
 	repeated string visibility = 14;
+	// status eg.[active|deleted]
 	repeated string status = 15;
+	// runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	repeated string provider = 16;
+	// a kv string, tags of server
 	google.protobuf.StringValue label = 17;
+	// selector of label
 	google.protobuf.StringValue selector = 18;
+	// category ids
 	repeated string category_id = 19;
+	// owner
 	repeated string owner = 20;
+	// app default status eg.[draft|active]
 	repeated string app_default_status = 21;
+	// user id
 	string user_id = 22;
-	// 0 for self resource; 1 for openpitrix resource
+	// controller, value 0 for self resource, value1 for openpitrix resource
 	google.protobuf.Int32Value controller = 23;
 }
 
 message DescribeReposResponse {
+	// total count of repository
 	uint32 total_count = 1;
+	// list of repository
 	repeated Repo repo_set = 2;
 }
 
 message ValidateRepoRequest {
+	// required, type of repository
 	google.protobuf.StringValue type = 1;
+	// required, url of visiting the repository
 	google.protobuf.StringValue url = 2;
+	// required, credential of visiting the repository
 	google.protobuf.StringValue credential = 3;
 }
 
 message ValidateRepoResponse {
+	// validate repository ok or not
 	google.protobuf.BoolValue ok = 1;
+	// if validate error,return error code
 	uint32 errorCode = 2;
 }
 
 service RepoManager {
+	// Create repository, repository used to store package of app
 	rpc CreateRepo (CreateRepoRequest) returns (CreateRepoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create repo"
+			summary: "Create repository, repository used to store package of app"
 		};
 		option (google.api.http) = {
 			post: "/v1/repos"
 			body: "*"
 		};
 	}
+	// Get repositories ,filter with these fields(repo_id, name, type, visibility, status, app_default_status, owner, controller), default return all repositories
 	rpc DescribeRepos (DescribeReposRequest) returns (DescribeReposResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe repos with filter"
+			summary: "Get repositories ,filter with these fields(repo_id, name, type, visibility, status, app_default_status, owner, controller), default return all repositories"
 		};
 		option (google.api.http) = {
 			get: "/v1/repos"
 		};
 	}
+	// Modify repository
 	rpc ModifyRepo (ModifyRepoRequest) returns (ModifyRepoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify repo"
+			summary: "Modify repository"
 		};
 		option (google.api.http) = {
 			patch: "/v1/repos"
 			body: "*"
 		};
 	}
+	// Batch delete repositories
 	rpc DeleteRepos (DeleteReposRequest) returns (DeleteReposResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete repos"
+			summary: "Batch delete repositories"
 		};
 		option (google.api.http) = {
 			delete: "/v1/repos"
 			body: "*"
 		};
 	}
+	// Validate repository
 	rpc ValidateRepo (ValidateRepoRequest) returns (ValidateRepoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "validate repo"
+			summary: "Validate repository"
 		};
 		option (google.api.http) = {
 			get: "/v1/repos/validate"

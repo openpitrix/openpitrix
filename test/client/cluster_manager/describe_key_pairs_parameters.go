@@ -63,23 +63,50 @@ for the describe key pairs operation typically these are written to a http.Reque
 */
 type DescribeKeyPairsParams struct {
 
-	/*Description*/
+	/*Description
+	  key pair description.
+
+	*/
 	Description *string
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
-	/*KeyPairID*/
+	/*KeyPairID
+	  key pair id.
+
+	*/
 	KeyPairID *string
-	/*Limit*/
+	/*Limit
+	  data limit per page, default value 20, max value 200.
+
+	*/
 	Limit *int64
-	/*Name*/
+	/*Name
+	  key pair name.
+
+	*/
 	Name *string
-	/*Offset*/
+	/*Offset
+	  data offset, default 0.
+
+	*/
 	Offset *int64
-	/*Owner*/
+	/*Owner
+	  owner.
+
+	*/
 	Owner []string
-	/*PubKey*/
+	/*PubKey
+	  public key.
+
+	*/
 	PubKey *string
-	/*SearchWord*/
+	/*SearchWord
+	  query key, can filter with these fields(key_pair_id, name, owner).
+
+	*/
 	SearchWord *string
 
 	timeout    time.Duration

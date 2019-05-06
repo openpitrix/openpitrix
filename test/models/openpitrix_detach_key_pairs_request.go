@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixDetachKeyPairsRequest
 type OpenpitrixDetachKeyPairsRequest struct {
 
-	// key pair id
+	// ids of key pairs to detach
 	KeyPairID []string `json:"key_pair_id"`
 
-	// node id
+	// ids of nodes to detached
 	NodeID []string `json:"node_id"`
 }
 

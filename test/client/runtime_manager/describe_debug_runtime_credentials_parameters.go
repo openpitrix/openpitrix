@@ -63,31 +63,55 @@ for the describe debug runtime credentials operation typically these are written
 */
 type DescribeDebugRuntimeCredentialsParams struct {
 
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*Owner*/
+	/*Owner
+	  owner.
+
+	*/
 	Owner []string
-	/*Provider*/
+	/*Provider
+	  runtime provider eg.[qingcloud|aliyun|aws|kubernetes].
+
+	*/
 	Provider []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*RuntimeCredentialID*/
+	/*RuntimeCredentialID
+	  runtime credential ids.
+
+	*/
 	RuntimeCredentialID []string
-	/*SearchWord*/
+	/*SearchWord
+	  query key.
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[active|deleted].
+
+	*/
 	Status []string
 
 	timeout    time.Duration

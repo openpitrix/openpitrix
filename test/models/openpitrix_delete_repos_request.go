@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteReposRequest
 type OpenpitrixDeleteReposRequest struct {
 
-	// repo id
+	// required, ids of repository to delete
 	RepoID []string `json:"repo_id"`
 }
 

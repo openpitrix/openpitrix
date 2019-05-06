@@ -63,9 +63,15 @@ for the get app version package files operation typically these are written to a
 */
 type GetAppVersionPackageFilesParams struct {
 
-	/*Files*/
+	/*Files
+	  files.
+
+	*/
 	Files []string
-	/*VersionID*/
+	/*VersionID
+	  use version id to get file of package.
+
+	*/
 	VersionID *string
 
 	timeout    time.Duration

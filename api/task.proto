@@ -15,84 +15,125 @@ import "protoc-gen-swagger/options/annotations.proto";
 
 
 message CreateTaskRequest {
+	// id of job(jod will split to one more task) to split
 	google.protobuf.StringValue job_id = 1;
+	// node(task run in node) id
 	google.protobuf.StringValue node_id = 2;
+	// describe where the task running eg.[runtime|pilot]
 	google.protobuf.StringValue target = 3;
+	// directive, a kv string, describe the info of running the action
 	google.protobuf.StringValue task_action = 4;
+	// describe the action of the task eg.[WaitFrontgateAvailable|PingFrontgate|AttachVolumes|StartInstances|...]
 	google.protobuf.StringValue directive = 5;
+	// allow failure or not
 	google.protobuf.BoolValue failure_allowed = 6;
+	// task status eg.[running|success|failed|pending]
 	google.protobuf.StringValue status = 7;
 }
 
 message CreateTaskResponse {
+	// id of task created
 	google.protobuf.StringValue task_id = 1;
+	// id of job created
 	google.protobuf.StringValue job_id = 2;
 }
 
 message RetryTasksRequest {
+	// ids of task to retry
 	repeated string task_id = 1;
 }
 
 message RetryTasksResponse {
+	// list of task retried
 	repeated Task task_set = 1;
 }
 
 message TaskLayer {
+	// task in task layer, a task layer contain one more task
 	repeated Task tasks = 1;
+	// a task layer point to another task layer
 	TaskLayer child = 2;
 }
 
 message Task {
+	// task id
 	google.protobuf.StringValue task_id = 1;
+	// job id,job will be split to one more task
 	google.protobuf.StringValue job_id = 2;
+	// describe the action of the task eg.[WaitFrontgateAvailable|PingFrontgate|AttachVolumes|StartInstances|...]
 	google.protobuf.StringValue task_action = 3;
+	// task status eg.[running|successful|failed|pending]
 	google.protobuf.StringValue status = 4;
+	// error code
 	google.protobuf.UInt32Value error_code = 5;
+	// directive,a json string, describe the info of running the task action
 	google.protobuf.StringValue directive = 6;
+	// host name of server
 	google.protobuf.StringValue executor = 7;
+	// owner path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 8;
+	// describe where the task running eg.[runtime|pilot]
 	google.protobuf.StringValue target = 9;
+	// the cluster contain one more node
 	google.protobuf.StringValue node_id = 10;
+	// the time when task create
 	google.protobuf.Timestamp create_time = 11;
+	// record the status changed time
 	google.protobuf.Timestamp status_time = 12;
+	// allow task run failed or not
 	google.protobuf.BoolValue failure_allowed = 13;
+	// owner
 	google.protobuf.StringValue owner = 14;
 }
 message DescribeTasksRequest {
+	// query key, support these fields(job_id, task_id, executor, status, owner)
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 5;
+	// select columns to display
 	repeated string display_columns = 6;
 
+	// task ids
 	repeated string task_id = 11;
+	// job ids
 	repeated string job_id = 12;
+	// host name of server
 	google.protobuf.StringValue executor = 13;
+	// target eg.[runtime|pilot]
 	google.protobuf.StringValue target = 14;
+	// task status eg.[running|successful|failed|pending]
 	repeated string status = 15;
+	// owner
 	repeated string owner = 16;
 }
 message DescribeTasksResponse {
+	// total count of task
 	uint32 total_count = 1;
+	// list of task
 	repeated Task task_set = 2;
 }
 
 service TaskManager {
 	rpc CreateTask (CreateTaskRequest) returns (CreateTaskResponse);
+	// Get tasks, can filter with these fields(job_id, task_id, executor, status, owner), default return all tasks
 	rpc DescribeTasks (DescribeTasksRequest) returns (DescribeTasksResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe tasks with filter"
+			summary: "Get tasks, can filter with these fields(job_id, task_id, executor, status, owner), default return all tasks"
 		};
 		option (google.api.http) = {
 			get: "/v1/tasks"
 		};
 	}
+	// Retry tasks
 	rpc RetryTasks (RetryTasksRequest) returns (RetryTasksResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "retry tasks"
+			summary: "Retry tasks"
 		};
 		option (google.api.http) = {
 			post: "/v1/tasks/retry"

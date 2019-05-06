@@ -16,22 +16,22 @@ import (
 // swagger:model openpitrixRoleResource
 type OpenpitrixRoleResource struct {
 
-	// cpu
+	// number of cpu
 	CPU int64 `json:"cpu,omitempty"`
 
-	// gpu
+	// number of gpu
 	Gpu int64 `json:"gpu,omitempty"`
 
-	// instance size
+	// size of instance
 	InstanceSize int64 `json:"instance_size,omitempty"`
 
-	// memory
+	// size of memory
 	Memory int64 `json:"memory,omitempty"`
 
-	// role
+	// role.eg:[mysql|wordpress]
 	Role string `json:"role,omitempty"`
 
-	// storage size
+	// size of storage
 	StorageSize int64 `json:"storage_size,omitempty"`
 }
 

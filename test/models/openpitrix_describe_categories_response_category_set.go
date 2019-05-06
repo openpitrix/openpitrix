@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeCategoriesResponseCategorySet openpitrix describe categories response category set
+// OpenpitrixDescribeCategoriesResponseCategorySet list of category
 // swagger:model openpitrixDescribeCategoriesResponseCategorySet
 type OpenpitrixDescribeCategoriesResponseCategorySet []*OpenpitrixCategory
 

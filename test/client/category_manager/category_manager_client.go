@@ -54,7 +54,7 @@ func (a *Client) CreateCategory(params *CreateCategoryParams, authInfo runtime.C
 }
 
 /*
-DeleteCategories deletes categories
+DeleteCategories batches delete categories
 */
 func (a *Client) DeleteCategories(params *DeleteCategoriesParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteCategoriesOK, error) {
 	// TODO: Validate the params before sending
@@ -83,7 +83,7 @@ func (a *Client) DeleteCategories(params *DeleteCategoriesParams, authInfo runti
 }
 
 /*
-DescribeCategories describes categories with filter
+DescribeCategories gets categories support filter with these fields category id status locale owner name default return all categories
 */
 func (a *Client) DescribeCategories(params *DescribeCategoriesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeCategoriesOK, error) {
 	// TODO: Validate the params before sending

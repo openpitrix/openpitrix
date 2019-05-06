@@ -16,22 +16,22 @@ import (
 // swagger:model openpitrixRole
 type OpenpitrixRole struct {
 
-	// controller
+	// controller eg.[self|pitrix]
 	Controller string `json:"controller,omitempty"`
 
-	// create time
+	// the time when role create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// description
+	// role description
 	Description string `json:"description,omitempty"`
 
-	// owner
+	// own
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// owner path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// portal
+	// portal eg.[global_admin|user|isv]
 	Portal string `json:"portal,omitempty"`
 
 	// role id
@@ -40,13 +40,13 @@ type OpenpitrixRole struct {
 	// role name
 	RoleName string `json:"role_name,omitempty"`
 
-	// status
+	// status eg.[active|deleted]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record change time of status
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
-	// update time
+	// the time when role update
 	UpdateTime strfmt.DateTime `json:"update_time,omitempty"`
 }
 

@@ -63,27 +63,60 @@ for the describe groups operation typically these are written to a http.Request
 */
 type DescribeGroupsParams struct {
 
-	/*GroupID*/
+	/*GroupID
+	  group ids.
+
+	*/
 	GroupID []string
-	/*GroupName*/
+	/*GroupName
+	  group name.
+
+	*/
 	GroupName []string
-	/*GroupPath*/
+	/*GroupPath
+	  group path, a concat string gid-xxx.gid-xxx.gid...
+
+	*/
 	GroupPath []string
-	/*Limit*/
+	/*Limit
+	  data limit per page, default value 20, max value 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  data offset, default 0.
+
+	*/
 	Offset *int64
-	/*ParentGroupID*/
+	/*ParentGroupID
+	  parent group ids.
+
+	*/
 	ParentGroupID []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*RootGroupID*/
+	/*RootGroupID
+	  use root group ids to get all groups.
+
+	*/
 	RootGroupID []string
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(group_id, parent_group_id, group_path, status).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[active|deleted].
+
+	*/
 	Status []string
 
 	timeout    time.Duration

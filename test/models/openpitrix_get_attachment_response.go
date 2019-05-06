@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixGetAttachmentResponse
 type OpenpitrixGetAttachmentResponse struct {
 
-	// content
+	// file content of attachment
 	Content strfmt.Base64 `json:"content,omitempty"`
 
-	// etag
+	// tell server to pack file
 	Etag string `json:"etag,omitempty"`
 }
 

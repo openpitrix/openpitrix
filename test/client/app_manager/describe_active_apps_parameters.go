@@ -63,37 +63,70 @@ for the describe active apps operation typically these are written to a http.Req
 */
 type DescribeActiveAppsParams struct {
 
-	/*AppID*/
+	/*AppID
+	  app ids.
+
+	*/
 	AppID []string
-	/*CategoryID*/
+	/*CategoryID
+	  app category ids.
+
+	*/
 	CategoryID []string
-	/*ChartName*/
+	/*ChartName
+	  app chart name.
+
+	*/
 	ChartName []string
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select column to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default is 20, max value is 200.
 
 	*/
 	Limit *int64
-	/*Name*/
+	/*Name
+	  app name.
+
+	*/
 	Name []string
 	/*Offset
-	  default is 0.
+	  data offset, default is 0.
 
 	*/
 	Offset *int64
-	/*Owner*/
+	/*Owner
+	  app owner.
+
+	*/
 	Owner []string
-	/*RepoID*/
+	/*RepoID
+	  app repository ids.
+
+	*/
 	RepoID []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  app status eg.[modify|submit|review|cancel|release|delete|pass|reject|suspend|recover].
+
+	*/
 	Status []string
 
 	timeout    time.Duration

@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeJobsResponseJobSet openpitrix describe jobs response job set
+// OpenpitrixDescribeJobsResponseJobSet list of job
 // swagger:model openpitrixDescribeJobsResponseJobSet
 type OpenpitrixDescribeJobsResponseJobSet []*OpenpitrixJob
 

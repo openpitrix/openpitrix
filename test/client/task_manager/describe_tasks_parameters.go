@@ -63,35 +63,65 @@ for the describe tasks operation typically these are written to a http.Request
 */
 type DescribeTasksParams struct {
 
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select columns to display.
+
+	*/
 	DisplayColumns []string
-	/*Executor*/
+	/*Executor
+	  host name of server.
+
+	*/
 	Executor *string
-	/*JobID*/
+	/*JobID
+	  job ids.
+
+	*/
 	JobID []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*Owner*/
+	/*Owner
+	  owner.
+
+	*/
 	Owner []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(job_id, task_id, executor, status, owner).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  task status eg.[running|successful|failed|pending].
+
+	*/
 	Status []string
-	/*Target*/
+	/*Target
+	  target eg.[runtime|pilot].
+
+	*/
 	Target *string
-	/*TaskID*/
+	/*TaskID
+	  task ids.
+
+	*/
 	TaskID []string
 
 	timeout    time.Duration

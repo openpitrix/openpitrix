@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixLeaveGroupResponse
 type OpenpitrixLeaveGroupResponse struct {
 
-	// group id
+	// ids of group for user to leave from
 	GroupID []string `json:"group_id"`
 
-	// user id
+	// ids of user to leave
 	UserID []string `json:"user_id"`
 }
 

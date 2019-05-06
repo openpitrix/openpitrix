@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixCreatePasswordResetResponse
 type OpenpitrixCreatePasswordResetResponse struct {
 
-	// reset id
+	// reset id, used to change password
 	ResetID string `json:"reset_id,omitempty"`
 
-	// user id
+	// id of user that reset password
 	UserID string `json:"user_id,omitempty"`
 }
 

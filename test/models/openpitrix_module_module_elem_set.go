@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixModuleModuleElemSet openpitrix module module elem set
+// OpenpitrixModuleModuleElemSet list of module elem
 // swagger:model openpitrixModuleModuleElemSet
 type OpenpitrixModuleModuleElemSet []*OpenpitrixModuleElem
 

@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixFeatureActionBundleSet openpitrix feature action bundle set
+// OpenpitrixFeatureActionBundleSet list of action bundle
 // swagger:model openpitrixFeatureActionBundleSet
 type OpenpitrixFeatureActionBundleSet []*OpenpitrixActionBundle
 

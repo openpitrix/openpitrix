@@ -28,7 +28,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type RegisterRuntimeProviderRequest struct {
-	Provider             *wrappers.StringValue `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	// required, runtime provider.eg:[qingcloud|aliyun|aws|kubernetes]
+	Provider *wrappers.StringValue `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	// required, configure of runtime provider
 	Config               *wrappers.StringValue `protobuf:"bytes,2,opt,name=config,proto3" json:"config,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
@@ -75,6 +77,7 @@ func (m *RegisterRuntimeProviderRequest) GetConfig() *wrappers.StringValue {
 }
 
 type RegisterRuntimeProviderResponse struct {
+	// register ok or not
 	Ok                   *wrappers.BoolValue `protobuf:"bytes,1,opt,name=ok,proto3" json:"ok,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
@@ -114,13 +117,17 @@ func (m *RegisterRuntimeProviderResponse) GetOk() *wrappers.BoolValue {
 }
 
 type ParseClusterConfRequest struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
-	Conf                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=conf,proto3" json:"conf,omitempty"`
-	Cluster              *Cluster              `protobuf:"bytes,4,opt,name=cluster,proto3" json:"cluster,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// required, runtime id
+	RuntimeId *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	// version id
+	VersionId *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	// required, configure
+	Conf *wrappers.StringValue `protobuf:"bytes,3,opt,name=conf,proto3" json:"conf,omitempty"`
+	// cluster in the runtime
+	Cluster              *Cluster `protobuf:"bytes,4,opt,name=cluster,proto3" json:"cluster,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *ParseClusterConfRequest) Reset()         { *m = ParseClusterConfRequest{} }
@@ -177,6 +184,7 @@ func (m *ParseClusterConfRequest) GetCluster() *Cluster {
 }
 
 type ParseClusterConfResponse struct {
+	// cluster
 	Cluster              *Cluster `protobuf:"bytes,1,opt,name=cluster,proto3" json:"cluster,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -216,11 +224,13 @@ func (m *ParseClusterConfResponse) GetCluster() *Cluster {
 }
 
 type SplitJobIntoTasksRequest struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	Job                  *Job                  `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// required, runtime id
+	RuntimeId *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	// required, job to split
+	Job                  *Job     `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *SplitJobIntoTasksRequest) Reset()         { *m = SplitJobIntoTasksRequest{} }
@@ -263,6 +273,7 @@ func (m *SplitJobIntoTasksRequest) GetJob() *Job {
 }
 
 type SplitJobIntoTasksResponse struct {
+	// job will split to TaskLayer
 	TaskLayer            *TaskLayer `protobuf:"bytes,1,opt,name=taskLayer,proto3" json:"taskLayer,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`
@@ -302,11 +313,13 @@ func (m *SplitJobIntoTasksResponse) GetTaskLayer() *TaskLayer {
 }
 
 type HandleSubtaskRequest struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	Task                 *Task                 `protobuf:"bytes,2,opt,name=task,proto3" json:"task,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// required, runtime id
+	RuntimeId *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	// required, task to handle
+	Task                 *Task    `protobuf:"bytes,2,opt,name=task,proto3" json:"task,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *HandleSubtaskRequest) Reset()         { *m = HandleSubtaskRequest{} }
@@ -349,6 +362,7 @@ func (m *HandleSubtaskRequest) GetTask() *Task {
 }
 
 type HandleSubtaskResponse struct {
+	// task handled
 	Task                 *Task    `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -388,11 +402,13 @@ func (m *HandleSubtaskResponse) GetTask() *Task {
 }
 
 type WaitSubtaskRequest struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	Task                 *Task                 `protobuf:"bytes,2,opt,name=task,proto3" json:"task,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// required, runtime id
+	RuntimeId *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	// required, task to wait
+	Task                 *Task    `protobuf:"bytes,2,opt,name=task,proto3" json:"task,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *WaitSubtaskRequest) Reset()         { *m = WaitSubtaskRequest{} }
@@ -435,6 +451,7 @@ func (m *WaitSubtaskRequest) GetTask() *Task {
 }
 
 type WaitSubtaskResponse struct {
+	// task waited
 	Task                 *Task    `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -474,11 +491,13 @@ func (m *WaitSubtaskResponse) GetTask() *Task {
 }
 
 type CheckResourceRequest struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	Cluster              *Cluster              `protobuf:"bytes,2,opt,name=cluster,proto3" json:"cluster,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// required, runtime id
+	RuntimeId *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	// required, cluster to check
+	Cluster              *Cluster `protobuf:"bytes,2,opt,name=cluster,proto3" json:"cluster,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *CheckResourceRequest) Reset()         { *m = CheckResourceRequest{} }
@@ -521,6 +540,7 @@ func (m *CheckResourceRequest) GetCluster() *Cluster {
 }
 
 type CheckResourceResponse struct {
+	// check ok or not
 	Ok                   *wrappers.BoolValue `protobuf:"bytes,1,opt,name=ok,proto3" json:"ok,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
@@ -560,7 +580,9 @@ func (m *CheckResourceResponse) GetOk() *wrappers.BoolValue {
 }
 
 type DescribeVpcRequest struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	// required, get vpc of runtime
+	RuntimeId *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	// required, use vpc id to get vpc in runtime
 	VpcId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=vpc_id,json=vpcId,proto3" json:"vpc_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
@@ -607,8 +629,11 @@ func (m *DescribeVpcRequest) GetVpcId() *wrappers.StringValue {
 }
 
 type Eip struct {
-	EipId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=eip_id,json=eipId,proto3" json:"eip_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// elastic ip
+	EipId *wrappers.StringValue `protobuf:"bytes,1,opt,name=eip_id,json=eipId,proto3" json:"eip_id,omitempty"`
+	// eip name
+	Name *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// eip address
 	Addr                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=addr,proto3" json:"addr,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
@@ -662,17 +687,25 @@ func (m *Eip) GetAddr() *wrappers.StringValue {
 }
 
 type Vpc struct {
-	VpcId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=vpc_id,json=vpcId,proto3" json:"vpc_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,3,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	TransitionStatus     *wrappers.StringValue `protobuf:"bytes,6,opt,name=transition_status,json=transitionStatus,proto3" json:"transition_status,omitempty"`
-	Subnets              []string              `protobuf:"bytes,7,rep,name=subnets,proto3" json:"subnets,omitempty"`
-	Eip                  *Eip                  `protobuf:"bytes,8,opt,name=eip,proto3" json:"eip,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// vpc id
+	VpcId *wrappers.StringValue `protobuf:"bytes,1,opt,name=vpc_id,json=vpcId,proto3" json:"vpc_id,omitempty"`
+	// vpc name
+	Name *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// the time when vpc create
+	CreateTime *timestamp.Timestamp `protobuf:"bytes,3,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	// vpc description
+	Description *wrappers.StringValue `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	// cluster status eg.[pending|running|stopped|suspended|terminated|ceased]
+	Status *wrappers.StringValue `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	// cluster transition status eg.[creating|starting|stopping|restarting|suspending|resuming|terminating|recovering|resetting]
+	TransitionStatus *wrappers.StringValue `protobuf:"bytes,6,opt,name=transition_status,json=transitionStatus,proto3" json:"transition_status,omitempty"`
+	// list subnet, a vpc contain one more subnet
+	Subnets []string `protobuf:"bytes,7,rep,name=subnets,proto3" json:"subnets,omitempty"`
+	// elastic ip, a vpc has a eip
+	Eip                  *Eip     `protobuf:"bytes,8,opt,name=eip,proto3" json:"eip,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Vpc) Reset()         { *m = Vpc{} }
@@ -757,6 +790,7 @@ func (m *Vpc) GetEip() *Eip {
 }
 
 type DescribeVpcResponse struct {
+	// vpc
 	Vpc                  *Vpc     `protobuf:"bytes,1,opt,name=vpc,proto3" json:"vpc,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -796,11 +830,13 @@ func (m *DescribeVpcResponse) GetVpc() *Vpc {
 }
 
 type DescribeClusterDetailsRequest struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	Cluster              *Cluster              `protobuf:"bytes,2,opt,name=cluster,proto3" json:"cluster,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// required, get detail of cluster in runtime
+	RuntimeId *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	// required, cluster in the runtime
+	Cluster              *Cluster `protobuf:"bytes,2,opt,name=cluster,proto3" json:"cluster,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *DescribeClusterDetailsRequest) Reset()         { *m = DescribeClusterDetailsRequest{} }
@@ -843,6 +879,7 @@ func (m *DescribeClusterDetailsRequest) GetCluster() *Cluster {
 }
 
 type DescribeClusterDetailsResponse struct {
+	// cluster info
 	Cluster              *Cluster `protobuf:"bytes,1,opt,name=cluster,proto3" json:"cluster,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -882,13 +919,17 @@ func (m *DescribeClusterDetailsResponse) GetCluster() *Cluster {
 }
 
 type ValidateRuntimeRequest struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	Zone                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=zone,proto3" json:"zone,omitempty"`
-	RuntimeCredential    *RuntimeCredential    `protobuf:"bytes,3,opt,name=runtime_credential,json=runtimeCredential,proto3" json:"runtime_credential,omitempty"`
-	NeedCreate           *wrappers.BoolValue   `protobuf:"bytes,4,opt,name=need_create,json=needCreate,proto3" json:"need_create,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// required, id of runtime to validate
+	RuntimeId *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	// required, runtime zone
+	Zone *wrappers.StringValue `protobuf:"bytes,2,opt,name=zone,proto3" json:"zone,omitempty"`
+	// required, runtime credential
+	RuntimeCredential *RuntimeCredential `protobuf:"bytes,3,opt,name=runtime_credential,json=runtimeCredential,proto3" json:"runtime_credential,omitempty"`
+	// need create or not
+	NeedCreate           *wrappers.BoolValue `protobuf:"bytes,4,opt,name=need_create,json=needCreate,proto3" json:"need_create,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *ValidateRuntimeRequest) Reset()         { *m = ValidateRuntimeRequest{} }
@@ -945,6 +986,7 @@ func (m *ValidateRuntimeRequest) GetNeedCreate() *wrappers.BoolValue {
 }
 
 type ValidateRuntimeResponse struct {
+	// validate ok or not
 	Ok                   *wrappers.BoolValue `protobuf:"bytes,1,opt,name=ok,proto3" json:"ok,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
@@ -984,11 +1026,13 @@ func (m *ValidateRuntimeResponse) GetOk() *wrappers.BoolValue {
 }
 
 type DescribeZonesRequest struct {
-	Provider             *wrappers.StringValue `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
-	RuntimeCredential    *RuntimeCredential    `protobuf:"bytes,2,opt,name=runtime_credential,json=runtimeCredential,proto3" json:"runtime_credential,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// required, get zone of runtime provider
+	Provider *wrappers.StringValue `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
+	// required, runtime credential
+	RuntimeCredential    *RuntimeCredential `protobuf:"bytes,2,opt,name=runtime_credential,json=runtimeCredential,proto3" json:"runtime_credential,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
+	XXX_unrecognized     []byte             `json:"-"`
+	XXX_sizecache        int32              `json:"-"`
 }
 
 func (m *DescribeZonesRequest) Reset()         { *m = DescribeZonesRequest{} }
@@ -1031,6 +1075,7 @@ func (m *DescribeZonesRequest) GetRuntimeCredential() *RuntimeCredential {
 }
 
 type DescribeZonesResponse struct {
+	// list of zones in runtime provider
 	Zones                []string `protobuf:"bytes,1,rep,name=zones,proto3" json:"zones,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
