@@ -237,9 +237,10 @@ message Sku {
 	google.protobuf.StringValue sku_id = 1;
 	google.protobuf.StringValue spu_id = 2;
 	repeated string attribute_ids = 3;
-	google.protobuf.StringValue status = 4;
-	google.protobuf.Timestamp create_time = 5;
-	google.protobuf.Timestamp status_time = 6;
+	repeated string metering_attribute_ids = 4;
+	google.protobuf.StringValue status = 5;
+	google.protobuf.Timestamp create_time = 6;
+	google.protobuf.Timestamp status_time = 7;
 }
 
 message CreateSkuRequest {
@@ -281,57 +282,6 @@ message DeleteSkusRequest {
 
 message DeleteSkusResponse {
 	repeated string sku_ids = 1;
-}
-
-//metering_attribute_binding
-message MeteringAttributeBinding { // binding metering_attribute_id into sku_id
-	google.protobuf.StringValue binding_id = 1;
-	google.protobuf.StringValue sku_id = 2;
-	google.protobuf.StringValue attribute_id = 3; //the attribute id that need to metering
-	google.protobuf.StringValue status = 4;
-	google.protobuf.Timestamp create_time = 5;
-	google.protobuf.Timestamp status_time = 6;
-}
-
-message CreateMeteringAttributeBindingsRequest {
-	google.protobuf.StringValue sku_id = 1;
-	repeated string attribute_ids = 2;
-}
-
-message CreateMeteringAttributeBindingsResponse {
-	repeated string binding_ids = 1;
-}
-
-message DescribeMeteringAttributeBindingsRequest {
-	google.protobuf.StringValue binding_id = 1;
-	google.protobuf.StringValue sku_id = 2;
-	google.protobuf.StringValue status = 3;
-	google.protobuf.StringValue sort_key = 4;
-	google.protobuf.BoolValue reverse = 5;
-	uint32 offset = 6;
-	uint32 limit = 7;
-}
-
-message DescribeMeteringAttributeBindingsResponse {
-	repeated MeteringAttributeBinding meteringAttributeBindings = 1;
-}
-
-message ModifyMeteringAttributeBindingRequest {
-	google.protobuf.StringValue binding_id = 1;
-	google.protobuf.StringValue sku_id = 2;
-	google.protobuf.StringValue attribute_id = 3;
-}
-
-message ModifyMeteringAttributeBindingResponse {
-	google.protobuf.StringValue binding_id = 1;
-}
-
-message DeleteMeteringAttributeBindingsRequest {
-	repeated string binding_ids = 1;
-}
-
-message DeleteMeteringAttributeBindingsResponse {
-	repeated string binding_ids = 1;
 }
 
 service SkuManager {
@@ -529,328 +479,6 @@ service SkuManager {
 			body: "*"
 		};
 	}
-
-	rpc CreateMeteringAttributeBindings (CreateMeteringAttributeBindingsRequest) returns (CreateMeteringAttributeBindingsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create metering attribute bindings of sku"
-        };
-		option (google.api.http) = {
-            post: "/v1/metering/attribute/bingings"
-            body: "*"
-        };
-	}
-
-	rpc DescribeMeteringAttributeBindings (DescribeMeteringAttributeBindingsRequest) returns (DescribeMeteringAttributeBindingsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe metering attribute bindings of sku"
-		};
-		option (google.api.http) = {
-			get: "/v1/metering/attribute/bindings"
-		};
-	}
-
-	rpc ModifyMeteringAttributeBinding (ModifyMeteringAttributeBindingRequest) returns (ModifyMeteringAttributeBindingResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify metering attribute binding of sku"
-		};
-		option (google.api.http) = {
-			put: "/v1/metering/attribute/binding"
-			body: "*"
-		};
-	}
-
-	rpc DeleteMeteringAttributeBindings (DeleteMeteringAttributeBindingsRequest) returns (DeleteMeteringAttributeBindingsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete metering attribute bindings of sku"
-		};
-		option (google.api.http) = {
-			delete: "/v1/metering/attribute/bindings"
-			body: "*"
-		};
-	}
-}
-
-
-//************************************* Promotion *************************
-//combination
-message Combination {
-	google.protobuf.StringValue combination_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue description = 3;
-	google.protobuf.StringValue owner = 4;
-	google.protobuf.StringValue status = 5;
-	google.protobuf.Timestamp start_time = 6; //start time for this combination, default now
-	google.protobuf.Timestamp end_time = 7; //overdue time for this combination, default null(forever)
-	google.protobuf.Timestamp create_time = 8;
-	google.protobuf.Timestamp status_time = 9;
-}
-
-message CreateCombinationRequest {
-	google.protobuf.StringValue name = 1;
-	google.protobuf.StringValue description = 2;
-	google.protobuf.Timestamp start_time = 3;
-	google.protobuf.Timestamp end_time = 4;
-}
-
-message CreateCombinationResponse {
-	google.protobuf.StringValue combination_id = 1;
-}
-
-message DescribeCombinationsRequest {
-	google.protobuf.StringValue combination_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue owner = 3;
-	google.protobuf.StringValue status = 4;
-	google.protobuf.StringValue sort_key = 5;
-	google.protobuf.BoolValue reverse = 6;
-	uint32 offset = 7;
-	uint32 limit = 8;
-}
-
-message DescribeCombinationsResponse {
-	repeated Combination combinations = 1;
-}
-
-message ModifyCombinationRequest {
-	google.protobuf.StringValue combination_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue description = 3;
-	google.protobuf.Timestamp start_time = 4;
-	google.protobuf.Timestamp end_time = 5;
-}
-
-message ModifyCombinationResponse {
-	google.protobuf.StringValue combination_id = 1;
-}
-
-message DeleteCombinationsRequest {
-	repeated string combination_ids = 1;
-}
-
-message DeleteCombinationsResponse {
-	repeated string combination_ids = 1;
-}
-
-//combination_sku
-message CombinationSku {
-	google.protobuf.StringValue combination_sku_id = 1;
-	google.protobuf.StringValue combination_id = 2;
-	google.protobuf.StringValue sku_id = 3;
-	google.protobuf.StringValue status = 4;
-	google.protobuf.Timestamp create_time = 5;
-	google.protobuf.Timestamp status_time = 6;
-}
-
-message CreateCombinationSkuRequest {
-	google.protobuf.StringValue combination_id = 1;
-	google.protobuf.StringValue sku_id = 2;
-}
-
-message CreateCombinationSkuResponse {
-	google.protobuf.StringValue combination_sku_id = 1;
-}
-
-message DescribeCombinationSkusRequest {
-	google.protobuf.StringValue combination_sku_id = 1;
-	google.protobuf.StringValue combination_id = 2;
-	google.protobuf.StringValue sku_id = 3;
-	google.protobuf.StringValue status = 4;
-	google.protobuf.StringValue sort_key = 5;
-	google.protobuf.BoolValue reverse = 6;
-	uint32 offset = 7;
-	uint32 limit = 8;
-}
-
-message DescribeCombinationSkusResponse {
-	repeated CombinationSku combination_skus = 1;
-}
-
-message ModifyCombinationSkuRequest {
-	google.protobuf.StringValue combination_sku_id = 1;
-	google.protobuf.StringValue combination_id = 2;
-	google.protobuf.StringValue sku_id = 3;
-}
-
-message ModifyCombinationSkuResponse {
-	google.protobuf.StringValue combination_sku_id = 1;
-}
-
-message DeleteCombinationSkusRequest {
-	repeated string combination_sku_ids = 1;
-}
-
-message DeleteCombinationSkusResponse {
-	repeated string combination_sku_ids = 1;
-}
-
-//CombinationMABinding: CombinationMeteringAttributeBinding
-message CombinationMABinding {
-	google.protobuf.StringValue combination_binding_id = 1;
-	google.protobuf.StringValue combination_sku_id = 2;
-	google.protobuf.StringValue attribute_id = 3;
-	google.protobuf.StringValue status = 4;
-	google.protobuf.Timestamp create_time = 5;
-	google.protobuf.Timestamp status_time = 6;
-}
-
-message CreateCombinationMABindingRequest {
-	google.protobuf.StringValue combination_sku_id = 1;
-	google.protobuf.StringValue attribute_id = 2;
-}
-
-message CreateCombinationMABindingResponse {
-	google.protobuf.StringValue combination_binding_id = 1;
-}
-
-message DescribeCombinationMABindingsRequest {
-	google.protobuf.StringValue combination_binding_id = 1;
-	google.protobuf.StringValue combination_sku_id = 2;
-	google.protobuf.StringValue status = 3;
-	google.protobuf.StringValue sort_key = 4;
-	google.protobuf.BoolValue reverse = 5;
-	uint32 offset = 6;
-	uint32 limit = 7;
-}
-
-message DescribeCombinationMABindingsResponse {
-	repeated CombinationMABinding combination_ma_bindings = 1;
-}
-
-message ModifyCombinationMABindingRequest {
-	google.protobuf.StringValue combination_binding_id = 1;
-	google.protobuf.StringValue combination_sku_id = 2;
-	google.protobuf.StringValue attribute_id = 3;
-}
-
-message ModifyCombinationMABindingResponse {
-	google.protobuf.StringValue combination_binding_id = 1;
-}
-
-message DeleteCombinationMABindingsRequest {
-	repeated string combination_binding_ids = 1;
-}
-
-message DeleteCombinationMABindingsResponse {
-	repeated string combination_binding_ids = 1;
-}
-
-service PromotionSkuManager {
-	rpc CreateCombination (CreateCombinationRequest) returns (CreateCombinationResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create combination"
-        };
-		option (google.api.http) = {
-            post: "/v1/metering/combination"
-            body: "*"
-        };
-	}
-
-	rpc DescribeCombinations (DescribeCombinationsRequest) returns (DescribeCombinationsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe combinations"
-		};
-		option (google.api.http) = {
-			get: "/v1/metering/combinations"
-		};
-	}
-
-	rpc ModifyCombination (ModifyCombinationRequest) returns (ModifyCombinationResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify combination"
-		};
-		option (google.api.http) = {
-			put: "/v1/metering/combination"
-			body: "*"
-		};
-	}
-
-	rpc DeleteCombinations (DeleteCombinationsRequest) returns (DeleteCombinationsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete combinations"
-		};
-		option (google.api.http) = {
-			delete: "/v1/metering/combinations"
-			body: "*"
-		};
-	}
-
-	rpc CreateCombinationSku (CreateCombinationSkuRequest) returns (CreateCombinationSkuResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create combination_sku"
-        };
-		option (google.api.http) = {
-            post: "/v1/metering/combination/sku"
-            body: "*"
-        };
-	}
-
-	rpc DescribeCombinationSkus (DescribeCombinationSkusRequest) returns (DescribeCombinationSkusResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe combination_skus"
-		};
-		option (google.api.http) = {
-			get: "/v1/metering/combination/skus"
-		};
-	}
-
-	rpc ModifyCombinationSku (ModifyCombinationSkuRequest) returns (ModifyCombinationSkuResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify combination_sku"
-		};
-		option (google.api.http) = {
-			put: "/v1/metering/combination/sku"
-			body: "*"
-		};
-	}
-
-	rpc DeleteCombinationSkus (DeleteCombinationSkusRequest) returns (DeleteCombinationSkusResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete combination_skus"
-		};
-		option (google.api.http) = {
-			delete: "/v1/metering/combination/skus"
-			body: "*"
-		};
-	}
-
-	rpc CreateCombinationMABinding (CreateCombinationMABindingRequest) returns (CreateCombinationMABindingResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create combination_ma_binding"
-        };
-		option (google.api.http) = {
-            post: "/v1/metering/combination/mabinding"
-            body: "*"
-        };
-	}
-
-	rpc DescribeCombinationMABindings (DescribeCombinationMABindingsRequest) returns (DescribeCombinationMABindingsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe combination_ma_bindings"
-		};
-		option (google.api.http) = {
-			get: "/v1/metering/combination/mabindings"
-		};
-	}
-
-	rpc ModifyCombinationMABinding (ModifyCombinationMABindingRequest) returns (ModifyCombinationMABindingResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify combination_ma_binding"
-		};
-		option (google.api.http) = {
-			put: "/v1/metering/combination/mabinding"
-			body: "*"
-		};
-	}
-
-	rpc DeleteCombinationMABindings (DeleteCombinationMABindingsRequest) returns (DeleteCombinationMABindingsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete combination_ma_bindings"
-		};
-		option (google.api.http) = {
-			delete: "/v1/metering/combination/mabindings"
-			body: "*"
-		};
-	}
 }
 
 
@@ -994,4 +622,198 @@ service MeteringManager {
             body: "*"
         };
 	}
+}
+
+
+//************************************* Promotion *************************
+//combination
+message Combination {
+	google.protobuf.StringValue combination_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue owner = 4;
+	google.protobuf.StringValue status = 5;
+	google.protobuf.Timestamp start_time = 6; //start time for this combination, default now
+	google.protobuf.Timestamp end_time = 7; //overdue time for this combination, default null(forever)
+	google.protobuf.Timestamp create_time = 8;
+	google.protobuf.Timestamp status_time = 9;
+}
+
+message CreateCombinationRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue description = 2;
+	google.protobuf.Timestamp start_time = 3;
+	google.protobuf.Timestamp end_time = 4;
+}
+
+message CreateCombinationResponse {
+	google.protobuf.StringValue combination_id = 1;
+}
+
+message DescribeCombinationsRequest {
+	google.protobuf.StringValue combination_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue owner = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.StringValue sort_key = 5;
+	google.protobuf.BoolValue reverse = 6;
+	uint32 offset = 7;
+	uint32 limit = 8;
+}
+
+message DescribeCombinationsResponse {
+	repeated Combination combinations = 1;
+}
+
+message ModifyCombinationRequest {
+	google.protobuf.StringValue combination_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.Timestamp start_time = 4;
+	google.protobuf.Timestamp end_time = 5;
+}
+
+message ModifyCombinationResponse {
+	google.protobuf.StringValue combination_id = 1;
+}
+
+message DeleteCombinationsRequest {
+	repeated string combination_ids = 1;
+}
+
+message DeleteCombinationsResponse {
+	repeated string combination_ids = 1;
+}
+
+//combination_sku
+message CombinationSku {
+	google.protobuf.StringValue combination_sku_id = 1;
+	google.protobuf.StringValue combination_id = 2;
+	google.protobuf.StringValue sku_id = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
+}
+
+message CreateCombinationSkuRequest {
+	google.protobuf.StringValue combination_id = 1;
+	google.protobuf.StringValue sku_id = 2;
+}
+
+message CreateCombinationSkuResponse {
+	google.protobuf.StringValue combination_sku_id = 1;
+}
+
+message DescribeCombinationSkusRequest {
+	google.protobuf.StringValue combination_sku_id = 1;
+	google.protobuf.StringValue combination_id = 2;
+	google.protobuf.StringValue sku_id = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.StringValue sort_key = 5;
+	google.protobuf.BoolValue reverse = 6;
+	uint32 offset = 7;
+	uint32 limit = 8;
+}
+
+message DescribeCombinationSkusResponse {
+	repeated CombinationSku combination_skus = 1;
+}
+
+message ModifyCombinationSkuRequest {
+	google.protobuf.StringValue combination_sku_id = 1;
+	google.protobuf.StringValue combination_id = 2;
+	google.protobuf.StringValue sku_id = 3;
+}
+
+message ModifyCombinationSkuResponse {
+	google.protobuf.StringValue combination_sku_id = 1;
+}
+
+message DeleteCombinationSkusRequest {
+	repeated string combination_sku_ids = 1;
+}
+
+message DeleteCombinationSkusResponse {
+	repeated string combination_sku_ids = 1;
+}
+
+service PromotionSkuManager {
+	rpc CreateCombination (CreateCombinationRequest) returns (CreateCombinationResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "create combination"
+        };
+		option (google.api.http) = {
+            post: "/v1/metering/combination"
+            body: "*"
+        };
+	}
+
+	rpc DescribeCombinations (DescribeCombinationsRequest) returns (DescribeCombinationsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe combinations"
+		};
+		option (google.api.http) = {
+			get: "/v1/metering/combinations"
+		};
+	}
+
+	rpc ModifyCombination (ModifyCombinationRequest) returns (ModifyCombinationResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify combination"
+		};
+		option (google.api.http) = {
+			put: "/v1/metering/combination"
+			body: "*"
+		};
+	}
+
+	rpc DeleteCombinations (DeleteCombinationsRequest) returns (DeleteCombinationsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete combinations"
+		};
+		option (google.api.http) = {
+			delete: "/v1/metering/combinations"
+			body: "*"
+		};
+	}
+
+	rpc CreateCombinationSku (CreateCombinationSkuRequest) returns (CreateCombinationSkuResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "create combination_sku"
+        };
+		option (google.api.http) = {
+            post: "/v1/metering/combination/sku"
+            body: "*"
+        };
+	}
+
+	rpc DescribeCombinationSkus (DescribeCombinationSkusRequest) returns (DescribeCombinationSkusResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe combination_skus"
+		};
+		option (google.api.http) = {
+			get: "/v1/metering/combination/skus"
+		};
+	}
+
+	rpc ModifyCombinationSku (ModifyCombinationSkuRequest) returns (ModifyCombinationSkuResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify combination_sku"
+		};
+		option (google.api.http) = {
+			put: "/v1/metering/combination/sku"
+			body: "*"
+		};
+	}
+
+	rpc DeleteCombinationSkus (DeleteCombinationSkusRequest) returns (DeleteCombinationSkusResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete combination_skus"
+		};
+		option (google.api.http) = {
+			delete: "/v1/metering/combination/skus"
+			body: "*"
+		};
+	}
+
 }
