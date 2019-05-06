@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDetachKeyPairsResponse
 type OpenpitrixDetachKeyPairsResponse struct {
 
-	// job id
+	// ids of jobs of detach key pair
 	JobID []string `json:"job_id"`
 }
 

@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixActionBundle
 type OpenpitrixActionBundle struct {
 
-	// action bundle id
+	// bundle of action, bundle contain one more api
 	ActionBundleID string `json:"action_bundle_id,omitempty"`
 
-	// action bundle name
+	// name of bundle
 	ActionBundleName string `json:"action_bundle_name,omitempty"`
 
 	// api set

@@ -34,7 +34,7 @@ type OpenpitrixEmailServiceConfig struct {
 	// protocol
 	Protocol string `json:"protocol,omitempty"`
 
-	// ssl enable
+	// use ssl or not
 	SslEnable bool `json:"ssl_enable,omitempty"`
 }
 

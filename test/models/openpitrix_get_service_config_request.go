@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixGetServiceConfigRequest
 type OpenpitrixGetServiceConfigRequest struct {
 
-	// service type
+	// service type eg.[runtime]
 	ServiceType []string `json:"service_type"`
 }
 

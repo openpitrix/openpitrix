@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeReposResponseRepoSet openpitrix describe repos response repo set
+// OpenpitrixDescribeReposResponseRepoSet list of repository
 // swagger:model openpitrixDescribeReposResponseRepoSet
 type OpenpitrixDescribeReposResponseRepoSet []*OpenpitrixRepo
 

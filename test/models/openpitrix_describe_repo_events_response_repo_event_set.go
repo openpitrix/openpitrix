@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeRepoEventsResponseRepoEventSet openpitrix describe repo events response repo event set
+// OpenpitrixDescribeRepoEventsResponseRepoEventSet list of repository event
 // swagger:model openpitrixDescribeRepoEventsResponseRepoEventSet
 type OpenpitrixDescribeRepoEventsResponseRepoEventSet []*OpenpitrixRepoEvent
 

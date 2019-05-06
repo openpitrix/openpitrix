@@ -16,16 +16,16 @@ import (
 // swagger:model openpitrixSubnet
 type OpenpitrixSubnet struct {
 
-	// create time
+	// the time when subnet create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// description
+	// subnet description
 	Description string `json:"description,omitempty"`
 
-	// instance id
+	// instance ids, subnet belong to one more instance
 	InstanceID []string `json:"instance_id"`
 
-	// name
+	// subnet name
 	Name string `json:"name,omitempty"`
 
 	// subnet id
@@ -34,10 +34,10 @@ type OpenpitrixSubnet struct {
 	// subnet type
 	SubnetType int64 `json:"subnet_type,omitempty"`
 
-	// vpc id
+	// vpc id, a vpc contain one more subnet
 	VpcID string `json:"vpc_id,omitempty"`
 
-	// zone
+	// subnet zone
 	Zone string `json:"zone,omitempty"`
 }
 

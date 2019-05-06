@@ -64,22 +64,34 @@ for the describe repo events operation typically these are written to a http.Req
 type DescribeRepoEventsParams struct {
 
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*Owner*/
+	/*Owner
+	  owner.
+
+	*/
 	Owner []string
-	/*RepoEventID*/
+	/*RepoEventID
+	  repository event ids.
+
+	*/
 	RepoEventID []string
-	/*RepoID*/
+	/*RepoID
+	  repository ids.
+
+	*/
 	RepoID []string
-	/*Status*/
+	/*Status
+	  repository event status eg.[failed|successful|working|pending].
+
+	*/
 	Status []string
 
 	timeout    time.Duration

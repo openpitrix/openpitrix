@@ -62,7 +62,10 @@ for the get app version package operation typically these are written to a http.
 */
 type GetAppVersionPackageParams struct {
 
-	/*VersionID*/
+	/*VersionID
+	  required, use version id to get package.
+
+	*/
 	VersionID *string
 
 	timeout    time.Duration

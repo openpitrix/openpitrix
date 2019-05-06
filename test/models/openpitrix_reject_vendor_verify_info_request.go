@@ -19,7 +19,7 @@ type OpenpitrixRejectVendorVerifyInfoRequest struct {
 	// reject message
 	RejectMessage string `json:"reject_message,omitempty"`
 
-	// user id
+	// required, id of user to reject
 	UserID string `json:"user_id,omitempty"`
 }
 

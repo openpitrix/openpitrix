@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixCreateTaskResponse
 type OpenpitrixCreateTaskResponse struct {
 
-	// job id
+	// id of job created
 	JobID string `json:"job_id,omitempty"`
 
-	// task id
+	// id of task created
 	TaskID string `json:"task_id,omitempty"`
 }
 

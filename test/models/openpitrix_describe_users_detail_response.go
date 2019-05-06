@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDescribeUsersDetailResponse
 type OpenpitrixDescribeUsersDetailResponse struct {
 
-	// total count
+	// total count of qualified user
 	TotalCount int64 `json:"total_count,omitempty"`
 
 	// user detail set

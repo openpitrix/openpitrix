@@ -19,7 +19,7 @@ type OpenpitrixRecoverClustersRequest struct {
 	// advanced param
 	AdvancedParam []string `json:"advanced_param"`
 
-	// cluster id
+	// required, ids of clusters to recover
 	ClusterID []string `json:"cluster_id"`
 }
 

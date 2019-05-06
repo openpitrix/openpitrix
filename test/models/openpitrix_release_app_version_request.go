@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixReleaseAppVersionRequest
 type OpenpitrixReleaseAppVersionRequest struct {
 
-	// version id
+	// required, id of version to release
 	VersionID string `json:"version_id,omitempty"`
 }
 

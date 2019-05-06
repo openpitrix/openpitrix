@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteAppVersionRequest
 type OpenpitrixDeleteAppVersionRequest struct {
 
-	// version id
+	// required, id of version to delete
 	VersionID string `json:"version_id,omitempty"`
 }
 

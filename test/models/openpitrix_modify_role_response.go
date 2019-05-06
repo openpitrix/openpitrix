@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixModifyRoleResponse
 type OpenpitrixModifyRoleResponse struct {
 
-	// role id
+	// id of role modified
 	RoleID string `json:"role_id,omitempty"`
 }
 

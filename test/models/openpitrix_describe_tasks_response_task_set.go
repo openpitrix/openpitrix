@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeTasksResponseTaskSet openpitrix describe tasks response task set
+// OpenpitrixDescribeTasksResponseTaskSet list of task
 // swagger:model openpitrixDescribeTasksResponseTaskSet
 type OpenpitrixDescribeTasksResponseTaskSet []*OpenpitrixTask
 

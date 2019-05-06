@@ -19,7 +19,7 @@ type OpenpitrixDescribeAppsResponse struct {
 	// app set
 	AppSet OpenpitrixDescribeAppsResponseAppSet `json:"app_set"`
 
-	// total count
+	// total count of qualified app
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

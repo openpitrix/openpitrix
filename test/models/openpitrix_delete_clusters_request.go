@@ -19,7 +19,7 @@ type OpenpitrixDeleteClustersRequest struct {
 	// advanced param
 	AdvancedParam []string `json:"advanced_param"`
 
-	// cluster id
+	// required, ids of clusters to delete
 	ClusterID []string `json:"cluster_id"`
 }
 

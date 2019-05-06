@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixResizeClusterResponse
 type OpenpitrixResizeClusterResponse struct {
 
-	// cluster id
+	// id of cluster resized
 	ClusterID string `json:"cluster_id,omitempty"`
 
 	// job id

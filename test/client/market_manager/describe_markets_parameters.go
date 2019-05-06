@@ -79,11 +79,17 @@ type DescribeMarketsParams struct {
 	Offset *int64
 	/*Owner*/
 	Owner []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
 	/*SearchWord*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
 	/*Status*/
 	Status []string

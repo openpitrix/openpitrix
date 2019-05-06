@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixAttachKeyPairsRequest
 type OpenpitrixAttachKeyPairsRequest struct {
 
-	// key pair id
+	// ids of key pairs to attach
 	KeyPairID []string `json:"key_pair_id"`
 
-	// node id
+	// ids of node to attached
 	NodeID []string `json:"node_id"`
 }
 

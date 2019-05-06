@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeKeyPairsResponseKeyPairSet openpitrix describe key pairs response key pair set
+// OpenpitrixDescribeKeyPairsResponseKeyPairSet list of key pair
 // swagger:model openpitrixDescribeKeyPairsResponseKeyPairSet
 type OpenpitrixDescribeKeyPairsResponseKeyPairSet []*OpenpitrixKeyPair
 

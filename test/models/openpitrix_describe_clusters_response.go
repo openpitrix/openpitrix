@@ -19,7 +19,7 @@ type OpenpitrixDescribeClustersResponse struct {
 	// cluster set
 	ClusterSet OpenpitrixDescribeClustersResponseClusterSet `json:"cluster_set"`
 
-	// total count
+	// total count of qualified cluster
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

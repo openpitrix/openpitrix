@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixChangePasswordRequest
 type OpenpitrixChangePasswordRequest struct {
 
-	// new password
+	// required, new password for reset
 	NewPassword string `json:"new_password,omitempty"`
 
-	// reset id
+	// required, reset id
 	ResetID string `json:"reset_id,omitempty"`
 }
 

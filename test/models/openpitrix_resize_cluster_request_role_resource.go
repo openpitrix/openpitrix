@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixResizeClusterRequestRoleResource openpitrix resize cluster request role resource
+// OpenpitrixResizeClusterRequestRoleResource list of role resource
 // swagger:model openpitrixResizeClusterRequestRoleResource
 type OpenpitrixResizeClusterRequestRoleResource []*OpenpitrixRoleResource
 

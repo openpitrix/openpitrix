@@ -16,19 +16,19 @@ import (
 // swagger:model openpitrixCreateJobResponse
 type OpenpitrixCreateJobResponse struct {
 
-	// app id
+	// id of app deploy in cluster
 	AppID string `json:"app_id,omitempty"`
 
-	// cluster id
+	// id of cluster run job
 	ClusterID string `json:"cluster_id,omitempty"`
 
-	// job id
+	// id of job created
 	JobID string `json:"job_id,omitempty"`
 
-	// runtime id
+	// id of runtime of cluster
 	RuntimeID string `json:"runtime_id,omitempty"`
 
-	// version id
+	// id of specific app version
 	VersionID string `json:"version_id,omitempty"`
 }
 

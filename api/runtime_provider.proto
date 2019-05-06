@@ -18,113 +18,158 @@ import "job.proto";
 import "task.proto";
 
 message RegisterRuntimeProviderRequest {
+	// required, runtime provider.eg:[qingcloud|aliyun|aws|kubernetes]
 	google.protobuf.StringValue provider = 1;
+	// required, configure of runtime provider
 	google.protobuf.StringValue config = 2;
 }
 
 message RegisterRuntimeProviderResponse {
+	// register ok or not
 	google.protobuf.BoolValue ok = 1;
 }
 
 message ParseClusterConfRequest {
+	// required, runtime id
 	google.protobuf.StringValue runtime_id = 1;
+	// version id
 	google.protobuf.StringValue version_id = 2;
+	// required, configure
 	google.protobuf.StringValue conf = 3;
+	// cluster in the runtime
 	Cluster cluster = 4;
 }
 
 message ParseClusterConfResponse {
+	// cluster
 	Cluster cluster = 1;
 }
 
 message SplitJobIntoTasksRequest {
+	// required, runtime id
 	google.protobuf.StringValue runtime_id = 1;
+	// required, job to split
 	Job job = 2;
 }
 
 message SplitJobIntoTasksResponse {
+	// job will split to TaskLayer
 	TaskLayer taskLayer = 1;
 }
 
 message HandleSubtaskRequest {
+	// required, runtime id
 	google.protobuf.StringValue runtime_id = 1;
+	// required, task to handle
 	Task task = 2;
 }
 
 message HandleSubtaskResponse {
+	// task handled
 	Task task = 1;
 }
 
 message WaitSubtaskRequest {
+	// required, runtime id
 	google.protobuf.StringValue runtime_id = 1;
+	// required, task to wait
 	Task task = 2;
 }
 
 message WaitSubtaskResponse {
+	// task waited
 	Task task = 1;
 }
 
 message CheckResourceRequest {
+	// required, runtime id
 	google.protobuf.StringValue runtime_id = 1;
+	// required, cluster to check
 	Cluster cluster = 2;
 }
 
 message CheckResourceResponse {
+	// check ok or not
 	google.protobuf.BoolValue ok = 1;
 }
 
 message DescribeVpcRequest {
+	// required, get vpc of runtime
 	google.protobuf.StringValue runtime_id = 1;
+	// required, use vpc id to get vpc in runtime
 	google.protobuf.StringValue vpc_id = 2;
 }
 
 message Eip {
+	// elastic ip
 	google.protobuf.StringValue eip_id = 1;
+	// eip name
 	google.protobuf.StringValue name = 2;
+	// eip address
 	google.protobuf.StringValue addr = 3;
 }
 
 message Vpc {
+	// vpc id
 	google.protobuf.StringValue vpc_id = 1;
+	// vpc name
 	google.protobuf.StringValue name = 2;
+	// the time when vpc create
 	google.protobuf.Timestamp create_time = 3;
+	// vpc description
 	google.protobuf.StringValue description = 4;
+	// cluster status eg.[pending|running|stopped|suspended|terminated|ceased]
 	google.protobuf.StringValue status = 5;
+	// cluster transition status eg.[creating|starting|stopping|restarting|suspending|resuming|terminating|recovering|resetting]
 	google.protobuf.StringValue transition_status = 6;
+	// list subnet, a vpc contain one more subnet
 	repeated string subnets = 7;
+	// elastic ip, a vpc has a eip
 	Eip eip = 8;
 }
 
 message DescribeVpcResponse {
+	// vpc
 	Vpc vpc = 1;
 }
 
 message DescribeClusterDetailsRequest {
+	// required, get detail of cluster in runtime
 	google.protobuf.StringValue runtime_id = 1;
+	// required, cluster in the runtime
 	Cluster cluster = 2;
 }
 
 message DescribeClusterDetailsResponse {
+	// cluster info
 	Cluster cluster = 1;
 }
 
 message ValidateRuntimeRequest {
+	// required, id of runtime to validate
 	google.protobuf.StringValue runtime_id = 1;
+	// required, runtime zone
 	google.protobuf.StringValue zone = 2;
+	// required, runtime credential
 	RuntimeCredential runtime_credential = 3;
+	// need create or not
 	google.protobuf.BoolValue need_create = 4;
 }
 
 message ValidateRuntimeResponse {
+	// validate ok or not
 	google.protobuf.BoolValue ok = 1;
 }
 
 message DescribeZonesRequest {
+	// required, get zone of runtime provider
 	google.protobuf.StringValue provider = 1;
+	// required, runtime credential
 	RuntimeCredential runtime_credential = 2;
 }
 
 message DescribeZonesResponse {
+	// list of zones in runtime provider
 	repeated string zones = 1;
 }
 

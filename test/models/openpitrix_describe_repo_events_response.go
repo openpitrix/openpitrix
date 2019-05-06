@@ -19,7 +19,7 @@ type OpenpitrixDescribeRepoEventsResponse struct {
 	// repo event set
 	RepoEventSet OpenpitrixDescribeRepoEventsResponseRepoEventSet `json:"repo_event_set"`
 
-	// total count
+	// total count of repository event
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

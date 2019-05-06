@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixUnbindUserRoleRequest
 type OpenpitrixUnbindUserRoleRequest struct {
 
-	// role id
+	// ids of role for user to unbind with
 	RoleID []string `json:"role_id"`
 
-	// user id
+	// ids of user to unbind
 	UserID []string `json:"user_id"`
 }
 

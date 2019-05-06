@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixModifyRuntimeResponse
 type OpenpitrixModifyRuntimeResponse struct {
 
-	// runtime id
+	// id of runtime modified
 	RuntimeID string `json:"runtime_id,omitempty"`
 }
 

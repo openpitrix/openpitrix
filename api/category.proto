@@ -14,100 +14,132 @@ import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
 message Category {
+	// category id
 	google.protobuf.StringValue category_id = 1;
+	// category name,app belong to a category,eg.[AI|Firewall|cache|...]
 	google.protobuf.StringValue name = 2;
+	// the i18n of this category, json format, sample: {"zh_cn": "数据库", "en": "database"}
 	google.protobuf.StringValue locale = 3;
+	// owner path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 4;
+	// the time when category create
 	google.protobuf.Timestamp create_time = 5;
+	// the time when category update
 	google.protobuf.Timestamp update_time = 6;
+	// category description
 	google.protobuf.StringValue description = 7;
+	// category icon
 	google.protobuf.StringValue icon = 8;
+	// owner
 	google.protobuf.StringValue owner = 9;
 }
 
 message DescribeCategoriesRequest {
+	// query key, can fields with these fields(category_id, status, locale, owner, name), default return all categories
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 5;
+	// select column to display
 	repeated string display_columns = 6;
-
+	// category ids
 	repeated string category_id = 7;
+	// category name
 	repeated string name = 8;
+	// owner
 	repeated string owner = 9;
 }
 
 message DescribeCategoriesResponse {
+	// total count of qualified category
 	uint32 total_count = 1;
+	// list of category
 	repeated Category category_set = 2;
 }
 
 message CreateCategoryRequest {
+	// required, category name
 	google.protobuf.StringValue name = 2;
 	// the i18n of this category, json format, sample: {"zh_cn": "数据库", "en": "database"}
 	google.protobuf.StringValue locale = 3;
+	// category description
 	google.protobuf.StringValue description = 4;
+	// category icon
 	google.protobuf.BytesValue icon = 5;
 }
 
 message CreateCategoryResponse {
+	// id of category created
 	google.protobuf.StringValue category_id = 1;
 }
 
 message ModifyCategoryRequest {
+	// required, id of category to modify
 	google.protobuf.StringValue category_id = 1;
+	// category name
 	google.protobuf.StringValue name = 2;
 	// the i18n of this category, json format, sample: {"zh_cn": "数据库", "en": "database"}
 	google.protobuf.StringValue locale = 3;
+	// category description
 	google.protobuf.StringValue description = 4;
+	// category icon
 	google.protobuf.BytesValue icon = 5;
 }
 
 message ModifyCategoryResponse {
+	// id of category modified
 	google.protobuf.StringValue category_id = 1;
 }
 
 message DeleteCategoriesRequest {
+	// required, ids of category to delete
 	repeated string category_id = 1;
 }
 
 message DeleteCategoriesResponse {
+	// ids of category to deleted
 	repeated string category_id = 1;
 }
 
 service CategoryManager {
+	// Get categories, support filter with these fields(category_id, status, locale, owner, name), default return all categories
 	rpc DescribeCategories (DescribeCategoriesRequest) returns (DescribeCategoriesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe categories with filter"
+			summary: "Get categories, support filter with these fields(category_id, status, locale, owner, name), default return all categories"
 		};
 		option (google.api.http) = {
 			get: "/v1/categories"
 		};
 	}
+	// Create category
 	rpc CreateCategory (CreateCategoryRequest) returns (CreateCategoryResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create category"
+			summary: "Create category"
 		};
 		option (google.api.http) = {
 			post: "/v1/categories"
 			body: "*"
 		};
 	}
+	// Modify category
 	rpc ModifyCategory (ModifyCategoryRequest) returns (ModifyCategoryResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify category"
+			summary: "Modify category"
 		};
 		option (google.api.http) = {
 			patch: "/v1/categories"
 			body: "*"
 		};
 	}
+	// Batch delete categories
 	rpc DeleteCategories (DeleteCategoriesRequest) returns (DeleteCategoriesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete categories"
+			summary: "Batch delete categories"
 		};
 		option (google.api.http) = {
 			delete: "/v1/categories"

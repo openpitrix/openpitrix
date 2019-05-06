@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeGroupsDetailResponseGroupDetailSet openpitrix describe groups detail response group detail set
+// OpenpitrixDescribeGroupsDetailResponseGroupDetailSet list of group with detail info
 // swagger:model openpitrixDescribeGroupsDetailResponseGroupDetailSet
 type OpenpitrixDescribeGroupsDetailResponseGroupDetailSet []*OpenpitrixGroupDetail
 

@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixModifyCategoryResponse
 type OpenpitrixModifyCategoryResponse struct {
 
-	// category id
+	// id of category modified
 	CategoryID string `json:"category_id,omitempty"`
 }
 

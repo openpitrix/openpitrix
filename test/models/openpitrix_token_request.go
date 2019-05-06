@@ -16,25 +16,25 @@ import (
 // swagger:model openpitrixTokenRequest
 type OpenpitrixTokenRequest struct {
 
-	// client id
+	// required, client id
 	ClientID string `json:"client_id,omitempty"`
 
-	// client secret
+	// required, used for validate client credentials
 	ClientSecret string `json:"client_secret,omitempty"`
 
-	// grant type
+	// required, type of client request verification.eg.[client_credentials or password or refresh_token]
 	GrantType string `json:"grant_type,omitempty"`
 
-	// password
+	// required or not depend on grant_type, user's password
 	Password string `json:"password,omitempty"`
 
-	// refresh token
+	// required or not depend on grant_type, refresh token to check whether token expired
 	RefreshToken string `json:"refresh_token,omitempty"`
 
 	// scope
 	Scope string `json:"scope,omitempty"`
 
-	// username
+	// required or not depend on grant_type, user's name
 	Username string `json:"username,omitempty"`
 }
 

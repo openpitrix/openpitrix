@@ -16,19 +16,19 @@ import (
 // swagger:model openpitrixModifyCategoryRequest
 type OpenpitrixModifyCategoryRequest struct {
 
-	// category id
+	// required, id of category to modify
 	CategoryID string `json:"category_id,omitempty"`
 
-	// description
+	// category description
 	Description string `json:"description,omitempty"`
 
-	// icon
+	// category icon
 	Icon strfmt.Base64 `json:"icon,omitempty"`
 
 	// the i18n of this category, json format, sample: {"zh_cn": "数据库", "en": "database"}
 	Locale string `json:"locale,omitempty"`
 
-	// name
+	// category name
 	Name string `json:"name,omitempty"`
 }
 

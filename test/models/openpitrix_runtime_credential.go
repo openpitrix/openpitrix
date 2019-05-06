@@ -16,25 +16,25 @@ import (
 // swagger:model openpitrixRuntimeCredential
 type OpenpitrixRuntimeCredential struct {
 
-	// create time
+	// the time when runtime credential create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// debug
+	// debug or not
 	Debug bool `json:"debug,omitempty"`
 
-	// description
+	// runtime credential description
 	Description string `json:"description,omitempty"`
 
-	// name
+	// runtime credential name
 	Name string `json:"name,omitempty"`
 
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// own path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// provider
+	// runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	Provider string `json:"provider,omitempty"`
 
 	// runtime credential content
@@ -43,13 +43,13 @@ type OpenpitrixRuntimeCredential struct {
 	// runtime credential id
 	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
 
-	// runtime url
+	// runtime url eg.[http://www.qingyun.com]
 	RuntimeURL string `json:"runtime_url,omitempty"`
 
-	// status
+	// runtime credential status eg.[active|deleted]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 }
 

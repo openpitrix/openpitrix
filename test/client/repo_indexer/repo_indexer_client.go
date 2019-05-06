@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-DescribeRepoEvents describes repo events
+DescribeRepoEvents gets repository events
 */
 func (a *Client) DescribeRepoEvents(params *DescribeRepoEventsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeRepoEventsOK, error) {
 	// TODO: Validate the params before sending
@@ -54,7 +54,7 @@ func (a *Client) DescribeRepoEvents(params *DescribeRepoEventsParams, authInfo r
 }
 
 /*
-IndexRepo starts a index repo event
+IndexRepo starts index repository event
 */
 func (a *Client) IndexRepo(params *IndexRepoParams, authInfo runtime.ClientAuthInfoWriter) (*IndexRepoOK, error) {
 	// TODO: Validate the params before sending

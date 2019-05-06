@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixSplitJobIntoTasksResponse
 type OpenpitrixSplitJobIntoTasksResponse struct {
 
-	// task layer
+	// job will split to TaskLayer
 	TaskLayer *OpenpitrixTaskLayer `json:"taskLayer,omitempty"`
 }
 

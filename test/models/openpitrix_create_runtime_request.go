@@ -16,19 +16,19 @@ import (
 // swagger:model openpitrixCreateRuntimeRequest
 type OpenpitrixCreateRuntimeRequest struct {
 
-	// description
+	// runtime description
 	Description string `json:"description,omitempty"`
 
-	// name
+	// required, runtime name
 	Name string `json:"name,omitempty"`
 
-	// provider
+	// required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	Provider string `json:"provider,omitempty"`
 
-	// runtime credential id
+	// required, runtime credential id
 	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
 
-	// zone
+	// required, runtime zone eg.[pek3a|pek3b|...]
 	Zone string `json:"zone,omitempty"`
 }
 

@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixPassVendorVerifyInfoResponse
 type OpenpitrixPassVendorVerifyInfoResponse struct {
 
-	// user id
+	// id of user passed
 	UserID string `json:"user_id,omitempty"`
 }
 

@@ -62,7 +62,10 @@ for the get password reset operation typically these are written to a http.Reque
 */
 type GetPasswordResetParams struct {
 
-	/*ResetID*/
+	/*ResetID
+	  required, reset id.
+
+	*/
 	ResetID *string
 
 	timeout    time.Duration

@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteRuntimesResponse
 type OpenpitrixDeleteRuntimesResponse struct {
 
-	// runtime id
+	// ids of runtime deleted
 	RuntimeID []string `json:"runtime_id"`
 }
 

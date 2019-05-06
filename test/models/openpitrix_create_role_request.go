@@ -16,13 +16,13 @@ import (
 // swagger:model openpitrixCreateRoleRequest
 type OpenpitrixCreateRoleRequest struct {
 
-	// description
+	// role description
 	Description string `json:"description,omitempty"`
 
-	// portal
+	// required, portal of role eg.[global_admin|user|isv]
 	Portal string `json:"portal,omitempty"`
 
-	// role name
+	// required, role name
 	RoleName string `json:"role_name,omitempty"`
 }
 

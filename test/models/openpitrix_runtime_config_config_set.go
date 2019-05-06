@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRuntimeConfigConfigSet openpitrix runtime config config set
+// OpenpitrixRuntimeConfigConfigSet runtime item config
 // swagger:model openpitrixRuntimeConfigConfigSet
 type OpenpitrixRuntimeConfigConfigSet []*OpenpitrixRuntimeItemConfig
 

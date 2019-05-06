@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixRepoSelector
 type OpenpitrixRepoSelector struct {
 
-	// create time
+	// the time when repository selector create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
 	// selector key

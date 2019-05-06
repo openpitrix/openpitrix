@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixModifyClusterNodeAttributesRequest
 type OpenpitrixModifyClusterNodeAttributesRequest struct {
 
-	// name
+	// node name
 	Name string `json:"name,omitempty"`
 
-	// node id
+	// required, id of cluster node to modify
 	NodeID string `json:"node_id,omitempty"`
 }
 

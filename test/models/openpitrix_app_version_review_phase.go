@@ -16,22 +16,22 @@ import (
 // swagger:model openpitrixAppVersionReviewPhase
 type OpenpitrixAppVersionReviewPhase struct {
 
-	// message
+	// review message
 	Message string `json:"message,omitempty"`
 
-	// operator
+	// user of reviewer
 	Operator string `json:"operator,omitempty"`
 
-	// operator type
+	// operator type of reviewer eg.[global_admin|developer|business|technical|isv]
 	OperatorType string `json:"operator_type,omitempty"`
 
-	// review time
+	// app version review time
 	ReviewTime strfmt.DateTime `json:"review_time,omitempty"`
 
-	// status
+	// review status of app version eg.[isv-in-review|isv-passed|isv-rejected|isv-draft|business-in-review|business-passed|business-rejected|develop-draft|develop-in-review|develop-passed|develop-rejected|develop-draft]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 }
 

@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDescribeVendorStatisticsResponse
 type OpenpitrixDescribeVendorStatisticsResponse struct {
 
-	// total count
+	// total count of vendor statistic
 	TotalCount int64 `json:"total_count,omitempty"`
 
 	// vendor verify statistics set

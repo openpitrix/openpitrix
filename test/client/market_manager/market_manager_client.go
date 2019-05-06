@@ -83,7 +83,7 @@ func (a *Client) DeleteMarkets(params *DeleteMarketsParams, authInfo runtime.Cli
 }
 
 /*
-DescribeMarketUsers describes users with filter
+DescribeMarketUsers gets users with filter
 */
 func (a *Client) DescribeMarketUsers(params *DescribeMarketUsersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeMarketUsersOK, error) {
 	// TODO: Validate the params before sending
@@ -170,7 +170,7 @@ func (a *Client) ModifyMarket(params *ModifyMarketParams, authInfo runtime.Clien
 }
 
 /*
-UserJoinMarket users join market
+UserJoinMarket joins market
 */
 func (a *Client) UserJoinMarket(params *UserJoinMarketParams, authInfo runtime.ClientAuthInfoWriter) (*UserJoinMarketOK, error) {
 	// TODO: Validate the params before sending
@@ -199,7 +199,7 @@ func (a *Client) UserJoinMarket(params *UserJoinMarketParams, authInfo runtime.C
 }
 
 /*
-UserLeaveMarket users leave market
+UserLeaveMarket leaves market
 */
 func (a *Client) UserLeaveMarket(params *UserLeaveMarketParams, authInfo runtime.ClientAuthInfoWriter) (*UserLeaveMarketOK, error) {
 	// TODO: Validate the params before sending

@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRepoSelectors openpitrix repo selectors
+// OpenpitrixRepoSelectors selectors of label
 // swagger:model openpitrixRepoSelectors
 type OpenpitrixRepoSelectors []*OpenpitrixRepoSelector
 

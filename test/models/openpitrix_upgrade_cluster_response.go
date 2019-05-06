@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixUpgradeClusterResponse
 type OpenpitrixUpgradeClusterResponse struct {
 
-	// cluster id
+	// id of cluster upgraded
 	ClusterID string `json:"cluster_id,omitempty"`
 
 	// job id

@@ -38,7 +38,9 @@ message CreateMarketResponse {
 
 message DescribeMarketsRequest {
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
 	// default is 20, max value is 200
 	uint32 limit = 4;
@@ -108,7 +110,9 @@ message MarketUser {
 
 message DescribeMarketUsersRequest {
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
 	// default is 20, max value is 200
 	uint32 limit = 4;
@@ -128,7 +132,7 @@ message DescribeMarketUsersResponse {
 service MarketManager {
     rpc CreateMarket (CreateMarketRequest) returns (CreateMarketResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create market"
+			summary: "Create market"
 		};
 		option (google.api.http) = {
 			post: "/v1/markets"
@@ -137,7 +141,7 @@ service MarketManager {
     }
     rpc DescribeMarkets (DescribeMarketsRequest) returns (DescribeMarketsResponse) {
 	  	 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe markets with filter"
+			summary: "Describe markets with filter"
 		};
 		 option (google.api.http) = {
 			get: "/v1/markets"
@@ -145,7 +149,7 @@ service MarketManager {
     }
     rpc ModifyMarket (ModifyMarketRequest) returns (ModifyMarketResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify market"
+			summary: "Modify market"
 		};
 		option (google.api.http) = {
 			patch: "/v1/markets"
@@ -154,7 +158,7 @@ service MarketManager {
     }
     rpc DeleteMarkets (DeleteMarketsRequest) returns (DeleteMarketsResponse) {
 		 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete markets"
+			summary: "Delete markets"
 		};
 		option (google.api.http) = {
 			delete: "/v1/markets"
@@ -163,7 +167,7 @@ service MarketManager {
     }
     rpc UserJoinMarket (UserJoinMarketRequest) returns (UserJoinMarketResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "user join market"
+			summary: "Join market"
 		};
 		option (google.api.http) = {
 			post: "/v1/markets:join"
@@ -172,7 +176,7 @@ service MarketManager {
     }
     rpc UserLeaveMarket (UserLeaveMarketRequest) returns (UserLeaveMarketResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "user leave market"
+			summary: "Leave market"
 		};
 		option (google.api.http) = {
 			post: "/v1/markets:leave"
@@ -181,7 +185,7 @@ service MarketManager {
     }
     rpc DescribeMarketUsers (DescribeMarketUsersRequest) returns (DescribeMarketUsersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe users with filter"
+			summary: "Get users with filter"
 		};
 		option (google.api.http) = {
 			get: "/v1/market_users"

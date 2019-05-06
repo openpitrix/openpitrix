@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixSuspendAppVersionRequest
 type OpenpitrixSuspendAppVersionRequest struct {
 
-	// version id
+	// required, id of version to suspend
 	VersionID string `json:"version_id,omitempty"`
 }
 

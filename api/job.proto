@@ -14,71 +14,115 @@ import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
 message CreateJobRequest {
+	// required, cluster id
 	google.protobuf.StringValue cluster_id = 1;
+	// required, id of app run in cluster
 	google.protobuf.StringValue app_id = 2;
+	// id of specific app version
 	google.protobuf.StringValue version_id = 3;
+	// required, describe job's action.eg:[CreateCluster|StartClusters|...]
 	google.protobuf.StringValue job_action = 4;
+	// required, runtime provide.eg:[qingcloud|aliyun|aws|kubernetes]
 	google.protobuf.StringValue provider = 5;
+	// required, directive, a json string, describe the info of running the job action
 	google.protobuf.StringValue directive = 6;
+	// required, runtime id
 	google.protobuf.StringValue runtime_id = 7;
 }
 
 message CreateJobResponse {
+	// id of job created
 	google.protobuf.StringValue job_id = 1;
+	// id of cluster run job
 	google.protobuf.StringValue cluster_id = 2;
+	// id of app deploy in cluster
 	google.protobuf.StringValue app_id = 3;
+	// id of specific app version
 	google.protobuf.StringValue version_id = 4;
+	// id of runtime of cluster
 	google.protobuf.StringValue runtime_id = 5;
 }
 
 message Job {
+	// job id
 	google.protobuf.StringValue job_id = 1;
+	// id of cluster run job
 	google.protobuf.StringValue cluster_id = 2;
+	// id of app deployed in cluster
 	google.protobuf.StringValue app_id = 3;
+	// id of specific app version
 	google.protobuf.StringValue version_id = 4;
+	// describe job's action eg:[CreateCluster|StartClusters|...]
 	google.protobuf.StringValue job_action = 5;
+	// status eg.[successful|failed|running|pending]
 	google.protobuf.StringValue status = 6;
+	// error code, if job run failed will return a error code
 	google.protobuf.UInt32Value error_code = 7;
+	// directive, a json string, describe the info of running the job action
 	google.protobuf.StringValue directive = 8;
+	// host name of server
 	google.protobuf.StringValue executor = 9;
+	// total count of task in job, a job contain one more task
 	google.protobuf.UInt32Value task_count = 10;
+	// own path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 11;
+	// runtime provider eg:[qingcloud|aliyun|aws|kubernetes]
 	google.protobuf.StringValue provider = 12;
+	// id of runtime of cluster
 	google.protobuf.StringValue runtime_id = 13;
+	// the time job create
 	google.protobuf.Timestamp create_time = 14;
+	// record the status changed time
 	google.protobuf.Timestamp status_time = 15;
+	// owner
 	google.protobuf.StringValue owner = 16;
 }
-message DescribeJobsRequest {
-	google.protobuf.StringValue search_word = 1;
-	google.protobuf.StringValue sort_key = 2;
-	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
-	uint32 limit = 4;
-	// default is 0
-	uint32 offset = 5;
-	repeated string display_columns = 6;
 
+message DescribeJobsRequest {
+	// query key, support these fields(job_id, cluster_id, app_id, version_id, executor, provider, status, owner)
+	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
+	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
+	google.protobuf.BoolValue reverse = 3;
+	// data limit per page, default value 20, max value 200
+	uint32 limit = 4;
+	// data offset, default 0
+	uint32 offset = 5;
+	// select column to display
+	repeated string display_columns = 6;
+	// job ids
 	repeated string job_id = 11;
+	// cluster id
 	google.protobuf.StringValue cluster_id = 12;
+	// app id
 	google.protobuf.StringValue app_id = 13;
+	// specific app version id to filter result
 	google.protobuf.StringValue version_id = 14;
+	// host name of server
 	google.protobuf.StringValue executor = 15;
+	// runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	google.protobuf.StringValue provider = 16;
+	// runtime id
 	google.protobuf.StringValue runtime_id = 17;
+	// status eg.[successful|failed|running|pending]
 	repeated string status = 18;
+	// owner
 	repeated string owner = 19;
 }
 message DescribeJobsResponse {
+	// total count of job
 	uint32 total_count = 1;
+	// list of job
 	repeated Job job_set = 2;
 }
 
 service JobManager {
 	rpc CreateJob (CreateJobRequest) returns (CreateJobResponse);
+	// Get job, filter with these fields(job_id, cluster_id, app_id, version_id, executor, provider, status, owner), default return all jobs
 	rpc DescribeJobs (DescribeJobsRequest) returns (DescribeJobsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe jobs with filter"
+			summary: "Get job, filter with these fields(job_id, cluster_id, app_id, version_id, executor, provider, status, owner), default return all jobs"
 		};
 		option (google.api.http) = {
 			get: "/v1/jobs"

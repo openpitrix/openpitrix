@@ -19,13 +19,13 @@ type OpenpitrixAPI struct {
 	// api id
 	APIID string `json:"api_id,omitempty"`
 
-	// api method
+	// api method, rpc method eg.[Token|CanDo|...]
 	APIMethod string `json:"api_method,omitempty"`
 
-	// url
+	// request url
 	URL string `json:"url,omitempty"`
 
-	// url method
+	// url method, http verb
 	URLMethod string `json:"url_method,omitempty"`
 }
 

@@ -15,154 +15,204 @@ import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
 message DescribeVendorVerifyInfosRequest {
+	// query key, support these fields(user_id, status)
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 5;
-
+	// user ids
 	repeated string user_id = 11;
+	// status eg.[draft|submitted|passed|rejected|suspended|in-review|new]
 	repeated string status = 12;
+	// select column to display
 	repeated string display_columns = 13;
-	repeated string owner = 14;
+	// owner
+ 	repeated string owner = 14;
 }
 
 message DescribeVendorVerifyInfosResponse {
+	// total count of vendor
 	uint32 total_count = 1;
+	// list of vendor verify info
 	repeated VendorVerifyInfo vendor_verify_info_set = 2;
 }
 
 message VendorVerifyInfo {
+	// user id
 	google.protobuf.StringValue user_id = 1;
+	// company name
 	google.protobuf.StringValue company_name = 2;
+	// company website
 	google.protobuf.StringValue company_website = 3;
+	// company profile
 	google.protobuf.StringValue company_profile = 4;
+	// authorizer name
 	google.protobuf.StringValue authorizer_name = 5;
+	// authorizer email eg.***@yunify.com
 	google.protobuf.StringValue authorizer_email = 6;
+	// authorizer phone, string of 11 digit
 	google.protobuf.StringValue authorizer_phone = 7;
+	// bank name
 	google.protobuf.StringValue bank_name = 8;
+	// name of bank account
 	google.protobuf.StringValue bank_account_name = 9;
+	// number of bank account
 	google.protobuf.StringValue bank_account_number = 10;
+	// status eg.[draft|submitted|passed|rejected|suspended|in-review|new]
 	google.protobuf.StringValue status = 11;
+	// reject message
 	google.protobuf.StringValue reject_message = 12;
+	// approver who approve the vendor verify
 	google.protobuf.StringValue approver = 13;
+	// owner who own the vendor verify
 	google.protobuf.StringValue owner = 14;
+	// owner path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 15;
+	// submit time of vendor verify
 	google.protobuf.Timestamp submit_time = 16;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 17;
 }
 
 message SubmitVendorVerifyInfoRequest {
+	// required, id of user to submit
 	string user_id = 1;
+	// required, company name
 	google.protobuf.StringValue company_name = 2;
+	// company website
 	google.protobuf.StringValue company_website = 3;
+	// company profile
 	google.protobuf.StringValue company_profile = 4;
+	// required, authorizer name
 	google.protobuf.StringValue authorizer_name = 5;
+	// required, authorizer email eg. xxx@yunify.com
 	google.protobuf.StringValue authorizer_email = 6;
+	// authorizer phone, string of 11 digit
 	google.protobuf.StringValue authorizer_phone = 7;
+	// bank name
 	google.protobuf.StringValue bank_name = 8;
+	// bank account name
 	google.protobuf.StringValue bank_account_name = 9;
+	// bank account number
 	google.protobuf.StringValue bank_account_number = 10;
 }
 
 message SubmitVendorVerifyInfoResponse {
+	// id of user submitted
 	google.protobuf.StringValue user_id = 1;
 }
 
 message PassVendorVerifyInfoRequest {
+	// required, id of user to pass
 	string user_id = 1;
 }
 
 message PassVendorVerifyInfoResponse {
+	// id of user passed
 	google.protobuf.StringValue user_id = 1;
 }
 
 message RejectVendorVerifyInfoRequest {
+	// required, id of user to reject
 	string user_id = 1;
+	// reject message
 	google.protobuf.StringValue reject_message = 2;
 }
 
 message RejectVendorVerifyInfoResponse {
+	// id of user rejected
 	google.protobuf.StringValue user_id = 1;
 }
 
 message VendorStatistics {
+	// use user id to statistic
 	google.protobuf.StringValue user_id = 1;
+	// company name
 	google.protobuf.StringValue company_name = 2;
+	// number of user's active app
 	uint32 active_app_count = 3;
+
+	// total count of cluster last month
 	uint32 cluster_count_month = 4;
+	// total count of cluster
 	uint32 cluster_count_total = 5;
 }
 
 message DescribeVendorStatisticsResponse {
+	// total count of vendor statistic
 	uint32 total_count = 1;
+	// list of vendor statistic
 	repeated VendorStatistics vendor_verify_statistics_set = 2;
 }
 
 message GetVendorVerifyInfoRequest {
+	// required, use user id to get vendor verify info
 	google.protobuf.StringValue user_id = 1;
 }
 
 message GetVendorVerifyInfoResponse {
+	// vendor verify info
 	VendorVerifyInfo vendor_verify_info = 1;
 }
 
 service IsvManager {
-
+	// Submit vendor verify info
 	rpc SubmitVendorVerifyInfo (SubmitVendorVerifyInfoRequest) returns (SubmitVendorVerifyInfoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "SubmitVendorVerifyInfo"
+			summary: "Submit vendor verify info"
 		};
 		option (google.api.http) = {
 			post: "/v1/app_vendors",
             body: "*"
 		};
 	}
-
+	// Get vendor verifies info, can filer with these fields(user_id, status), default return all VendorVerifyInfos
 	rpc DescribeVendorVerifyInfos (DescribeVendorVerifyInfosRequest) returns (DescribeVendorVerifyInfosResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "DescribeVendorVerifyInfos"
+			summary: "Get vendor verifies info, can filer with these fields(user_id, status), default return all VendorVerifyInfos"
 		};
 		option (google.api.http) = {
 			get: "/v1/app_vendors"
 		};
 	}
-
+	// Get statistics of vendor
 	rpc DescribeAppVendorStatistics (DescribeVendorVerifyInfosRequest) returns (DescribeVendorStatisticsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "DescribeAppVendorStatistics"
+			summary: "Get statistics of vendor"
 		};
 		option (google.api.http) = {
 			get: "/v1/app_vendors/app_vendor_statistics"
 		};
 	}
-
-
+    // Pass vendor verify
 	rpc PassVendorVerifyInfo (PassVendorVerifyInfoRequest) returns (PassVendorVerifyInfoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "PassVendorVerifyInfo"
+			summary: "Pass vendor verify"
 		};
 		option (google.api.http) = {
  			post: "/v1/app_vendors/pass",
             body: "*"
 		};
 	}
-
+	// Reject vendor verify
 	rpc RejectVendorVerifyInfo (RejectVendorVerifyInfoRequest) returns (RejectVendorVerifyInfoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "RejectVendorVerifyInfo"
+			summary: "Reject vendor verify"
 		};
 		option (google.api.http) = {
 			post: "/v1/app_vendors/reject",
             body: "*"
 		};
 	}
-
+	// Get vendor verify info
 	rpc GetVendorVerifyInfo (GetVendorVerifyInfoRequest) returns (GetVendorVerifyInfoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get isv by isv user Id"
+			summary: "Get vendor verify info"
 		};
 		option (google.api.http) = {
 			get: "/v1/app_vendors/app_vendor"

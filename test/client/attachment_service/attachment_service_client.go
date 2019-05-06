@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-GetAttachment gets attachment
+GetAttachment gets attachment use attachment id to get attachment
 */
 func (a *Client) GetAttachment(params *GetAttachmentParams, authInfo runtime.ClientAuthInfoWriter) (*GetAttachmentOK, error) {
 	// TODO: Validate the params before sending

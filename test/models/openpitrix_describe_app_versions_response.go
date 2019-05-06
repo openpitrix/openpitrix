@@ -19,7 +19,7 @@ type OpenpitrixDescribeAppVersionsResponse struct {
 	// app version set
 	AppVersionSet OpenpitrixDescribeAppVersionsResponseAppVersionSet `json:"app_version_set"`
 
-	// total count
+	// total count of qualified app version
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

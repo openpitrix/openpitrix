@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeRuntimesResponseRuntimeSet openpitrix describe runtimes response runtime set
+// OpenpitrixDescribeRuntimesResponseRuntimeSet list of runtime
 // swagger:model openpitrixDescribeRuntimesResponseRuntimeSet
 type OpenpitrixDescribeRuntimesResponseRuntimeSet []*OpenpitrixRuntime
 

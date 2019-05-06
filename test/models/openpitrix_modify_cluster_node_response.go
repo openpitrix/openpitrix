@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixModifyClusterNodeResponse
 type OpenpitrixModifyClusterNodeResponse struct {
 
-	// node id
+	// id of cluster node modified
 	NodeID string `json:"node_id,omitempty"`
 }
 

@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteCategoriesRequest
 type OpenpitrixDeleteCategoriesRequest struct {
 
-	// category id
+	// required, ids of category to delete
 	CategoryID []string `json:"category_id"`
 }
 

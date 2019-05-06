@@ -16,22 +16,22 @@ import (
 // swagger:model openpitrixApp
 type OpenpitrixApp struct {
 
-	// abstraction
+	// abstraction of app
 	Abstraction string `json:"abstraction,omitempty"`
 
-	// active
+	// whether there is a released version in the app
 	Active bool `json:"active,omitempty"`
 
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
-	// app version types
+	// app version types eg.[vmbased|helm]
 	AppVersionTypes string `json:"app_version_types,omitempty"`
 
 	// category set
 	CategorySet OpenpitrixAppCategorySet `json:"category_set"`
 
-	// chart name
+	// chart name of app
 	ChartName string `json:"chart_name,omitempty"`
 
 	// company join time
@@ -46,61 +46,61 @@ type OpenpitrixApp struct {
 	// company website
 	CompanyWebsite string `json:"company_website,omitempty"`
 
-	// create time
+	// the time when app create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// description
+	// app description
 	Description string `json:"description,omitempty"`
 
-	// home
+	// app home page
 	Home string `json:"home,omitempty"`
 
-	// icon
+	// app icon
 	Icon string `json:"icon,omitempty"`
 
-	// isv
+	// the isv user who create the app
 	Isv string `json:"isv,omitempty"`
 
-	// keywords
+	// app key words
 	Keywords string `json:"keywords,omitempty"`
 
-	// latest app version
+	// latest version of app
 	LatestAppVersion *OpenpitrixAppVersion `json:"latest_app_version,omitempty"`
 
-	// maintainers
+	// app maintainers
 	Maintainers string `json:"maintainers,omitempty"`
 
-	// name
+	// app name
 	Name string `json:"name,omitempty"`
 
-	// owner
+	// owner of app
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// owner path of the app, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// readme
+	// app instructions
 	Readme string `json:"readme,omitempty"`
 
-	// repo id
+	// repository(store app package) id
 	RepoID string `json:"repo_id,omitempty"`
 
-	// screenshots
+	// app screenshots
 	Screenshots string `json:"screenshots,omitempty"`
 
-	// sources
+	// sources of app
 	Sources string `json:"sources,omitempty"`
 
-	// status
+	// status eg.[modify|submit|review|cancel|release|delete|pass|reject|suspend|recover]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
-	// tos
+	// tos of app
 	Tos string `json:"tos,omitempty"`
 
-	// update time
+	// the time when app update
 	UpdateTime strfmt.DateTime `json:"update_time,omitempty"`
 }
 

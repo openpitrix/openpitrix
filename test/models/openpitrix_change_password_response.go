@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixChangePasswordResponse
 type OpenpitrixChangePasswordResponse struct {
 
-	// user id
+	// id of user that changed password
 	UserID string `json:"user_id,omitempty"`
 }
 

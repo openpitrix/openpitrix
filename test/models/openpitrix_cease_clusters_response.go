@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixCeaseClustersResponse
 type OpenpitrixCeaseClustersResponse struct {
 
-	// cluster id
+	// ids of cluster ceased
 	ClusterID []string `json:"cluster_id"`
 
-	// job id
+	// ids of job of cease cluster
 	JobID []string `json:"job_id"`
 }
 

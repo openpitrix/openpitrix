@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixNotificationConfig
 type OpenpitrixNotificationConfig struct {
 
-	// email service config
+	// email service sonfig
 	EmailServiceConfig *OpenpitrixEmailServiceConfig `json:"email_service_config,omitempty"`
 }
 
