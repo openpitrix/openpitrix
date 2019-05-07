@@ -572,7 +572,7 @@ message CombinationPrice {
 
 message CreateCombinationPriceRequest {
 	google.protobuf.StringValue combination_sku_id = 1;
-	google.protobuf.StringValue combination_attribute_id = 2;
+	google.protobuf.StringValue attribute_id = 2;
 	map<int64, double> prices = 3;
 	Currency currency = 4;
 }

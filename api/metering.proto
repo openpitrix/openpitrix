@@ -246,6 +246,7 @@ message Sku {
 message CreateSkuRequest {
 	google.protobuf.StringValue spu_id = 1;
 	repeated string attribute_ids = 2;
+	repeated string metering_attribute_ids = 3;
 }
 
 message CreateSkuResponse {
@@ -270,6 +271,7 @@ message ModifySkuRequest {
 	google.protobuf.StringValue sku_id = 1;
 	google.protobuf.StringValue spu_id = 2;
 	repeated string attribute_ids = 3;
+	repeated string metering_attribute_ids = 4;
 }
 
 message ModifySkuResponse {

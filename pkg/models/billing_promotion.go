@@ -1,4 +1,4 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -34,31 +34,34 @@ func NewCouponReceivedId() string {
 }
 
 type CombinationPrice struct {
-	CombinationPriceId   string
-	CombinationBindingId string
-	Prices               map[int64]float64 //StepPrice: {upto: price, ..}
-	Currency             string
-	Status               string
-	CreateTime           time.Time
-	StatusTime           time.Time
+	CombinationPriceId string
+	CombinationSkuId   string
+	AttributeId        string
+	Prices             map[int64]float64 //StepPrice: {upto: price, ..}
+	Currency           string
+	Status             string
+	CreateTime         time.Time
+	StatusTime         time.Time
 }
 
-func NewCombinationPrice(bindingId, currency string, prices map[int64]float64) *CombinationPrice {
+func NewCombinationPrice(skuId, attributeId, currency string, prices map[int64]float64) *CombinationPrice {
 	now := time.Now()
 	return &CombinationPrice{
-		CombinationPriceId:   NewCombinationPriceId(),
-		CombinationBindingId: bindingId,
-		Prices:               prices,
-		Currency:             currency,
-		Status:               constants.StatusActive,
-		CreateTime:           now,
-		StatusTime:           now,
+		CombinationPriceId: NewCombinationPriceId(),
+		CombinationSkuId:   skuId,
+		AttributeId:        attributeId,
+		Prices:             prices,
+		Currency:           currency,
+		Status:             constants.StatusActive,
+		CreateTime:         now,
+		StatusTime:         now,
 	}
 }
 
 func PbToCombinationPrice(req *pb.CreateCombinationPriceRequest) *CombinationPrice {
 	return NewCombinationPrice(
-		req.GetCombinationBindingId().GetValue(),
+		req.GetCombinationSkuId().GetValue(),
+		req.GetAttributeId().GetValue(),
 		req.GetCurrency().String(),
 		req.GetPrices(),
 	)

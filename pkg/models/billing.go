@@ -1,4 +1,4 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -22,38 +22,41 @@ func NewContractId() string {
 }
 
 type Price struct {
-	PriceId    string
-	BindingId  string
-	Prices     map[int64]float64
-	Currency   string
-	Status     string
-	StartTime  time.Time
-	EndTime    time.Time
-	CreateTime time.Time
-	StatusTime time.Time
+	PriceId     string
+	SkuId       string
+	AttributeId string
+	Prices      map[int64]float64
+	Currency    string
+	Status      string
+	StartTime   time.Time
+	EndTime     time.Time
+	CreateTime  time.Time
+	StatusTime  time.Time
 }
 
-func NewPrice(bindingId, currency string, prices map[int64]float64, startTime, endTime time.Time) *Price {
+func NewPrice(skuId, attributeId, currency string, prices map[int64]float64, startTime, endTime time.Time) *Price {
 	now := time.Now()
 	if (time.Time{}) == startTime {
 		startTime = now
 	}
 	return &Price{
-		PriceId:    NewPriceId(),
-		BindingId:  bindingId,
-		Prices:     prices,
-		Currency:   currency,
-		Status:     constants.StatusActive,
-		StartTime:  startTime,
-		EndTime:    endTime,
-		CreateTime: now,
-		StatusTime: now,
+		PriceId:     NewPriceId(),
+		SkuId:       skuId,
+		AttributeId: attributeId,
+		Prices:      prices,
+		Currency:    currency,
+		Status:      constants.StatusActive,
+		StartTime:   startTime,
+		EndTime:     endTime,
+		CreateTime:  now,
+		StatusTime:  now,
 	}
 }
 
 func PbToPrice(pbPrice *pb.CreatePriceRequest) *Price {
 	return NewPrice(
-		pbPrice.GetBindingId().GetValue(),
+		pbPrice.GetSkuId().GetValue(),
+		pbPrice.GetAttributeId().GetValue(),
 		pbPrice.GetCurrency().String(),
 		pbPrice.GetPrices(),
 		pbutil.FromProtoTimestamp(pbPrice.GetStartTime()),
@@ -63,15 +66,16 @@ func PbToPrice(pbPrice *pb.CreatePriceRequest) *Price {
 
 func PriceToPb(price *Price) *pb.Price {
 	return &pb.Price{
-		PriceId:    pbutil.ToProtoString(price.PriceId),
-		BindingId:  pbutil.ToProtoString(price.BindingId),
-		Prices:     price.Prices,
-		Currency:   pb.Currency(pb.Currency_value[price.Currency]),
-		Status:     pbutil.ToProtoString(price.Status),
-		StartTime:  pbutil.ToProtoTimestamp(price.StartTime),
-		EndTime:    pbutil.ToProtoTimestamp(price.EndTime),
-		CreateTime: pbutil.ToProtoTimestamp(price.CreateTime),
-		StatusTime: pbutil.ToProtoTimestamp(price.StatusTime),
+		PriceId:     pbutil.ToProtoString(price.PriceId),
+		SkuId:       pbutil.ToProtoString(price.SkuId),
+		AttributeId: pbutil.ToProtoString(price.AttributeId),
+		Prices:      price.Prices,
+		Currency:    pb.Currency(pb.Currency_value[price.Currency]),
+		Status:      pbutil.ToProtoString(price.Status),
+		StartTime:   pbutil.ToProtoTimestamp(price.StartTime),
+		EndTime:     pbutil.ToProtoTimestamp(price.EndTime),
+		CreateTime:  pbutil.ToProtoTimestamp(price.CreateTime),
+		StatusTime:  pbutil.ToProtoTimestamp(price.StatusTime),
 	}
 }
 
@@ -146,13 +150,13 @@ func (leasingContract LeasingContract) ToLeasedContract() *LeasedContract {
 		Fee:              leasingContract.Fee,
 		DueFee:           leasingContract.DueFee,
 		OtherContractFee: leasingContract.OtherContractFee,
-		CouponFee: leasingContract.CouponFee,
-		RealFee: leasingContract.RealFee,
-		Currency: leasingContract.Currency,
-		StartTime: leasingContract.StartTime,
-		EndTime: leasingContract.StatusTime,
-		CreateTime: time.Now(),
-    }
+		CouponFee:        leasingContract.CouponFee,
+		RealFee:          leasingContract.RealFee,
+		Currency:         leasingContract.Currency,
+		StartTime:        leasingContract.StartTime,
+		EndTime:          leasingContract.StatusTime,
+		CreateTime:       time.Now(),
+	}
 }
 
 type Account struct {

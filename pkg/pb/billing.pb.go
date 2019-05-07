@@ -5,6 +5,8 @@ package pb
 
 import (
 	fmt "fmt"
+	math "math"
+
 	proto "github.com/golang/protobuf/proto"
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
@@ -12,7 +14,6 @@ import (
 	context "golang.org/x/net/context"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
-	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -58,14 +59,15 @@ func (Currency) EnumDescriptor() ([]byte, []int) {
 // price
 type Price struct {
 	PriceId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=price_id,json=priceId,proto3" json:"price_id,omitempty"`
-	BindingId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=binding_id,json=bindingId,proto3" json:"binding_id,omitempty"`
-	Prices               map[int64]float64     `protobuf:"bytes,3,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
-	Currency             Currency              `protobuf:"varint,4,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	StartTime            *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime              *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	Prices               map[int64]float64     `protobuf:"bytes,4,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
+	Currency             Currency              `protobuf:"varint,5,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -103,9 +105,16 @@ func (m *Price) GetPriceId() *wrappers.StringValue {
 	return nil
 }
 
-func (m *Price) GetBindingId() *wrappers.StringValue {
+func (m *Price) GetSkuId() *wrappers.StringValue {
 	if m != nil {
-		return m.BindingId
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *Price) GetAttributeId() *wrappers.StringValue {
+	if m != nil {
+		return m.AttributeId
 	}
 	return nil
 }
@@ -160,11 +169,12 @@ func (m *Price) GetStatusTime() *timestamp.Timestamp {
 }
 
 type CreatePriceRequest struct {
-	BindingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=binding_id,json=bindingId,proto3" json:"binding_id,omitempty"`
-	Prices               map[int64]float64     `protobuf:"bytes,2,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
-	Currency             Currency              `protobuf:"varint,3,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
-	StartTime            *timestamp.Timestamp  `protobuf:"bytes,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime              *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,2,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	Prices               map[int64]float64     `protobuf:"bytes,3,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
+	Currency             Currency              `protobuf:"varint,4,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -195,9 +205,16 @@ func (m *CreatePriceRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CreatePriceRequest proto.InternalMessageInfo
 
-func (m *CreatePriceRequest) GetBindingId() *wrappers.StringValue {
+func (m *CreatePriceRequest) GetSkuId() *wrappers.StringValue {
 	if m != nil {
-		return m.BindingId
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *CreatePriceRequest) GetAttributeId() *wrappers.StringValue {
+	if m != nil {
+		return m.AttributeId
 	}
 	return nil
 }
@@ -271,14 +288,15 @@ func (m *CreatePriceResponse) GetPriceId() *wrappers.StringValue {
 
 type DescribePricesRequest struct {
 	PriceId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=price_id,json=priceId,proto3" json:"price_id,omitempty"`
-	BindingId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=binding_id,json=bindingId,proto3" json:"binding_id,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
-	StartTime            *timestamp.Timestamp  `protobuf:"bytes,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime              *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,6,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,7,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	Offset               uint32                `protobuf:"varint,8,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit                uint32                `protobuf:"varint,9,opt,name=limit,proto3" json:"limit,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,7,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,8,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,9,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,10,opt,name=limit,proto3" json:"limit,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -316,9 +334,16 @@ func (m *DescribePricesRequest) GetPriceId() *wrappers.StringValue {
 	return nil
 }
 
-func (m *DescribePricesRequest) GetBindingId() *wrappers.StringValue {
+func (m *DescribePricesRequest) GetSkuId() *wrappers.StringValue {
 	if m != nil {
-		return m.BindingId
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *DescribePricesRequest) GetAttributeId() *wrappers.StringValue {
+	if m != nil {
+		return m.AttributeId
 	}
 	return nil
 }
@@ -413,9 +438,9 @@ func (m *DescribePricesResponse) GetPrices() []*Price {
 
 type ModifyPriceRequest struct {
 	PriceId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=price_id,json=priceId,proto3" json:"price_id,omitempty"`
-	BindingId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=binding_id,json=bindingId,proto3" json:"binding_id,omitempty"`
-	Prices               map[int64]float64     `protobuf:"bytes,3,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
-	Currency             Currency              `protobuf:"varint,4,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
 	StartTime            *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime              *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
@@ -455,25 +480,25 @@ func (m *ModifyPriceRequest) GetPriceId() *wrappers.StringValue {
 	return nil
 }
 
-func (m *ModifyPriceRequest) GetBindingId() *wrappers.StringValue {
+func (m *ModifyPriceRequest) GetSkuId() *wrappers.StringValue {
 	if m != nil {
-		return m.BindingId
+		return m.SkuId
 	}
 	return nil
 }
 
-func (m *ModifyPriceRequest) GetPrices() map[int64]float64 {
+func (m *ModifyPriceRequest) GetAttributeId() *wrappers.StringValue {
 	if m != nil {
-		return m.Prices
+		return m.AttributeId
 	}
 	return nil
 }
 
-func (m *ModifyPriceRequest) GetCurrency() Currency {
+func (m *ModifyPriceRequest) GetStatus() *wrappers.StringValue {
 	if m != nil {
-		return m.Currency
+		return m.Status
 	}
-	return Currency_CNY
+	return nil
 }
 
 func (m *ModifyPriceRequest) GetStartTime() *timestamp.Timestamp {
@@ -530,10 +555,11 @@ func (m *ModifyPriceResponse) GetPriceId() *wrappers.StringValue {
 }
 
 type DeletePricesRequest struct {
-	PriceIds             []string `protobuf:"bytes,1,rep,name=price_ids,json=priceIds,proto3" json:"price_ids,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	PriceIds             []string              `protobuf:"bytes,2,rep,name=price_ids,json=priceIds,proto3" json:"price_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *DeletePricesRequest) Reset()         { *m = DeletePricesRequest{} }
@@ -560,6 +586,13 @@ func (m *DeletePricesRequest) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_DeletePricesRequest proto.InternalMessageInfo
+
+func (m *DeletePricesRequest) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
 
 func (m *DeletePricesRequest) GetPriceIds() []string {
 	if m != nil {
@@ -1142,6 +1175,632 @@ func (m *DeleteAccountsResponse) GetUserIds() []string {
 	return nil
 }
 
+type LeasingContract struct {
+	ContractId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
+	LeasingId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=leasing_id,json=leasingId,proto3" json:"leasing_id,omitempty"`
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,3,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,4,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MeteringValues       map[string]float64    `protobuf:"bytes,6,rep,name=metering_values,json=meteringValues,proto3" json:"metering_values,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
+	FeeInfo              *wrappers.StringValue `protobuf:"bytes,7,opt,name=fee_info,json=feeInfo,proto3" json:"fee_info,omitempty"`
+	Fee                  *wrappers.DoubleValue `protobuf:"bytes,8,opt,name=fee,proto3" json:"fee,omitempty"`
+	DueFee               *wrappers.DoubleValue `protobuf:"bytes,9,opt,name=due_fee,json=dueFee,proto3" json:"due_fee,omitempty"`
+	OtherContractFee     *wrappers.DoubleValue `protobuf:"bytes,10,opt,name=other_contract_fee,json=otherContractFee,proto3" json:"other_contract_fee,omitempty"`
+	CouponFee            *wrappers.DoubleValue `protobuf:"bytes,11,opt,name=coupon_fee,json=couponFee,proto3" json:"coupon_fee,omitempty"`
+	RealFee              *wrappers.DoubleValue `protobuf:"bytes,12,opt,name=real_fee,json=realFee,proto3" json:"real_fee,omitempty"`
+	Currency             *wrappers.StringValue `protobuf:"bytes,13,opt,name=currency,proto3" json:"currency,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,14,opt,name=status,proto3" json:"status,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,15,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,16,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,17,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *LeasingContract) Reset()         { *m = LeasingContract{} }
+func (m *LeasingContract) String() string { return proto.CompactTextString(m) }
+func (*LeasingContract) ProtoMessage()    {}
+func (*LeasingContract) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{18}
+}
+
+func (m *LeasingContract) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_LeasingContract.Unmarshal(m, b)
+}
+func (m *LeasingContract) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_LeasingContract.Marshal(b, m, deterministic)
+}
+func (m *LeasingContract) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LeasingContract.Merge(m, src)
+}
+func (m *LeasingContract) XXX_Size() int {
+	return xxx_messageInfo_LeasingContract.Size(m)
+}
+func (m *LeasingContract) XXX_DiscardUnknown() {
+	xxx_messageInfo_LeasingContract.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LeasingContract proto.InternalMessageInfo
+
+func (m *LeasingContract) GetContractId() *wrappers.StringValue {
+	if m != nil {
+		return m.ContractId
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetLeasingId() *wrappers.StringValue {
+	if m != nil {
+		return m.LeasingId
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetMeteringValues() map[string]float64 {
+	if m != nil {
+		return m.MeteringValues
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetFeeInfo() *wrappers.StringValue {
+	if m != nil {
+		return m.FeeInfo
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetFee() *wrappers.DoubleValue {
+	if m != nil {
+		return m.Fee
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetDueFee() *wrappers.DoubleValue {
+	if m != nil {
+		return m.DueFee
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetOtherContractFee() *wrappers.DoubleValue {
+	if m != nil {
+		return m.OtherContractFee
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetCouponFee() *wrappers.DoubleValue {
+	if m != nil {
+		return m.CouponFee
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetRealFee() *wrappers.DoubleValue {
+	if m != nil {
+		return m.RealFee
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetCurrency() *wrappers.StringValue {
+	if m != nil {
+		return m.Currency
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetStartTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StartTime
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetCreateTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.CreateTime
+	}
+	return nil
+}
+
+func (m *LeasingContract) GetStatusTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StatusTime
+	}
+	return nil
+}
+
+type DescribeLeasingContractsRequest struct {
+	ContractId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
+	LeasingId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=leasing_id,json=leasingId,proto3" json:"leasing_id,omitempty"`
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,3,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,4,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,7,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,8,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,9,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,10,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *DescribeLeasingContractsRequest) Reset()         { *m = DescribeLeasingContractsRequest{} }
+func (m *DescribeLeasingContractsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeLeasingContractsRequest) ProtoMessage()    {}
+func (*DescribeLeasingContractsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{19}
+}
+
+func (m *DescribeLeasingContractsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeLeasingContractsRequest.Unmarshal(m, b)
+}
+func (m *DescribeLeasingContractsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeLeasingContractsRequest.Marshal(b, m, deterministic)
+}
+func (m *DescribeLeasingContractsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeLeasingContractsRequest.Merge(m, src)
+}
+func (m *DescribeLeasingContractsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeLeasingContractsRequest.Size(m)
+}
+func (m *DescribeLeasingContractsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeLeasingContractsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeLeasingContractsRequest proto.InternalMessageInfo
+
+func (m *DescribeLeasingContractsRequest) GetContractId() *wrappers.StringValue {
+	if m != nil {
+		return m.ContractId
+	}
+	return nil
+}
+
+func (m *DescribeLeasingContractsRequest) GetLeasingId() *wrappers.StringValue {
+	if m != nil {
+		return m.LeasingId
+	}
+	return nil
+}
+
+func (m *DescribeLeasingContractsRequest) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *DescribeLeasingContractsRequest) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *DescribeLeasingContractsRequest) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+func (m *DescribeLeasingContractsRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *DescribeLeasingContractsRequest) GetSortKey() *wrappers.StringValue {
+	if m != nil {
+		return m.SortKey
+	}
+	return nil
+}
+
+func (m *DescribeLeasingContractsRequest) GetReverse() *wrappers.BoolValue {
+	if m != nil {
+		return m.Reverse
+	}
+	return nil
+}
+
+func (m *DescribeLeasingContractsRequest) GetOffset() uint32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+func (m *DescribeLeasingContractsRequest) GetLimit() uint32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type DescribeLeasingContractsResponse struct {
+	LeasingContracts     []*LeasingContract `protobuf:"bytes,1,rep,name=leasing_contracts,json=leasingContracts,proto3" json:"leasing_contracts,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
+	XXX_unrecognized     []byte             `json:"-"`
+	XXX_sizecache        int32              `json:"-"`
+}
+
+func (m *DescribeLeasingContractsResponse) Reset()         { *m = DescribeLeasingContractsResponse{} }
+func (m *DescribeLeasingContractsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeLeasingContractsResponse) ProtoMessage()    {}
+func (*DescribeLeasingContractsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{20}
+}
+
+func (m *DescribeLeasingContractsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeLeasingContractsResponse.Unmarshal(m, b)
+}
+func (m *DescribeLeasingContractsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeLeasingContractsResponse.Marshal(b, m, deterministic)
+}
+func (m *DescribeLeasingContractsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeLeasingContractsResponse.Merge(m, src)
+}
+func (m *DescribeLeasingContractsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeLeasingContractsResponse.Size(m)
+}
+func (m *DescribeLeasingContractsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeLeasingContractsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeLeasingContractsResponse proto.InternalMessageInfo
+
+func (m *DescribeLeasingContractsResponse) GetLeasingContracts() []*LeasingContract {
+	if m != nil {
+		return m.LeasingContracts
+	}
+	return nil
+}
+
+type LeasedContract struct {
+	ContractId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
+	LeasingId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=leasing_id,json=leasingId,proto3" json:"leasing_id,omitempty"`
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,3,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,4,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MeteringValues       map[string]float64    `protobuf:"bytes,6,rep,name=metering_values,json=meteringValues,proto3" json:"metering_values,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
+	FeeInfo              *wrappers.StringValue `protobuf:"bytes,7,opt,name=fee_info,json=feeInfo,proto3" json:"fee_info,omitempty"`
+	Fee                  *wrappers.DoubleValue `protobuf:"bytes,8,opt,name=fee,proto3" json:"fee,omitempty"`
+	DueFee               *wrappers.DoubleValue `protobuf:"bytes,9,opt,name=due_fee,json=dueFee,proto3" json:"due_fee,omitempty"`
+	OtherContractFee     *wrappers.DoubleValue `protobuf:"bytes,10,opt,name=other_contract_fee,json=otherContractFee,proto3" json:"other_contract_fee,omitempty"`
+	CouponFee            *wrappers.DoubleValue `protobuf:"bytes,11,opt,name=coupon_fee,json=couponFee,proto3" json:"coupon_fee,omitempty"`
+	RealFee              *wrappers.DoubleValue `protobuf:"bytes,12,opt,name=real_fee,json=realFee,proto3" json:"real_fee,omitempty"`
+	Currency             *wrappers.StringValue `protobuf:"bytes,13,opt,name=currency,proto3" json:"currency,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,14,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,15,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,16,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *LeasedContract) Reset()         { *m = LeasedContract{} }
+func (m *LeasedContract) String() string { return proto.CompactTextString(m) }
+func (*LeasedContract) ProtoMessage()    {}
+func (*LeasedContract) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{21}
+}
+
+func (m *LeasedContract) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_LeasedContract.Unmarshal(m, b)
+}
+func (m *LeasedContract) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_LeasedContract.Marshal(b, m, deterministic)
+}
+func (m *LeasedContract) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LeasedContract.Merge(m, src)
+}
+func (m *LeasedContract) XXX_Size() int {
+	return xxx_messageInfo_LeasedContract.Size(m)
+}
+func (m *LeasedContract) XXX_DiscardUnknown() {
+	xxx_messageInfo_LeasedContract.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LeasedContract proto.InternalMessageInfo
+
+func (m *LeasedContract) GetContractId() *wrappers.StringValue {
+	if m != nil {
+		return m.ContractId
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetLeasingId() *wrappers.StringValue {
+	if m != nil {
+		return m.LeasingId
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetMeteringValues() map[string]float64 {
+	if m != nil {
+		return m.MeteringValues
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetFeeInfo() *wrappers.StringValue {
+	if m != nil {
+		return m.FeeInfo
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetFee() *wrappers.DoubleValue {
+	if m != nil {
+		return m.Fee
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetDueFee() *wrappers.DoubleValue {
+	if m != nil {
+		return m.DueFee
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetOtherContractFee() *wrappers.DoubleValue {
+	if m != nil {
+		return m.OtherContractFee
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetCouponFee() *wrappers.DoubleValue {
+	if m != nil {
+		return m.CouponFee
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetRealFee() *wrappers.DoubleValue {
+	if m != nil {
+		return m.RealFee
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetCurrency() *wrappers.StringValue {
+	if m != nil {
+		return m.Currency
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetStartTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StartTime
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetEndTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.EndTime
+	}
+	return nil
+}
+
+func (m *LeasedContract) GetCreateTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.CreateTime
+	}
+	return nil
+}
+
+type DescribeLeasedContractsRequest struct {
+	ContractId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
+	LeasingId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=leasing_id,json=leasingId,proto3" json:"leasing_id,omitempty"`
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,3,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,4,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,7,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,8,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,9,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,10,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *DescribeLeasedContractsRequest) Reset()         { *m = DescribeLeasedContractsRequest{} }
+func (m *DescribeLeasedContractsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeLeasedContractsRequest) ProtoMessage()    {}
+func (*DescribeLeasedContractsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{22}
+}
+
+func (m *DescribeLeasedContractsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeLeasedContractsRequest.Unmarshal(m, b)
+}
+func (m *DescribeLeasedContractsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeLeasedContractsRequest.Marshal(b, m, deterministic)
+}
+func (m *DescribeLeasedContractsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeLeasedContractsRequest.Merge(m, src)
+}
+func (m *DescribeLeasedContractsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeLeasedContractsRequest.Size(m)
+}
+func (m *DescribeLeasedContractsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeLeasedContractsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeLeasedContractsRequest proto.InternalMessageInfo
+
+func (m *DescribeLeasedContractsRequest) GetContractId() *wrappers.StringValue {
+	if m != nil {
+		return m.ContractId
+	}
+	return nil
+}
+
+func (m *DescribeLeasedContractsRequest) GetLeasingId() *wrappers.StringValue {
+	if m != nil {
+		return m.LeasingId
+	}
+	return nil
+}
+
+func (m *DescribeLeasedContractsRequest) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *DescribeLeasedContractsRequest) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *DescribeLeasedContractsRequest) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+func (m *DescribeLeasedContractsRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *DescribeLeasedContractsRequest) GetSortKey() *wrappers.StringValue {
+	if m != nil {
+		return m.SortKey
+	}
+	return nil
+}
+
+func (m *DescribeLeasedContractsRequest) GetReverse() *wrappers.BoolValue {
+	if m != nil {
+		return m.Reverse
+	}
+	return nil
+}
+
+func (m *DescribeLeasedContractsRequest) GetOffset() uint32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+func (m *DescribeLeasedContractsRequest) GetLimit() uint32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type DescribeLeasedContractsResponse struct {
+	LeasedContracts      []*LeasedContract `protobuf:"bytes,1,rep,name=leased_contracts,json=leasedContracts,proto3" json:"leased_contracts,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *DescribeLeasedContractsResponse) Reset()         { *m = DescribeLeasedContractsResponse{} }
+func (m *DescribeLeasedContractsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeLeasedContractsResponse) ProtoMessage()    {}
+func (*DescribeLeasedContractsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{23}
+}
+
+func (m *DescribeLeasedContractsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeLeasedContractsResponse.Unmarshal(m, b)
+}
+func (m *DescribeLeasedContractsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeLeasedContractsResponse.Marshal(b, m, deterministic)
+}
+func (m *DescribeLeasedContractsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeLeasedContractsResponse.Merge(m, src)
+}
+func (m *DescribeLeasedContractsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeLeasedContractsResponse.Size(m)
+}
+func (m *DescribeLeasedContractsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeLeasedContractsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeLeasedContractsResponse proto.InternalMessageInfo
+
+func (m *DescribeLeasedContractsResponse) GetLeasedContracts() []*LeasedContract {
+	if m != nil {
+		return m.LeasedContracts
+	}
+	return nil
+}
+
 type Recharge struct {
 	RechargeId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=recharge_id,json=rechargeId,proto3" json:"recharge_id,omitempty"`
 	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -1159,7 +1818,7 @@ func (m *Recharge) Reset()         { *m = Recharge{} }
 func (m *Recharge) String() string { return proto.CompactTextString(m) }
 func (*Recharge) ProtoMessage()    {}
 func (*Recharge) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{18}
+	return fileDescriptor_958db8ba491a6b57, []int{24}
 }
 
 func (m *Recharge) XXX_Unmarshal(b []byte) error {
@@ -1243,7 +1902,7 @@ func (m *CreateRechargeRequest) Reset()         { *m = CreateRechargeRequest{} }
 func (m *CreateRechargeRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateRechargeRequest) ProtoMessage()    {}
 func (*CreateRechargeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{19}
+	return fileDescriptor_958db8ba491a6b57, []int{25}
 }
 
 func (m *CreateRechargeRequest) XXX_Unmarshal(b []byte) error {
@@ -1303,7 +1962,7 @@ func (m *CreateRechargeResponse) Reset()         { *m = CreateRechargeResponse{}
 func (m *CreateRechargeResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateRechargeResponse) ProtoMessage()    {}
 func (*CreateRechargeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{20}
+	return fileDescriptor_958db8ba491a6b57, []int{26}
 }
 
 func (m *CreateRechargeResponse) XXX_Unmarshal(b []byte) error {
@@ -1345,7 +2004,7 @@ func (m *DescribeRechargesRequest) Reset()         { *m = DescribeRechargesReque
 func (m *DescribeRechargesRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeRechargesRequest) ProtoMessage()    {}
 func (*DescribeRechargesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{21}
+	return fileDescriptor_958db8ba491a6b57, []int{27}
 }
 
 func (m *DescribeRechargesRequest) XXX_Unmarshal(b []byte) error {
@@ -1405,7 +2064,7 @@ func (m *DescribeRechargesResponse) Reset()         { *m = DescribeRechargesResp
 func (m *DescribeRechargesResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeRechargesResponse) ProtoMessage()    {}
 func (*DescribeRechargesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{22}
+	return fileDescriptor_958db8ba491a6b57, []int{28}
 }
 
 func (m *DescribeRechargesResponse) XXX_Unmarshal(b []byte) error {
@@ -1451,7 +2110,7 @@ func (m *Charge) Reset()         { *m = Charge{} }
 func (m *Charge) String() string { return proto.CompactTextString(m) }
 func (*Charge) ProtoMessage()    {}
 func (*Charge) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{23}
+	return fileDescriptor_958db8ba491a6b57, []int{29}
 }
 
 func (m *Charge) XXX_Unmarshal(b []byte) error {
@@ -1545,7 +2204,7 @@ func (m *DescribeChargesRequest) Reset()         { *m = DescribeChargesRequest{}
 func (m *DescribeChargesRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeChargesRequest) ProtoMessage()    {}
 func (*DescribeChargesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{24}
+	return fileDescriptor_958db8ba491a6b57, []int{30}
 }
 
 func (m *DescribeChargesRequest) XXX_Unmarshal(b []byte) error {
@@ -1626,7 +2285,7 @@ func (m *DescribeChargesResponse) Reset()         { *m = DescribeChargesResponse
 func (m *DescribeChargesResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeChargesResponse) ProtoMessage()    {}
 func (*DescribeChargesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{25}
+	return fileDescriptor_958db8ba491a6b57, []int{31}
 }
 
 func (m *DescribeChargesResponse) XXX_Unmarshal(b []byte) error {
@@ -1671,7 +2330,7 @@ func (m *Refund) Reset()         { *m = Refund{} }
 func (m *Refund) String() string { return proto.CompactTextString(m) }
 func (*Refund) ProtoMessage()    {}
 func (*Refund) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{26}
+	return fileDescriptor_958db8ba491a6b57, []int{32}
 }
 
 func (m *Refund) XXX_Unmarshal(b []byte) error {
@@ -1758,7 +2417,7 @@ func (m *DescribeRefundsRequest) Reset()         { *m = DescribeRefundsRequest{}
 func (m *DescribeRefundsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeRefundsRequest) ProtoMessage()    {}
 func (*DescribeRefundsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{27}
+	return fileDescriptor_958db8ba491a6b57, []int{33}
 }
 
 func (m *DescribeRefundsRequest) XXX_Unmarshal(b []byte) error {
@@ -1839,7 +2498,7 @@ func (m *DescribeRefundsResponse) Reset()         { *m = DescribeRefundsResponse
 func (m *DescribeRefundsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeRefundsResponse) ProtoMessage()    {}
 func (*DescribeRefundsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{28}
+	return fileDescriptor_958db8ba491a6b57, []int{34}
 }
 
 func (m *DescribeRefundsResponse) XXX_Unmarshal(b []byte) error {
@@ -1883,7 +2542,7 @@ func (m *Income) Reset()         { *m = Income{} }
 func (m *Income) String() string { return proto.CompactTextString(m) }
 func (*Income) ProtoMessage()    {}
 func (*Income) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{29}
+	return fileDescriptor_958db8ba491a6b57, []int{35}
 }
 
 func (m *Income) XXX_Unmarshal(b []byte) error {
@@ -1963,7 +2622,7 @@ func (m *DescribeIncomesRequest) Reset()         { *m = DescribeIncomesRequest{}
 func (m *DescribeIncomesRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeIncomesRequest) ProtoMessage()    {}
 func (*DescribeIncomesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{30}
+	return fileDescriptor_958db8ba491a6b57, []int{36}
 }
 
 func (m *DescribeIncomesRequest) XXX_Unmarshal(b []byte) error {
@@ -2044,7 +2703,7 @@ func (m *DescribeIncomesResponse) Reset()         { *m = DescribeIncomesResponse
 func (m *DescribeIncomesResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeIncomesResponse) ProtoMessage()    {}
 func (*DescribeIncomesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{31}
+	return fileDescriptor_958db8ba491a6b57, []int{37}
 }
 
 func (m *DescribeIncomesResponse) XXX_Unmarshal(b []byte) error {
@@ -2072,16 +2731,433 @@ func (m *DescribeIncomesResponse) GetIncomes() []*Income {
 	return nil
 }
 
+type Context struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Context) Reset()         { *m = Context{} }
+func (m *Context) String() string { return proto.CompactTextString(m) }
+func (*Context) ProtoMessage()    {}
+func (*Context) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{38}
+}
+
+func (m *Context) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Context.Unmarshal(m, b)
+}
+func (m *Context) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Context.Marshal(b, m, deterministic)
+}
+func (m *Context) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Context.Merge(m, src)
+}
+func (m *Context) XXX_Size() int {
+	return xxx_messageInfo_Context.Size(m)
+}
+func (m *Context) XXX_DiscardUnknown() {
+	xxx_messageInfo_Context.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Context proto.InternalMessageInfo
+
+type Metering struct {
+	LeasingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=leasing_id,json=leasingId,proto3" json:"leasing_id,omitempty"`
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,2,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,3,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ActionId             *wrappers.StringValue `protobuf:"bytes,5,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
+	MeteringValues       map[string]float64    `protobuf:"bytes,6,rep,name=metering_values,json=meteringValues,proto3" json:"metering_values,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
+	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *Metering) Reset()         { *m = Metering{} }
+func (m *Metering) String() string { return proto.CompactTextString(m) }
+func (*Metering) ProtoMessage()    {}
+func (*Metering) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{39}
+}
+
+func (m *Metering) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Metering.Unmarshal(m, b)
+}
+func (m *Metering) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Metering.Marshal(b, m, deterministic)
+}
+func (m *Metering) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Metering.Merge(m, src)
+}
+func (m *Metering) XXX_Size() int {
+	return xxx_messageInfo_Metering.Size(m)
+}
+func (m *Metering) XXX_DiscardUnknown() {
+	xxx_messageInfo_Metering.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Metering proto.InternalMessageInfo
+
+func (m *Metering) GetLeasingId() *wrappers.StringValue {
+	if m != nil {
+		return m.LeasingId
+	}
+	return nil
+}
+
+func (m *Metering) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *Metering) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *Metering) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+func (m *Metering) GetActionId() *wrappers.StringValue {
+	if m != nil {
+		return m.ActionId
+	}
+	return nil
+}
+
+func (m *Metering) GetMeteringValues() map[string]float64 {
+	if m != nil {
+		return m.MeteringValues
+	}
+	return nil
+}
+
+func (m *Metering) GetUpdateTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.UpdateTime
+	}
+	return nil
+}
+
+type BillingRequest struct {
+	Context              *Context  `protobuf:"bytes,1,opt,name=context,proto3" json:"context,omitempty"`
+	Metering             *Metering `protobuf:"bytes,2,opt,name=metering,proto3" json:"metering,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
+}
+
+func (m *BillingRequest) Reset()         { *m = BillingRequest{} }
+func (m *BillingRequest) String() string { return proto.CompactTextString(m) }
+func (*BillingRequest) ProtoMessage()    {}
+func (*BillingRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{40}
+}
+
+func (m *BillingRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BillingRequest.Unmarshal(m, b)
+}
+func (m *BillingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BillingRequest.Marshal(b, m, deterministic)
+}
+func (m *BillingRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BillingRequest.Merge(m, src)
+}
+func (m *BillingRequest) XXX_Size() int {
+	return xxx_messageInfo_BillingRequest.Size(m)
+}
+func (m *BillingRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_BillingRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BillingRequest proto.InternalMessageInfo
+
+func (m *BillingRequest) GetContext() *Context {
+	if m != nil {
+		return m.Context
+	}
+	return nil
+}
+
+func (m *BillingRequest) GetMetering() *Metering {
+	if m != nil {
+		return m.Metering
+	}
+	return nil
+}
+
+type NIL struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *NIL) Reset()         { *m = NIL{} }
+func (m *NIL) String() string { return proto.CompactTextString(m) }
+func (*NIL) ProtoMessage()    {}
+func (*NIL) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{41}
+}
+
+func (m *NIL) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_NIL.Unmarshal(m, b)
+}
+func (m *NIL) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_NIL.Marshal(b, m, deterministic)
+}
+func (m *NIL) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NIL.Merge(m, src)
+}
+func (m *NIL) XXX_Size() int {
+	return xxx_messageInfo_NIL.Size(m)
+}
+func (m *NIL) XXX_DiscardUnknown() {
+	xxx_messageInfo_NIL.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NIL proto.InternalMessageInfo
+
+type CreateLeasingContractRequest struct {
+	LeasingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=leasing_id,json=leasingId,proto3" json:"leasing_id,omitempty"`
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,2,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,3,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	MeteringValues       map[string]float64    `protobuf:"bytes,5,rep,name=metering_values,json=meteringValues,proto3" json:"metering_values,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CreateLeasingContractRequest) Reset()         { *m = CreateLeasingContractRequest{} }
+func (m *CreateLeasingContractRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateLeasingContractRequest) ProtoMessage()    {}
+func (*CreateLeasingContractRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{42}
+}
+
+func (m *CreateLeasingContractRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateLeasingContractRequest.Unmarshal(m, b)
+}
+func (m *CreateLeasingContractRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateLeasingContractRequest.Marshal(b, m, deterministic)
+}
+func (m *CreateLeasingContractRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateLeasingContractRequest.Merge(m, src)
+}
+func (m *CreateLeasingContractRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateLeasingContractRequest.Size(m)
+}
+func (m *CreateLeasingContractRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateLeasingContractRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateLeasingContractRequest proto.InternalMessageInfo
+
+func (m *CreateLeasingContractRequest) GetLeasingId() *wrappers.StringValue {
+	if m != nil {
+		return m.LeasingId
+	}
+	return nil
+}
+
+func (m *CreateLeasingContractRequest) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *CreateLeasingContractRequest) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *CreateLeasingContractRequest) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+func (m *CreateLeasingContractRequest) GetMeteringValues() map[string]float64 {
+	if m != nil {
+		return m.MeteringValues
+	}
+	return nil
+}
+
+func (m *CreateLeasingContractRequest) GetStartTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StartTime
+	}
+	return nil
+}
+
+type CreateLeasingContractResponse struct {
+	LeasingContract      *LeasingContract `protobuf:"bytes,1,opt,name=leasing_contract,json=leasingContract,proto3" json:"leasing_contract,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
+func (m *CreateLeasingContractResponse) Reset()         { *m = CreateLeasingContractResponse{} }
+func (m *CreateLeasingContractResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateLeasingContractResponse) ProtoMessage()    {}
+func (*CreateLeasingContractResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{43}
+}
+
+func (m *CreateLeasingContractResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateLeasingContractResponse.Unmarshal(m, b)
+}
+func (m *CreateLeasingContractResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateLeasingContractResponse.Marshal(b, m, deterministic)
+}
+func (m *CreateLeasingContractResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateLeasingContractResponse.Merge(m, src)
+}
+func (m *CreateLeasingContractResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateLeasingContractResponse.Size(m)
+}
+func (m *CreateLeasingContractResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateLeasingContractResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateLeasingContractResponse proto.InternalMessageInfo
+
+func (m *CreateLeasingContractResponse) GetLeasingContract() *LeasingContract {
+	if m != nil {
+		return m.LeasingContract
+	}
+	return nil
+}
+
+type CalculateRequest struct {
+	Ctx                  *Context         `protobuf:"bytes,1,opt,name=ctx,proto3" json:"ctx,omitempty"`
+	Metering             *Metering        `protobuf:"bytes,2,opt,name=metering,proto3" json:"metering,omitempty"`
+	LeaingContract       *LeasingContract `protobuf:"bytes,3,opt,name=leaing_contract,json=leaingContract,proto3" json:"leaing_contract,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
+func (m *CalculateRequest) Reset()         { *m = CalculateRequest{} }
+func (m *CalculateRequest) String() string { return proto.CompactTextString(m) }
+func (*CalculateRequest) ProtoMessage()    {}
+func (*CalculateRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{44}
+}
+
+func (m *CalculateRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CalculateRequest.Unmarshal(m, b)
+}
+func (m *CalculateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CalculateRequest.Marshal(b, m, deterministic)
+}
+func (m *CalculateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CalculateRequest.Merge(m, src)
+}
+func (m *CalculateRequest) XXX_Size() int {
+	return xxx_messageInfo_CalculateRequest.Size(m)
+}
+func (m *CalculateRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CalculateRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CalculateRequest proto.InternalMessageInfo
+
+func (m *CalculateRequest) GetCtx() *Context {
+	if m != nil {
+		return m.Ctx
+	}
+	return nil
+}
+
+func (m *CalculateRequest) GetMetering() *Metering {
+	if m != nil {
+		return m.Metering
+	}
+	return nil
+}
+
+func (m *CalculateRequest) GetLeaingContract() *LeasingContract {
+	if m != nil {
+		return m.LeaingContract
+	}
+	return nil
+}
+
+type LeasingContractOperationRequest struct {
+	Ctx                  *Context         `protobuf:"bytes,1,opt,name=ctx,proto3" json:"ctx,omitempty"`
+	LeaingContract       *LeasingContract `protobuf:"bytes,2,opt,name=leaing_contract,json=leaingContract,proto3" json:"leaing_contract,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
+func (m *LeasingContractOperationRequest) Reset()         { *m = LeasingContractOperationRequest{} }
+func (m *LeasingContractOperationRequest) String() string { return proto.CompactTextString(m) }
+func (*LeasingContractOperationRequest) ProtoMessage()    {}
+func (*LeasingContractOperationRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{45}
+}
+
+func (m *LeasingContractOperationRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_LeasingContractOperationRequest.Unmarshal(m, b)
+}
+func (m *LeasingContractOperationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_LeasingContractOperationRequest.Marshal(b, m, deterministic)
+}
+func (m *LeasingContractOperationRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LeasingContractOperationRequest.Merge(m, src)
+}
+func (m *LeasingContractOperationRequest) XXX_Size() int {
+	return xxx_messageInfo_LeasingContractOperationRequest.Size(m)
+}
+func (m *LeasingContractOperationRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_LeasingContractOperationRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LeasingContractOperationRequest proto.InternalMessageInfo
+
+func (m *LeasingContractOperationRequest) GetCtx() *Context {
+	if m != nil {
+		return m.Ctx
+	}
+	return nil
+}
+
+func (m *LeasingContractOperationRequest) GetLeaingContract() *LeasingContract {
+	if m != nil {
+		return m.LeaingContract
+	}
+	return nil
+}
+
 // ************************************* Promotion *************************
 // combination_price
 type CombinationPrice struct {
 	CombinationPriceId   *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_price_id,json=combinationPriceId,proto3" json:"combination_price_id,omitempty"`
-	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
-	Prices               map[int64]float64     `protobuf:"bytes,3,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
-	Currency             Currency              `protobuf:"varint,4,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	Prices               map[int64]float64     `protobuf:"bytes,4,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
+	Currency             Currency              `protobuf:"varint,5,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2091,7 +3167,7 @@ func (m *CombinationPrice) Reset()         { *m = CombinationPrice{} }
 func (m *CombinationPrice) String() string { return proto.CompactTextString(m) }
 func (*CombinationPrice) ProtoMessage()    {}
 func (*CombinationPrice) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{32}
+	return fileDescriptor_958db8ba491a6b57, []int{46}
 }
 
 func (m *CombinationPrice) XXX_Unmarshal(b []byte) error {
@@ -2119,9 +3195,16 @@ func (m *CombinationPrice) GetCombinationPriceId() *wrappers.StringValue {
 	return nil
 }
 
-func (m *CombinationPrice) GetCombinationBindingId() *wrappers.StringValue {
+func (m *CombinationPrice) GetCombinationSkuId() *wrappers.StringValue {
 	if m != nil {
-		return m.CombinationBindingId
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *CombinationPrice) GetAttributeId() *wrappers.StringValue {
+	if m != nil {
+		return m.AttributeId
 	}
 	return nil
 }
@@ -2162,9 +3245,10 @@ func (m *CombinationPrice) GetStatusTime() *timestamp.Timestamp {
 }
 
 type CreateCombinationPriceRequest struct {
-	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
-	Prices               map[int64]float64     `protobuf:"bytes,2,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
-	Currency             Currency              `protobuf:"varint,3,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,2,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	Prices               map[int64]float64     `protobuf:"bytes,3,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
+	Currency             Currency              `protobuf:"varint,4,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2174,7 +3258,7 @@ func (m *CreateCombinationPriceRequest) Reset()         { *m = CreateCombination
 func (m *CreateCombinationPriceRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCombinationPriceRequest) ProtoMessage()    {}
 func (*CreateCombinationPriceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{33}
+	return fileDescriptor_958db8ba491a6b57, []int{47}
 }
 
 func (m *CreateCombinationPriceRequest) XXX_Unmarshal(b []byte) error {
@@ -2195,9 +3279,16 @@ func (m *CreateCombinationPriceRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CreateCombinationPriceRequest proto.InternalMessageInfo
 
-func (m *CreateCombinationPriceRequest) GetCombinationBindingId() *wrappers.StringValue {
+func (m *CreateCombinationPriceRequest) GetCombinationSkuId() *wrappers.StringValue {
 	if m != nil {
-		return m.CombinationBindingId
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *CreateCombinationPriceRequest) GetAttributeId() *wrappers.StringValue {
+	if m != nil {
+		return m.AttributeId
 	}
 	return nil
 }
@@ -2227,7 +3318,7 @@ func (m *CreateCombinationPriceResponse) Reset()         { *m = CreateCombinatio
 func (m *CreateCombinationPriceResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCombinationPriceResponse) ProtoMessage()    {}
 func (*CreateCombinationPriceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{34}
+	return fileDescriptor_958db8ba491a6b57, []int{48}
 }
 
 func (m *CreateCombinationPriceResponse) XXX_Unmarshal(b []byte) error {
@@ -2257,12 +3348,13 @@ func (m *CreateCombinationPriceResponse) GetCombinationPriceId() *wrappers.Strin
 
 type DescribeCombinationPricesRequest struct {
 	CombinationPriceId   *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_price_id,json=combinationPriceId,proto3" json:"combination_price_id,omitempty"`
-	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,4,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,5,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	Offset               uint32                `protobuf:"varint,6,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit                uint32                `protobuf:"varint,7,opt,name=limit,proto3" json:"limit,omitempty"`
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,5,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,7,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2272,7 +3364,7 @@ func (m *DescribeCombinationPricesRequest) Reset()         { *m = DescribeCombin
 func (m *DescribeCombinationPricesRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeCombinationPricesRequest) ProtoMessage()    {}
 func (*DescribeCombinationPricesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{35}
+	return fileDescriptor_958db8ba491a6b57, []int{49}
 }
 
 func (m *DescribeCombinationPricesRequest) XXX_Unmarshal(b []byte) error {
@@ -2300,9 +3392,16 @@ func (m *DescribeCombinationPricesRequest) GetCombinationPriceId() *wrappers.Str
 	return nil
 }
 
-func (m *DescribeCombinationPricesRequest) GetCombinationBindingId() *wrappers.StringValue {
+func (m *DescribeCombinationPricesRequest) GetCombinationSkuId() *wrappers.StringValue {
 	if m != nil {
-		return m.CombinationBindingId
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *DescribeCombinationPricesRequest) GetAttributeId() *wrappers.StringValue {
+	if m != nil {
+		return m.AttributeId
 	}
 	return nil
 }
@@ -2353,7 +3452,7 @@ func (m *DescribeCombinationPricesResponse) Reset()         { *m = DescribeCombi
 func (m *DescribeCombinationPricesResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeCombinationPricesResponse) ProtoMessage()    {}
 func (*DescribeCombinationPricesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{36}
+	return fileDescriptor_958db8ba491a6b57, []int{50}
 }
 
 func (m *DescribeCombinationPricesResponse) XXX_Unmarshal(b []byte) error {
@@ -2383,9 +3482,10 @@ func (m *DescribeCombinationPricesResponse) GetCombinationPrices() []*Combinatio
 
 type ModifyCombinationPriceRequest struct {
 	CombinationPriceId   *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_price_id,json=combinationPriceId,proto3" json:"combination_price_id,omitempty"`
-	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
-	Prices               map[int64]float64     `protobuf:"bytes,3,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
-	Currency             Currency              `protobuf:"varint,4,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	Prices               map[int64]float64     `protobuf:"bytes,4,rep,name=prices,proto3" json:"prices,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
+	Currency             Currency              `protobuf:"varint,5,opt,name=currency,proto3,enum=openpitrix.Currency" json:"currency,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2395,7 +3495,7 @@ func (m *ModifyCombinationPriceRequest) Reset()         { *m = ModifyCombination
 func (m *ModifyCombinationPriceRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyCombinationPriceRequest) ProtoMessage()    {}
 func (*ModifyCombinationPriceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{37}
+	return fileDescriptor_958db8ba491a6b57, []int{51}
 }
 
 func (m *ModifyCombinationPriceRequest) XXX_Unmarshal(b []byte) error {
@@ -2423,9 +3523,16 @@ func (m *ModifyCombinationPriceRequest) GetCombinationPriceId() *wrappers.String
 	return nil
 }
 
-func (m *ModifyCombinationPriceRequest) GetCombinationBindingId() *wrappers.StringValue {
+func (m *ModifyCombinationPriceRequest) GetCombinationSkuId() *wrappers.StringValue {
 	if m != nil {
-		return m.CombinationBindingId
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *ModifyCombinationPriceRequest) GetAttributeId() *wrappers.StringValue {
+	if m != nil {
+		return m.AttributeId
 	}
 	return nil
 }
@@ -2455,7 +3562,7 @@ func (m *ModifyCombinationPriceResponse) Reset()         { *m = ModifyCombinatio
 func (m *ModifyCombinationPriceResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyCombinationPriceResponse) ProtoMessage()    {}
 func (*ModifyCombinationPriceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{38}
+	return fileDescriptor_958db8ba491a6b57, []int{52}
 }
 
 func (m *ModifyCombinationPriceResponse) XXX_Unmarshal(b []byte) error {
@@ -2484,17 +3591,18 @@ func (m *ModifyCombinationPriceResponse) GetCombinationPriceId() *wrappers.Strin
 }
 
 type DeleteCombinationPricesRequest struct {
-	CombinationPriceIds  []string `protobuf:"bytes,1,rep,name=combination_price_ids,json=combinationPriceIds,proto3" json:"combination_price_ids,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	CombinationPriceIds  []string              `protobuf:"bytes,2,rep,name=combination_price_ids,json=combinationPriceIds,proto3" json:"combination_price_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *DeleteCombinationPricesRequest) Reset()         { *m = DeleteCombinationPricesRequest{} }
 func (m *DeleteCombinationPricesRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteCombinationPricesRequest) ProtoMessage()    {}
 func (*DeleteCombinationPricesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{39}
+	return fileDescriptor_958db8ba491a6b57, []int{53}
 }
 
 func (m *DeleteCombinationPricesRequest) XXX_Unmarshal(b []byte) error {
@@ -2515,6 +3623,13 @@ func (m *DeleteCombinationPricesRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeleteCombinationPricesRequest proto.InternalMessageInfo
 
+func (m *DeleteCombinationPricesRequest) GetCombinationSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
 func (m *DeleteCombinationPricesRequest) GetCombinationPriceIds() []string {
 	if m != nil {
 		return m.CombinationPriceIds
@@ -2533,7 +3648,7 @@ func (m *DeleteCombinationPricesResponse) Reset()         { *m = DeleteCombinati
 func (m *DeleteCombinationPricesResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteCombinationPricesResponse) ProtoMessage()    {}
 func (*DeleteCombinationPricesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{40}
+	return fileDescriptor_958db8ba491a6b57, []int{54}
 }
 
 func (m *DeleteCombinationPricesResponse) XXX_Unmarshal(b []byte) error {
@@ -2580,7 +3695,7 @@ func (m *Probation) Reset()         { *m = Probation{} }
 func (m *Probation) String() string { return proto.CompactTextString(m) }
 func (*Probation) ProtoMessage()    {}
 func (*Probation) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{41}
+	return fileDescriptor_958db8ba491a6b57, []int{55}
 }
 
 func (m *Probation) XXX_Unmarshal(b []byte) error {
@@ -2671,7 +3786,7 @@ func (m *CreateProbationRequest) Reset()         { *m = CreateProbationRequest{}
 func (m *CreateProbationRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateProbationRequest) ProtoMessage()    {}
 func (*CreateProbationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{42}
+	return fileDescriptor_958db8ba491a6b57, []int{56}
 }
 
 func (m *CreateProbationRequest) XXX_Unmarshal(b []byte) error {
@@ -2731,7 +3846,7 @@ func (m *CreateProbationResponse) Reset()         { *m = CreateProbationResponse
 func (m *CreateProbationResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateProbationResponse) ProtoMessage()    {}
 func (*CreateProbationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{43}
+	return fileDescriptor_958db8ba491a6b57, []int{57}
 }
 
 func (m *CreateProbationResponse) XXX_Unmarshal(b []byte) error {
@@ -2776,7 +3891,7 @@ func (m *DescribeProbationsRequest) Reset()         { *m = DescribeProbationsReq
 func (m *DescribeProbationsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeProbationsRequest) ProtoMessage()    {}
 func (*DescribeProbationsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{44}
+	return fileDescriptor_958db8ba491a6b57, []int{58}
 }
 
 func (m *DescribeProbationsRequest) XXX_Unmarshal(b []byte) error {
@@ -2857,7 +3972,7 @@ func (m *DescribeProbationsResponse) Reset()         { *m = DescribeProbationsRe
 func (m *DescribeProbationsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeProbationsResponse) ProtoMessage()    {}
 func (*DescribeProbationsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{45}
+	return fileDescriptor_958db8ba491a6b57, []int{59}
 }
 
 func (m *DescribeProbationsResponse) XXX_Unmarshal(b []byte) error {
@@ -2900,7 +4015,7 @@ func (m *ModifyProbationRequest) Reset()         { *m = ModifyProbationRequest{}
 func (m *ModifyProbationRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyProbationRequest) ProtoMessage()    {}
 func (*ModifyProbationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{46}
+	return fileDescriptor_958db8ba491a6b57, []int{60}
 }
 
 func (m *ModifyProbationRequest) XXX_Unmarshal(b []byte) error {
@@ -2967,7 +4082,7 @@ func (m *ModifyProbationResponse) Reset()         { *m = ModifyProbationResponse
 func (m *ModifyProbationResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyProbationResponse) ProtoMessage()    {}
 func (*ModifyProbationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{47}
+	return fileDescriptor_958db8ba491a6b57, []int{61}
 }
 
 func (m *ModifyProbationResponse) XXX_Unmarshal(b []byte) error {
@@ -3006,7 +4121,7 @@ func (m *DeleteProbationsRequest) Reset()         { *m = DeleteProbationsRequest
 func (m *DeleteProbationsRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteProbationsRequest) ProtoMessage()    {}
 func (*DeleteProbationsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{48}
+	return fileDescriptor_958db8ba491a6b57, []int{62}
 }
 
 func (m *DeleteProbationsRequest) XXX_Unmarshal(b []byte) error {
@@ -3045,7 +4160,7 @@ func (m *DeleteProbationsResponse) Reset()         { *m = DeleteProbationsRespon
 func (m *DeleteProbationsResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteProbationsResponse) ProtoMessage()    {}
 func (*DeleteProbationsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{49}
+	return fileDescriptor_958db8ba491a6b57, []int{63}
 }
 
 func (m *DeleteProbationsResponse) XXX_Unmarshal(b []byte) error {
@@ -3096,7 +4211,7 @@ func (m *Discount) Reset()         { *m = Discount{} }
 func (m *Discount) String() string { return proto.CompactTextString(m) }
 func (*Discount) ProtoMessage()    {}
 func (*Discount) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{50}
+	return fileDescriptor_958db8ba491a6b57, []int{64}
 }
 
 func (m *Discount) XXX_Unmarshal(b []byte) error {
@@ -3218,7 +4333,7 @@ func (m *CreateDiscountRequest) Reset()         { *m = CreateDiscountRequest{} }
 func (m *CreateDiscountRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateDiscountRequest) ProtoMessage()    {}
 func (*CreateDiscountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{51}
+	return fileDescriptor_958db8ba491a6b57, []int{65}
 }
 
 func (m *CreateDiscountRequest) XXX_Unmarshal(b []byte) error {
@@ -3299,7 +4414,7 @@ func (m *CreateDiscountResponse) Reset()         { *m = CreateDiscountResponse{}
 func (m *CreateDiscountResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateDiscountResponse) ProtoMessage()    {}
 func (*CreateDiscountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{52}
+	return fileDescriptor_958db8ba491a6b57, []int{66}
 }
 
 func (m *CreateDiscountResponse) XXX_Unmarshal(b []byte) error {
@@ -3345,7 +4460,7 @@ func (m *DescribeDiscountsRequest) Reset()         { *m = DescribeDiscountsReque
 func (m *DescribeDiscountsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeDiscountsRequest) ProtoMessage()    {}
 func (*DescribeDiscountsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{53}
+	return fileDescriptor_958db8ba491a6b57, []int{67}
 }
 
 func (m *DescribeDiscountsRequest) XXX_Unmarshal(b []byte) error {
@@ -3433,7 +4548,7 @@ func (m *DescribeDiscountsResponse) Reset()         { *m = DescribeDiscountsResp
 func (m *DescribeDiscountsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeDiscountsResponse) ProtoMessage()    {}
 func (*DescribeDiscountsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{54}
+	return fileDescriptor_958db8ba491a6b57, []int{68}
 }
 
 func (m *DescribeDiscountsResponse) XXX_Unmarshal(b []byte) error {
@@ -3479,7 +4594,7 @@ func (m *ModifyDiscountRequest) Reset()         { *m = ModifyDiscountRequest{} }
 func (m *ModifyDiscountRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyDiscountRequest) ProtoMessage()    {}
 func (*ModifyDiscountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{55}
+	return fileDescriptor_958db8ba491a6b57, []int{69}
 }
 
 func (m *ModifyDiscountRequest) XXX_Unmarshal(b []byte) error {
@@ -3567,7 +4682,7 @@ func (m *ModifyDiscountResponse) Reset()         { *m = ModifyDiscountResponse{}
 func (m *ModifyDiscountResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyDiscountResponse) ProtoMessage()    {}
 func (*ModifyDiscountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{56}
+	return fileDescriptor_958db8ba491a6b57, []int{70}
 }
 
 func (m *ModifyDiscountResponse) XXX_Unmarshal(b []byte) error {
@@ -3606,7 +4721,7 @@ func (m *DeleteDiscountsRequest) Reset()         { *m = DeleteDiscountsRequest{}
 func (m *DeleteDiscountsRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteDiscountsRequest) ProtoMessage()    {}
 func (*DeleteDiscountsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{57}
+	return fileDescriptor_958db8ba491a6b57, []int{71}
 }
 
 func (m *DeleteDiscountsRequest) XXX_Unmarshal(b []byte) error {
@@ -3645,7 +4760,7 @@ func (m *DeleteDiscountsResponse) Reset()         { *m = DeleteDiscountsResponse
 func (m *DeleteDiscountsResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteDiscountsResponse) ProtoMessage()    {}
 func (*DeleteDiscountsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{58}
+	return fileDescriptor_958db8ba491a6b57, []int{72}
 }
 
 func (m *DeleteDiscountsResponse) XXX_Unmarshal(b []byte) error {
@@ -3697,7 +4812,7 @@ func (m *Coupon) Reset()         { *m = Coupon{} }
 func (m *Coupon) String() string { return proto.CompactTextString(m) }
 func (*Coupon) ProtoMessage()    {}
 func (*Coupon) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{59}
+	return fileDescriptor_958db8ba491a6b57, []int{73}
 }
 
 func (m *Coupon) XXX_Unmarshal(b []byte) error {
@@ -3834,7 +4949,7 @@ func (m *CreateCouponRequest) Reset()         { *m = CreateCouponRequest{} }
 func (m *CreateCouponRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCouponRequest) ProtoMessage()    {}
 func (*CreateCouponRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{60}
+	return fileDescriptor_958db8ba491a6b57, []int{74}
 }
 
 func (m *CreateCouponRequest) XXX_Unmarshal(b []byte) error {
@@ -3922,7 +5037,7 @@ func (m *CreateCouponResponse) Reset()         { *m = CreateCouponResponse{} }
 func (m *CreateCouponResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCouponResponse) ProtoMessage()    {}
 func (*CreateCouponResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{61}
+	return fileDescriptor_958db8ba491a6b57, []int{75}
 }
 
 func (m *CreateCouponResponse) XXX_Unmarshal(b []byte) error {
@@ -3968,7 +5083,7 @@ func (m *DescribeCouponsRequest) Reset()         { *m = DescribeCouponsRequest{}
 func (m *DescribeCouponsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeCouponsRequest) ProtoMessage()    {}
 func (*DescribeCouponsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{62}
+	return fileDescriptor_958db8ba491a6b57, []int{76}
 }
 
 func (m *DescribeCouponsRequest) XXX_Unmarshal(b []byte) error {
@@ -4056,7 +5171,7 @@ func (m *DescribeCouponsResponse) Reset()         { *m = DescribeCouponsResponse
 func (m *DescribeCouponsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeCouponsResponse) ProtoMessage()    {}
 func (*DescribeCouponsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{63}
+	return fileDescriptor_958db8ba491a6b57, []int{77}
 }
 
 func (m *DescribeCouponsResponse) XXX_Unmarshal(b []byte) error {
@@ -4103,7 +5218,7 @@ func (m *ModifyCouponRequest) Reset()         { *m = ModifyCouponRequest{} }
 func (m *ModifyCouponRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyCouponRequest) ProtoMessage()    {}
 func (*ModifyCouponRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{64}
+	return fileDescriptor_958db8ba491a6b57, []int{78}
 }
 
 func (m *ModifyCouponRequest) XXX_Unmarshal(b []byte) error {
@@ -4198,7 +5313,7 @@ func (m *ModifyCouponResponse) Reset()         { *m = ModifyCouponResponse{} }
 func (m *ModifyCouponResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyCouponResponse) ProtoMessage()    {}
 func (*ModifyCouponResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{65}
+	return fileDescriptor_958db8ba491a6b57, []int{79}
 }
 
 func (m *ModifyCouponResponse) XXX_Unmarshal(b []byte) error {
@@ -4237,7 +5352,7 @@ func (m *DeleteCouponsRequest) Reset()         { *m = DeleteCouponsRequest{} }
 func (m *DeleteCouponsRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteCouponsRequest) ProtoMessage()    {}
 func (*DeleteCouponsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{66}
+	return fileDescriptor_958db8ba491a6b57, []int{80}
 }
 
 func (m *DeleteCouponsRequest) XXX_Unmarshal(b []byte) error {
@@ -4276,7 +5391,7 @@ func (m *DeleteCouponsResponse) Reset()         { *m = DeleteCouponsResponse{} }
 func (m *DeleteCouponsResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteCouponsResponse) ProtoMessage()    {}
 func (*DeleteCouponsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{67}
+	return fileDescriptor_958db8ba491a6b57, []int{81}
 }
 
 func (m *DeleteCouponsResponse) XXX_Unmarshal(b []byte) error {
@@ -4321,7 +5436,7 @@ func (m *CouponReceived) Reset()         { *m = CouponReceived{} }
 func (m *CouponReceived) String() string { return proto.CompactTextString(m) }
 func (*CouponReceived) ProtoMessage()    {}
 func (*CouponReceived) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{68}
+	return fileDescriptor_958db8ba491a6b57, []int{82}
 }
 
 func (m *CouponReceived) XXX_Unmarshal(b []byte) error {
@@ -4402,7 +5517,7 @@ func (m *CreateCouponReceivedRequest) Reset()         { *m = CreateCouponReceive
 func (m *CreateCouponReceivedRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCouponReceivedRequest) ProtoMessage()    {}
 func (*CreateCouponReceivedRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{69}
+	return fileDescriptor_958db8ba491a6b57, []int{83}
 }
 
 func (m *CreateCouponReceivedRequest) XXX_Unmarshal(b []byte) error {
@@ -4441,7 +5556,7 @@ func (m *CreateCouponReceivedResponse) Reset()         { *m = CreateCouponReceiv
 func (m *CreateCouponReceivedResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCouponReceivedResponse) ProtoMessage()    {}
 func (*CreateCouponReceivedResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{70}
+	return fileDescriptor_958db8ba491a6b57, []int{84}
 }
 
 func (m *CreateCouponReceivedResponse) XXX_Unmarshal(b []byte) error {
@@ -4487,7 +5602,7 @@ func (m *DescribeCouponReceivedsRequest) Reset()         { *m = DescribeCouponRe
 func (m *DescribeCouponReceivedsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeCouponReceivedsRequest) ProtoMessage()    {}
 func (*DescribeCouponReceivedsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{71}
+	return fileDescriptor_958db8ba491a6b57, []int{85}
 }
 
 func (m *DescribeCouponReceivedsRequest) XXX_Unmarshal(b []byte) error {
@@ -4575,7 +5690,7 @@ func (m *DescribeCouponReceivedsResponse) Reset()         { *m = DescribeCouponR
 func (m *DescribeCouponReceivedsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeCouponReceivedsResponse) ProtoMessage()    {}
 func (*DescribeCouponReceivedsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{72}
+	return fileDescriptor_958db8ba491a6b57, []int{86}
 }
 
 func (m *DescribeCouponReceivedsResponse) XXX_Unmarshal(b []byte) error {
@@ -4614,7 +5729,7 @@ func (m *DeleteCouponReceivedsRequest) Reset()         { *m = DeleteCouponReceiv
 func (m *DeleteCouponReceivedsRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteCouponReceivedsRequest) ProtoMessage()    {}
 func (*DeleteCouponReceivedsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{73}
+	return fileDescriptor_958db8ba491a6b57, []int{87}
 }
 
 func (m *DeleteCouponReceivedsRequest) XXX_Unmarshal(b []byte) error {
@@ -4653,7 +5768,7 @@ func (m *DeleteCouponReceivedsResponse) Reset()         { *m = DeleteCouponRecei
 func (m *DeleteCouponReceivedsResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteCouponReceivedsResponse) ProtoMessage()    {}
 func (*DeleteCouponReceivedsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{74}
+	return fileDescriptor_958db8ba491a6b57, []int{88}
 }
 
 func (m *DeleteCouponReceivedsResponse) XXX_Unmarshal(b []byte) error {
@@ -4691,7 +5806,6 @@ func init() {
 	proto.RegisterType((*DescribePricesRequest)(nil), "openpitrix.DescribePricesRequest")
 	proto.RegisterType((*DescribePricesResponse)(nil), "openpitrix.DescribePricesResponse")
 	proto.RegisterType((*ModifyPriceRequest)(nil), "openpitrix.ModifyPriceRequest")
-	proto.RegisterMapType((map[int64]float64)(nil), "openpitrix.ModifyPriceRequest.PricesEntry")
 	proto.RegisterType((*ModifyPriceResponse)(nil), "openpitrix.ModifyPriceResponse")
 	proto.RegisterType((*DeletePricesRequest)(nil), "openpitrix.DeletePricesRequest")
 	proto.RegisterType((*DeletePricesResponse)(nil), "openpitrix.DeletePricesResponse")
@@ -4707,6 +5821,14 @@ func init() {
 	proto.RegisterType((*ModifyAccountResponse)(nil), "openpitrix.ModifyAccountResponse")
 	proto.RegisterType((*DeleteAccountsRequest)(nil), "openpitrix.DeleteAccountsRequest")
 	proto.RegisterType((*DeleteAccountsResponse)(nil), "openpitrix.DeleteAccountsResponse")
+	proto.RegisterType((*LeasingContract)(nil), "openpitrix.LeasingContract")
+	proto.RegisterMapType((map[string]float64)(nil), "openpitrix.LeasingContract.MeteringValuesEntry")
+	proto.RegisterType((*DescribeLeasingContractsRequest)(nil), "openpitrix.DescribeLeasingContractsRequest")
+	proto.RegisterType((*DescribeLeasingContractsResponse)(nil), "openpitrix.DescribeLeasingContractsResponse")
+	proto.RegisterType((*LeasedContract)(nil), "openpitrix.LeasedContract")
+	proto.RegisterMapType((map[string]float64)(nil), "openpitrix.LeasedContract.MeteringValuesEntry")
+	proto.RegisterType((*DescribeLeasedContractsRequest)(nil), "openpitrix.DescribeLeasedContractsRequest")
+	proto.RegisterType((*DescribeLeasedContractsResponse)(nil), "openpitrix.DescribeLeasedContractsResponse")
 	proto.RegisterType((*Recharge)(nil), "openpitrix.Recharge")
 	proto.RegisterType((*CreateRechargeRequest)(nil), "openpitrix.CreateRechargeRequest")
 	proto.RegisterType((*CreateRechargeResponse)(nil), "openpitrix.CreateRechargeResponse")
@@ -4721,6 +5843,16 @@ func init() {
 	proto.RegisterType((*Income)(nil), "openpitrix.Income")
 	proto.RegisterType((*DescribeIncomesRequest)(nil), "openpitrix.DescribeIncomesRequest")
 	proto.RegisterType((*DescribeIncomesResponse)(nil), "openpitrix.DescribeIncomesResponse")
+	proto.RegisterType((*Context)(nil), "openpitrix.Context")
+	proto.RegisterType((*Metering)(nil), "openpitrix.Metering")
+	proto.RegisterMapType((map[string]float64)(nil), "openpitrix.Metering.MeteringValuesEntry")
+	proto.RegisterType((*BillingRequest)(nil), "openpitrix.BillingRequest")
+	proto.RegisterType((*NIL)(nil), "openpitrix.NIL")
+	proto.RegisterType((*CreateLeasingContractRequest)(nil), "openpitrix.CreateLeasingContractRequest")
+	proto.RegisterMapType((map[string]float64)(nil), "openpitrix.CreateLeasingContractRequest.MeteringValuesEntry")
+	proto.RegisterType((*CreateLeasingContractResponse)(nil), "openpitrix.CreateLeasingContractResponse")
+	proto.RegisterType((*CalculateRequest)(nil), "openpitrix.CalculateRequest")
+	proto.RegisterType((*LeasingContractOperationRequest)(nil), "openpitrix.LeasingContractOperationRequest")
 	proto.RegisterType((*CombinationPrice)(nil), "openpitrix.CombinationPrice")
 	proto.RegisterMapType((map[int64]float64)(nil), "openpitrix.CombinationPrice.PricesEntry")
 	proto.RegisterType((*CreateCombinationPriceRequest)(nil), "openpitrix.CreateCombinationPriceRequest")
@@ -4772,227 +5904,276 @@ func init() {
 func init() { proto.RegisterFile("billing.proto", fileDescriptor_958db8ba491a6b57) }
 
 var fileDescriptor_958db8ba491a6b57 = []byte{
-	// 3507 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x5c, 0xcb, 0x73, 0x1c, 0x57,
-	0xd5, 0xff, 0x7a, 0x7a, 0x9e, 0x67, 0xf4, 0xbc, 0x7a, 0x58, 0x6e, 0x59, 0xd2, 0xb8, 0xfd, 0x05,
-	0x9c, 0x89, 0x2d, 0x25, 0x72, 0x14, 0xc7, 0x79, 0xeb, 0x11, 0x82, 0x70, 0xd9, 0x31, 0x93, 0x04,
-	0x42, 0x36, 0xae, 0xd1, 0x4c, 0x4b, 0x1e, 0x2c, 0x75, 0x0f, 0xdd, 0x3d, 0x36, 0x5e, 0x50, 0x15,
-	0xb2, 0x81, 0x45, 0x8a, 0xaa, 0x0c, 0x45, 0x0a, 0x8a, 0x0d, 0x0b, 0xa0, 0xd8, 0x50, 0x54, 0xaa,
-	0x28, 0x58, 0x84, 0xa2, 0xa0, 0x60, 0xc3, 0x0e, 0xc8, 0xbf, 0x10, 0x28, 0x8a, 0x35, 0xfb, 0x50,
-	0x7d, 0x1f, 0xdd, 0x7d, 0x6f, 0xdf, 0x9e, 0xe9, 0xe9, 0x51, 0x46, 0x51, 0xc8, 0xc6, 0x1e, 0x4d,
-	0x9f, 0x73, 0xe7, 0xf4, 0xef, 0xfc, 0xce, 0xb9, 0xa7, 0xef, 0x3d, 0xb7, 0x61, 0x7c, 0xaf, 0x75,
-	0x78, 0xd8, 0x32, 0x0f, 0x56, 0xdb, 0xb6, 0xe5, 0x5a, 0x08, 0xac, 0xb6, 0x61, 0xb6, 0x5b, 0xae,
-	0xdd, 0xfa, 0xa6, 0xb6, 0x7c, 0x60, 0x59, 0x07, 0x87, 0xc6, 0x1a, 0xbe, 0xb2, 0xd7, 0xd9, 0x5f,
-	0xbb, 0x6f, 0xd7, 0xdb, 0x6d, 0xc3, 0x76, 0x88, 0xac, 0xb6, 0x22, 0x5e, 0x77, 0x5b, 0x47, 0x86,
-	0xe3, 0xd6, 0x8f, 0xda, 0x54, 0xe0, 0x1c, 0x15, 0xa8, 0xb7, 0x5b, 0x6b, 0x75, 0xd3, 0xb4, 0xdc,
-	0xba, 0xdb, 0xb2, 0x4c, 0xa6, 0x7e, 0x09, 0xff, 0xd7, 0xb8, 0x7c, 0x60, 0x98, 0x97, 0x9d, 0xfb,
-	0xf5, 0x83, 0x03, 0xc3, 0x5e, 0xb3, 0xda, 0x58, 0x22, 0x2a, 0xad, 0xff, 0x29, 0x0b, 0xb9, 0x5b,
-	0x76, 0xab, 0x61, 0xa0, 0xab, 0x50, 0x6c, 0x7b, 0x1f, 0x6e, 0xb7, 0x9a, 0x0b, 0x4a, 0x45, 0xb9,
-	0x58, 0x5e, 0x3f, 0xb7, 0x4a, 0x7e, 0x68, 0x95, 0x59, 0xb2, 0xfa, 0x8a, 0x6b, 0xb7, 0xcc, 0x83,
-	0xaf, 0xd4, 0x0f, 0x3b, 0x46, 0xad, 0x80, 0xa5, 0x77, 0x9b, 0xe8, 0x69, 0x80, 0xbd, 0x96, 0xd9,
-	0x6c, 0x99, 0x07, 0x9e, 0x6a, 0x26, 0x81, 0x6a, 0x89, 0xca, 0xef, 0x36, 0xd1, 0x06, 0xe4, 0xf1,
-	0x38, 0xce, 0x82, 0x5a, 0x51, 0x2f, 0x96, 0xd7, 0x97, 0x56, 0x03, 0xa4, 0x56, 0xb1, 0x61, 0xe4,
-	0x5f, 0xe7, 0x45, 0xd3, 0xb5, 0x1f, 0xd4, 0xa8, 0x30, 0x7a, 0x14, 0x8a, 0x8d, 0x8e, 0x6d, 0x1b,
-	0x66, 0xe3, 0xc1, 0x42, 0xb6, 0xa2, 0x5c, 0x9c, 0x58, 0x9f, 0x0d, 0x2b, 0x6e, 0xd3, 0x6b, 0x35,
-	0x5f, 0x0a, 0x3d, 0x0e, 0x79, 0xc7, 0xad, 0xbb, 0x1d, 0x67, 0x21, 0x97, 0xc0, 0x42, 0x2a, 0x8b,
-	0xae, 0x01, 0x38, 0x6e, 0xdd, 0x76, 0x6f, 0x7b, 0x3e, 0x58, 0xc8, 0x63, 0x4d, 0x2d, 0xa2, 0xf9,
-	0x2a, 0x73, 0x50, 0xad, 0x84, 0xa5, 0xbd, 0xbf, 0xd1, 0x06, 0x14, 0x0d, 0xb3, 0x49, 0x14, 0x0b,
-	0x7d, 0x15, 0x0b, 0x86, 0xd9, 0xc4, 0x6a, 0x4f, 0x43, 0xb9, 0x61, 0x1b, 0x75, 0xd7, 0x20, 0x9a,
-	0xc5, 0xbe, 0x9a, 0x40, 0xc4, 0x99, 0x32, 0x31, 0x9c, 0x28, 0x97, 0xfa, 0x2b, 0x13, 0x71, 0xef,
-	0x0b, 0xed, 0x1a, 0x94, 0x43, 0x50, 0xa3, 0x29, 0x50, 0xef, 0x1a, 0x0f, 0x30, 0x15, 0xd4, 0x9a,
-	0xf7, 0x11, 0xcd, 0x42, 0xee, 0x9e, 0x87, 0x0e, 0xf6, 0xb1, 0x52, 0x23, 0x7f, 0x3c, 0x95, 0x79,
-	0x52, 0xd1, 0xff, 0x93, 0x01, 0xb4, 0x8d, 0xcd, 0xc0, 0x23, 0xd4, 0x8c, 0x6f, 0x74, 0x0c, 0xc7,
-	0x15, 0x98, 0xa1, 0x0c, 0xc6, 0x8c, 0x2d, 0x9f, 0x19, 0x19, 0xcc, 0x8c, 0x2a, 0xe7, 0xe0, 0xc8,
-	0x8f, 0xf5, 0xa5, 0x89, 0x9a, 0x88, 0x26, 0xbc, 0xc3, 0xb3, 0x69, 0x1d, 0x9e, 0x4b, 0xec, 0xf0,
-	0x61, 0x60, 0xbf, 0x09, 0x33, 0x1c, 0x10, 0x4e, 0xdb, 0x32, 0x9d, 0xf4, 0x91, 0xac, 0xff, 0x5d,
-	0x85, 0xb9, 0x1d, 0xc3, 0x69, 0xd8, 0xad, 0x3d, 0x32, 0xa4, 0xc3, 0x3c, 0x79, 0x32, 0xc9, 0x21,
-	0x88, 0x59, 0x35, 0x75, 0xcc, 0x8e, 0xc0, 0x85, 0x1e, 0x3a, 0x8e, 0x65, 0xbb, 0xb7, 0x3d, 0xc7,
-	0xe5, 0x93, 0xa0, 0xe3, 0x49, 0x5f, 0x37, 0xbc, 0xa4, 0x54, 0xb0, 0x8d, 0x7b, 0x86, 0xed, 0xc4,
-	0xa7, 0x88, 0x2d, 0xcb, 0x3a, 0xa4, 0x5a, 0x54, 0x14, 0xcd, 0x43, 0xde, 0xda, 0xdf, 0x77, 0x0c,
-	0x17, 0x67, 0x87, 0xf1, 0x1a, 0xfd, 0xcb, 0x23, 0xca, 0x61, 0xeb, 0xa8, 0xe5, 0xe2, 0xb8, 0x1f,
-	0xaf, 0x91, 0x3f, 0xf4, 0x6d, 0x98, 0x17, 0x7d, 0x4a, 0x79, 0xf2, 0xb0, 0x1f, 0x61, 0x0a, 0x8e,
-	0xb0, 0xe9, 0x48, 0xee, 0x65, 0x81, 0xa4, 0xff, 0x52, 0x05, 0x74, 0xc3, 0x6a, 0xb6, 0xf6, 0x1f,
-	0x70, 0x01, 0x7e, 0x32, 0xb4, 0xd8, 0x12, 0xe6, 0x0c, 0x2e, 0x33, 0x44, 0xad, 0x3c, 0xa6, 0x09,
-	0x84, 0xa7, 0x55, 0x2e, 0x2d, 0xad, 0xf2, 0xa3, 0xca, 0x0c, 0x1c, 0x10, 0xc3, 0x66, 0x86, 0x75,
-	0x98, 0xd9, 0x31, 0x0e, 0x0d, 0x57, 0x48, 0x0b, 0x8b, 0x50, 0x62, 0xe3, 0x11, 0x12, 0x95, 0x6a,
-	0x45, 0xaa, 0xe2, 0xe8, 0x57, 0x60, 0x96, 0xd7, 0xa1, 0x46, 0xf4, 0x54, 0xfa, 0x5b, 0x16, 0x0a,
-	0x9b, 0x8d, 0x86, 0xd5, 0x31, 0x5d, 0xb4, 0x01, 0x85, 0x8e, 0x63, 0xd8, 0x49, 0x8d, 0xcd, 0x7b,
-	0xc2, 0xbb, 0x4d, 0x74, 0x0d, 0x4a, 0x58, 0xcd, 0x7d, 0xd0, 0x36, 0x12, 0x51, 0xab, 0xe8, 0x89,
-	0xbf, 0xfa, 0xa0, 0x6d, 0xa0, 0x27, 0xa0, 0xb0, 0x57, 0x3f, 0xac, 0x9b, 0x0d, 0x23, 0x36, 0xe3,
-	0xec, 0x58, 0x9d, 0xbd, 0x43, 0x83, 0xc2, 0x43, 0x85, 0xd1, 0x93, 0x02, 0x9b, 0xfa, 0xfe, 0xa2,
-	0xcf, 0xaa, 0xab, 0x90, 0x6f, 0x99, 0x0d, 0x0b, 0x33, 0xca, 0xe3, 0xf2, 0x4a, 0x98, 0x85, 0x14,
-	0x88, 0xd5, 0x5d, 0x2c, 0x41, 0x09, 0x4c, 0xc4, 0x43, 0xb9, 0x31, 0x3f, 0x40, 0x6e, 0x14, 0xaa,
-	0x8b, 0xc2, 0x30, 0xd5, 0x45, 0x71, 0x90, 0xea, 0x02, 0x3d, 0x07, 0xe5, 0x26, 0x4e, 0x43, 0xb8,
-	0x14, 0xa5, 0xa5, 0x49, 0x6f, 0xa3, 0xc3, 0x0a, 0x5e, 0x30, 0x84, 0x60, 0x08, 0x07, 0x43, 0xa9,
-	0x5f, 0x30, 0xbc, 0xaf, 0xc2, 0x2c, 0x99, 0x27, 0x29, 0xa0, 0x8c, 0xbe, 0xff, 0x0b, 0x04, 0xdb,
-	0x11, 0x08, 0x76, 0x29, 0x5a, 0x46, 0xf1, 0xa8, 0x48, 0xd9, 0x26, 0x78, 0x2f, 0x3f, 0x42, 0xef,
-	0xdd, 0x84, 0x39, 0xc1, 0x4c, 0x9a, 0x47, 0xd2, 0x79, 0x4f, 0xff, 0x45, 0x06, 0xce, 0xb0, 0x09,
-	0x91, 0x0e, 0xe9, 0x9c, 0x1c, 0x21, 0xc2, 0xa5, 0x83, 0x9a, 0xb2, 0x74, 0xc8, 0xa6, 0x29, 0x1d,
-	0x72, 0xf2, 0xd2, 0x21, 0x1f, 0x2e, 0x1d, 0xae, 0xc3, 0x42, 0x14, 0x29, 0x8a, 0xfe, 0x1a, 0x14,
-	0xeb, 0xf4, 0x3b, 0x5a, 0x3e, 0xcc, 0x48, 0x52, 0x57, 0xcd, 0x17, 0xc2, 0x51, 0x48, 0xe6, 0xa4,
-	0xcf, 0xa2, 0x90, 0x8f, 0x42, 0x19, 0x2a, 0x9f, 0xc0, 0x28, 0x14, 0xcc, 0x1c, 0x2e, 0x0a, 0xd7,
-	0xbd, 0x27, 0x0d, 0xaf, 0x38, 0x10, 0x43, 0xf0, 0x2c, 0x14, 0xe9, 0x78, 0xac, 0x38, 0x28, 0x10,
-	0x15, 0xaf, 0xa0, 0x98, 0x17, 0x75, 0xa8, 0x11, 0x3d, 0x94, 0x7e, 0xa6, 0x42, 0xb1, 0x66, 0x34,
-	0xee, 0xd4, 0xed, 0x03, 0x03, 0x3d, 0x0b, 0x65, 0x9b, 0x7e, 0x4e, 0x6a, 0x30, 0x30, 0x05, 0xbc,
-	0x58, 0xe1, 0xdf, 0x6b, 0x66, 0x00, 0xa6, 0x8e, 0x9e, 0x6e, 0xe9, 0x16, 0x3b, 0x84, 0xe2, 0x20,
-	0x3f, 0x50, 0x71, 0x20, 0x70, 0xb3, 0x30, 0x20, 0x37, 0xf5, 0x37, 0x33, 0x2c, 0xcf, 0x33, 0x6f,
-	0x0d, 0x99, 0x1f, 0x42, 0xa8, 0x67, 0xd2, 0xa2, 0xae, 0x0e, 0x84, 0xba, 0x00, 0x41, 0x76, 0x50,
-	0x08, 0xbe, 0x0a, 0xf3, 0x22, 0x02, 0x94, 0xdf, 0xc3, 0xf1, 0x56, 0xff, 0xbd, 0x12, 0x24, 0x72,
-	0x36, 0xb6, 0x1f, 0x70, 0x27, 0x13, 0x13, 0xc1, 0x44, 0xa4, 0xca, 0x27, 0xa2, 0x6c, 0x78, 0x22,
-	0x7a, 0x19, 0xce, 0x4a, 0xec, 0xa7, 0xe0, 0xac, 0x43, 0x89, 0xd9, 0xc3, 0xa6, 0x22, 0xee, 0x59,
-	0xce, 0x47, 0x33, 0x10, 0xd3, 0x3f, 0x50, 0x21, 0xbf, 0x4d, 0x72, 0xc2, 0x35, 0x28, 0x0d, 0x76,
-	0xf7, 0x45, 0xff, 0xde, 0x9f, 0x85, 0x72, 0xc3, 0x32, 0x5d, 0xbb, 0xde, 0x70, 0x93, 0xde, 0x3f,
-	0x30, 0x05, 0x1e, 0x3a, 0x75, 0x00, 0xe8, 0x56, 0x41, 0xdd, 0x37, 0x8c, 0x58, 0x7a, 0x85, 0x49,
-	0xed, 0x09, 0x72, 0x84, 0xce, 0xa5, 0x4c, 0x23, 0xa7, 0xe2, 0x19, 0x43, 0xff, 0x67, 0x26, 0x58,
-	0xeb, 0xd8, 0xe6, 0x59, 0x7e, 0xea, 0xbc, 0x1c, 0x2e, 0x0c, 0xb3, 0x29, 0x0b, 0xc3, 0x5c, 0x9a,
-	0xc2, 0x30, 0x2f, 0x8f, 0xc7, 0x42, 0x38, 0x1e, 0x5f, 0x0a, 0x4a, 0xe8, 0x6d, 0x21, 0x1a, 0x2f,
-	0x41, 0x81, 0x8f, 0x45, 0xc4, 0x3d, 0x70, 0x90, 0x48, 0x64, 0x22, 0xfa, 0xbb, 0x2a, 0xe4, 0x6b,
-	0xc6, 0x7e, 0xc7, 0xc4, 0xf5, 0x1c, 0xf9, 0x94, 0xd8, 0x43, 0x44, 0xfc, 0xb3, 0x38, 0xfc, 0x18,
-	0xe2, 0x90, 0x0b, 0x25, 0x82, 0x73, 0x38, 0x94, 0xec, 0xc1, 0x1c, 0x65, 0x9f, 0xac, 0xa3, 0x4e,
-	0x4b, 0x28, 0xf9, 0x38, 0x07, 0xa1, 0x44, 0x90, 0x93, 0x86, 0x12, 0x91, 0xae, 0x31, 0x11, 0xfd,
-	0xdf, 0x19, 0xc8, 0x93, 0xea, 0xde, 0xf3, 0x10, 0x79, 0x62, 0x48, 0xec, 0x21, 0x22, 0x3e, 0xbc,
-	0x87, 0xae, 0x42, 0xd1, 0xba, 0x6f, 0x26, 0x77, 0x51, 0x01, 0x4b, 0xf3, 0xd5, 0x5a, 0x36, 0x6d,
-	0xb5, 0x36, 0x58, 0x50, 0x0d, 0x53, 0xed, 0xea, 0xff, 0x0a, 0x85, 0x07, 0x01, 0x3d, 0x1c, 0x1e,
-	0xa7, 0x0d, 0xfc, 0xd3, 0x12, 0x20, 0x3e, 0xd2, 0x41, 0x80, 0x10, 0xec, 0xa4, 0x01, 0x42, 0xa4,
-	0x6b, 0x4c, 0x44, 0xff, 0x41, 0x16, 0xa6, 0xb6, 0xad, 0xa3, 0xbd, 0x96, 0x89, 0x77, 0xc0, 0xc9,
-	0xae, 0xf7, 0x4d, 0x98, 0x6d, 0x04, 0xdf, 0xdd, 0x1e, 0x68, 0x75, 0x1c, 0x35, 0x84, 0xd1, 0x76,
-	0x9b, 0xa8, 0x06, 0xf3, 0xe1, 0xf1, 0x06, 0xdc, 0xe4, 0x08, 0xdb, 0xb2, 0xe5, 0xef, 0x77, 0xbc,
-	0x20, 0xec, 0x77, 0x5c, 0xe4, 0x66, 0x54, 0xc1, 0x86, 0x13, 0xdd, 0x2e, 0x1f, 0xea, 0x09, 0x52,
-	0x28, 0xfd, 0x0a, 0xa3, 0xda, 0xbc, 0xfe, 0x55, 0x06, 0x96, 0xc8, 0x73, 0x97, 0x88, 0x25, 0x0b,
-	0xe9, 0x78, 0xa7, 0x2a, 0xa9, 0x9d, 0x7a, 0x43, 0xd8, 0xde, 0xde, 0x88, 0xae, 0xcb, 0xc6, 0x98,
-	0x73, 0x3c, 0x3b, 0xdd, 0xc3, 0x20, 0xd6, 0x86, 0xe5, 0x38, 0x0b, 0x69, 0x64, 0x1e, 0x73, 0x58,
-	0xe9, 0x3f, 0x52, 0xa1, 0xe2, 0x57, 0x9c, 0xc2, 0x65, 0x3f, 0xf3, 0x9e, 0x86, 0x58, 0x4e, 0xb7,
-	0xa5, 0xfd, 0x89, 0x4e, 0xd0, 0x6d, 0x38, 0xdf, 0xc3, 0x35, 0x94, 0x10, 0xd7, 0x01, 0x45, 0x7c,
-	0xc3, 0xb2, 0xf6, 0xb9, 0x5e, 0xf9, 0xac, 0x36, 0x2d, 0x7a, 0xc6, 0xd1, 0x3f, 0xca, 0xc0, 0x12,
-	0x59, 0x8d, 0x8c, 0x8b, 0xd8, 0xd3, 0x40, 0x85, 0x1b, 0x42, 0x5a, 0xdf, 0x88, 0xae, 0x09, 0xa7,
-	0xcd, 0x00, 0xd9, 0x11, 0x64, 0x80, 0x38, 0x0b, 0x3f, 0xa6, 0x0c, 0xf0, 0x2a, 0x2c, 0x93, 0xc5,
-	0xdf, 0xd8, 0xf0, 0x5f, 0x87, 0x39, 0xd9, 0x2f, 0xb2, 0x15, 0xe1, 0x99, 0xe8, 0xa0, 0x8e, 0xfe,
-	0x1a, 0xac, 0xc4, 0x8e, 0xea, 0x2f, 0x2f, 0x0d, 0x3e, 0xec, 0x87, 0x2a, 0x94, 0x6e, 0xd9, 0xd6,
-	0x1e, 0xfe, 0x16, 0x3d, 0x0f, 0x63, 0x6d, 0xf6, 0x47, 0x52, 0x08, 0xca, 0xbe, 0xc6, 0x6e, 0x13,
-	0x5d, 0x81, 0xbc, 0x73, 0xb7, 0x93, 0x94, 0x6d, 0x39, 0xe7, 0x6e, 0x67, 0xb7, 0xe9, 0xfd, 0x6a,
-	0xdd, 0x75, 0xed, 0xd6, 0x5e, 0xc7, 0x35, 0x92, 0x56, 0x84, 0x65, 0x5f, 0x83, 0x4b, 0x55, 0xd9,
-	0xd4, 0xdd, 0x37, 0x23, 0x68, 0x93, 0x38, 0xc1, 0xf5, 0xa6, 0x37, 0x33, 0x6c, 0xc5, 0xd6, 0x77,
-	0x36, 0x23, 0x63, 0xe0, 0x32, 0x25, 0xbd, 0xcb, 0x32, 0x83, 0xba, 0x8c, 0x07, 0x5f, 0x4d, 0x0b,
-	0x7e, 0x36, 0x31, 0xf8, 0xfa, 0x1b, 0x70, 0x26, 0x82, 0x00, 0x0d, 0x9c, 0x61, 0x69, 0xaf, 0x7f,
-	0x98, 0x09, 0x96, 0x7d, 0xfd, 0xe1, 0xfd, 0x70, 0x3f, 0x99, 0xa8, 0xfa, 0x14, 0xce, 0xdf, 0xaf,
-	0x80, 0x26, 0x43, 0xd9, 0xdf, 0xdf, 0x03, 0x1f, 0x34, 0x36, 0x61, 0xcf, 0xf1, 0x8d, 0x62, 0xcc,
-	0xf1, 0x21, 0x41, 0xfd, 0x8f, 0x19, 0x98, 0x67, 0x1d, 0x48, 0x42, 0x68, 0x9c, 0xd2, 0x74, 0x38,
-	0xf2, 0xb6, 0x42, 0x2f, 0xb6, 0x22, 0x10, 0x1e, 0x57, 0x6c, 0x3d, 0xe7, 0x3d, 0x55, 0x93, 0xe6,
-	0x2c, 0x31, 0xb0, 0x2e, 0xc0, 0x78, 0x78, 0x6c, 0x36, 0xd1, 0x8d, 0x85, 0xd4, 0x1d, 0xfd, 0x79,
-	0x58, 0x88, 0xea, 0x53, 0xe3, 0x12, 0x0d, 0xf0, 0xbb, 0x1c, 0x14, 0x77, 0x5a, 0x0e, 0xe9, 0xf4,
-	0x7a, 0x16, 0xca, 0x4d, 0xfa, 0x39, 0xf1, 0x1e, 0x14, 0x53, 0xd8, 0x6d, 0xa2, 0x47, 0x21, 0x6b,
-	0xd6, 0x8f, 0x92, 0x75, 0x01, 0x60, 0x49, 0xb4, 0x08, 0x25, 0x4c, 0x7e, 0x6c, 0x9e, 0x4a, 0x7a,
-	0xd0, 0xf0, 0x17, 0xbb, 0x4d, 0x07, 0x6d, 0xc3, 0x84, 0x6f, 0x0d, 0xa9, 0x7f, 0x92, 0x2c, 0x49,
-	0x8d, 0x33, 0x1d, 0xfc, 0x27, 0x7a, 0x09, 0xa6, 0xfc, 0x41, 0xda, 0x86, 0xdd, 0x30, 0x4c, 0x37,
-	0xf6, 0x51, 0x3a, 0x3c, 0xcc, 0x24, 0xd3, 0xba, 0x45, 0x94, 0x52, 0x2e, 0xfe, 0xae, 0x43, 0x0e,
-	0xaf, 0xee, 0x24, 0xda, 0x88, 0x25, 0xa2, 0x02, 0xc3, 0x8b, 0x69, 0x19, 0x5e, 0x4a, 0x3d, 0x75,
-	0xc3, 0x30, 0x53, 0x77, 0x79, 0x98, 0x76, 0xb4, 0xb1, 0x41, 0xf7, 0x6a, 0x7f, 0xae, 0xb2, 0xed,
-	0x6a, 0x46, 0x62, 0x16, 0x3e, 0x8c, 0x8c, 0x4a, 0x3a, 0x32, 0x66, 0xfa, 0x92, 0x51, 0x3d, 0x1e,
-	0x32, 0x66, 0xd3, 0x90, 0x71, 0xf4, 0xd5, 0xdd, 0xb0, 0x7d, 0x05, 0xfe, 0xa6, 0x7a, 0xe0, 0xa7,
-	0x60, 0x53, 0x7d, 0x88, 0xa4, 0xa3, 0x77, 0xd5, 0x60, 0x53, 0x9d, 0x8d, 0x1d, 0xde, 0x54, 0x1f,
-	0x6d, 0x42, 0xf3, 0xe3, 0x5d, 0x4d, 0x1e, 0xef, 0xe9, 0x0a, 0xfc, 0x70, 0x2d, 0x93, 0x4b, 0x59,
-	0xcb, 0xe4, 0xd3, 0xd4, 0x32, 0x05, 0x79, 0x2d, 0x53, 0x8c, 0x69, 0x14, 0x08, 0xf9, 0x24, 0x68,
-	0x14, 0x60, 0x18, 0x4b, 0x1b, 0x05, 0x7c, 0x86, 0x04, 0x62, 0xfa, 0x3f, 0x54, 0xd6, 0xf8, 0x24,
-	0xc6, 0xf9, 0x67, 0x73, 0x56, 0xd2, 0x34, 0x31, 0x8a, 0x63, 0x53, 0x42, 0x9a, 0x28, 0xa6, 0x48,
-	0x13, 0xa2, 0x9b, 0x8f, 0x27, 0x4d, 0x3c, 0xcd, 0x9a, 0xd6, 0x22, 0x39, 0xe2, 0x3c, 0x8c, 0x85,
-	0x06, 0x66, 0x55, 0x52, 0x39, 0xd0, 0x75, 0xf4, 0x67, 0x58, 0x95, 0x16, 0x25, 0x73, 0x02, 0xed,
-	0xb7, 0xf3, 0x90, 0xdf, 0xb6, 0x3a, 0x6d, 0xcb, 0xc4, 0xed, 0x0f, 0xf8, 0x53, 0xf2, 0xf6, 0x07,
-	0x2c, 0x3e, 0xb2, 0x5c, 0xc4, 0x91, 0x3b, 0x2b, 0x90, 0x3b, 0xb4, 0x39, 0x98, 0x1b, 0x64, 0x73,
-	0x70, 0x1d, 0x72, 0x18, 0x8c, 0xd8, 0xca, 0xe9, 0xb5, 0x5d, 0xd3, 0xbd, 0xb2, 0x4e, 0x0d, 0x21,
-	0xa5, 0xe8, 0xe3, 0x90, 0xb7, 0x8d, 0xa3, 0x7a, 0x2b, 0x7e, 0xaa, 0x09, 0x2b, 0x51, 0x59, 0xf4,
-	0x02, 0x8c, 0x13, 0xf3, 0xcd, 0xce, 0x91, 0x17, 0x3a, 0xb1, 0x04, 0x0c, 0x2b, 0x97, 0xb1, 0xca,
-	0xcd, 0xce, 0xd1, 0x2d, 0x2e, 0x19, 0x97, 0x52, 0xaf, 0xb6, 0x40, 0xda, 0x40, 0x2b, 0xa7, 0x2e,
-	0xd9, 0xc6, 0x86, 0x29, 0xd9, 0xc6, 0x87, 0x29, 0xd9, 0x26, 0x06, 0x0d, 0xf1, 0x3f, 0xab, 0xec,
-	0xb8, 0x1c, 0x09, 0x8a, 0x8f, 0xa9, 0x60, 0x4b, 0xdb, 0xed, 0xe9, 0x93, 0x35, 0x9b, 0x9c, 0xac,
-	0x11, 0xda, 0xe5, 0x06, 0xa5, 0xdd, 0xe9, 0xcb, 0xd4, 0x5f, 0x66, 0x87, 0x39, 0x98, 0x17, 0x69,
-	0x42, 0x4c, 0x9f, 0xe2, 0xf4, 0xb7, 0xd5, 0x50, 0xdf, 0x18, 0xfe, 0x92, 0xeb, 0x1b, 0xfb, 0x44,
-	0x27, 0xce, 0x4f, 0x61, 0x11, 0x17, 0xee, 0x2e, 0x63, 0xde, 0x08, 0x75, 0x97, 0x91, 0xaf, 0xa4,
-	0xdd, 0x65, 0x84, 0x11, 0x4c, 0x44, 0xff, 0x48, 0x65, 0xc7, 0xe0, 0xf8, 0x88, 0x1f, 0xa9, 0x53,
-	0x7b, 0x96, 0x6d, 0x69, 0xdb, 0x5e, 0xfc, 0x64, 0x91, 0x1b, 0x22, 0x59, 0xe4, 0x87, 0x4b, 0x16,
-	0x85, 0xb4, 0xc9, 0xa2, 0x98, 0x3a, 0x59, 0x94, 0x52, 0x24, 0x0b, 0x9e, 0x00, 0xc3, 0x27, 0x8b,
-	0x0d, 0x76, 0xac, 0x51, 0xc8, 0x14, 0x4b, 0x00, 0xfe, 0x90, 0xac, 0x1c, 0x2b, 0x31, 0x2d, 0x47,
-	0x7f, 0x82, 0x1d, 0x78, 0x10, 0x29, 0xdd, 0x47, 0xef, 0xd7, 0x2a, 0x4c, 0x30, 0xe3, 0x1b, 0x46,
-	0xeb, 0x9e, 0xd1, 0x44, 0x5f, 0x02, 0x44, 0x35, 0x6c, 0xfa, 0x55, 0xd2, 0xbb, 0x98, 0x6a, 0x70,
-	0x23, 0x91, 0x53, 0x34, 0x01, 0x10, 0x99, 0x81, 0x42, 0x21, 0x65, 0x37, 0x5e, 0x50, 0x60, 0x25,
-	0x61, 0x3c, 0x2b, 0xb0, 0x4e, 0x59, 0x3f, 0x8a, 0xfe, 0x3a, 0x2c, 0xf2, 0xb3, 0x14, 0x41, 0x7c,
-	0xf8, 0x0c, 0xa4, 0x7f, 0x1d, 0xce, 0xc9, 0x47, 0xa6, 0x7c, 0x3a, 0x46, 0x76, 0xe8, 0xef, 0xa9,
-	0xb0, 0xcc, 0xa7, 0x62, 0x76, 0xd1, 0xa7, 0xfd, 0xa9, 0x27, 0xe3, 0xa7, 0x6d, 0xf6, 0xbc, 0x03,
-	0x2b, 0xb1, 0x2e, 0xa3, 0x14, 0x79, 0x11, 0xa6, 0x04, 0x9f, 0xb1, 0xe9, 0x54, 0x93, 0x4c, 0xa7,
-	0x8c, 0x60, 0x93, 0xbc, 0xbf, 0x1c, 0xfd, 0x26, 0x9c, 0x0b, 0xa7, 0xb4, 0x08, 0x35, 0x56, 0x61,
-	0x26, 0x4a, 0x0d, 0x96, 0xe2, 0xa6, 0x45, 0xef, 0x3b, 0xfa, 0xcb, 0xb0, 0x14, 0x33, 0x1e, 0xb5,
-	0x7b, 0xc0, 0x01, 0xab, 0x0f, 0x41, 0x91, 0xb5, 0x3d, 0xa0, 0x02, 0xa8, 0xdb, 0x37, 0xbf, 0x36,
-	0xf5, 0x7f, 0xde, 0x87, 0x2f, 0x5e, 0xdf, 0x99, 0x52, 0xbc, 0x0f, 0xaf, 0xbd, 0xb2, 0x33, 0x95,
-	0x59, 0xff, 0xeb, 0x04, 0x4c, 0x6c, 0x91, 0xd7, 0xf5, 0xdc, 0xa8, 0x9b, 0xf5, 0x03, 0xc3, 0x46,
-	0x3f, 0x51, 0xa0, 0x1c, 0x7a, 0xb5, 0x06, 0x5a, 0xee, 0xfd, 0xf2, 0x11, 0x6d, 0x25, 0xf6, 0x3a,
-	0x31, 0x5d, 0xbf, 0xd5, 0xdd, 0x7c, 0x0c, 0xad, 0x91, 0xec, 0x52, 0xc1, 0x3d, 0x04, 0x15, 0x6b,
-	0xbf, 0xe2, 0xde, 0x31, 0x2a, 0xce, 0xdd, 0x4e, 0xe5, 0x7e, 0xcb, 0xbd, 0x53, 0x39, 0x32, 0x5c,
-	0xc3, 0xe3, 0xcc, 0x6d, 0x7f, 0xd7, 0xe9, 0xad, 0x0f, 0x3e, 0xfc, 0x7e, 0x66, 0x5e, 0x9f, 0x5e,
-	0xbb, 0xf7, 0xd8, 0x1a, 0x7d, 0x9f, 0xd0, 0x1a, 0xd6, 0x7d, 0x4a, 0xa9, 0xa2, 0xef, 0x28, 0x30,
-	0xc1, 0xbf, 0xd8, 0x01, 0x9d, 0xe7, 0x56, 0xb3, 0x64, 0x2f, 0xf2, 0xd0, 0xf4, 0x5e, 0x22, 0xd4,
-	0xd6, 0xd5, 0xee, 0xe6, 0x34, 0x9a, 0x6c, 0xd2, 0x8b, 0xc4, 0x5a, 0x07, 0xdb, 0x32, 0x8b, 0x50,
-	0xc4, 0x16, 0x07, 0x7d, 0x0b, 0xca, 0xa1, 0x97, 0x0d, 0xf0, 0x58, 0x45, 0x5f, 0xc7, 0xc0, 0x63,
-	0x25, 0x79, 0x4b, 0x81, 0x7e, 0xb9, 0xbb, 0x39, 0x81, 0xc6, 0x8e, 0xf0, 0x15, 0xf2, 0xeb, 0x04,
-	0x08, 0x4d, 0x0e, 0xc4, 0x5b, 0x0a, 0x8c, 0x85, 0x5f, 0x34, 0x80, 0x56, 0xf8, 0x7b, 0x8c, 0xbc,
-	0xb6, 0x40, 0xab, 0xc4, 0x0b, 0x50, 0x13, 0xd6, 0xba, 0x9b, 0x93, 0x68, 0xbc, 0x89, 0x2f, 0x85,
-	0x01, 0x38, 0x53, 0x95, 0x00, 0x40, 0xbd, 0x31, 0xce, 0x1d, 0x53, 0x46, 0x95, 0x7e, 0x07, 0xad,
-	0xb5, 0xf3, 0x3d, 0x24, 0xa8, 0x1d, 0x8f, 0x75, 0x37, 0xa7, 0xd0, 0x04, 0xa5, 0x0d, 0x3d, 0x4a,
-	0x8b, 0x0d, 0x59, 0xd0, 0x67, 0xc2, 0x86, 0xd0, 0x4b, 0x9e, 0x25, 0xef, 0x28, 0x30, 0x25, 0x9e,
-	0xda, 0x45, 0x17, 0x64, 0x6e, 0x17, 0x8e, 0x5e, 0x6a, 0xff, 0xdf, 0x5b, 0x88, 0x9a, 0xb4, 0xde,
-	0xdd, 0x9c, 0x41, 0xd3, 0x3e, 0x3b, 0xd8, 0xf9, 0x5e, 0xe2, 0x22, 0x34, 0x2b, 0xb1, 0xca, 0x41,
-	0xdf, 0x55, 0x60, 0x9c, 0x3b, 0x3e, 0xca, 0xa3, 0x23, 0x3b, 0x00, 0xcb, 0xa3, 0x23, 0x3d, 0x7b,
-	0xea, 0x99, 0x32, 0x8d, 0x26, 0x29, 0x51, 0x78, 0x78, 0xb4, 0x38, 0x78, 0xde, 0xc6, 0x61, 0x13,
-	0x3e, 0x45, 0x2a, 0x86, 0x8d, 0xe4, 0x54, 0xaa, 0x18, 0x36, 0xb2, 0x43, 0xa8, 0xfa, 0x15, 0x1a,
-	0x36, 0x98, 0x33, 0x1c, 0x2c, 0x67, 0xab, 0x52, 0x58, 0x3c, 0x73, 0xbe, 0xa7, 0xc0, 0x04, 0x7f,
-	0xe8, 0x0f, 0x49, 0x68, 0x21, 0x1c, 0x89, 0xe4, 0xcd, 0x91, 0x9f, 0x19, 0xd4, 0x37, 0xb0, 0x9f,
-	0xd8, 0x91, 0xb7, 0xca, 0xbe, 0x65, 0x57, 0xbc, 0x49, 0x8f, 0x18, 0xa4, 0x73, 0x06, 0x31, 0x21,
-	0xcf, 0xa0, 0x77, 0x15, 0x98, 0x8e, 0x9c, 0xb5, 0x43, 0x52, 0x6a, 0x88, 0x47, 0x09, 0xb5, 0x87,
-	0xfa, 0x48, 0x51, 0xcb, 0x1e, 0xef, 0x6e, 0xce, 0x22, 0xe4, 0x33, 0xc8, 0x3f, 0x95, 0x47, 0x22,
-	0x0c, 0xcd, 0xc9, 0x4c, 0x73, 0x3c, 0xc7, 0x4d, 0x0a, 0x87, 0x8e, 0x90, 0x34, 0x9b, 0xf1, 0x27,
-	0xbf, 0xb4, 0x0b, 0x3d, 0x65, 0xa8, 0x49, 0x8f, 0x76, 0x37, 0x11, 0x9a, 0xf2, 0x4d, 0x0a, 0x1b,
-	0x34, 0x87, 0x38, 0x2a, 0xc9, 0xcc, 0xa1, 0x07, 0x37, 0xe4, 0xe6, 0xf0, 0xa7, 0x67, 0xe4, 0xe6,
-	0x08, 0x27, 0x3f, 0x44, 0x73, 0xe8, 0x11, 0x0f, 0x99, 0x39, 0xf4, 0x12, 0x67, 0x0e, 0x6d, 0x93,
-	0x97, 0x9b, 0xc3, 0x9f, 0x56, 0x90, 0x9b, 0x23, 0xf4, 0xd9, 0x8b, 0xe6, 0xd0, 0x86, 0x7a, 0x99,
-	0x39, 0xf4, 0xd2, 0xfa, 0xb7, 0x17, 0x60, 0xea, 0x96, 0x6d, 0x1d, 0x59, 0xde, 0x53, 0x18, 0x9b,
-	0x54, 0xff, 0xa2, 0xb0, 0xbd, 0xb8, 0x48, 0x1b, 0xfe, 0xc3, 0x89, 0xbb, 0x9f, 0xb5, 0x6a, 0x12,
-	0x51, 0x6a, 0xf8, 0xeb, 0xdd, 0xcd, 0xcb, 0xe8, 0x11, 0x9a, 0x3e, 0x43, 0x8d, 0x7a, 0xc1, 0x0c,
-	0x1c, 0xfe, 0xd2, 0xb9, 0xdb, 0xc1, 0xf7, 0xa4, 0xeb, 0x4b, 0x9c, 0xc7, 0x03, 0x91, 0x60, 0xd2,
-	0xf9, 0x83, 0x12, 0xec, 0x34, 0x45, 0x7a, 0x07, 0xd1, 0x25, 0x29, 0xe7, 0x62, 0x1a, 0x17, 0xb5,
-	0xcb, 0x09, 0xa5, 0xe9, 0x4d, 0x7d, 0xa1, 0xbb, 0xb9, 0x84, 0x16, 0x03, 0xae, 0x8a, 0xb7, 0x45,
-	0x1c, 0x53, 0x41, 0xcb, 0x3d, 0x6f, 0xc2, 0x41, 0xbf, 0x55, 0xd8, 0x9e, 0x47, 0x6f, 0x77, 0xf4,
-	0x6c, 0x45, 0xd5, 0xaa, 0x49, 0x44, 0x03, 0xcb, 0x17, 0xd1, 0x59, 0x96, 0xaf, 0x23, 0x86, 0x13,
-	0xf0, 0xb5, 0xfe, 0xe0, 0xbf, 0xaf, 0xb0, 0x7d, 0x91, 0x28, 0xf4, 0xd5, 0x68, 0xa6, 0x8e, 0x05,
-	0xfe, 0x91, 0x44, 0xb2, 0xd4, 0xf8, 0x97, 0xb0, 0xf1, 0x34, 0xbd, 0xc7, 0x80, 0x7e, 0xa1, 0xda,
-	0x07, 0x74, 0xcf, 0xfa, 0x1f, 0x2a, 0x30, 0x29, 0xf4, 0xcc, 0x21, 0x5d, 0x56, 0x3f, 0xf2, 0x7d,
-	0x53, 0x7c, 0xa8, 0xc6, 0x34, 0xdd, 0xe9, 0xcf, 0x74, 0x37, 0xcf, 0xa2, 0x33, 0x7e, 0x9d, 0x49,
-	0x2f, 0x7b, 0x4c, 0x67, 0xec, 0xd6, 0xf4, 0x39, 0xbe, 0x84, 0xa1, 0x32, 0x9e, 0x69, 0x3f, 0x56,
-	0x00, 0x45, 0x7b, 0xc1, 0xd0, 0x43, 0xf2, 0xa2, 0x51, 0x68, 0x1c, 0xd2, 0x3e, 0xd7, 0x4f, 0x8c,
-	0xda, 0xf8, 0x44, 0x77, 0x73, 0x0e, 0xcd, 0x84, 0xea, 0x4b, 0x26, 0x41, 0xa6, 0x6e, 0x34, 0x2f,
-	0xb5, 0xcf, 0xf1, 0x2a, 0x9b, 0x49, 0xa1, 0x21, 0x8a, 0x07, 0x4e, 0xde, 0x70, 0xc6, 0x03, 0x17,
-	0xd3, 0x51, 0xe5, 0x4d, 0x97, 0x08, 0x4d, 0xf9, 0x45, 0x27, 0xbd, 0x4c, 0x10, 0xd3, 0xe2, 0x11,
-	0x7b, 0x17, 0x57, 0x5b, 0x7c, 0x23, 0x94, 0x58, 0x6d, 0x49, 0xdb, 0xac, 0xc4, 0x6a, 0x4b, 0xde,
-	0x4b, 0xa5, 0x5f, 0xa5, 0xd5, 0x16, 0x2d, 0x44, 0x39, 0xa4, 0x16, 0xab, 0x31, 0x48, 0xb1, 0x3a,
-	0x87, 0x6f, 0x7c, 0x90, 0x15, 0x16, 0xc2, 0xa6, 0xb6, 0xac, 0xb0, 0x10, 0x37, 0x44, 0x69, 0x9d,
-	0x43, 0x29, 0xc6, 0xf6, 0x1b, 0x65, 0x65, 0x05, 0xbb, 0x26, 0x96, 0x15, 0xfe, 0x66, 0xa6, 0xbc,
-	0xac, 0x10, 0x37, 0x4a, 0xe5, 0x65, 0x45, 0x64, 0x47, 0x54, 0x2c, 0x2b, 0xfc, 0x3d, 0x7c, 0x59,
-	0x59, 0xe1, 0x5f, 0xc4, 0x38, 0xf1, 0x3b, 0xbf, 0x48, 0x52, 0x79, 0xf6, 0xc4, 0x49, 0xbe, 0x71,
-	0x4c, 0x71, 0xa2, 0x8c, 0xe2, 0x71, 0xd2, 0x62, 0x71, 0x7a, 0x07, 0xcf, 0xe3, 0xdc, 0x96, 0x2f,
-	0x92, 0x14, 0x9f, 0x11, 0x8c, 0x2e, 0xf4, 0x94, 0xe1, 0x38, 0x4e, 0xc9, 0xc4, 0xe3, 0xa3, 0x55,
-	0xe5, 0xf8, 0xb0, 0x07, 0xac, 0xf0, 0x92, 0x13, 0x5a, 0x91, 0x4d, 0xc1, 0xa1, 0x05, 0x76, 0xad,
-	0x12, 0x2f, 0xc0, 0x3d, 0x60, 0xf9, 0x33, 0xb3, 0x77, 0x8d, 0xf8, 0x49, 0x47, 0x7c, 0x06, 0xf5,
-	0xae, 0x50, 0x3e, 0x4f, 0x0a, 0xbb, 0x02, 0x31, 0xe5, 0x1f, 0xb7, 0x2c, 0x1b, 0x53, 0xfe, 0xf1,
-	0x6b, 0xb0, 0x91, 0xf2, 0x8f, 0x5c, 0x96, 0x96, 0x7f, 0xf4, 0xa7, 0x3d, 0x4c, 0xc2, 0x2b, 0xcb,
-	0x68, 0x45, 0x36, 0x0f, 0xc6, 0x62, 0x22, 0x5b, 0x94, 0xa6, 0x98, 0x50, 0xc2, 0x84, 0x31, 0xd1,
-	0x62, 0x30, 0xf1, 0x1e, 0x3a, 0xb9, 0x45, 0x65, 0x54, 0x91, 0xcd, 0x68, 0x1c, 0x1e, 0xe7, 0x7b,
-	0x48, 0x70, 0x0f, 0x9d, 0xfe, 0x4c, 0x17, 0x60, 0xb1, 0x50, 0x95, 0x61, 0xe1, 0x59, 0xf2, 0x53,
-	0x45, 0xdc, 0x95, 0xa3, 0x6b, 0xd5, 0x9f, 0x8f, 0x67, 0x02, 0xb7, 0x22, 0xaa, 0x5d, 0xec, 0x2f,
-	0x48, 0xcd, 0xbb, 0x86, 0xcd, 0xa3, 0x2b, 0x40, 0x61, 0x9c, 0x2a, 0xfa, 0x62, 0xd4, 0xbc, 0x35,
-	0xb6, 0x54, 0xe4, 0x99, 0xf9, 0x1b, 0x45, 0xdc, 0x5a, 0xf2, 0x17, 0x99, 0xc4, 0xc2, 0xa1, 0xd7,
-	0xa2, 0xa7, 0x58, 0x38, 0xf4, 0x5c, 0x6d, 0xd3, 0xb7, 0x68, 0xe1, 0xc0, 0x91, 0x2b, 0x58, 0x79,
-	0xc3, 0xa6, 0x2f, 0xa3, 0x73, 0x3d, 0x4c, 0x77, 0xd0, 0x7b, 0x0a, 0xbf, 0x7d, 0x10, 0x98, 0x7d,
-	0x31, 0xce, 0x9f, 0x11, 0xa3, 0x1f, 0x4e, 0x20, 0x49, 0x4d, 0xde, 0xc6, 0x55, 0x04, 0xc7, 0x00,
-	0xc1, 0xe0, 0xf3, 0xd5, 0x9e, 0x06, 0x3f, 0xa5, 0x54, 0xb7, 0xb2, 0x6f, 0x64, 0xda, 0x7b, 0x7b,
-	0x79, 0xbc, 0xb2, 0x79, 0xe5, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x3e, 0xf0, 0x87, 0x7c, 0x11,
-	0x5b, 0x00, 0x00,
+	// 4295 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x5c, 0xdd, 0x6f, 0x1b, 0x57,
+	0x76, 0xcf, 0x70, 0xf8, 0x79, 0x68, 0x89, 0xd4, 0x95, 0x64, 0xcb, 0x23, 0xdb, 0xa2, 0xc7, 0x4d,
+	0xab, 0xc8, 0xb1, 0x94, 0xc8, 0x71, 0x1c, 0xc7, 0xd9, 0x0f, 0x5a, 0xda, 0x24, 0xda, 0xc4, 0x8a,
+	0x97, 0xd9, 0x74, 0xd3, 0xbc, 0x08, 0x14, 0x39, 0x92, 0x59, 0x53, 0x24, 0x77, 0x66, 0x98, 0xc4,
+	0x0f, 0x05, 0xd2, 0x7d, 0xd9, 0x02, 0x0d, 0x16, 0x58, 0x15, 0x08, 0x8a, 0x2e, 0x50, 0xec, 0x43,
+	0x5b, 0xf4, 0xa5, 0x0f, 0x01, 0xfa, 0x85, 0x6e, 0x51, 0xb4, 0x40, 0xfb, 0xd0, 0x97, 0x02, 0xed,
+	0xbe, 0xf6, 0x31, 0x2d, 0x16, 0xdd, 0x3f, 0xa1, 0x05, 0xba, 0x98, 0xfb, 0x31, 0x73, 0xef, 0x9d,
+	0x3b, 0xe4, 0xcc, 0x50, 0x96, 0x22, 0x47, 0x2f, 0x36, 0xc5, 0x39, 0xe7, 0xf2, 0xcc, 0x39, 0xbf,
+	0x73, 0xee, 0xb9, 0xf7, 0x9e, 0x73, 0x61, 0x6a, 0xb7, 0xd3, 0xed, 0x76, 0x7a, 0xfb, 0xab, 0x03,
+	0xbb, 0xef, 0xf6, 0x11, 0xf4, 0x07, 0x56, 0x6f, 0xd0, 0x71, 0xed, 0xce, 0xc7, 0xc6, 0x95, 0xfd,
+	0x7e, 0x7f, 0xbf, 0x6b, 0xad, 0xe1, 0x27, 0xbb, 0xc3, 0xbd, 0xb5, 0x8f, 0xec, 0xe6, 0x60, 0x60,
+	0xd9, 0x0e, 0xa1, 0x35, 0x96, 0xe4, 0xe7, 0x6e, 0xe7, 0xc0, 0x72, 0xdc, 0xe6, 0xc1, 0x80, 0x12,
+	0x5c, 0xa2, 0x04, 0xcd, 0x41, 0x67, 0xad, 0xd9, 0xeb, 0xf5, 0xdd, 0xa6, 0xdb, 0xe9, 0xf7, 0x18,
+	0xfb, 0xf3, 0xf8, 0xbf, 0xd6, 0x8d, 0x7d, 0xab, 0x77, 0xc3, 0xf9, 0xa8, 0xb9, 0xbf, 0x6f, 0xd9,
+	0x6b, 0xfd, 0x01, 0xa6, 0x08, 0x53, 0x9b, 0xff, 0x97, 0x85, 0xdc, 0x03, 0xbb, 0xd3, 0xb2, 0xd0,
+	0x6d, 0x28, 0x0e, 0xbc, 0x0f, 0x3b, 0x9d, 0xf6, 0x82, 0x56, 0xd3, 0x96, 0xcb, 0xeb, 0x97, 0x56,
+	0xc9, 0x0f, 0xad, 0x32, 0x49, 0x56, 0xdf, 0x75, 0xed, 0x4e, 0x6f, 0xff, 0x37, 0x9b, 0xdd, 0xa1,
+	0xd5, 0x28, 0x60, 0xea, 0xad, 0x36, 0xba, 0x09, 0x79, 0xe7, 0xd1, 0xd0, 0x63, 0xcb, 0xc4, 0x60,
+	0xcb, 0x39, 0x8f, 0x86, 0x5b, 0x6d, 0xf4, 0x0d, 0x38, 0xd7, 0x74, 0x5d, 0xbb, 0xb3, 0x3b, 0x74,
+	0xf1, 0x2f, 0xea, 0x31, 0x58, 0xcb, 0x3e, 0xc7, 0x56, 0x1b, 0xdd, 0x82, 0x3c, 0x16, 0xc0, 0x59,
+	0xc8, 0xd6, 0xf4, 0xe5, 0xf2, 0xfa, 0xe5, 0xd5, 0x40, 0xc5, 0xab, 0xf8, 0x8d, 0xc8, 0xbf, 0xce,
+	0xb7, 0x7a, 0xae, 0xfd, 0xb8, 0x41, 0x89, 0xd1, 0x0b, 0x50, 0x6c, 0x0d, 0x6d, 0xdb, 0xea, 0xb5,
+	0x1e, 0x2f, 0xe4, 0x6a, 0xda, 0xf2, 0xf4, 0xfa, 0x1c, 0xcf, 0xb8, 0x41, 0x9f, 0x35, 0x7c, 0x2a,
+	0xf4, 0x12, 0xe4, 0x1d, 0xb7, 0xe9, 0x0e, 0x9d, 0x85, 0x7c, 0x0c, 0x19, 0x29, 0x2d, 0xba, 0x03,
+	0xe0, 0xb8, 0x4d, 0xdb, 0xdd, 0xf1, 0x8c, 0xb7, 0x50, 0xc0, 0x9c, 0x46, 0x88, 0xf3, 0xbb, 0xcc,
+	0xb2, 0x8d, 0x12, 0xa6, 0xf6, 0xfe, 0x46, 0xb7, 0xa0, 0x68, 0xf5, 0xda, 0x84, 0xb1, 0x38, 0x96,
+	0xb1, 0x60, 0xf5, 0xda, 0x98, 0xed, 0x2e, 0x94, 0x5b, 0xb6, 0xd5, 0x74, 0x2d, 0xc2, 0x59, 0x1a,
+	0xcb, 0x09, 0x84, 0x9c, 0x31, 0x13, 0xc1, 0x09, 0x33, 0x8c, 0x67, 0x26, 0xe4, 0xde, 0x17, 0xc6,
+	0x1d, 0x28, 0x73, 0xaa, 0x46, 0x55, 0xd0, 0x1f, 0x59, 0x8f, 0x31, 0x86, 0xf4, 0x86, 0xf7, 0x11,
+	0xcd, 0x41, 0xee, 0x43, 0x4f, 0x3b, 0x18, 0x20, 0x5a, 0x83, 0xfc, 0xf1, 0x6a, 0xe6, 0x15, 0xcd,
+	0xfc, 0x0b, 0x1d, 0xd0, 0x06, 0x16, 0x03, 0x8f, 0xd0, 0xb0, 0xbe, 0x3f, 0xb4, 0x1c, 0x97, 0x83,
+	0x94, 0x96, 0x1e, 0x52, 0x99, 0xa4, 0x90, 0xba, 0xe7, 0x43, 0x4a, 0xc7, 0x90, 0x5a, 0x11, 0x90,
+	0x11, 0x92, 0x72, 0x2c, 0xbe, 0xb2, 0xb1, 0xf0, 0x25, 0x22, 0x25, 0x97, 0x16, 0x29, 0xf9, 0xd8,
+	0x48, 0x99, 0xc4, 0x5e, 0xdb, 0x30, 0x2b, 0x28, 0xc2, 0x19, 0xf4, 0x7b, 0x4e, 0xfa, 0xd8, 0x61,
+	0xfe, 0x7e, 0x16, 0xe6, 0x37, 0x2d, 0xa7, 0x65, 0x77, 0x76, 0xc9, 0x90, 0x0e, 0x83, 0xc0, 0x29,
+	0x0b, 0x47, 0x41, 0x94, 0xc8, 0xa6, 0x8e, 0x12, 0xc7, 0x60, 0x7b, 0x4f, 0xad, 0x4e, 0xdf, 0x76,
+	0x77, 0x3c, 0x8b, 0x17, 0xe2, 0xa8, 0xd5, 0xa3, 0x7e, 0xcb, 0xf2, 0xc2, 0x60, 0xc1, 0xb6, 0x3e,
+	0xb4, 0x6c, 0x27, 0x3a, 0x28, 0xdd, 0xeb, 0xf7, 0xbb, 0x94, 0x8b, 0x92, 0xa2, 0xf3, 0x90, 0xef,
+	0xef, 0xed, 0x39, 0x96, 0x8b, 0xe3, 0xd1, 0x54, 0x83, 0xfe, 0xe5, 0x21, 0xac, 0xdb, 0x39, 0xe8,
+	0xb8, 0x38, 0xd2, 0x4c, 0x35, 0xc8, 0x1f, 0xe6, 0x06, 0x9c, 0x97, 0xc1, 0x40, 0x01, 0xf6, 0x9c,
+	0xef, 0x9a, 0x1a, 0x76, 0xcd, 0x99, 0x50, 0xb4, 0x67, 0x1e, 0x68, 0xfe, 0x32, 0x03, 0xe8, 0x7e,
+	0xbf, 0xdd, 0xd9, 0x7b, 0x2c, 0x84, 0x94, 0x33, 0x3c, 0x3d, 0x09, 0x3c, 0x79, 0x01, 0x41, 0x50,
+	0xf6, 0xa4, 0x01, 0x61, 0x1f, 0x66, 0x37, 0xad, 0xae, 0xe5, 0x4a, 0xd1, 0x20, 0xd5, 0x84, 0xb0,
+	0x08, 0x25, 0x26, 0x84, 0xb3, 0x90, 0xa9, 0xe9, 0xcb, 0xa5, 0x46, 0x91, 0xfe, 0x8e, 0x63, 0xde,
+	0x84, 0x39, 0xf1, 0x87, 0xa8, 0xe4, 0x02, 0x93, 0x26, 0x31, 0xfd, 0x7b, 0x16, 0x0a, 0xf5, 0x56,
+	0xab, 0x3f, 0xec, 0xb9, 0xe8, 0x16, 0x14, 0x86, 0x8e, 0x65, 0xc7, 0x95, 0x29, 0xef, 0x11, 0x6f,
+	0xb5, 0xd1, 0x1d, 0x28, 0x61, 0x36, 0xf7, 0xf1, 0xc0, 0x8a, 0x85, 0xa8, 0xa2, 0x47, 0xfe, 0xdd,
+	0xc7, 0x03, 0x0b, 0xbd, 0x0c, 0x85, 0xdd, 0x66, 0xb7, 0xd9, 0x6b, 0x59, 0x91, 0x78, 0xda, 0xec,
+	0x0f, 0x77, 0xbb, 0x16, 0xd5, 0x29, 0x25, 0x46, 0xaf, 0x48, 0x73, 0xd2, 0xd8, 0x5f, 0xf4, 0xe7,
+	0xa6, 0xdb, 0x90, 0xef, 0xf4, 0x5a, 0x7d, 0x8c, 0x25, 0xcf, 0xed, 0x96, 0x78, 0xb7, 0xa3, 0x8a,
+	0x58, 0xdd, 0xc2, 0x14, 0x74, 0x1a, 0x24, 0xe4, 0x29, 0x93, 0x26, 0x29, 0x85, 0x29, 0x4c, 0x92,
+	0xc2, 0x14, 0x93, 0xa4, 0x30, 0xe8, 0xeb, 0x50, 0x6e, 0xe3, 0xc8, 0x83, 0x13, 0x65, 0x9a, 0x3c,
+	0x8d, 0x71, 0x57, 0x8e, 0xc1, 0x9b, 0x52, 0x39, 0x35, 0xf0, 0x53, 0x6a, 0x69, 0xdc, 0x94, 0xfa,
+	0x33, 0x1d, 0xe6, 0xc8, 0x9c, 0x4a, 0x15, 0xca, 0x30, 0xff, 0x55, 0x00, 0xd8, 0xa6, 0x04, 0xb0,
+	0xe7, 0xc3, 0x29, 0x97, 0xa8, 0x15, 0x25, 0xda, 0x24, 0xeb, 0xe5, 0x8f, 0xd1, 0x7a, 0xdb, 0x30,
+	0x2f, 0x89, 0x49, 0xe3, 0x48, 0x3a, 0xeb, 0x99, 0x7f, 0x9e, 0x81, 0x0b, 0x6c, 0x0e, 0xa4, 0x43,
+	0x3a, 0x27, 0x07, 0x08, 0x3e, 0x5b, 0xd0, 0x53, 0x66, 0x0b, 0xd9, 0x34, 0xd9, 0x42, 0x4e, 0x9d,
+	0x2d, 0xe4, 0xf9, 0x6c, 0xe1, 0x2d, 0x58, 0x08, 0x6b, 0x8a, 0x6a, 0x7f, 0x0d, 0x8a, 0x4d, 0xfa,
+	0x1d, 0xcd, 0x18, 0x66, 0x15, 0xa1, 0xab, 0xe1, 0x13, 0x61, 0x2f, 0x24, 0x13, 0xd9, 0x99, 0x17,
+	0x8a, 0x5e, 0xa8, 0xd2, 0xca, 0x97, 0xd0, 0x0b, 0x25, 0x31, 0x27, 0xf3, 0xc2, 0x75, 0x6f, 0x55,
+	0xe2, 0x25, 0x07, 0xb2, 0x0b, 0x5e, 0x84, 0x22, 0x1d, 0x8f, 0x25, 0x07, 0x05, 0xc2, 0xe2, 0x25,
+	0x14, 0xe7, 0x65, 0x1e, 0x2a, 0xc4, 0x08, 0xa6, 0xff, 0x2c, 0x42, 0xe5, 0x6d, 0xab, 0xe9, 0x74,
+	0x7a, 0xfb, 0x1b, 0xfd, 0x9e, 0x6b, 0x37, 0x5b, 0x2e, 0xfa, 0x1a, 0x94, 0x5b, 0xf4, 0x73, 0x5c,
+	0xb9, 0x81, 0x31, 0x6c, 0xb5, 0xd1, 0x5d, 0x80, 0x2e, 0x19, 0x31, 0x6e, 0xce, 0x5a, 0xa2, 0xf4,
+	0x5b, 0x6d, 0xef, 0xb7, 0x6d, 0xcb, 0xe9, 0x0f, 0xed, 0x56, 0xec, 0xb4, 0x15, 0x18, 0x83, 0x90,
+	0x2b, 0x67, 0xe3, 0xa7, 0x69, 0x9c, 0x8d, 0x72, 0x09, 0x3c, 0xec, 0x7d, 0xa8, 0x1c, 0x58, 0xae,
+	0xe5, 0x3d, 0xd8, 0xc1, 0x48, 0xf0, 0x72, 0x0d, 0x0f, 0xbd, 0x6b, 0x3c, 0x7a, 0x25, 0xe5, 0xae,
+	0xde, 0xa7, 0x2c, 0x78, 0x2c, 0xba, 0x76, 0x9f, 0x3e, 0x10, 0xbe, 0xf4, 0xa2, 0xde, 0x9e, 0x65,
+	0xed, 0x74, 0x7a, 0x7b, 0xfd, 0x78, 0x6b, 0xa4, 0x3d, 0xcb, 0xda, 0xea, 0xed, 0xf5, 0xd1, 0x2a,
+	0xe8, 0x7b, 0x16, 0x4b, 0x3d, 0x46, 0x7b, 0xad, 0x47, 0xe8, 0xbd, 0x79, 0x7b, 0x68, 0xed, 0x78,
+	0x3c, 0xa5, 0x18, 0x3c, 0xf9, 0xf6, 0xd0, 0x7a, 0xdd, 0xb2, 0xd0, 0xb7, 0x01, 0xf5, 0xdd, 0x87,
+	0x96, 0xbd, 0xe3, 0xc3, 0xc4, 0x1b, 0x01, 0x62, 0x8c, 0x50, 0xc5, 0x7c, 0x4c, 0x19, 0xde, 0x58,
+	0x77, 0x01, 0x5a, 0xfd, 0xe1, 0xa0, 0xdf, 0xc3, 0x63, 0x94, 0x63, 0x8c, 0x51, 0x22, 0xf4, 0x1e,
+	0xf3, 0x6d, 0x28, 0xda, 0x56, 0xb3, 0x8b, 0x59, 0xcf, 0xc5, 0x09, 0x55, 0x1e, 0xb5, 0xc7, 0xc8,
+	0x87, 0xaa, 0xa9, 0x44, 0xa1, 0x2a, 0x48, 0x2c, 0xa7, 0x53, 0xaf, 0x8b, 0x2a, 0x49, 0xd6, 0x45,
+	0x52, 0x4e, 0x5a, 0x9d, 0x24, 0x27, 0x9d, 0x49, 0xb4, 0xad, 0x56, 0x87, 0x59, 0x05, 0x5a, 0x13,
+	0xc5, 0xc5, 0x9f, 0x64, 0x61, 0x89, 0xcd, 0x91, 0x92, 0x27, 0xf8, 0x21, 0xed, 0x2c, 0xdc, 0xc4,
+	0x0a, 0x37, 0xe9, 0x56, 0x34, 0x5f, 0xea, 0xed, 0x96, 0x2e, 0xd4, 0xa2, 0xc1, 0x41, 0xe7, 0xae,
+	0x37, 0x61, 0x86, 0x99, 0x97, 0x19, 0x9d, 0x65, 0x54, 0x8b, 0x23, 0xe2, 0x6c, 0xa3, 0xda, 0x95,
+	0x46, 0x34, 0xff, 0xb8, 0x08, 0xd3, 0x1e, 0x95, 0xd5, 0x3e, 0x9b, 0xe9, 0x92, 0x41, 0xef, 0x7b,
+	0x51, 0x33, 0xdd, 0xaa, 0x6c, 0x81, 0x40, 0xb7, 0x67, 0x13, 0xdd, 0x29, 0x9f, 0xe8, 0xc4, 0x29,
+	0x6b, 0x3a, 0xed, 0x56, 0x5e, 0x25, 0xf5, 0x01, 0x52, 0xa2, 0x99, 0xee, 0x28, 0x26, 0xab, 0x3f,
+	0xca, 0xc2, 0x15, 0x3e, 0x1e, 0x05, 0x60, 0x3e, 0x9b, 0xab, 0xbe, 0xf2, 0x73, 0xd5, 0x43, 0x31,
+	0x91, 0x11, 0xb0, 0x41, 0xa7, 0xaa, 0x6f, 0x01, 0x9e, 0x74, 0xac, 0x76, 0x68, 0xa6, 0x32, 0xa2,
+	0xe3, 0x64, 0xa3, 0xd2, 0x15, 0x87, 0x33, 0xff, 0x54, 0x87, 0x62, 0xc3, 0x6a, 0x3d, 0x6c, 0xda,
+	0xfb, 0x16, 0x31, 0x3a, 0xf9, 0x1c, 0x1b, 0x70, 0x8c, 0x41, 0xb4, 0x5f, 0x26, 0x81, 0xfd, 0x8e,
+	0x7f, 0x07, 0x20, 0x40, 0x4c, 0x2e, 0xfd, 0x7e, 0x6d, 0x3e, 0x51, 0x6e, 0x2c, 0x6d, 0x17, 0x14,
+	0x12, 0x6e, 0x17, 0x98, 0x9f, 0x64, 0xd8, 0xd6, 0x1b, 0xb3, 0xd6, 0x84, 0x5b, 0x36, 0x9c, 0xd6,
+	0x33, 0x69, 0xb5, 0xae, 0x27, 0xd2, 0xba, 0xa4, 0x82, 0x6c, 0x52, 0x15, 0x7c, 0x0f, 0xce, 0xcb,
+	0x1a, 0xa0, 0xbe, 0x30, 0x19, 0x6e, 0xcd, 0x7f, 0xd0, 0x82, 0xbd, 0x35, 0x36, 0x36, 0x1f, 0x84,
+	0x4f, 0xc0, 0x27, 0x82, 0x70, 0xa1, 0xab, 0xc3, 0x45, 0x96, 0x0f, 0x17, 0xef, 0xc0, 0x45, 0x85,
+	0xfc, 0x54, 0x39, 0xeb, 0x50, 0x62, 0xf2, 0xb0, 0x08, 0x21, 0x1c, 0xd2, 0xfb, 0xda, 0x0c, 0xc8,
+	0xcc, 0x9f, 0xeb, 0x90, 0xdf, 0x20, 0x31, 0xe1, 0x0e, 0x94, 0x92, 0xbd, 0x7d, 0xd1, 0x7f, 0x77,
+	0x69, 0xfe, 0xca, 0x24, 0x9c, 0xbf, 0x38, 0xd5, 0xe9, 0x09, 0x54, 0x47, 0xb3, 0xb5, 0x6c, 0xdc,
+	0x6c, 0xed, 0x15, 0xa9, 0x46, 0x26, 0x4d, 0x18, 0x39, 0x15, 0xc7, 0x3e, 0xe6, 0x7f, 0x67, 0x82,
+	0x13, 0xe7, 0x0d, 0x11, 0xe5, 0xa7, 0xce, 0xca, 0xfc, 0xf4, 0x9d, 0x4d, 0x39, 0x7d, 0xe7, 0xd2,
+	0x4c, 0xdf, 0x79, 0xb5, 0x3f, 0x16, 0x78, 0x7f, 0x7c, 0x23, 0x38, 0xd5, 0xd8, 0x90, 0xbc, 0xf1,
+	0x79, 0x28, 0x88, 0xbe, 0x88, 0x84, 0x33, 0x20, 0xe2, 0x89, 0x8c, 0xc4, 0xfc, 0x4c, 0x87, 0x7c,
+	0xc3, 0xda, 0x1b, 0xf6, 0xf0, 0x16, 0x3b, 0xf9, 0x14, 0xdb, 0x42, 0x84, 0xfc, 0xcc, 0x0f, 0x9f,
+	0x80, 0x1f, 0x0a, 0xae, 0x44, 0xf4, 0xcc, 0xbb, 0x92, 0x9d, 0xcc, 0x50, 0xf6, 0xc9, 0x1a, 0xea,
+	0xb4, 0xb8, 0x92, 0xaf, 0xe7, 0xc0, 0x95, 0x88, 0xe6, 0x94, 0xae, 0x44, 0xa8, 0x1b, 0x8c, 0xc4,
+	0xfc, 0x9f, 0x0c, 0xe4, 0xc9, 0x81, 0x8b, 0x67, 0x21, 0x72, 0x88, 0x13, 0xdb, 0x42, 0x84, 0x7c,
+	0x72, 0x0b, 0xdd, 0x86, 0x62, 0xff, 0xa3, 0x5e, 0x7c, 0x13, 0x15, 0x30, 0xb5, 0x98, 0xad, 0x65,
+	0xd3, 0x66, 0x6b, 0xc9, 0x9c, 0x6a, 0x92, 0x6c, 0xd7, 0xfc, 0x05, 0xe7, 0x1e, 0x44, 0xe9, 0xbc,
+	0x7b, 0x9c, 0x36, 0xe5, 0x9f, 0x16, 0x07, 0xf1, 0x35, 0x1d, 0x38, 0x08, 0xd1, 0x9d, 0xd2, 0x41,
+	0x08, 0x75, 0x83, 0x91, 0x98, 0x25, 0x28, 0x78, 0xcb, 0x42, 0xeb, 0x63, 0xd7, 0xfc, 0x24, 0x0b,
+	0x45, 0xb6, 0xbf, 0x21, 0x6d, 0x23, 0x68, 0x13, 0x6d, 0x23, 0x64, 0x52, 0x6f, 0x23, 0xe8, 0xa9,
+	0xb6, 0x11, 0xb2, 0xc9, 0xce, 0xb0, 0x9b, 0x2d, 0x6f, 0xa1, 0x11, 0x77, 0xff, 0xa1, 0x48, 0xc8,
+	0xb7, 0xda, 0xe8, 0x3b, 0x51, 0x5b, 0x96, 0xcb, 0xc2, 0xd1, 0x32, 0x25, 0x89, 0xb5, 0x59, 0x79,
+	0x17, 0xca, 0xc3, 0x41, 0x3b, 0xc9, 0xec, 0x44, 0xc8, 0x8f, 0x6a, 0x7b, 0xea, 0xfb, 0x30, 0x7d,
+	0x8f, 0xd4, 0xf4, 0x33, 0xc7, 0xbd, 0x01, 0x85, 0x16, 0xc1, 0x07, 0x05, 0x81, 0x50, 0x63, 0x40,
+	0xa1, 0xd3, 0x60, 0x34, 0xe8, 0x05, 0x28, 0xb2, 0x57, 0xa2, 0x66, 0x9f, 0x53, 0x29, 0xa3, 0xe1,
+	0x53, 0x99, 0x39, 0xd0, 0xb7, 0xb7, 0xde, 0x36, 0x7f, 0xa9, 0xc3, 0x25, 0xb2, 0xce, 0x93, 0x77,
+	0xd9, 0xa9, 0x20, 0x5f, 0x15, 0x40, 0x5a, 0x61, 0x54, 0x91, 0x82, 0x85, 0xd7, 0xc2, 0x65, 0x43,
+	0x6a, 0x55, 0xc5, 0x42, 0x9a, 0xb8, 0xf5, 0x9a, 0x4f, 0xb0, 0xf5, 0x7a, 0x14, 0x38, 0xdb, 0x87,
+	0xcb, 0x11, 0x6f, 0x40, 0x83, 0xd8, 0xeb, 0x50, 0x95, 0x8f, 0x64, 0xa8, 0xcd, 0x47, 0x9e, 0xc8,
+	0x54, 0xa4, 0x13, 0x19, 0xf3, 0x73, 0x0d, 0xaa, 0x1b, 0xcd, 0x6e, 0x6b, 0xd8, 0xc5, 0x3b, 0x08,
+	0x04, 0x4a, 0xcf, 0x82, 0xde, 0x72, 0x3f, 0x1e, 0x85, 0x67, 0xef, 0x79, 0x72, 0x2c, 0xa3, 0x4d,
+	0xf0, 0x04, 0x10, 0x84, 0xd6, 0xc7, 0x0b, 0x3d, 0x4d, 0x78, 0x7c, 0x99, 0x7f, 0xa4, 0xc1, 0x92,
+	0x44, 0xf3, 0xce, 0xc0, 0xb2, 0x71, 0x4b, 0x4b, 0xc2, 0x57, 0x50, 0x08, 0x94, 0x49, 0x2e, 0xd0,
+	0xbf, 0x65, 0xa1, 0xba, 0xd1, 0x3f, 0xd8, 0xed, 0xf4, 0xb0, 0x0c, 0xa4, 0x95, 0x66, 0x1b, 0xe6,
+	0x5a, 0xc1, 0x77, 0x3b, 0x89, 0x2a, 0x61, 0x51, 0x4b, 0x1a, 0x6d, 0xab, 0x8d, 0xbe, 0x0d, 0xfc,
+	0xb7, 0x3b, 0x09, 0xca, 0x91, 0xab, 0x1c, 0xdf, 0xbb, 0x47, 0x53, 0x99, 0xfc, 0x4d, 0xa9, 0xf1,
+	0x66, 0x59, 0xd4, 0xb0, 0x28, 0xfc, 0x89, 0xf6, 0xe0, 0x9c, 0xd8, 0xbe, 0xc2, 0x24, 0x1d, 0x16,
+	0xbf, 0xc8, 0x30, 0xff, 0x97, 0x75, 0xc9, 0xf0, 0xad, 0x46, 0x83, 0x76, 0x24, 0x68, 0x48, 0xdc,
+	0x33, 0x73, 0x5f, 0xea, 0x99, 0xb9, 0x15, 0x8e, 0xc4, 0x11, 0xef, 0x71, 0x34, 0xed, 0x33, 0x93,
+	0xa8, 0x7a, 0x00, 0x57, 0xa2, 0x24, 0xa4, 0xa1, 0xf6, 0x88, 0x1d, 0xd9, 0xfc, 0x0f, 0x3d, 0x38,
+	0x72, 0x97, 0x7f, 0xd4, 0x5f, 0x0f, 0x3c, 0xd5, 0xd1, 0x23, 0x5d, 0x5f, 0x03, 0xbf, 0xde, 0xc8,
+	0xa5, 0x5c, 0x6f, 0xe4, 0xd3, 0xac, 0x37, 0x0a, 0xea, 0xf5, 0x46, 0x91, 0x5f, 0x6f, 0x0c, 0xe0,
+	0xea, 0x08, 0x9b, 0x52, 0x24, 0xbd, 0x25, 0x1a, 0x41, 0x68, 0x66, 0xb9, 0x34, 0x2a, 0x82, 0x36,
+	0x66, 0x64, 0x93, 0x3a, 0xe6, 0xdf, 0xea, 0x70, 0x99, 0xd4, 0x3b, 0x46, 0xc5, 0x88, 0xa7, 0x1a,
+	0x43, 0xf7, 0xa5, 0x19, 0xe8, 0x56, 0xb8, 0x5c, 0x35, 0x6d, 0xcc, 0xc9, 0x1d, 0x43, 0xcc, 0x89,
+	0x92, 0xf0, 0x09, 0xc5, 0x9c, 0x9f, 0x6a, 0x70, 0x85, 0x14, 0xa6, 0x46, 0x46, 0x9c, 0xa3, 0x9c,
+	0x51, 0xd6, 0x61, 0x5e, 0x25, 0x3e, 0x6b, 0xc0, 0x99, 0x0d, 0x4b, 0xe8, 0x98, 0xef, 0xc1, 0x52,
+	0xa4, 0x84, 0xfe, 0x99, 0x4d, 0xc4, 0xb0, 0x5a, 0xf4, 0xb0, 0x5f, 0xe8, 0x50, 0x7a, 0x60, 0xf7,
+	0x77, 0xf1, 0xb7, 0x1e, 0xec, 0x06, 0xec, 0x8f, 0xb8, 0xaf, 0x57, 0xf6, 0x39, 0xce, 0x1a, 0xc1,
+	0x92, 0x55, 0x8f, 0x1c, 0xe3, 0x21, 0xce, 0x27, 0x19, 0x76, 0x0c, 0xea, 0x1b, 0xfb, 0x64, 0xfb,
+	0x88, 0x45, 0xe5, 0xeb, 0x69, 0x95, 0x9f, 0x8d, 0xdf, 0x85, 0xf7, 0x01, 0x5c, 0x08, 0x69, 0x80,
+	0x3a, 0xce, 0xa4, 0xb0, 0x37, 0xbf, 0xc8, 0x04, 0x67, 0xa9, 0xfe, 0xf0, 0x7e, 0xe8, 0x38, 0x19,
+	0xaf, 0x0a, 0x9c, 0x42, 0x4f, 0x99, 0x45, 0x7c, 0xe9, 0x76, 0x2d, 0xdf, 0x05, 0x43, 0xa5, 0x65,
+	0xbf, 0x8f, 0x01, 0x7c, 0xa5, 0xb1, 0xb4, 0x61, 0x5e, 0xec, 0x81, 0x65, 0x86, 0xe7, 0x08, 0xcd,
+	0x7f, 0xca, 0xc0, 0x79, 0xd6, 0x9e, 0x29, 0xb9, 0xc6, 0x29, 0x0d, 0x87, 0xa2, 0x6f, 0x65, 0xd3,
+	0xfa, 0x56, 0x2e, 0x91, 0x6f, 0x85, 0x54, 0x78, 0x54, 0xbe, 0xf5, 0x75, 0xb8, 0xc0, 0x9a, 0x50,
+	0x65, 0xc7, 0xba, 0x06, 0x53, 0xfc, 0xd8, 0x6c, 0xa2, 0x3b, 0xc7, 0xb1, 0x3b, 0xe6, 0x37, 0x60,
+	0x21, 0xcc, 0x4f, 0x85, 0x8b, 0x35, 0xc0, 0xdf, 0xe7, 0xa0, 0xb8, 0xd9, 0x71, 0x48, 0x47, 0xeb,
+	0xd7, 0xa0, 0xdc, 0xa6, 0x9f, 0x63, 0x17, 0x76, 0x30, 0x86, 0xad, 0x36, 0x7a, 0x01, 0xb2, 0xbd,
+	0xe6, 0x41, 0xbc, 0x6e, 0x27, 0x4c, 0x89, 0x16, 0xa1, 0x84, 0xc1, 0x8f, 0xc5, 0xd3, 0x49, 0xaf,
+	0x2d, 0xfe, 0x62, 0xab, 0xed, 0xa0, 0x0d, 0x98, 0xf6, 0xa5, 0x21, 0xc9, 0x54, 0x9c, 0x73, 0x9e,
+	0x29, 0xc6, 0x83, 0xff, 0x44, 0x6f, 0x40, 0xd5, 0x1f, 0x64, 0x60, 0xd9, 0x2d, 0xab, 0xe7, 0x46,
+	0x2e, 0x20, 0xf8, 0x61, 0x2a, 0x8c, 0xeb, 0x01, 0x61, 0x4a, 0xb9, 0x03, 0xb1, 0x0e, 0x39, 0x7c,
+	0x64, 0x12, 0xab, 0xba, 0x89, 0x90, 0x4a, 0x08, 0x2f, 0xa6, 0x45, 0x78, 0x29, 0xf5, 0xd4, 0x0d,
+	0x93, 0x4c, 0xdd, 0xe5, 0x49, 0xda, 0x6e, 0xcf, 0x25, 0x2d, 0x80, 0xfa, 0x33, 0x9d, 0xd5, 0x80,
+	0x31, 0x10, 0x33, 0xf7, 0x61, 0x60, 0xd4, 0xd2, 0x81, 0x31, 0x33, 0x16, 0x8c, 0xfa, 0xd1, 0x80,
+	0x31, 0x9b, 0x06, 0x8c, 0xc7, 0x9f, 0xdd, 0x4d, 0x5a, 0xac, 0xe7, 0x57, 0xaa, 0x05, 0x76, 0x0a,
+	0x2a, 0xd5, 0x26, 0x08, 0x3a, 0xe6, 0xa1, 0x1e, 0x54, 0xaa, 0xb1, 0xb1, 0xf9, 0x4a, 0xb5, 0xe3,
+	0x0d, 0x68, 0xbe, 0xbf, 0xeb, 0xf1, 0xfd, 0xfd, 0x29, 0xdc, 0x11, 0xe1, 0xaa, 0xef, 0x38, 0x9b,
+	0x04, 0xd5, 0x77, 0x4c, 0xc7, 0xca, 0xea, 0x3b, 0x1f, 0x21, 0x01, 0x99, 0xf9, 0x5f, 0x3a, 0x6b,
+	0xf0, 0x94, 0xfd, 0xfc, 0x6c, 0xce, 0x8a, 0x1b, 0x26, 0xf2, 0x69, 0xc3, 0x44, 0x21, 0x75, 0x98,
+	0x28, 0xa6, 0x08, 0x13, 0xb2, 0x99, 0x8f, 0x26, 0x4c, 0xdc, 0x65, 0xcd, 0xb9, 0xa1, 0x18, 0x71,
+	0x15, 0xce, 0x71, 0x03, 0xb3, 0x2c, 0xa9, 0x1c, 0xf0, 0x3a, 0xe6, 0x6b, 0x2c, 0x4b, 0x0b, 0x83,
+	0x39, 0x06, 0xf7, 0xa7, 0x79, 0xc8, 0x6f, 0xe0, 0x4e, 0x12, 0x5c, 0x53, 0x48, 0x7a, 0x50, 0x62,
+	0xd7, 0x14, 0x62, 0xf2, 0x63, 0x8b, 0x45, 0x02, 0xb8, 0xb3, 0x12, 0xb8, 0xb9, 0x8a, 0x9b, 0x5c,
+	0x92, 0x8a, 0x9b, 0x75, 0xc8, 0x61, 0x65, 0x44, 0x66, 0x4e, 0xef, 0x6d, 0xf5, 0xdc, 0x9b, 0xeb,
+	0x54, 0x10, 0x92, 0x8a, 0xbe, 0x04, 0x79, 0xdb, 0x3a, 0x68, 0x76, 0xa2, 0xa7, 0x1a, 0x9e, 0x89,
+	0xd2, 0xa2, 0x6f, 0xc2, 0x14, 0x11, 0xbf, 0x37, 0x3c, 0xf0, 0x5c, 0x27, 0x12, 0x80, 0x3c, 0x73,
+	0x19, 0xb3, 0x6c, 0x0f, 0x0f, 0x1e, 0x08, 0xc1, 0xb8, 0x94, 0x7a, 0xb7, 0x05, 0xd2, 0x3a, 0x5a,
+	0x39, 0x75, 0xca, 0x76, 0x6e, 0x92, 0x94, 0x6d, 0x6a, 0x92, 0x94, 0x6d, 0x3a, 0xa9, 0x8b, 0xff,
+	0xb3, 0xce, 0xae, 0x10, 0x23, 0x4e, 0xf1, 0x84, 0x12, 0xb6, 0xb4, 0x2d, 0x14, 0x3e, 0x58, 0xb3,
+	0xf1, 0xc1, 0x1a, 0x82, 0x5d, 0x2e, 0x29, 0xec, 0x4e, 0x5f, 0xa4, 0xfe, 0x0e, 0xbb, 0xb4, 0x86,
+	0x59, 0x91, 0x06, 0xc4, 0xf4, 0x21, 0xce, 0xfc, 0x54, 0xe7, 0x8a, 0xb1, 0xf1, 0x97, 0x42, 0x31,
+	0xf6, 0x97, 0x3a, 0x70, 0x3e, 0x85, 0x49, 0x1c, 0x5f, 0xb2, 0xcd, 0xac, 0xc1, 0x95, 0x6c, 0x93,
+	0xaf, 0x94, 0x25, 0xdb, 0x04, 0x11, 0x8c, 0xc4, 0xfc, 0x7f, 0x9d, 0xdd, 0x11, 0x26, 0x7a, 0xfc,
+	0xb1, 0x1a, 0x75, 0x64, 0xda, 0x96, 0xb6, 0x96, 0xd4, 0x0f, 0x16, 0xb9, 0x09, 0x82, 0x45, 0x7e,
+	0xb2, 0x60, 0x71, 0x1c, 0x57, 0x8b, 0x4e, 0x78, 0x3b, 0x96, 0x17, 0x2c, 0x44, 0x00, 0x4c, 0x1e,
+	0x2c, 0x6e, 0xb1, 0xeb, 0xdb, 0xa4, 0x48, 0x71, 0xd9, 0x6f, 0xf3, 0x0d, 0xd2, 0xb1, 0x12, 0xe3,
+	0x72, 0xcc, 0x97, 0xd9, 0xc5, 0x2e, 0x32, 0xa4, 0xc7, 0xf0, 0xfd, 0xa5, 0x0e, 0xd3, 0x4c, 0xf8,
+	0x96, 0xd5, 0xf9, 0xd0, 0xa2, 0x47, 0xa2, 0x98, 0xc3, 0xa6, 0x5f, 0x25, 0x38, 0x34, 0xe3, 0x47,
+	0x22, 0x95, 0x96, 0x81, 0x22, 0x32, 0x89, 0x5c, 0x21, 0x65, 0x89, 0x7b, 0x90, 0x60, 0xc5, 0x41,
+	0x3c, 0x4b, 0xb0, 0x4e, 0xa0, 0x4d, 0x50, 0x4a, 0x56, 0x0a, 0x89, 0x8e, 0x86, 0xde, 0x87, 0x45,
+	0x71, 0x96, 0x22, 0x1a, 0x9f, 0x3c, 0x02, 0x99, 0xbf, 0xcd, 0x4a, 0x32, 0xe5, 0x91, 0x29, 0x9e,
+	0x8e, 0x10, 0x1d, 0xe6, 0xe7, 0x7a, 0xd0, 0x18, 0x2d, 0xfe, 0x9c, 0x78, 0x82, 0x7b, 0x9a, 0xc1,
+	0xf8, 0xb4, 0xcd, 0x9e, 0x5c, 0xbf, 0x72, 0xc8, 0x64, 0x41, 0xbf, 0xb2, 0x64, 0x33, 0x65, 0xbf,
+	0xb2, 0x04, 0xb0, 0x8a, 0x68, 0x2f, 0xc7, 0xdc, 0x86, 0x4b, 0x7c, 0x48, 0x0b, 0x41, 0x63, 0x15,
+	0x66, 0xc3, 0xd0, 0x60, 0x21, 0x6e, 0x46, 0xb6, 0xbe, 0x63, 0xbe, 0x03, 0x97, 0x23, 0xc6, 0xa3,
+	0x72, 0x27, 0x1c, 0x70, 0xe5, 0x59, 0x28, 0xb2, 0x1a, 0x0a, 0x54, 0x00, 0x7d, 0x63, 0xfb, 0xb7,
+	0xaa, 0xcf, 0x78, 0x1f, 0xde, 0x7c, 0x6b, 0xb3, 0xaa, 0x79, 0x1f, 0xde, 0x7b, 0x77, 0xb3, 0x9a,
+	0x59, 0xff, 0x97, 0x19, 0xbf, 0xc0, 0xfa, 0x7e, 0xb3, 0xd7, 0xdc, 0xb7, 0x6c, 0xf4, 0x53, 0x0d,
+	0xca, 0xdc, 0x75, 0xc3, 0xe8, 0xca, 0xe8, 0x0b, 0x99, 0x8d, 0xa5, 0xc8, 0xe7, 0x44, 0x74, 0xf3,
+	0xc1, 0x61, 0xfd, 0x45, 0xb4, 0x46, 0xa2, 0x4b, 0x0d, 0xd7, 0x10, 0xd4, 0xfa, 0x7b, 0x35, 0xf7,
+	0xa1, 0x55, 0x73, 0x1e, 0x0d, 0x6b, 0x1f, 0x75, 0xdc, 0x87, 0x35, 0xbf, 0xc0, 0xd8, 0x3f, 0x75,
+	0xfa, 0xc1, 0xcf, 0xbf, 0xf8, 0x83, 0xcc, 0x79, 0x73, 0x66, 0xed, 0xc3, 0x17, 0xd7, 0xe8, 0xad,
+	0xee, 0x6b, 0x98, 0xf7, 0x55, 0x6d, 0x05, 0xfd, 0x50, 0x83, 0x69, 0xf1, 0xce, 0x5a, 0x74, 0x55,
+	0xd8, 0xcd, 0x52, 0x5d, 0x6e, 0x6c, 0x98, 0xa3, 0x48, 0xa8, 0xac, 0xab, 0x87, 0xf5, 0x19, 0x54,
+	0x69, 0xd3, 0x87, 0x44, 0x5a, 0x07, 0xcb, 0x32, 0x87, 0x50, 0x48, 0x16, 0x07, 0xfd, 0x0e, 0x94,
+	0xb9, 0x9b, 0x58, 0x45, 0x5d, 0x85, 0xef, 0xc3, 0x15, 0x75, 0xa5, 0xb8, 0xc2, 0xd5, 0xbc, 0x71,
+	0x58, 0x9f, 0x46, 0xe7, 0x0e, 0xf0, 0x13, 0xf2, 0xeb, 0x44, 0x11, 0x86, 0x5a, 0x11, 0x3f, 0xd0,
+	0xe0, 0x1c, 0x7f, 0xa1, 0x2a, 0x5a, 0x12, 0xdf, 0x31, 0x74, 0xa7, 0xab, 0x51, 0x8b, 0x26, 0xa0,
+	0x22, 0xac, 0x1d, 0xd6, 0x2b, 0x68, 0xaa, 0x8d, 0x1f, 0xf1, 0x0a, 0xb8, 0xb0, 0xa2, 0x50, 0x00,
+	0xb5, 0xc6, 0x94, 0x70, 0x1d, 0x23, 0xaa, 0x8d, 0xbb, 0x50, 0xd2, 0xb8, 0x3a, 0x82, 0x82, 0xca,
+	0xf1, 0xe2, 0x61, 0xbd, 0x8a, 0xa6, 0x29, 0x6c, 0xe8, 0x95, 0x81, 0x58, 0x90, 0x05, 0x73, 0x96,
+	0x17, 0x84, 0x3e, 0xf2, 0x24, 0xf9, 0xb1, 0x06, 0x55, 0xf9, 0x76, 0x42, 0x74, 0x4d, 0x65, 0x76,
+	0xe9, 0x8a, 0x39, 0xe3, 0xd7, 0x46, 0x13, 0x51, 0x91, 0xd6, 0x0f, 0xeb, 0xb3, 0x68, 0xc6, 0x47,
+	0x07, 0xbb, 0xc7, 0x90, 0x98, 0x08, 0xcd, 0x29, 0xa4, 0x72, 0xd0, 0xef, 0x69, 0x30, 0x25, 0x5c,
+	0x93, 0x27, 0x6a, 0x47, 0x75, 0xd1, 0x9f, 0xa8, 0x1d, 0xe5, 0x1d, 0x7b, 0x9e, 0x28, 0x33, 0xa8,
+	0x42, 0x81, 0x22, 0xaa, 0xc7, 0x88, 0x52, 0xcf, 0xa7, 0xd8, 0x6d, 0xf8, 0xdb, 0xf2, 0x64, 0xb7,
+	0x51, 0xdc, 0xbe, 0x27, 0xbb, 0x8d, 0xea, 0xb2, 0x3d, 0xf3, 0x26, 0x75, 0x1b, 0x8c, 0x19, 0x41,
+	0x2d, 0x17, 0x57, 0x94, 0x6a, 0xf1, 0xc4, 0xf9, 0x3b, 0xae, 0xdf, 0x5d, 0xbe, 0x0a, 0x09, 0x5d,
+	0x57, 0x19, 0x24, 0xe2, 0x36, 0x2d, 0xe3, 0xf9, 0x78, 0xc4, 0x54, 0xd8, 0x8d, 0xc3, 0xfa, 0x22,
+	0xba, 0xe8, 0x5b, 0x51, 0x2e, 0xeb, 0xc7, 0x62, 0x2f, 0xa1, 0xcb, 0xbc, 0xd8, 0x94, 0x66, 0xcd,
+	0xbf, 0xe3, 0x02, 0xfd, 0x95, 0x16, 0xac, 0xd4, 0xa4, 0xbb, 0x31, 0xd0, 0x4a, 0x94, 0x38, 0xe1,
+	0xcb, 0x55, 0x8c, 0xeb, 0xb1, 0x68, 0xa9, 0xe4, 0xf5, 0xc3, 0xba, 0x81, 0x16, 0x04, 0xc9, 0xb9,
+	0x8b, 0x37, 0xb0, 0xe0, 0x57, 0xd0, 0x25, 0x59, 0x70, 0xab, 0xcd, 0xc9, 0xfd, 0x23, 0x0d, 0xa6,
+	0xc5, 0xeb, 0x0b, 0x90, 0xc2, 0x17, 0xa5, 0xcb, 0x1d, 0x44, 0x0c, 0xa8, 0x6f, 0x3f, 0x30, 0x6f,
+	0x61, 0xe7, 0x60, 0xcd, 0xfb, 0xb5, 0xbd, 0xbe, 0x5d, 0xf3, 0x32, 0x0d, 0x82, 0x02, 0x53, 0x40,
+	0x01, 0x23, 0xf2, 0x50, 0xf0, 0x99, 0x06, 0x33, 0xa1, 0x5b, 0x03, 0x90, 0xd2, 0x1f, 0xe5, 0x4b,
+	0x11, 0x8c, 0x67, 0xc7, 0x50, 0x51, 0xc9, 0x5e, 0x3a, 0xac, 0xcf, 0x21, 0xe4, 0xab, 0xcd, 0xbf,
+	0x5f, 0x80, 0x84, 0x35, 0x34, 0xaf, 0x12, 0xcd, 0xf1, 0xbc, 0xa5, 0x22, 0xb5, 0x4f, 0x23, 0xe5,
+	0x14, 0x22, 0xf6, 0xb0, 0x1b, 0xd7, 0x46, 0xd2, 0x50, 0x91, 0x5e, 0x38, 0xac, 0x23, 0x54, 0xf5,
+	0x45, 0xe2, 0x05, 0x9a, 0x47, 0x82, 0xff, 0xaa, 0xc4, 0xa1, 0x2d, 0xa8, 0x6a, 0x71, 0xc4, 0x3e,
+	0x60, 0xb5, 0x38, 0x52, 0x0f, 0xab, 0x2c, 0x0e, 0x6d, 0x56, 0x55, 0x89, 0x43, 0x1f, 0x09, 0xe2,
+	0xd0, 0x86, 0x3f, 0xb5, 0x38, 0x62, 0xdf, 0xa5, 0x5a, 0x1c, 0xa9, 0x63, 0x50, 0x16, 0x87, 0xb6,
+	0x06, 0xaa, 0xc4, 0xa1, 0x8f, 0xd6, 0xff, 0x37, 0x0b, 0xf3, 0x34, 0x8f, 0xb9, 0xd7, 0x6c, 0x3d,
+	0xb2, 0x7a, 0x6d, 0x96, 0xce, 0xbc, 0x02, 0x05, 0xfa, 0x00, 0x09, 0x19, 0x9e, 0xd8, 0x56, 0x66,
+	0x54, 0xf8, 0x67, 0xdb, 0x5b, 0x6f, 0x9b, 0xcf, 0xa0, 0x1e, 0x3b, 0xe6, 0x96, 0xef, 0x0a, 0x5d,
+	0x8e, 0xdb, 0xf8, 0x64, 0x3c, 0x17, 0x83, 0x92, 0xbe, 0xf3, 0x33, 0xe8, 0x4d, 0x28, 0xf9, 0x9d,
+	0x41, 0x48, 0x2c, 0x4f, 0x96, 0x1a, 0x86, 0x8c, 0x51, 0xdd, 0x32, 0xe6, 0x33, 0xe8, 0x03, 0x2f,
+	0x2b, 0x68, 0x0f, 0x5b, 0x2e, 0x3d, 0x02, 0xb9, 0x3e, 0x82, 0x5c, 0xee, 0xe4, 0x89, 0x31, 0x36,
+	0x41, 0xcf, 0x93, 0x19, 0x9b, 0xae, 0xef, 0x48, 0x64, 0x7a, 0x22, 0x63, 0xd3, 0x8b, 0x0c, 0x8e,
+	0x70, 0xec, 0xf5, 0xdf, 0x5d, 0x80, 0xea, 0x03, 0xbb, 0x7f, 0xd0, 0xf7, 0x78, 0x18, 0xf0, 0xfe,
+	0x55, 0x63, 0xc7, 0xef, 0xa1, 0x56, 0xa5, 0xe7, 0x62, 0xf7, 0x6b, 0x18, 0x2b, 0x71, 0x48, 0x29,
+	0x84, 0xde, 0x3f, 0xac, 0xdf, 0x40, 0xd7, 0x69, 0xc6, 0xc4, 0xd5, 0xe6, 0x06, 0x49, 0x37, 0xff,
+	0xa5, 0xf3, 0x68, 0x88, 0x3d, 0xca, 0x34, 0x85, 0xa9, 0x8e, 0x23, 0x09, 0xf2, 0xcc, 0x7f, 0xd4,
+	0x82, 0xc3, 0xe5, 0x50, 0xb9, 0x30, 0x52, 0x4e, 0xbf, 0x51, 0x75, 0xcf, 0xc6, 0x8d, 0x98, 0xd4,
+	0xf4, 0xa5, 0x5e, 0x3f, 0xac, 0x5f, 0x46, 0x8b, 0x41, 0xa4, 0x94, 0x5f, 0x8b, 0x84, 0x85, 0x1a,
+	0xba, 0x32, 0xf2, 0x25, 0x1c, 0xf4, 0x37, 0x1a, 0x3b, 0xe6, 0x1c, 0x6d, 0x8e, 0x91, 0xa5, 0xec,
+	0xa2, 0x39, 0x46, 0xd7, 0x94, 0x7b, 0x92, 0x2f, 0xa2, 0x8b, 0x2c, 0x45, 0x0b, 0x09, 0x4e, 0x94,
+	0x6f, 0x8c, 0x57, 0xfe, 0xcf, 0x34, 0x76, 0x14, 0x1a, 0x56, 0xfd, 0x4a, 0x38, 0x39, 0x8b, 0x54,
+	0xfc, 0xf5, 0x58, 0xb4, 0x54, 0xf8, 0x37, 0x68, 0x92, 0x84, 0x33, 0xba, 0x08, 0xa5, 0x5f, 0x5b,
+	0x19, 0xa3, 0x74, 0x4f, 0xfa, 0x3f, 0xd4, 0xa0, 0x22, 0x95, 0xc9, 0x22, 0x53, 0xb5, 0x64, 0x14,
+	0x4b, 0x25, 0xc5, 0x89, 0x22, 0xa2, 0xce, 0xd6, 0x7c, 0xed, 0xb0, 0x7e, 0x11, 0x5d, 0xf0, 0x97,
+	0x96, 0xf4, 0xb1, 0x87, 0x74, 0x86, 0x6e, 0xc3, 0x9c, 0x17, 0x57, 0x2d, 0x94, 0xc6, 0x13, 0xed,
+	0x27, 0x1a, 0xa0, 0x70, 0xf9, 0x27, 0x7a, 0x56, 0xbd, 0x4e, 0x94, 0x6a, 0x05, 0x8d, 0x5f, 0x1f,
+	0x47, 0x46, 0x65, 0x7c, 0xf9, 0xb0, 0x3e, 0x8f, 0x66, 0xb9, 0x25, 0x25, 0xa3, 0x20, 0xd9, 0x3a,
+	0x3a, 0xaf, 0x94, 0xcf, 0xf1, 0x16, 0x33, 0x15, 0xa9, 0x06, 0x52, 0x54, 0x9c, 0xba, 0xc6, 0x54,
+	0x54, 0x5c, 0x44, 0x11, 0xa5, 0x97, 0xac, 0x21, 0x54, 0xf5, 0xd7, 0x99, 0xf4, 0x31, 0xd1, 0x98,
+	0x11, 0xad, 0xb1, 0xcf, 0xf0, 0x02, 0x4b, 0xac, 0x7d, 0x94, 0x17, 0x58, 0xca, 0xca, 0x4a, 0x79,
+	0x81, 0xa5, 0x2e, 0x9f, 0x34, 0x6f, 0xd3, 0x05, 0x16, 0x5d, 0x7b, 0x0a, 0x9a, 0x5a, 0x5c, 0x89,
+	0xd0, 0x14, 0x5b, 0xda, 0x88, 0xb5, 0x4e, 0xaa, 0xb4, 0x56, 0xaa, 0x63, 0x51, 0xa5, 0xb5, 0x72,
+	0x0d, 0x04, 0x5d, 0xda, 0x50, 0x88, 0xb1, 0x12, 0x03, 0x55, 0x52, 0xcb, 0x9e, 0xc9, 0x49, 0xad,
+	0x5f, 0xbf, 0xa0, 0x4e, 0x6a, 0xe5, 0xda, 0x08, 0x75, 0x52, 0x1b, 0x2a, 0x82, 0x90, 0x93, 0x5a,
+	0xbf, 0x6c, 0x47, 0x95, 0xd4, 0xfa, 0x0f, 0xb1, 0x9e, 0xc4, 0x62, 0x0f, 0xa4, 0x58, 0x6c, 0x8e,
+	0xd4, 0x93, 0xba, 0x56, 0x84, 0xea, 0x89, 0x22, 0x4a, 0xd4, 0x93, 0x11, 0xa9, 0xa7, 0x1f, 0xe3,
+	0x2c, 0x52, 0xa8, 0xf2, 0x40, 0x8a, 0xf5, 0x66, 0x48, 0x47, 0xd7, 0x46, 0xd2, 0x08, 0x18, 0xa7,
+	0x60, 0x12, 0xf5, 0x63, 0xac, 0xa8, 0xf5, 0xc3, 0xf6, 0x54, 0xf8, 0x5d, 0x66, 0xb4, 0xa4, 0x9a,
+	0x82, 0xb9, 0x33, 0x35, 0xa3, 0x16, 0x4d, 0x20, 0xec, 0xa9, 0xf8, 0x33, 0xb3, 0xf7, 0x8c, 0xd8,
+	0xc9, 0x44, 0x62, 0x04, 0xf5, 0x9e, 0x50, 0x3c, 0x57, 0xa4, 0x83, 0xc0, 0x88, 0xc5, 0x87, 0x70,
+	0x12, 0x13, 0xb1, 0xf8, 0x10, 0x8f, 0x5d, 0x42, 0x8b, 0x0f, 0xf2, 0x58, 0xb9, 0xf8, 0xa0, 0x3f,
+	0xed, 0xe9, 0x84, 0x3f, 0x4c, 0x42, 0x4b, 0xaa, 0x79, 0x30, 0x52, 0x27, 0xaa, 0x73, 0x28, 0xaa,
+	0x13, 0x0a, 0x18, 0x5e, 0x27, 0x46, 0x84, 0x4e, 0x7e, 0xa8, 0xc1, 0x94, 0x70, 0x8e, 0x84, 0x6a,
+	0xaa, 0x19, 0x4d, 0xd0, 0xc7, 0xd5, 0x11, 0x14, 0xc2, 0x3e, 0x93, 0x3f, 0xd3, 0x05, 0xba, 0x58,
+	0x58, 0x51, 0xe9, 0xc2, 0x93, 0xe4, 0x4f, 0x34, 0xf9, 0x20, 0x9e, 0x1e, 0x4f, 0xfd, 0x46, 0x34,
+	0x12, 0x84, 0x43, 0x10, 0x63, 0x79, 0x3c, 0x21, 0x15, 0xef, 0x0e, 0x16, 0x8f, 0x6e, 0xfa, 0xf2,
+	0x7a, 0xaa, 0x99, 0x8b, 0x61, 0xf1, 0xd6, 0xd8, 0xee, 0xb0, 0x27, 0xe6, 0x5f, 0x6b, 0xf2, 0x69,
+	0xb2, 0xbf, 0xaf, 0xac, 0xde, 0xa3, 0x50, 0x6f, 0x66, 0xab, 0xf7, 0x28, 0x22, 0x36, 0xaa, 0xcd,
+	0x7b, 0xe2, 0xee, 0x8a, 0xbc, 0xd9, 0xae, 0xda, 0xa4, 0x90, 0x44, 0x77, 0xd0, 0xe7, 0x9a, 0x78,
+	0x62, 0x18, 0x88, 0xbd, 0x1c, 0x65, 0xcf, 0x90, 0xd0, 0xcf, 0xc5, 0xa0, 0x0c, 0x36, 0x84, 0x2e,
+	0xa2, 0x0b, 0x02, 0x02, 0x24, 0x81, 0xaf, 0xae, 0x8c, 0x14, 0xf8, 0x55, 0x6d, 0xe5, 0x5e, 0xf6,
+	0x83, 0xcc, 0x60, 0x77, 0x37, 0x8f, 0x0f, 0x33, 0x6e, 0xfe, 0x2a, 0x00, 0x00, 0xff, 0xff, 0x22,
+	0x0d, 0x96, 0x1c, 0x8a, 0x74, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -5015,6 +6196,8 @@ type BillingManagerClient interface {
 	DescribeAccounts(ctx context.Context, in *DescribeAccountsRequest, opts ...grpc.CallOption) (*DescribeAccountsResponse, error)
 	ModifyAccount(ctx context.Context, in *ModifyAccountRequest, opts ...grpc.CallOption) (*ModifyAccountResponse, error)
 	DeleteAccounts(ctx context.Context, in *DeleteAccountsRequest, opts ...grpc.CallOption) (*DeleteAccountsResponse, error)
+	DescribeLeasingContracts(ctx context.Context, in *DescribeLeasingContractsRequest, opts ...grpc.CallOption) (*DescribeLeasingContractsResponse, error)
+	DescribeLeasedContracts(ctx context.Context, in *DescribeLeasedContractsRequest, opts ...grpc.CallOption) (*DescribeLeasedContractsResponse, error)
 	CreateRecharge(ctx context.Context, in *CreateRechargeRequest, opts ...grpc.CallOption) (*CreateRechargeResponse, error)
 	DescribeRecharges(ctx context.Context, in *DescribeRechargesRequest, opts ...grpc.CallOption) (*DescribeRechargesResponse, error)
 	DescribeCharges(ctx context.Context, in *DescribeChargesRequest, opts ...grpc.CallOption) (*DescribeChargesResponse, error)
@@ -5102,6 +6285,24 @@ func (c *billingManagerClient) DeleteAccounts(ctx context.Context, in *DeleteAcc
 	return out, nil
 }
 
+func (c *billingManagerClient) DescribeLeasingContracts(ctx context.Context, in *DescribeLeasingContractsRequest, opts ...grpc.CallOption) (*DescribeLeasingContractsResponse, error) {
+	out := new(DescribeLeasingContractsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.BillingManager/DescribeLeasingContracts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingManagerClient) DescribeLeasedContracts(ctx context.Context, in *DescribeLeasedContractsRequest, opts ...grpc.CallOption) (*DescribeLeasedContractsResponse, error) {
+	out := new(DescribeLeasedContractsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.BillingManager/DescribeLeasedContracts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *billingManagerClient) CreateRecharge(ctx context.Context, in *CreateRechargeRequest, opts ...grpc.CallOption) (*CreateRechargeResponse, error) {
 	out := new(CreateRechargeResponse)
 	err := c.cc.Invoke(ctx, "/openpitrix.BillingManager/CreateRecharge", in, out, opts...)
@@ -5157,6 +6358,8 @@ type BillingManagerServer interface {
 	DescribeAccounts(context.Context, *DescribeAccountsRequest) (*DescribeAccountsResponse, error)
 	ModifyAccount(context.Context, *ModifyAccountRequest) (*ModifyAccountResponse, error)
 	DeleteAccounts(context.Context, *DeleteAccountsRequest) (*DeleteAccountsResponse, error)
+	DescribeLeasingContracts(context.Context, *DescribeLeasingContractsRequest) (*DescribeLeasingContractsResponse, error)
+	DescribeLeasedContracts(context.Context, *DescribeLeasedContractsRequest) (*DescribeLeasedContractsResponse, error)
 	CreateRecharge(context.Context, *CreateRechargeRequest) (*CreateRechargeResponse, error)
 	DescribeRecharges(context.Context, *DescribeRechargesRequest) (*DescribeRechargesResponse, error)
 	DescribeCharges(context.Context, *DescribeChargesRequest) (*DescribeChargesResponse, error)
@@ -5312,6 +6515,42 @@ func _BillingManager_DeleteAccounts_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BillingManager_DescribeLeasingContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeLeasingContractsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingManagerServer).DescribeLeasingContracts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.BillingManager/DescribeLeasingContracts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingManagerServer).DescribeLeasingContracts(ctx, req.(*DescribeLeasingContractsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingManager_DescribeLeasedContracts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeLeasedContractsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingManagerServer).DescribeLeasedContracts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.BillingManager/DescribeLeasedContracts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingManagerServer).DescribeLeasedContracts(ctx, req.(*DescribeLeasedContractsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BillingManager_CreateRecharge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRechargeRequest)
 	if err := dec(in); err != nil {
@@ -5439,6 +6678,14 @@ var _BillingManager_serviceDesc = grpc.ServiceDesc{
 			Handler:    _BillingManager_DeleteAccounts_Handler,
 		},
 		{
+			MethodName: "DescribeLeasingContracts",
+			Handler:    _BillingManager_DescribeLeasingContracts_Handler,
+		},
+		{
+			MethodName: "DescribeLeasedContracts",
+			Handler:    _BillingManager_DescribeLeasedContracts_Handler,
+		},
+		{
 			MethodName: "CreateRecharge",
 			Handler:    _BillingManager_CreateRecharge_Handler,
 		},
@@ -5457,6 +6704,268 @@ var _BillingManager_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DescribeIncomes",
 			Handler:    _BillingManager_DescribeIncomes_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "billing.proto",
+}
+
+// BillingBackendManagerClient is the client API for BillingBackendManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type BillingBackendManagerClient interface {
+	Billing(ctx context.Context, in *BillingRequest, opts ...grpc.CallOption) (*NIL, error)
+	CreateLeasingContract(ctx context.Context, in *CreateLeasingContractRequest, opts ...grpc.CallOption) (*CreateLeasingContractResponse, error)
+	Calculate(ctx context.Context, in *CalculateRequest, opts ...grpc.CallOption) (*LeasingContract, error)
+	DeductCoupon(ctx context.Context, in *LeasingContractOperationRequest, opts ...grpc.CallOption) (*LeasingContract, error)
+	RefundCoupon(ctx context.Context, in *LeasingContractOperationRequest, opts ...grpc.CallOption) (*LeasingContract, error)
+	CreateCharge(ctx context.Context, in *LeasingContractOperationRequest, opts ...grpc.CallOption) (*LeasingContract, error)
+	CreateRefund(ctx context.Context, in *LeasingContractOperationRequest, opts ...grpc.CallOption) (*LeasingContract, error)
+}
+
+type billingBackendManagerClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewBillingBackendManagerClient(cc *grpc.ClientConn) BillingBackendManagerClient {
+	return &billingBackendManagerClient{cc}
+}
+
+func (c *billingBackendManagerClient) Billing(ctx context.Context, in *BillingRequest, opts ...grpc.CallOption) (*NIL, error) {
+	out := new(NIL)
+	err := c.cc.Invoke(ctx, "/openpitrix.BillingBackendManager/Billing", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingBackendManagerClient) CreateLeasingContract(ctx context.Context, in *CreateLeasingContractRequest, opts ...grpc.CallOption) (*CreateLeasingContractResponse, error) {
+	out := new(CreateLeasingContractResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.BillingBackendManager/CreateLeasingContract", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingBackendManagerClient) Calculate(ctx context.Context, in *CalculateRequest, opts ...grpc.CallOption) (*LeasingContract, error) {
+	out := new(LeasingContract)
+	err := c.cc.Invoke(ctx, "/openpitrix.BillingBackendManager/Calculate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingBackendManagerClient) DeductCoupon(ctx context.Context, in *LeasingContractOperationRequest, opts ...grpc.CallOption) (*LeasingContract, error) {
+	out := new(LeasingContract)
+	err := c.cc.Invoke(ctx, "/openpitrix.BillingBackendManager/DeductCoupon", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingBackendManagerClient) RefundCoupon(ctx context.Context, in *LeasingContractOperationRequest, opts ...grpc.CallOption) (*LeasingContract, error) {
+	out := new(LeasingContract)
+	err := c.cc.Invoke(ctx, "/openpitrix.BillingBackendManager/RefundCoupon", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingBackendManagerClient) CreateCharge(ctx context.Context, in *LeasingContractOperationRequest, opts ...grpc.CallOption) (*LeasingContract, error) {
+	out := new(LeasingContract)
+	err := c.cc.Invoke(ctx, "/openpitrix.BillingBackendManager/CreateCharge", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *billingBackendManagerClient) CreateRefund(ctx context.Context, in *LeasingContractOperationRequest, opts ...grpc.CallOption) (*LeasingContract, error) {
+	out := new(LeasingContract)
+	err := c.cc.Invoke(ctx, "/openpitrix.BillingBackendManager/CreateRefund", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// BillingBackendManagerServer is the server API for BillingBackendManager service.
+type BillingBackendManagerServer interface {
+	Billing(context.Context, *BillingRequest) (*NIL, error)
+	CreateLeasingContract(context.Context, *CreateLeasingContractRequest) (*CreateLeasingContractResponse, error)
+	Calculate(context.Context, *CalculateRequest) (*LeasingContract, error)
+	DeductCoupon(context.Context, *LeasingContractOperationRequest) (*LeasingContract, error)
+	RefundCoupon(context.Context, *LeasingContractOperationRequest) (*LeasingContract, error)
+	CreateCharge(context.Context, *LeasingContractOperationRequest) (*LeasingContract, error)
+	CreateRefund(context.Context, *LeasingContractOperationRequest) (*LeasingContract, error)
+}
+
+func RegisterBillingBackendManagerServer(s *grpc.Server, srv BillingBackendManagerServer) {
+	s.RegisterService(&_BillingBackendManager_serviceDesc, srv)
+}
+
+func _BillingBackendManager_Billing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BillingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingBackendManagerServer).Billing(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.BillingBackendManager/Billing",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingBackendManagerServer).Billing(ctx, req.(*BillingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingBackendManager_CreateLeasingContract_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateLeasingContractRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingBackendManagerServer).CreateLeasingContract(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.BillingBackendManager/CreateLeasingContract",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingBackendManagerServer).CreateLeasingContract(ctx, req.(*CreateLeasingContractRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingBackendManager_Calculate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CalculateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingBackendManagerServer).Calculate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.BillingBackendManager/Calculate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingBackendManagerServer).Calculate(ctx, req.(*CalculateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingBackendManager_DeductCoupon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LeasingContractOperationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingBackendManagerServer).DeductCoupon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.BillingBackendManager/DeductCoupon",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingBackendManagerServer).DeductCoupon(ctx, req.(*LeasingContractOperationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingBackendManager_RefundCoupon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LeasingContractOperationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingBackendManagerServer).RefundCoupon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.BillingBackendManager/RefundCoupon",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingBackendManagerServer).RefundCoupon(ctx, req.(*LeasingContractOperationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingBackendManager_CreateCharge_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LeasingContractOperationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingBackendManagerServer).CreateCharge(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.BillingBackendManager/CreateCharge",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingBackendManagerServer).CreateCharge(ctx, req.(*LeasingContractOperationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BillingBackendManager_CreateRefund_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LeasingContractOperationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BillingBackendManagerServer).CreateRefund(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.BillingBackendManager/CreateRefund",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BillingBackendManagerServer).CreateRefund(ctx, req.(*LeasingContractOperationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _BillingBackendManager_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "openpitrix.BillingBackendManager",
+	HandlerType: (*BillingBackendManagerServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Billing",
+			Handler:    _BillingBackendManager_Billing_Handler,
+		},
+		{
+			MethodName: "CreateLeasingContract",
+			Handler:    _BillingBackendManager_CreateLeasingContract_Handler,
+		},
+		{
+			MethodName: "Calculate",
+			Handler:    _BillingBackendManager_Calculate_Handler,
+		},
+		{
+			MethodName: "DeductCoupon",
+			Handler:    _BillingBackendManager_DeductCoupon_Handler,
+		},
+		{
+			MethodName: "RefundCoupon",
+			Handler:    _BillingBackendManager_RefundCoupon_Handler,
+		},
+		{
+			MethodName: "CreateCharge",
+			Handler:    _BillingBackendManager_CreateCharge_Handler,
+		},
+		{
+			MethodName: "CreateRefund",
+			Handler:    _BillingBackendManager_CreateRefund_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

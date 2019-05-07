@@ -17,9 +17,10 @@ import (
 func (s *Server) InitMetering(ctx context.Context, req *pb.InitMeteringRequest) (*pb.CommonMeteringResponse, error) {
 	var leasings []*models.Leasing
 	now := time.Now()
-	for skuId, meteringValue := range req.GetSkuMeterings() {
+	for _, skuM := range req.GetSkuMeterings() {
+		skuId := skuM.GetSkuId().GetValue()
 		renewalTime, _ := renewalTimeFromSku(ctx, skuId, now)
-		leasings = append(leasings, models.NewLeasing(meteringValue, GetGroupId(), req.GetResourceId().GetValue(), skuId, req.GetUserId().GetValue(), now, *renewalTime))
+		leasings = append(leasings, models.NewLeasing(skuM.GetValue(), req.GetUserId().GetValue(), req.GetResourceId().GetValue(), skuId, now, *renewalTime))
 	}
 
 	//insert leasings
@@ -28,11 +29,10 @@ func (s *Server) InitMetering(ctx context.Context, req *pb.InitMeteringRequest) 
 		return nil, internalError(ctx, err)
 	}
 
-	//TODO: Add leasing to REDIS if duration exist.
 	//TODO: How to guarantee consistency operations.
 	for _, l := range leasings {
-		//TODO: check MeteringValue > 0
-		err = leasingToEtcd(*l)
+		err = leasingToRedis(*l)
+		//TODO: check if BillingService exist add billing task for pre-charging by curl TaskService
 	}
 	return &pb.CommonMeteringResponse{ResourceId: req.GetResourceId()}, nil
 }
@@ -56,7 +56,8 @@ func (s *Server) UpdateMetering(ctx context.Context, req *pb.UpdateMeteringReque
 
 		//TODO: Update lesasing metering_values and save leasing
 		//      check attribute_name, make sure not duration
-		leasingToEtcd(*leasing)
+		leasingToRedis(*leasing)
+		//TODO: check if BillingService exist add billing task for pre-charging by curl TaskService
 	}
 
 	return &pb.CommonMeteringResponse{}, nil

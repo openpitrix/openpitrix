@@ -1,4 +1,4 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -204,23 +204,25 @@ func SpuToPb(spu *Spu) *pb.Spu {
 
 //SKU: stock keeping unit
 type Sku struct {
-	SkuId        string
-	SpuId        string
-	AttributeIds []string
-	Status       string
-	CreateTime   time.Time
-	StatusTime   time.Time
+	SkuId                string
+	SpuId                string
+	AttributeIds         []string
+	MeteringAttributeIds []string
+	Status               string
+	CreateTime           time.Time
+	StatusTime           time.Time
 }
 
-func NewSku(spuId string, attributeIds []string) *Sku {
+func NewSku(spuId string, attributeIds, meteringAttributeIds []string) *Sku {
 	now := time.Now()
 	return &Sku{
-		SkuId:        NewSkuId(),
-		SpuId:        spuId,
-		AttributeIds: attributeIds,
-		Status:       constants.StatusActive,
-		CreateTime:   now,
-		StatusTime:   now,
+		SkuId:                NewSkuId(),
+		SpuId:                spuId,
+		AttributeIds:         attributeIds,
+		MeteringAttributeIds: meteringAttributeIds,
+		Status:               constants.StatusActive,
+		CreateTime:           now,
+		StatusTime:           now,
 	}
 }
 
@@ -228,60 +230,18 @@ func PbToSku(pbSku *pb.CreateSkuRequest) *Sku {
 	return NewSku(
 		pbSku.GetSpuId().GetValue(),
 		pbSku.GetAttributeIds(),
+		pbSku.GetMeteringAttributeIds(),
 	)
 }
 
 func SkuToPb(sku *Sku) *pb.Sku {
 	return &pb.Sku{
-		SkuId:        pbutil.ToProtoString(sku.SkuId),
-		SpuId:        pbutil.ToProtoString(sku.SpuId),
-		AttributeIds: sku.AttributeIds,
-		Status:       pbutil.ToProtoString(sku.Status),
-		CreateTime:   pbutil.ToProtoTimestamp(sku.CreateTime),
-		StatusTime:   pbutil.ToProtoTimestamp(sku.StatusTime),
-	}
-}
-
-type MeteringAttributeBinding struct {
-	BindingId   string
-	SkuId       string
-	AttributeId string
-	Status      string
-	CreateTime  time.Time
-	StatusTime  time.Time
-}
-
-func NewMeteringAttributeBinding(skuId, attributeId string) *MeteringAttributeBinding {
-	now := time.Now()
-	return &MeteringAttributeBinding{
-		BindingId:   NewMeteringAttributeBindingId(),
-		SkuId:       skuId,
-		AttributeId: attributeId,
-		Status:      constants.StatusActive,
-		CreateTime:  now,
-		StatusTime:  now,
-	}
-}
-
-func PbToMeteringAttributeBindings(pbMab *pb.CreateMeteringAttributeBindingsRequest) []*MeteringAttributeBinding {
-	var mabs []*MeteringAttributeBinding
-	for _, attId := range pbMab.GetAttributeIds() {
-		mab := NewMeteringAttributeBinding(
-			pbMab.GetSkuId().GetValue(),
-			attId,
-		)
-		mabs = append(mabs, mab)
-	}
-	return mabs
-}
-
-func MeteringAttributeBindingToPb(mab *MeteringAttributeBinding) *pb.MeteringAttributeBinding {
-	return &pb.MeteringAttributeBinding{
-		BindingId:   pbutil.ToProtoString(mab.BindingId),
-		SkuId:       pbutil.ToProtoString(mab.SkuId),
-		AttributeId: pbutil.ToProtoString(mab.AttributeId),
-		Status:      pbutil.ToProtoString(mab.Status),
-		CreateTime:  pbutil.ToProtoTimestamp(mab.CreateTime),
-		StatusTime:  pbutil.ToProtoTimestamp(mab.StatusTime),
+		SkuId:                pbutil.ToProtoString(sku.SkuId),
+		SpuId:                pbutil.ToProtoString(sku.SpuId),
+		AttributeIds:         sku.AttributeIds,
+		MeteringAttributeIds: sku.MeteringAttributeIds,
+		Status:               pbutil.ToProtoString(sku.Status),
+		CreateTime:           pbutil.ToProtoTimestamp(sku.CreateTime),
+		StatusTime:           pbutil.ToProtoTimestamp(sku.StatusTime),
 	}
 }

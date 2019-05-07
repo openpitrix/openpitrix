@@ -194,26 +194,6 @@ func (s *Server) DeleteSkus(ctx context.Context, req *pb.DeleteSkusRequest) (*pb
 	return &pb.DeleteSkusResponse{}, nil
 }
 
-func (s *Server) CreateMeteringAttributeBindings(ctx context.Context, req *pb.CreateMeteringAttributeBindingsRequest) (*pb.CreateMeteringAttributeBindingsResponse, error) {
-	//TODO: impl CreateMeteringAttributeBindings
-	return &pb.CreateMeteringAttributeBindingsResponse{}, nil
-}
-
-func (s *Server) DescribeMeteringAttributeBindings(ctx context.Context, req *pb.DescribeMeteringAttributeBindingsRequest) (*pb.DescribeMeteringAttributeBindingsResponse, error) {
-	//TODO: impl DescribeMeteringAttributeBindings
-	return &pb.DescribeMeteringAttributeBindingsResponse{}, nil
-}
-
-func (s *Server) ModifyMeteringAttributeBinding(ctx context.Context, req *pb.ModifyMeteringAttributeBindingRequest) (*pb.ModifyMeteringAttributeBindingResponse, error) {
-	//TODO: impl ModifyMeteringAttributeBinding
-	return &pb.ModifyMeteringAttributeBindingResponse{}, nil
-}
-
-func (s *Server) DeleteMeteringAttributeBindings(ctx context.Context, req *pb.DeleteMeteringAttributeBindingsRequest) (*pb.DeleteMeteringAttributeBindingsResponse, error) {
-	//TODO: impl DeleteMeteringAttributeBindings
-	return &pb.DeleteMeteringAttributeBindingsResponse{}, nil
-}
-
 func renewalTimeFromSku(ctx context.Context, skuId string, actionTime time.Time) (*time.Time, error) {
 	sku, err := getSku(ctx, skuId)
 

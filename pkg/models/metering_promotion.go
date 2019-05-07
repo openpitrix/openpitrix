@@ -1,4 +1,4 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -90,33 +90,5 @@ func PbToCombinationSku(req *pb.CreateCombinationSkuRequest) *CombinationSku {
 	return NewCombinationSku(
 		req.GetCombinationId().GetValue(),
 		req.GetSkuId().GetValue(),
-	)
-}
-
-type CombinationMABinding struct {
-	CombinationBindingId string
-	CombinationSkuId     string
-	AttributeId          string
-	Status               string
-	CreateTime           time.Time
-	StatusTime           time.Time
-}
-
-func NewCombinationMABinding(comSkuId, attId string) *CombinationMABinding {
-	now := time.Now()
-	return &CombinationMABinding{
-		CombinationBindingId: NewCombinationMABindingId(),
-		CombinationSkuId:     comSkuId,
-		AttributeId:          attId,
-		Status:               constants.StatusActive,
-		CreateTime:           now,
-		StatusTime:           now,
-	}
-}
-
-func PbToCombinationMABinding(req *pb.CreateCombinationMABindingRequest) *CombinationMABinding {
-	return NewCombinationMABinding(
-		req.GetCombinationSkuId().GetValue(),
-		req.GetAttributeId().GetValue(),
 	)
 }

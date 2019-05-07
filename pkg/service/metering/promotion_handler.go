@@ -66,23 +66,3 @@ func (s *Server) DeleteCombinationSkus(ctx context.Context, req *pb.DeleteCombin
 	//TODO: impl DeleteCombinationSkus
 	return &pb.DeleteCombinationSkusResponse{}, nil
 }
-
-func (s *Server) CreateCombinationMABinding(ctx context.Context, req *pb.CreateCombinationMABindingRequest) (*pb.CreateCombinationMABindingResponse, error) {
-	//TODO: impl CreateCombinationMABinding
-	return &pb.CreateCombinationMABindingResponse{}, nil
-}
-
-func (s *Server) DescribeCombinationMABindings(ctx context.Context, req *pb.DescribeCombinationMABindingsRequest) (*pb.DescribeCombinationMABindingsResponse, error) {
-	//TODO: impl DescribeCombinationMABindings
-	return &pb.DescribeCombinationMABindingsResponse{}, nil
-}
-
-func (s *Server) ModifyCombinationMABinding(ctx context.Context, req *pb.ModifyCombinationMABindingRequest) (*pb.ModifyCombinationMABindingResponse, error) {
-	//TODO: impl ModifyCombinationMABinding
-	return &pb.ModifyCombinationMABindingResponse{}, nil
-}
-
-func (s *Server) DeleteCombinationMABindings(ctx context.Context, req *pb.DeleteCombinationMABindingsRequest) (*pb.DeleteCombinationMABindingsResponse, error) {
-	//TODO: impl DeleteCombinationMABindings
-	return &pb.DeleteCombinationMABindingsResponse{}, nil
-}

@@ -5,6 +5,8 @@ package pb
 
 import (
 	fmt "fmt"
+	math "math"
+
 	proto "github.com/golang/protobuf/proto"
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
@@ -12,7 +14,6 @@ import (
 	context "golang.org/x/net/context"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
-	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -73,7 +74,7 @@ func (x UpdateMeteringValue_UpdateValueTypes) String() string {
 }
 
 func (UpdateMeteringValue_UpdateValueTypes) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{82, 0}
+	return fileDescriptor_e3483aebeefa1096, []int{46, 0}
 }
 
 // ************************************* Sku *************************
@@ -1988,9 +1989,10 @@ type Sku struct {
 	SkuId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
 	SpuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=spu_id,json=spuId,proto3" json:"spu_id,omitempty"`
 	AttributeIds         []string              `protobuf:"bytes,3,rep,name=attribute_ids,json=attributeIds,proto3" json:"attribute_ids,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	MeteringAttributeIds []string              `protobuf:"bytes,4,rep,name=metering_attribute_ids,json=meteringAttributeIds,proto3" json:"metering_attribute_ids,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2042,6 +2044,13 @@ func (m *Sku) GetAttributeIds() []string {
 	return nil
 }
 
+func (m *Sku) GetMeteringAttributeIds() []string {
+	if m != nil {
+		return m.MeteringAttributeIds
+	}
+	return nil
+}
+
 func (m *Sku) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
@@ -2066,6 +2075,7 @@ func (m *Sku) GetStatusTime() *timestamp.Timestamp {
 type CreateSkuRequest struct {
 	SpuId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=spu_id,json=spuId,proto3" json:"spu_id,omitempty"`
 	AttributeIds         []string              `protobuf:"bytes,2,rep,name=attribute_ids,json=attributeIds,proto3" json:"attribute_ids,omitempty"`
+	MeteringAttributeIds []string              `protobuf:"bytes,3,rep,name=metering_attribute_ids,json=meteringAttributeIds,proto3" json:"metering_attribute_ids,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2106,6 +2116,13 @@ func (m *CreateSkuRequest) GetSpuId() *wrappers.StringValue {
 func (m *CreateSkuRequest) GetAttributeIds() []string {
 	if m != nil {
 		return m.AttributeIds
+	}
+	return nil
+}
+
+func (m *CreateSkuRequest) GetMeteringAttributeIds() []string {
+	if m != nil {
+		return m.MeteringAttributeIds
 	}
 	return nil
 }
@@ -2279,6 +2296,7 @@ type ModifySkuRequest struct {
 	SkuId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
 	SpuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=spu_id,json=spuId,proto3" json:"spu_id,omitempty"`
 	AttributeIds         []string              `protobuf:"bytes,3,rep,name=attribute_ids,json=attributeIds,proto3" json:"attribute_ids,omitempty"`
+	MeteringAttributeIds []string              `protobuf:"bytes,4,rep,name=metering_attribute_ids,json=meteringAttributeIds,proto3" json:"metering_attribute_ids,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2326,6 +2344,13 @@ func (m *ModifySkuRequest) GetSpuId() *wrappers.StringValue {
 func (m *ModifySkuRequest) GetAttributeIds() []string {
 	if m != nil {
 		return m.AttributeIds
+	}
+	return nil
+}
+
+func (m *ModifySkuRequest) GetMeteringAttributeIds() []string {
+	if m != nil {
+		return m.MeteringAttributeIds
 	}
 	return nil
 }
@@ -2447,480 +2472,742 @@ func (m *DeleteSkusResponse) GetSkuIds() []string {
 	return nil
 }
 
-// metering_attribute_binding
-type MeteringAttributeBinding struct {
-	BindingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=binding_id,json=bindingId,proto3" json:"binding_id,omitempty"`
-	SkuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
-	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+type SkuMetering struct {
+	SkuId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	Value                map[string]float64    `protobuf:"bytes,2,rep,name=value,proto3" json:"value,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *MeteringAttributeBinding) Reset()         { *m = MeteringAttributeBinding{} }
-func (m *MeteringAttributeBinding) String() string { return proto.CompactTextString(m) }
-func (*MeteringAttributeBinding) ProtoMessage()    {}
-func (*MeteringAttributeBinding) Descriptor() ([]byte, []int) {
+func (m *SkuMetering) Reset()         { *m = SkuMetering{} }
+func (m *SkuMetering) String() string { return proto.CompactTextString(m) }
+func (*SkuMetering) ProtoMessage()    {}
+func (*SkuMetering) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e3483aebeefa1096, []int{45}
 }
 
-func (m *MeteringAttributeBinding) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_MeteringAttributeBinding.Unmarshal(m, b)
+func (m *SkuMetering) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SkuMetering.Unmarshal(m, b)
 }
-func (m *MeteringAttributeBinding) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_MeteringAttributeBinding.Marshal(b, m, deterministic)
+func (m *SkuMetering) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SkuMetering.Marshal(b, m, deterministic)
 }
-func (m *MeteringAttributeBinding) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MeteringAttributeBinding.Merge(m, src)
+func (m *SkuMetering) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SkuMetering.Merge(m, src)
 }
-func (m *MeteringAttributeBinding) XXX_Size() int {
-	return xxx_messageInfo_MeteringAttributeBinding.Size(m)
+func (m *SkuMetering) XXX_Size() int {
+	return xxx_messageInfo_SkuMetering.Size(m)
 }
-func (m *MeteringAttributeBinding) XXX_DiscardUnknown() {
-	xxx_messageInfo_MeteringAttributeBinding.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MeteringAttributeBinding proto.InternalMessageInfo
-
-func (m *MeteringAttributeBinding) GetBindingId() *wrappers.StringValue {
-	if m != nil {
-		return m.BindingId
-	}
-	return nil
+func (m *SkuMetering) XXX_DiscardUnknown() {
+	xxx_messageInfo_SkuMetering.DiscardUnknown(m)
 }
 
-func (m *MeteringAttributeBinding) GetSkuId() *wrappers.StringValue {
+var xxx_messageInfo_SkuMetering proto.InternalMessageInfo
+
+func (m *SkuMetering) GetSkuId() *wrappers.StringValue {
 	if m != nil {
 		return m.SkuId
 	}
 	return nil
 }
 
-func (m *MeteringAttributeBinding) GetAttributeId() *wrappers.StringValue {
+func (m *SkuMetering) GetValue() map[string]float64 {
+	if m != nil {
+		return m.Value
+	}
+	return nil
+}
+
+type UpdateMeteringValue struct {
+	AttributeId          *wrappers.StringValue                `protobuf:"bytes,1,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	Value                *wrappers.DoubleValue                `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Type                 UpdateMeteringValue_UpdateValueTypes `protobuf:"varint,3,opt,name=type,proto3,enum=openpitrix.UpdateMeteringValue_UpdateValueTypes" json:"type,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                             `json:"-"`
+	XXX_unrecognized     []byte                               `json:"-"`
+	XXX_sizecache        int32                                `json:"-"`
+}
+
+func (m *UpdateMeteringValue) Reset()         { *m = UpdateMeteringValue{} }
+func (m *UpdateMeteringValue) String() string { return proto.CompactTextString(m) }
+func (*UpdateMeteringValue) ProtoMessage()    {}
+func (*UpdateMeteringValue) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{46}
+}
+
+func (m *UpdateMeteringValue) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdateMeteringValue.Unmarshal(m, b)
+}
+func (m *UpdateMeteringValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdateMeteringValue.Marshal(b, m, deterministic)
+}
+func (m *UpdateMeteringValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateMeteringValue.Merge(m, src)
+}
+func (m *UpdateMeteringValue) XXX_Size() int {
+	return xxx_messageInfo_UpdateMeteringValue.Size(m)
+}
+func (m *UpdateMeteringValue) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateMeteringValue.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UpdateMeteringValue proto.InternalMessageInfo
+
+func (m *UpdateMeteringValue) GetAttributeId() *wrappers.StringValue {
 	if m != nil {
 		return m.AttributeId
 	}
 	return nil
 }
 
-func (m *MeteringAttributeBinding) GetStatus() *wrappers.StringValue {
+func (m *UpdateMeteringValue) GetValue() *wrappers.DoubleValue {
+	if m != nil {
+		return m.Value
+	}
+	return nil
+}
+
+func (m *UpdateMeteringValue) GetType() UpdateMeteringValue_UpdateValueTypes {
+	if m != nil {
+		return m.Type
+	}
+	return UpdateMeteringValue_INCREMENTAL
+}
+
+type UpdateSkuMetering struct {
+	SkuId *wrappers.StringValue `protobuf:"bytes,1,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	// if the metering attributes of sku is only duration, this is nil
+	MeteringValues       []*UpdateMeteringValue `protobuf:"bytes,2,rep,name=metering_values,json=meteringValues,proto3" json:"metering_values,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *UpdateSkuMetering) Reset()         { *m = UpdateSkuMetering{} }
+func (m *UpdateSkuMetering) String() string { return proto.CompactTextString(m) }
+func (*UpdateSkuMetering) ProtoMessage()    {}
+func (*UpdateSkuMetering) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{47}
+}
+
+func (m *UpdateSkuMetering) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdateSkuMetering.Unmarshal(m, b)
+}
+func (m *UpdateSkuMetering) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdateSkuMetering.Marshal(b, m, deterministic)
+}
+func (m *UpdateSkuMetering) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateSkuMetering.Merge(m, src)
+}
+func (m *UpdateSkuMetering) XXX_Size() int {
+	return xxx_messageInfo_UpdateSkuMetering.Size(m)
+}
+func (m *UpdateSkuMetering) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateSkuMetering.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UpdateSkuMetering proto.InternalMessageInfo
+
+func (m *UpdateSkuMetering) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *UpdateSkuMetering) GetMeteringValues() []*UpdateMeteringValue {
+	if m != nil {
+		return m.MeteringValues
+	}
+	return nil
+}
+
+type InitMeteringRequest struct {
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,2,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuMeterings         []*SkuMetering        `protobuf:"bytes,3,rep,name=sku_meterings,json=skuMeterings,proto3" json:"sku_meterings,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *InitMeteringRequest) Reset()         { *m = InitMeteringRequest{} }
+func (m *InitMeteringRequest) String() string { return proto.CompactTextString(m) }
+func (*InitMeteringRequest) ProtoMessage()    {}
+func (*InitMeteringRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{48}
+}
+
+func (m *InitMeteringRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_InitMeteringRequest.Unmarshal(m, b)
+}
+func (m *InitMeteringRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_InitMeteringRequest.Marshal(b, m, deterministic)
+}
+func (m *InitMeteringRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_InitMeteringRequest.Merge(m, src)
+}
+func (m *InitMeteringRequest) XXX_Size() int {
+	return xxx_messageInfo_InitMeteringRequest.Size(m)
+}
+func (m *InitMeteringRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_InitMeteringRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_InitMeteringRequest proto.InternalMessageInfo
+
+func (m *InitMeteringRequest) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+func (m *InitMeteringRequest) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *InitMeteringRequest) GetSkuMeterings() []*SkuMetering {
+	if m != nil {
+		return m.SkuMeterings
+	}
+	return nil
+}
+
+type UpdateMeteringRequest struct {
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuMeterings         []*UpdateSkuMetering  `protobuf:"bytes,2,rep,name=sku_meterings,json=skuMeterings,proto3" json:"sku_meterings,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *UpdateMeteringRequest) Reset()         { *m = UpdateMeteringRequest{} }
+func (m *UpdateMeteringRequest) String() string { return proto.CompactTextString(m) }
+func (*UpdateMeteringRequest) ProtoMessage()    {}
+func (*UpdateMeteringRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{49}
+}
+
+func (m *UpdateMeteringRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdateMeteringRequest.Unmarshal(m, b)
+}
+func (m *UpdateMeteringRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdateMeteringRequest.Marshal(b, m, deterministic)
+}
+func (m *UpdateMeteringRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateMeteringRequest.Merge(m, src)
+}
+func (m *UpdateMeteringRequest) XXX_Size() int {
+	return xxx_messageInfo_UpdateMeteringRequest.Size(m)
+}
+func (m *UpdateMeteringRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateMeteringRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UpdateMeteringRequest proto.InternalMessageInfo
+
+func (m *UpdateMeteringRequest) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *UpdateMeteringRequest) GetSkuMeterings() []*UpdateSkuMetering {
+	if m != nil {
+		return m.SkuMeterings
+	}
+	return nil
+}
+
+type StopMeteringsRequest struct {
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuIds               []string              `protobuf:"bytes,2,rep,name=sku_ids,json=skuIds,proto3" json:"sku_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *StopMeteringsRequest) Reset()         { *m = StopMeteringsRequest{} }
+func (m *StopMeteringsRequest) String() string { return proto.CompactTextString(m) }
+func (*StopMeteringsRequest) ProtoMessage()    {}
+func (*StopMeteringsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{50}
+}
+
+func (m *StopMeteringsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StopMeteringsRequest.Unmarshal(m, b)
+}
+func (m *StopMeteringsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StopMeteringsRequest.Marshal(b, m, deterministic)
+}
+func (m *StopMeteringsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StopMeteringsRequest.Merge(m, src)
+}
+func (m *StopMeteringsRequest) XXX_Size() int {
+	return xxx_messageInfo_StopMeteringsRequest.Size(m)
+}
+func (m *StopMeteringsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StopMeteringsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StopMeteringsRequest proto.InternalMessageInfo
+
+func (m *StopMeteringsRequest) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *StopMeteringsRequest) GetSkuIds() []string {
+	if m != nil {
+		return m.SkuIds
+	}
+	return nil
+}
+
+type StartMeteringsRequest struct {
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuIds               []string              `protobuf:"bytes,2,rep,name=sku_ids,json=skuIds,proto3" json:"sku_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *StartMeteringsRequest) Reset()         { *m = StartMeteringsRequest{} }
+func (m *StartMeteringsRequest) String() string { return proto.CompactTextString(m) }
+func (*StartMeteringsRequest) ProtoMessage()    {}
+func (*StartMeteringsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{51}
+}
+
+func (m *StartMeteringsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StartMeteringsRequest.Unmarshal(m, b)
+}
+func (m *StartMeteringsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StartMeteringsRequest.Marshal(b, m, deterministic)
+}
+func (m *StartMeteringsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartMeteringsRequest.Merge(m, src)
+}
+func (m *StartMeteringsRequest) XXX_Size() int {
+	return xxx_messageInfo_StartMeteringsRequest.Size(m)
+}
+func (m *StartMeteringsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StartMeteringsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StartMeteringsRequest proto.InternalMessageInfo
+
+func (m *StartMeteringsRequest) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *StartMeteringsRequest) GetSkuIds() []string {
+	if m != nil {
+		return m.SkuIds
+	}
+	return nil
+}
+
+type TerminateMeteringsRequest struct {
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	SkuIds               []string              `protobuf:"bytes,2,rep,name=sku_ids,json=skuIds,proto3" json:"sku_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *TerminateMeteringsRequest) Reset()         { *m = TerminateMeteringsRequest{} }
+func (m *TerminateMeteringsRequest) String() string { return proto.CompactTextString(m) }
+func (*TerminateMeteringsRequest) ProtoMessage()    {}
+func (*TerminateMeteringsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{52}
+}
+
+func (m *TerminateMeteringsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TerminateMeteringsRequest.Unmarshal(m, b)
+}
+func (m *TerminateMeteringsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TerminateMeteringsRequest.Marshal(b, m, deterministic)
+}
+func (m *TerminateMeteringsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TerminateMeteringsRequest.Merge(m, src)
+}
+func (m *TerminateMeteringsRequest) XXX_Size() int {
+	return xxx_messageInfo_TerminateMeteringsRequest.Size(m)
+}
+func (m *TerminateMeteringsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_TerminateMeteringsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TerminateMeteringsRequest proto.InternalMessageInfo
+
+func (m *TerminateMeteringsRequest) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *TerminateMeteringsRequest) GetSkuIds() []string {
+	if m != nil {
+		return m.SkuIds
+	}
+	return nil
+}
+
+type CommonMeteringResponse struct {
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CommonMeteringResponse) Reset()         { *m = CommonMeteringResponse{} }
+func (m *CommonMeteringResponse) String() string { return proto.CompactTextString(m) }
+func (*CommonMeteringResponse) ProtoMessage()    {}
+func (*CommonMeteringResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{53}
+}
+
+func (m *CommonMeteringResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CommonMeteringResponse.Unmarshal(m, b)
+}
+func (m *CommonMeteringResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CommonMeteringResponse.Marshal(b, m, deterministic)
+}
+func (m *CommonMeteringResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CommonMeteringResponse.Merge(m, src)
+}
+func (m *CommonMeteringResponse) XXX_Size() int {
+	return xxx_messageInfo_CommonMeteringResponse.Size(m)
+}
+func (m *CommonMeteringResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CommonMeteringResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CommonMeteringResponse proto.InternalMessageInfo
+
+func (m *CommonMeteringResponse) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+type CommonMeteringsResponse struct {
+	ResourceIds          []string `protobuf:"bytes,1,rep,name=resource_ids,json=resourceIds,proto3" json:"resource_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CommonMeteringsResponse) Reset()         { *m = CommonMeteringsResponse{} }
+func (m *CommonMeteringsResponse) String() string { return proto.CompactTextString(m) }
+func (*CommonMeteringsResponse) ProtoMessage()    {}
+func (*CommonMeteringsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{54}
+}
+
+func (m *CommonMeteringsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CommonMeteringsResponse.Unmarshal(m, b)
+}
+func (m *CommonMeteringsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CommonMeteringsResponse.Marshal(b, m, deterministic)
+}
+func (m *CommonMeteringsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CommonMeteringsResponse.Merge(m, src)
+}
+func (m *CommonMeteringsResponse) XXX_Size() int {
+	return xxx_messageInfo_CommonMeteringsResponse.Size(m)
+}
+func (m *CommonMeteringsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CommonMeteringsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CommonMeteringsResponse proto.InternalMessageInfo
+
+func (m *CommonMeteringsResponse) GetResourceIds() []string {
+	if m != nil {
+		return m.ResourceIds
+	}
+	return nil
+}
+
+type Leasing struct {
+	LeasingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=LeasingId,proto3" json:"LeasingId,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=UserId,proto3" json:"UserId,omitempty"`
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,4,opt,name=ResourceId,proto3" json:"ResourceId,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,5,opt,name=SkuId,proto3" json:"SkuId,omitempty"`
+	MeteringValues       map[string]float64    `protobuf:"bytes,6,rep,name=MeteringValues,proto3" json:"MeteringValues,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
+	Status               *wrappers.StringValue `protobuf:"bytes,7,opt,name=Status,proto3" json:"Status,omitempty"`
+	LeaseTime            *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=LeaseTime,proto3" json:"LeaseTime,omitempty"`
+	UpdateDurationTime   *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=UpdateDurationTime,proto3" json:"UpdateDurationTime,omitempty"`
+	RenewalTime          *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=RenewalTime,proto3" json:"RenewalTime,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,11,opt,name=CreateTime,proto3" json:"CreateTime,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,12,opt,name=StatusTime,proto3" json:"StatusTime,omitempty"`
+	StopTimes            map[string]string     `protobuf:"bytes,13,rep,name=StopTimes,proto3" json:"StopTimes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *Leasing) Reset()         { *m = Leasing{} }
+func (m *Leasing) String() string { return proto.CompactTextString(m) }
+func (*Leasing) ProtoMessage()    {}
+func (*Leasing) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{55}
+}
+
+func (m *Leasing) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Leasing.Unmarshal(m, b)
+}
+func (m *Leasing) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Leasing.Marshal(b, m, deterministic)
+}
+func (m *Leasing) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Leasing.Merge(m, src)
+}
+func (m *Leasing) XXX_Size() int {
+	return xxx_messageInfo_Leasing.Size(m)
+}
+func (m *Leasing) XXX_DiscardUnknown() {
+	xxx_messageInfo_Leasing.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Leasing proto.InternalMessageInfo
+
+func (m *Leasing) GetLeasingId() *wrappers.StringValue {
+	if m != nil {
+		return m.LeasingId
+	}
+	return nil
+}
+
+func (m *Leasing) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+func (m *Leasing) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *Leasing) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *Leasing) GetMeteringValues() map[string]float64 {
+	if m != nil {
+		return m.MeteringValues
+	}
+	return nil
+}
+
+func (m *Leasing) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *MeteringAttributeBinding) GetCreateTime() *timestamp.Timestamp {
+func (m *Leasing) GetLeaseTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.LeaseTime
+	}
+	return nil
+}
+
+func (m *Leasing) GetUpdateDurationTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.UpdateDurationTime
+	}
+	return nil
+}
+
+func (m *Leasing) GetRenewalTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.RenewalTime
+	}
+	return nil
+}
+
+func (m *Leasing) GetCreateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *MeteringAttributeBinding) GetStatusTime() *timestamp.Timestamp {
+func (m *Leasing) GetStatusTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
 	return nil
 }
 
-type CreateMeteringAttributeBindingsRequest struct {
-	SkuId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
-	AttributeIds         []string              `protobuf:"bytes,2,rep,name=attribute_ids,json=attributeIds,proto3" json:"attribute_ids,omitempty"`
+func (m *Leasing) GetStopTimes() map[string]string {
+	if m != nil {
+		return m.StopTimes
+	}
+	return nil
+}
+
+type DescribeLeasingsRequest struct {
+	LeasingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=LeasingId,proto3" json:"LeasingId,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=UserId,proto3" json:"UserId,omitempty"`
+	ResourceId           *wrappers.StringValue `protobuf:"bytes,4,opt,name=ResourceId,proto3" json:"ResourceId,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,5,opt,name=SkuId,proto3" json:"SkuId,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,6,opt,name=Status,proto3" json:"Status,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,7,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,8,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,9,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,10,opt,name=limit,proto3" json:"limit,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateMeteringAttributeBindingsRequest) Reset() {
-	*m = CreateMeteringAttributeBindingsRequest{}
-}
-func (m *CreateMeteringAttributeBindingsRequest) String() string { return proto.CompactTextString(m) }
-func (*CreateMeteringAttributeBindingsRequest) ProtoMessage()    {}
-func (*CreateMeteringAttributeBindingsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{46}
+func (m *DescribeLeasingsRequest) Reset()         { *m = DescribeLeasingsRequest{} }
+func (m *DescribeLeasingsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeLeasingsRequest) ProtoMessage()    {}
+func (*DescribeLeasingsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{56}
 }
 
-func (m *CreateMeteringAttributeBindingsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateMeteringAttributeBindingsRequest.Unmarshal(m, b)
+func (m *DescribeLeasingsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeLeasingsRequest.Unmarshal(m, b)
 }
-func (m *CreateMeteringAttributeBindingsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateMeteringAttributeBindingsRequest.Marshal(b, m, deterministic)
+func (m *DescribeLeasingsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeLeasingsRequest.Marshal(b, m, deterministic)
 }
-func (m *CreateMeteringAttributeBindingsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateMeteringAttributeBindingsRequest.Merge(m, src)
+func (m *DescribeLeasingsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeLeasingsRequest.Merge(m, src)
 }
-func (m *CreateMeteringAttributeBindingsRequest) XXX_Size() int {
-	return xxx_messageInfo_CreateMeteringAttributeBindingsRequest.Size(m)
+func (m *DescribeLeasingsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeLeasingsRequest.Size(m)
 }
-func (m *CreateMeteringAttributeBindingsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateMeteringAttributeBindingsRequest.DiscardUnknown(m)
+func (m *DescribeLeasingsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeLeasingsRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CreateMeteringAttributeBindingsRequest proto.InternalMessageInfo
+var xxx_messageInfo_DescribeLeasingsRequest proto.InternalMessageInfo
 
-func (m *CreateMeteringAttributeBindingsRequest) GetSkuId() *wrappers.StringValue {
+func (m *DescribeLeasingsRequest) GetLeasingId() *wrappers.StringValue {
+	if m != nil {
+		return m.LeasingId
+	}
+	return nil
+}
+
+func (m *DescribeLeasingsRequest) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+func (m *DescribeLeasingsRequest) GetResourceId() *wrappers.StringValue {
+	if m != nil {
+		return m.ResourceId
+	}
+	return nil
+}
+
+func (m *DescribeLeasingsRequest) GetSkuId() *wrappers.StringValue {
 	if m != nil {
 		return m.SkuId
 	}
 	return nil
 }
 
-func (m *CreateMeteringAttributeBindingsRequest) GetAttributeIds() []string {
-	if m != nil {
-		return m.AttributeIds
-	}
-	return nil
-}
-
-type CreateMeteringAttributeBindingsResponse struct {
-	BindingIds           []string `protobuf:"bytes,1,rep,name=binding_ids,json=bindingIds,proto3" json:"binding_ids,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CreateMeteringAttributeBindingsResponse) Reset() {
-	*m = CreateMeteringAttributeBindingsResponse{}
-}
-func (m *CreateMeteringAttributeBindingsResponse) String() string { return proto.CompactTextString(m) }
-func (*CreateMeteringAttributeBindingsResponse) ProtoMessage()    {}
-func (*CreateMeteringAttributeBindingsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{47}
-}
-
-func (m *CreateMeteringAttributeBindingsResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateMeteringAttributeBindingsResponse.Unmarshal(m, b)
-}
-func (m *CreateMeteringAttributeBindingsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateMeteringAttributeBindingsResponse.Marshal(b, m, deterministic)
-}
-func (m *CreateMeteringAttributeBindingsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateMeteringAttributeBindingsResponse.Merge(m, src)
-}
-func (m *CreateMeteringAttributeBindingsResponse) XXX_Size() int {
-	return xxx_messageInfo_CreateMeteringAttributeBindingsResponse.Size(m)
-}
-func (m *CreateMeteringAttributeBindingsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateMeteringAttributeBindingsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateMeteringAttributeBindingsResponse proto.InternalMessageInfo
-
-func (m *CreateMeteringAttributeBindingsResponse) GetBindingIds() []string {
-	if m != nil {
-		return m.BindingIds
-	}
-	return nil
-}
-
-type DescribeMeteringAttributeBindingsRequest struct {
-	BindingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=binding_id,json=bindingId,proto3" json:"binding_id,omitempty"`
-	SkuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,4,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,5,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	Offset               uint32                `protobuf:"varint,6,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit                uint32                `protobuf:"varint,7,opt,name=limit,proto3" json:"limit,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *DescribeMeteringAttributeBindingsRequest) Reset() {
-	*m = DescribeMeteringAttributeBindingsRequest{}
-}
-func (m *DescribeMeteringAttributeBindingsRequest) String() string { return proto.CompactTextString(m) }
-func (*DescribeMeteringAttributeBindingsRequest) ProtoMessage()    {}
-func (*DescribeMeteringAttributeBindingsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{48}
-}
-
-func (m *DescribeMeteringAttributeBindingsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DescribeMeteringAttributeBindingsRequest.Unmarshal(m, b)
-}
-func (m *DescribeMeteringAttributeBindingsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DescribeMeteringAttributeBindingsRequest.Marshal(b, m, deterministic)
-}
-func (m *DescribeMeteringAttributeBindingsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeMeteringAttributeBindingsRequest.Merge(m, src)
-}
-func (m *DescribeMeteringAttributeBindingsRequest) XXX_Size() int {
-	return xxx_messageInfo_DescribeMeteringAttributeBindingsRequest.Size(m)
-}
-func (m *DescribeMeteringAttributeBindingsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_DescribeMeteringAttributeBindingsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DescribeMeteringAttributeBindingsRequest proto.InternalMessageInfo
-
-func (m *DescribeMeteringAttributeBindingsRequest) GetBindingId() *wrappers.StringValue {
-	if m != nil {
-		return m.BindingId
-	}
-	return nil
-}
-
-func (m *DescribeMeteringAttributeBindingsRequest) GetSkuId() *wrappers.StringValue {
-	if m != nil {
-		return m.SkuId
-	}
-	return nil
-}
-
-func (m *DescribeMeteringAttributeBindingsRequest) GetStatus() *wrappers.StringValue {
+func (m *DescribeLeasingsRequest) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *DescribeMeteringAttributeBindingsRequest) GetSortKey() *wrappers.StringValue {
+func (m *DescribeLeasingsRequest) GetSortKey() *wrappers.StringValue {
 	if m != nil {
 		return m.SortKey
 	}
 	return nil
 }
 
-func (m *DescribeMeteringAttributeBindingsRequest) GetReverse() *wrappers.BoolValue {
+func (m *DescribeLeasingsRequest) GetReverse() *wrappers.BoolValue {
 	if m != nil {
 		return m.Reverse
 	}
 	return nil
 }
 
-func (m *DescribeMeteringAttributeBindingsRequest) GetOffset() uint32 {
+func (m *DescribeLeasingsRequest) GetOffset() uint32 {
 	if m != nil {
 		return m.Offset
 	}
 	return 0
 }
 
-func (m *DescribeMeteringAttributeBindingsRequest) GetLimit() uint32 {
+func (m *DescribeLeasingsRequest) GetLimit() uint32 {
 	if m != nil {
 		return m.Limit
 	}
 	return 0
 }
 
-type DescribeMeteringAttributeBindingsResponse struct {
-	MeteringAttributeBindings []*MeteringAttributeBinding `protobuf:"bytes,1,rep,name=meteringAttributeBindings,proto3" json:"meteringAttributeBindings,omitempty"`
-	XXX_NoUnkeyedLiteral      struct{}                    `json:"-"`
-	XXX_unrecognized          []byte                      `json:"-"`
-	XXX_sizecache             int32                       `json:"-"`
+type DescribeLeasingsResponse struct {
+	Leasings             []*Leasing `protobuf:"bytes,1,rep,name=leasings,proto3" json:"leasings,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
-func (m *DescribeMeteringAttributeBindingsResponse) Reset() {
-	*m = DescribeMeteringAttributeBindingsResponse{}
-}
-func (m *DescribeMeteringAttributeBindingsResponse) String() string { return proto.CompactTextString(m) }
-func (*DescribeMeteringAttributeBindingsResponse) ProtoMessage()    {}
-func (*DescribeMeteringAttributeBindingsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{49}
+func (m *DescribeLeasingsResponse) Reset()         { *m = DescribeLeasingsResponse{} }
+func (m *DescribeLeasingsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeLeasingsResponse) ProtoMessage()    {}
+func (*DescribeLeasingsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{57}
 }
 
-func (m *DescribeMeteringAttributeBindingsResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DescribeMeteringAttributeBindingsResponse.Unmarshal(m, b)
+func (m *DescribeLeasingsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeLeasingsResponse.Unmarshal(m, b)
 }
-func (m *DescribeMeteringAttributeBindingsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DescribeMeteringAttributeBindingsResponse.Marshal(b, m, deterministic)
+func (m *DescribeLeasingsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeLeasingsResponse.Marshal(b, m, deterministic)
 }
-func (m *DescribeMeteringAttributeBindingsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeMeteringAttributeBindingsResponse.Merge(m, src)
+func (m *DescribeLeasingsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeLeasingsResponse.Merge(m, src)
 }
-func (m *DescribeMeteringAttributeBindingsResponse) XXX_Size() int {
-	return xxx_messageInfo_DescribeMeteringAttributeBindingsResponse.Size(m)
+func (m *DescribeLeasingsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeLeasingsResponse.Size(m)
 }
-func (m *DescribeMeteringAttributeBindingsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_DescribeMeteringAttributeBindingsResponse.DiscardUnknown(m)
+func (m *DescribeLeasingsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeLeasingsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_DescribeMeteringAttributeBindingsResponse proto.InternalMessageInfo
+var xxx_messageInfo_DescribeLeasingsResponse proto.InternalMessageInfo
 
-func (m *DescribeMeteringAttributeBindingsResponse) GetMeteringAttributeBindings() []*MeteringAttributeBinding {
+func (m *DescribeLeasingsResponse) GetLeasings() []*Leasing {
 	if m != nil {
-		return m.MeteringAttributeBindings
-	}
-	return nil
-}
-
-type ModifyMeteringAttributeBindingRequest struct {
-	BindingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=binding_id,json=bindingId,proto3" json:"binding_id,omitempty"`
-	SkuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
-	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *ModifyMeteringAttributeBindingRequest) Reset()         { *m = ModifyMeteringAttributeBindingRequest{} }
-func (m *ModifyMeteringAttributeBindingRequest) String() string { return proto.CompactTextString(m) }
-func (*ModifyMeteringAttributeBindingRequest) ProtoMessage()    {}
-func (*ModifyMeteringAttributeBindingRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{50}
-}
-
-func (m *ModifyMeteringAttributeBindingRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ModifyMeteringAttributeBindingRequest.Unmarshal(m, b)
-}
-func (m *ModifyMeteringAttributeBindingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ModifyMeteringAttributeBindingRequest.Marshal(b, m, deterministic)
-}
-func (m *ModifyMeteringAttributeBindingRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ModifyMeteringAttributeBindingRequest.Merge(m, src)
-}
-func (m *ModifyMeteringAttributeBindingRequest) XXX_Size() int {
-	return xxx_messageInfo_ModifyMeteringAttributeBindingRequest.Size(m)
-}
-func (m *ModifyMeteringAttributeBindingRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_ModifyMeteringAttributeBindingRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ModifyMeteringAttributeBindingRequest proto.InternalMessageInfo
-
-func (m *ModifyMeteringAttributeBindingRequest) GetBindingId() *wrappers.StringValue {
-	if m != nil {
-		return m.BindingId
-	}
-	return nil
-}
-
-func (m *ModifyMeteringAttributeBindingRequest) GetSkuId() *wrappers.StringValue {
-	if m != nil {
-		return m.SkuId
-	}
-	return nil
-}
-
-func (m *ModifyMeteringAttributeBindingRequest) GetAttributeId() *wrappers.StringValue {
-	if m != nil {
-		return m.AttributeId
-	}
-	return nil
-}
-
-type ModifyMeteringAttributeBindingResponse struct {
-	BindingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=binding_id,json=bindingId,proto3" json:"binding_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *ModifyMeteringAttributeBindingResponse) Reset() {
-	*m = ModifyMeteringAttributeBindingResponse{}
-}
-func (m *ModifyMeteringAttributeBindingResponse) String() string { return proto.CompactTextString(m) }
-func (*ModifyMeteringAttributeBindingResponse) ProtoMessage()    {}
-func (*ModifyMeteringAttributeBindingResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{51}
-}
-
-func (m *ModifyMeteringAttributeBindingResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ModifyMeteringAttributeBindingResponse.Unmarshal(m, b)
-}
-func (m *ModifyMeteringAttributeBindingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ModifyMeteringAttributeBindingResponse.Marshal(b, m, deterministic)
-}
-func (m *ModifyMeteringAttributeBindingResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ModifyMeteringAttributeBindingResponse.Merge(m, src)
-}
-func (m *ModifyMeteringAttributeBindingResponse) XXX_Size() int {
-	return xxx_messageInfo_ModifyMeteringAttributeBindingResponse.Size(m)
-}
-func (m *ModifyMeteringAttributeBindingResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_ModifyMeteringAttributeBindingResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ModifyMeteringAttributeBindingResponse proto.InternalMessageInfo
-
-func (m *ModifyMeteringAttributeBindingResponse) GetBindingId() *wrappers.StringValue {
-	if m != nil {
-		return m.BindingId
-	}
-	return nil
-}
-
-type DeleteMeteringAttributeBindingsRequest struct {
-	BindingIds           []string `protobuf:"bytes,1,rep,name=binding_ids,json=bindingIds,proto3" json:"binding_ids,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *DeleteMeteringAttributeBindingsRequest) Reset() {
-	*m = DeleteMeteringAttributeBindingsRequest{}
-}
-func (m *DeleteMeteringAttributeBindingsRequest) String() string { return proto.CompactTextString(m) }
-func (*DeleteMeteringAttributeBindingsRequest) ProtoMessage()    {}
-func (*DeleteMeteringAttributeBindingsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{52}
-}
-
-func (m *DeleteMeteringAttributeBindingsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DeleteMeteringAttributeBindingsRequest.Unmarshal(m, b)
-}
-func (m *DeleteMeteringAttributeBindingsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DeleteMeteringAttributeBindingsRequest.Marshal(b, m, deterministic)
-}
-func (m *DeleteMeteringAttributeBindingsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteMeteringAttributeBindingsRequest.Merge(m, src)
-}
-func (m *DeleteMeteringAttributeBindingsRequest) XXX_Size() int {
-	return xxx_messageInfo_DeleteMeteringAttributeBindingsRequest.Size(m)
-}
-func (m *DeleteMeteringAttributeBindingsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_DeleteMeteringAttributeBindingsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DeleteMeteringAttributeBindingsRequest proto.InternalMessageInfo
-
-func (m *DeleteMeteringAttributeBindingsRequest) GetBindingIds() []string {
-	if m != nil {
-		return m.BindingIds
-	}
-	return nil
-}
-
-type DeleteMeteringAttributeBindingsResponse struct {
-	BindingIds           []string `protobuf:"bytes,1,rep,name=binding_ids,json=bindingIds,proto3" json:"binding_ids,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *DeleteMeteringAttributeBindingsResponse) Reset() {
-	*m = DeleteMeteringAttributeBindingsResponse{}
-}
-func (m *DeleteMeteringAttributeBindingsResponse) String() string { return proto.CompactTextString(m) }
-func (*DeleteMeteringAttributeBindingsResponse) ProtoMessage()    {}
-func (*DeleteMeteringAttributeBindingsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{53}
-}
-
-func (m *DeleteMeteringAttributeBindingsResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DeleteMeteringAttributeBindingsResponse.Unmarshal(m, b)
-}
-func (m *DeleteMeteringAttributeBindingsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DeleteMeteringAttributeBindingsResponse.Marshal(b, m, deterministic)
-}
-func (m *DeleteMeteringAttributeBindingsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteMeteringAttributeBindingsResponse.Merge(m, src)
-}
-func (m *DeleteMeteringAttributeBindingsResponse) XXX_Size() int {
-	return xxx_messageInfo_DeleteMeteringAttributeBindingsResponse.Size(m)
-}
-func (m *DeleteMeteringAttributeBindingsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_DeleteMeteringAttributeBindingsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DeleteMeteringAttributeBindingsResponse proto.InternalMessageInfo
-
-func (m *DeleteMeteringAttributeBindingsResponse) GetBindingIds() []string {
-	if m != nil {
-		return m.BindingIds
+		return m.Leasings
 	}
 	return nil
 }
@@ -2946,7 +3233,7 @@ func (m *Combination) Reset()         { *m = Combination{} }
 func (m *Combination) String() string { return proto.CompactTextString(m) }
 func (*Combination) ProtoMessage()    {}
 func (*Combination) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{54}
+	return fileDescriptor_e3483aebeefa1096, []int{58}
 }
 
 func (m *Combination) XXX_Unmarshal(b []byte) error {
@@ -3044,7 +3331,7 @@ func (m *CreateCombinationRequest) Reset()         { *m = CreateCombinationReque
 func (m *CreateCombinationRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCombinationRequest) ProtoMessage()    {}
 func (*CreateCombinationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{55}
+	return fileDescriptor_e3483aebeefa1096, []int{59}
 }
 
 func (m *CreateCombinationRequest) XXX_Unmarshal(b []byte) error {
@@ -3104,7 +3391,7 @@ func (m *CreateCombinationResponse) Reset()         { *m = CreateCombinationResp
 func (m *CreateCombinationResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCombinationResponse) ProtoMessage()    {}
 func (*CreateCombinationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{56}
+	return fileDescriptor_e3483aebeefa1096, []int{60}
 }
 
 func (m *CreateCombinationResponse) XXX_Unmarshal(b []byte) error {
@@ -3150,7 +3437,7 @@ func (m *DescribeCombinationsRequest) Reset()         { *m = DescribeCombination
 func (m *DescribeCombinationsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeCombinationsRequest) ProtoMessage()    {}
 func (*DescribeCombinationsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{57}
+	return fileDescriptor_e3483aebeefa1096, []int{61}
 }
 
 func (m *DescribeCombinationsRequest) XXX_Unmarshal(b []byte) error {
@@ -3238,7 +3525,7 @@ func (m *DescribeCombinationsResponse) Reset()         { *m = DescribeCombinatio
 func (m *DescribeCombinationsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeCombinationsResponse) ProtoMessage()    {}
 func (*DescribeCombinationsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{58}
+	return fileDescriptor_e3483aebeefa1096, []int{62}
 }
 
 func (m *DescribeCombinationsResponse) XXX_Unmarshal(b []byte) error {
@@ -3281,7 +3568,7 @@ func (m *ModifyCombinationRequest) Reset()         { *m = ModifyCombinationReque
 func (m *ModifyCombinationRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyCombinationRequest) ProtoMessage()    {}
 func (*ModifyCombinationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{59}
+	return fileDescriptor_e3483aebeefa1096, []int{63}
 }
 
 func (m *ModifyCombinationRequest) XXX_Unmarshal(b []byte) error {
@@ -3348,7 +3635,7 @@ func (m *ModifyCombinationResponse) Reset()         { *m = ModifyCombinationResp
 func (m *ModifyCombinationResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyCombinationResponse) ProtoMessage()    {}
 func (*ModifyCombinationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{60}
+	return fileDescriptor_e3483aebeefa1096, []int{64}
 }
 
 func (m *ModifyCombinationResponse) XXX_Unmarshal(b []byte) error {
@@ -3387,7 +3674,7 @@ func (m *DeleteCombinationsRequest) Reset()         { *m = DeleteCombinationsReq
 func (m *DeleteCombinationsRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteCombinationsRequest) ProtoMessage()    {}
 func (*DeleteCombinationsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{61}
+	return fileDescriptor_e3483aebeefa1096, []int{65}
 }
 
 func (m *DeleteCombinationsRequest) XXX_Unmarshal(b []byte) error {
@@ -3426,7 +3713,7 @@ func (m *DeleteCombinationsResponse) Reset()         { *m = DeleteCombinationsRe
 func (m *DeleteCombinationsResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteCombinationsResponse) ProtoMessage()    {}
 func (*DeleteCombinationsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{62}
+	return fileDescriptor_e3483aebeefa1096, []int{66}
 }
 
 func (m *DeleteCombinationsResponse) XXX_Unmarshal(b []byte) error {
@@ -3471,7 +3758,7 @@ func (m *CombinationSku) Reset()         { *m = CombinationSku{} }
 func (m *CombinationSku) String() string { return proto.CompactTextString(m) }
 func (*CombinationSku) ProtoMessage()    {}
 func (*CombinationSku) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{63}
+	return fileDescriptor_e3483aebeefa1096, []int{67}
 }
 
 func (m *CombinationSku) XXX_Unmarshal(b []byte) error {
@@ -3546,7 +3833,7 @@ func (m *CreateCombinationSkuRequest) Reset()         { *m = CreateCombinationSk
 func (m *CreateCombinationSkuRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCombinationSkuRequest) ProtoMessage()    {}
 func (*CreateCombinationSkuRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{64}
+	return fileDescriptor_e3483aebeefa1096, []int{68}
 }
 
 func (m *CreateCombinationSkuRequest) XXX_Unmarshal(b []byte) error {
@@ -3592,7 +3879,7 @@ func (m *CreateCombinationSkuResponse) Reset()         { *m = CreateCombinationS
 func (m *CreateCombinationSkuResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCombinationSkuResponse) ProtoMessage()    {}
 func (*CreateCombinationSkuResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{65}
+	return fileDescriptor_e3483aebeefa1096, []int{69}
 }
 
 func (m *CreateCombinationSkuResponse) XXX_Unmarshal(b []byte) error {
@@ -3638,7 +3925,7 @@ func (m *DescribeCombinationSkusRequest) Reset()         { *m = DescribeCombinat
 func (m *DescribeCombinationSkusRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeCombinationSkusRequest) ProtoMessage()    {}
 func (*DescribeCombinationSkusRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{66}
+	return fileDescriptor_e3483aebeefa1096, []int{70}
 }
 
 func (m *DescribeCombinationSkusRequest) XXX_Unmarshal(b []byte) error {
@@ -3726,7 +4013,7 @@ func (m *DescribeCombinationSkusResponse) Reset()         { *m = DescribeCombina
 func (m *DescribeCombinationSkusResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeCombinationSkusResponse) ProtoMessage()    {}
 func (*DescribeCombinationSkusResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{67}
+	return fileDescriptor_e3483aebeefa1096, []int{71}
 }
 
 func (m *DescribeCombinationSkusResponse) XXX_Unmarshal(b []byte) error {
@@ -3767,7 +4054,7 @@ func (m *ModifyCombinationSkuRequest) Reset()         { *m = ModifyCombinationSk
 func (m *ModifyCombinationSkuRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyCombinationSkuRequest) ProtoMessage()    {}
 func (*ModifyCombinationSkuRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{68}
+	return fileDescriptor_e3483aebeefa1096, []int{72}
 }
 
 func (m *ModifyCombinationSkuRequest) XXX_Unmarshal(b []byte) error {
@@ -3820,7 +4107,7 @@ func (m *ModifyCombinationSkuResponse) Reset()         { *m = ModifyCombinationS
 func (m *ModifyCombinationSkuResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyCombinationSkuResponse) ProtoMessage()    {}
 func (*ModifyCombinationSkuResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{69}
+	return fileDescriptor_e3483aebeefa1096, []int{73}
 }
 
 func (m *ModifyCombinationSkuResponse) XXX_Unmarshal(b []byte) error {
@@ -3859,7 +4146,7 @@ func (m *DeleteCombinationSkusRequest) Reset()         { *m = DeleteCombinationS
 func (m *DeleteCombinationSkusRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteCombinationSkusRequest) ProtoMessage()    {}
 func (*DeleteCombinationSkusRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{70}
+	return fileDescriptor_e3483aebeefa1096, []int{74}
 }
 
 func (m *DeleteCombinationSkusRequest) XXX_Unmarshal(b []byte) error {
@@ -3898,7 +4185,7 @@ func (m *DeleteCombinationSkusResponse) Reset()         { *m = DeleteCombination
 func (m *DeleteCombinationSkusResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteCombinationSkusResponse) ProtoMessage()    {}
 func (*DeleteCombinationSkusResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{71}
+	return fileDescriptor_e3483aebeefa1096, []int{75}
 }
 
 func (m *DeleteCombinationSkusResponse) XXX_Unmarshal(b []byte) error {
@@ -3922,1242 +4209,6 @@ var xxx_messageInfo_DeleteCombinationSkusResponse proto.InternalMessageInfo
 func (m *DeleteCombinationSkusResponse) GetCombinationSkuIds() []string {
 	if m != nil {
 		return m.CombinationSkuIds
-	}
-	return nil
-}
-
-// CombinationMABinding: CombinationMeteringAttributeBinding
-type CombinationMABinding struct {
-	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
-	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
-	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *CombinationMABinding) Reset()         { *m = CombinationMABinding{} }
-func (m *CombinationMABinding) String() string { return proto.CompactTextString(m) }
-func (*CombinationMABinding) ProtoMessage()    {}
-func (*CombinationMABinding) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{72}
-}
-
-func (m *CombinationMABinding) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CombinationMABinding.Unmarshal(m, b)
-}
-func (m *CombinationMABinding) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CombinationMABinding.Marshal(b, m, deterministic)
-}
-func (m *CombinationMABinding) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CombinationMABinding.Merge(m, src)
-}
-func (m *CombinationMABinding) XXX_Size() int {
-	return xxx_messageInfo_CombinationMABinding.Size(m)
-}
-func (m *CombinationMABinding) XXX_DiscardUnknown() {
-	xxx_messageInfo_CombinationMABinding.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CombinationMABinding proto.InternalMessageInfo
-
-func (m *CombinationMABinding) GetCombinationBindingId() *wrappers.StringValue {
-	if m != nil {
-		return m.CombinationBindingId
-	}
-	return nil
-}
-
-func (m *CombinationMABinding) GetCombinationSkuId() *wrappers.StringValue {
-	if m != nil {
-		return m.CombinationSkuId
-	}
-	return nil
-}
-
-func (m *CombinationMABinding) GetAttributeId() *wrappers.StringValue {
-	if m != nil {
-		return m.AttributeId
-	}
-	return nil
-}
-
-func (m *CombinationMABinding) GetStatus() *wrappers.StringValue {
-	if m != nil {
-		return m.Status
-	}
-	return nil
-}
-
-func (m *CombinationMABinding) GetCreateTime() *timestamp.Timestamp {
-	if m != nil {
-		return m.CreateTime
-	}
-	return nil
-}
-
-func (m *CombinationMABinding) GetStatusTime() *timestamp.Timestamp {
-	if m != nil {
-		return m.StatusTime
-	}
-	return nil
-}
-
-type CreateCombinationMABindingRequest struct {
-	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
-	AttributeId          *wrappers.StringValue `protobuf:"bytes,2,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *CreateCombinationMABindingRequest) Reset()         { *m = CreateCombinationMABindingRequest{} }
-func (m *CreateCombinationMABindingRequest) String() string { return proto.CompactTextString(m) }
-func (*CreateCombinationMABindingRequest) ProtoMessage()    {}
-func (*CreateCombinationMABindingRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{73}
-}
-
-func (m *CreateCombinationMABindingRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateCombinationMABindingRequest.Unmarshal(m, b)
-}
-func (m *CreateCombinationMABindingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateCombinationMABindingRequest.Marshal(b, m, deterministic)
-}
-func (m *CreateCombinationMABindingRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCombinationMABindingRequest.Merge(m, src)
-}
-func (m *CreateCombinationMABindingRequest) XXX_Size() int {
-	return xxx_messageInfo_CreateCombinationMABindingRequest.Size(m)
-}
-func (m *CreateCombinationMABindingRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateCombinationMABindingRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateCombinationMABindingRequest proto.InternalMessageInfo
-
-func (m *CreateCombinationMABindingRequest) GetCombinationSkuId() *wrappers.StringValue {
-	if m != nil {
-		return m.CombinationSkuId
-	}
-	return nil
-}
-
-func (m *CreateCombinationMABindingRequest) GetAttributeId() *wrappers.StringValue {
-	if m != nil {
-		return m.AttributeId
-	}
-	return nil
-}
-
-type CreateCombinationMABindingResponse struct {
-	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *CreateCombinationMABindingResponse) Reset()         { *m = CreateCombinationMABindingResponse{} }
-func (m *CreateCombinationMABindingResponse) String() string { return proto.CompactTextString(m) }
-func (*CreateCombinationMABindingResponse) ProtoMessage()    {}
-func (*CreateCombinationMABindingResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{74}
-}
-
-func (m *CreateCombinationMABindingResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateCombinationMABindingResponse.Unmarshal(m, b)
-}
-func (m *CreateCombinationMABindingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateCombinationMABindingResponse.Marshal(b, m, deterministic)
-}
-func (m *CreateCombinationMABindingResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCombinationMABindingResponse.Merge(m, src)
-}
-func (m *CreateCombinationMABindingResponse) XXX_Size() int {
-	return xxx_messageInfo_CreateCombinationMABindingResponse.Size(m)
-}
-func (m *CreateCombinationMABindingResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateCombinationMABindingResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateCombinationMABindingResponse proto.InternalMessageInfo
-
-func (m *CreateCombinationMABindingResponse) GetCombinationBindingId() *wrappers.StringValue {
-	if m != nil {
-		return m.CombinationBindingId
-	}
-	return nil
-}
-
-type DescribeCombinationMABindingsRequest struct {
-	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
-	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,4,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,5,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	Offset               uint32                `protobuf:"varint,6,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit                uint32                `protobuf:"varint,7,opt,name=limit,proto3" json:"limit,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *DescribeCombinationMABindingsRequest) Reset()         { *m = DescribeCombinationMABindingsRequest{} }
-func (m *DescribeCombinationMABindingsRequest) String() string { return proto.CompactTextString(m) }
-func (*DescribeCombinationMABindingsRequest) ProtoMessage()    {}
-func (*DescribeCombinationMABindingsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{75}
-}
-
-func (m *DescribeCombinationMABindingsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DescribeCombinationMABindingsRequest.Unmarshal(m, b)
-}
-func (m *DescribeCombinationMABindingsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DescribeCombinationMABindingsRequest.Marshal(b, m, deterministic)
-}
-func (m *DescribeCombinationMABindingsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeCombinationMABindingsRequest.Merge(m, src)
-}
-func (m *DescribeCombinationMABindingsRequest) XXX_Size() int {
-	return xxx_messageInfo_DescribeCombinationMABindingsRequest.Size(m)
-}
-func (m *DescribeCombinationMABindingsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_DescribeCombinationMABindingsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DescribeCombinationMABindingsRequest proto.InternalMessageInfo
-
-func (m *DescribeCombinationMABindingsRequest) GetCombinationBindingId() *wrappers.StringValue {
-	if m != nil {
-		return m.CombinationBindingId
-	}
-	return nil
-}
-
-func (m *DescribeCombinationMABindingsRequest) GetCombinationSkuId() *wrappers.StringValue {
-	if m != nil {
-		return m.CombinationSkuId
-	}
-	return nil
-}
-
-func (m *DescribeCombinationMABindingsRequest) GetStatus() *wrappers.StringValue {
-	if m != nil {
-		return m.Status
-	}
-	return nil
-}
-
-func (m *DescribeCombinationMABindingsRequest) GetSortKey() *wrappers.StringValue {
-	if m != nil {
-		return m.SortKey
-	}
-	return nil
-}
-
-func (m *DescribeCombinationMABindingsRequest) GetReverse() *wrappers.BoolValue {
-	if m != nil {
-		return m.Reverse
-	}
-	return nil
-}
-
-func (m *DescribeCombinationMABindingsRequest) GetOffset() uint32 {
-	if m != nil {
-		return m.Offset
-	}
-	return 0
-}
-
-func (m *DescribeCombinationMABindingsRequest) GetLimit() uint32 {
-	if m != nil {
-		return m.Limit
-	}
-	return 0
-}
-
-type DescribeCombinationMABindingsResponse struct {
-	CombinationMaBindings []*CombinationMABinding `protobuf:"bytes,1,rep,name=combination_ma_bindings,json=combinationMaBindings,proto3" json:"combination_ma_bindings,omitempty"`
-	XXX_NoUnkeyedLiteral  struct{}                `json:"-"`
-	XXX_unrecognized      []byte                  `json:"-"`
-	XXX_sizecache         int32                   `json:"-"`
-}
-
-func (m *DescribeCombinationMABindingsResponse) Reset()         { *m = DescribeCombinationMABindingsResponse{} }
-func (m *DescribeCombinationMABindingsResponse) String() string { return proto.CompactTextString(m) }
-func (*DescribeCombinationMABindingsResponse) ProtoMessage()    {}
-func (*DescribeCombinationMABindingsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{76}
-}
-
-func (m *DescribeCombinationMABindingsResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DescribeCombinationMABindingsResponse.Unmarshal(m, b)
-}
-func (m *DescribeCombinationMABindingsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DescribeCombinationMABindingsResponse.Marshal(b, m, deterministic)
-}
-func (m *DescribeCombinationMABindingsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeCombinationMABindingsResponse.Merge(m, src)
-}
-func (m *DescribeCombinationMABindingsResponse) XXX_Size() int {
-	return xxx_messageInfo_DescribeCombinationMABindingsResponse.Size(m)
-}
-func (m *DescribeCombinationMABindingsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_DescribeCombinationMABindingsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DescribeCombinationMABindingsResponse proto.InternalMessageInfo
-
-func (m *DescribeCombinationMABindingsResponse) GetCombinationMaBindings() []*CombinationMABinding {
-	if m != nil {
-		return m.CombinationMaBindings
-	}
-	return nil
-}
-
-type ModifyCombinationMABindingRequest struct {
-	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
-	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
-	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *ModifyCombinationMABindingRequest) Reset()         { *m = ModifyCombinationMABindingRequest{} }
-func (m *ModifyCombinationMABindingRequest) String() string { return proto.CompactTextString(m) }
-func (*ModifyCombinationMABindingRequest) ProtoMessage()    {}
-func (*ModifyCombinationMABindingRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{77}
-}
-
-func (m *ModifyCombinationMABindingRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ModifyCombinationMABindingRequest.Unmarshal(m, b)
-}
-func (m *ModifyCombinationMABindingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ModifyCombinationMABindingRequest.Marshal(b, m, deterministic)
-}
-func (m *ModifyCombinationMABindingRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ModifyCombinationMABindingRequest.Merge(m, src)
-}
-func (m *ModifyCombinationMABindingRequest) XXX_Size() int {
-	return xxx_messageInfo_ModifyCombinationMABindingRequest.Size(m)
-}
-func (m *ModifyCombinationMABindingRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_ModifyCombinationMABindingRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ModifyCombinationMABindingRequest proto.InternalMessageInfo
-
-func (m *ModifyCombinationMABindingRequest) GetCombinationBindingId() *wrappers.StringValue {
-	if m != nil {
-		return m.CombinationBindingId
-	}
-	return nil
-}
-
-func (m *ModifyCombinationMABindingRequest) GetCombinationSkuId() *wrappers.StringValue {
-	if m != nil {
-		return m.CombinationSkuId
-	}
-	return nil
-}
-
-func (m *ModifyCombinationMABindingRequest) GetAttributeId() *wrappers.StringValue {
-	if m != nil {
-		return m.AttributeId
-	}
-	return nil
-}
-
-type ModifyCombinationMABindingResponse struct {
-	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *ModifyCombinationMABindingResponse) Reset()         { *m = ModifyCombinationMABindingResponse{} }
-func (m *ModifyCombinationMABindingResponse) String() string { return proto.CompactTextString(m) }
-func (*ModifyCombinationMABindingResponse) ProtoMessage()    {}
-func (*ModifyCombinationMABindingResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{78}
-}
-
-func (m *ModifyCombinationMABindingResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ModifyCombinationMABindingResponse.Unmarshal(m, b)
-}
-func (m *ModifyCombinationMABindingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ModifyCombinationMABindingResponse.Marshal(b, m, deterministic)
-}
-func (m *ModifyCombinationMABindingResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ModifyCombinationMABindingResponse.Merge(m, src)
-}
-func (m *ModifyCombinationMABindingResponse) XXX_Size() int {
-	return xxx_messageInfo_ModifyCombinationMABindingResponse.Size(m)
-}
-func (m *ModifyCombinationMABindingResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_ModifyCombinationMABindingResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ModifyCombinationMABindingResponse proto.InternalMessageInfo
-
-func (m *ModifyCombinationMABindingResponse) GetCombinationBindingId() *wrappers.StringValue {
-	if m != nil {
-		return m.CombinationBindingId
-	}
-	return nil
-}
-
-type DeleteCombinationMABindingsRequest struct {
-	CombinationBindingIds []string `protobuf:"bytes,1,rep,name=combination_binding_ids,json=combinationBindingIds,proto3" json:"combination_binding_ids,omitempty"`
-	XXX_NoUnkeyedLiteral  struct{} `json:"-"`
-	XXX_unrecognized      []byte   `json:"-"`
-	XXX_sizecache         int32    `json:"-"`
-}
-
-func (m *DeleteCombinationMABindingsRequest) Reset()         { *m = DeleteCombinationMABindingsRequest{} }
-func (m *DeleteCombinationMABindingsRequest) String() string { return proto.CompactTextString(m) }
-func (*DeleteCombinationMABindingsRequest) ProtoMessage()    {}
-func (*DeleteCombinationMABindingsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{79}
-}
-
-func (m *DeleteCombinationMABindingsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DeleteCombinationMABindingsRequest.Unmarshal(m, b)
-}
-func (m *DeleteCombinationMABindingsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DeleteCombinationMABindingsRequest.Marshal(b, m, deterministic)
-}
-func (m *DeleteCombinationMABindingsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteCombinationMABindingsRequest.Merge(m, src)
-}
-func (m *DeleteCombinationMABindingsRequest) XXX_Size() int {
-	return xxx_messageInfo_DeleteCombinationMABindingsRequest.Size(m)
-}
-func (m *DeleteCombinationMABindingsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_DeleteCombinationMABindingsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DeleteCombinationMABindingsRequest proto.InternalMessageInfo
-
-func (m *DeleteCombinationMABindingsRequest) GetCombinationBindingIds() []string {
-	if m != nil {
-		return m.CombinationBindingIds
-	}
-	return nil
-}
-
-type DeleteCombinationMABindingsResponse struct {
-	CombinationBindingIds []string `protobuf:"bytes,1,rep,name=combination_binding_ids,json=combinationBindingIds,proto3" json:"combination_binding_ids,omitempty"`
-	XXX_NoUnkeyedLiteral  struct{} `json:"-"`
-	XXX_unrecognized      []byte   `json:"-"`
-	XXX_sizecache         int32    `json:"-"`
-}
-
-func (m *DeleteCombinationMABindingsResponse) Reset()         { *m = DeleteCombinationMABindingsResponse{} }
-func (m *DeleteCombinationMABindingsResponse) String() string { return proto.CompactTextString(m) }
-func (*DeleteCombinationMABindingsResponse) ProtoMessage()    {}
-func (*DeleteCombinationMABindingsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{80}
-}
-
-func (m *DeleteCombinationMABindingsResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DeleteCombinationMABindingsResponse.Unmarshal(m, b)
-}
-func (m *DeleteCombinationMABindingsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DeleteCombinationMABindingsResponse.Marshal(b, m, deterministic)
-}
-func (m *DeleteCombinationMABindingsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteCombinationMABindingsResponse.Merge(m, src)
-}
-func (m *DeleteCombinationMABindingsResponse) XXX_Size() int {
-	return xxx_messageInfo_DeleteCombinationMABindingsResponse.Size(m)
-}
-func (m *DeleteCombinationMABindingsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_DeleteCombinationMABindingsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DeleteCombinationMABindingsResponse proto.InternalMessageInfo
-
-func (m *DeleteCombinationMABindingsResponse) GetCombinationBindingIds() []string {
-	if m != nil {
-		return m.CombinationBindingIds
-	}
-	return nil
-}
-
-type MeteringValue struct {
-	AttributeId          *wrappers.StringValue `protobuf:"bytes,1,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
-	Value                *wrappers.DoubleValue `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *MeteringValue) Reset()         { *m = MeteringValue{} }
-func (m *MeteringValue) String() string { return proto.CompactTextString(m) }
-func (*MeteringValue) ProtoMessage()    {}
-func (*MeteringValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{81}
-}
-
-func (m *MeteringValue) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_MeteringValue.Unmarshal(m, b)
-}
-func (m *MeteringValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_MeteringValue.Marshal(b, m, deterministic)
-}
-func (m *MeteringValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MeteringValue.Merge(m, src)
-}
-func (m *MeteringValue) XXX_Size() int {
-	return xxx_messageInfo_MeteringValue.Size(m)
-}
-func (m *MeteringValue) XXX_DiscardUnknown() {
-	xxx_messageInfo_MeteringValue.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MeteringValue proto.InternalMessageInfo
-
-func (m *MeteringValue) GetAttributeId() *wrappers.StringValue {
-	if m != nil {
-		return m.AttributeId
-	}
-	return nil
-}
-
-func (m *MeteringValue) GetValue() *wrappers.DoubleValue {
-	if m != nil {
-		return m.Value
-	}
-	return nil
-}
-
-type UpdateMeteringValue struct {
-	MeteringValue        *MeteringValue                       `protobuf:"bytes,1,opt,name=metering_value,json=meteringValue,proto3" json:"metering_value,omitempty"`
-	Type                 UpdateMeteringValue_UpdateValueTypes `protobuf:"varint,2,opt,name=type,proto3,enum=openpitrix.UpdateMeteringValue_UpdateValueTypes" json:"type,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                             `json:"-"`
-	XXX_unrecognized     []byte                               `json:"-"`
-	XXX_sizecache        int32                                `json:"-"`
-}
-
-func (m *UpdateMeteringValue) Reset()         { *m = UpdateMeteringValue{} }
-func (m *UpdateMeteringValue) String() string { return proto.CompactTextString(m) }
-func (*UpdateMeteringValue) ProtoMessage()    {}
-func (*UpdateMeteringValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{82}
-}
-
-func (m *UpdateMeteringValue) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UpdateMeteringValue.Unmarshal(m, b)
-}
-func (m *UpdateMeteringValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UpdateMeteringValue.Marshal(b, m, deterministic)
-}
-func (m *UpdateMeteringValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateMeteringValue.Merge(m, src)
-}
-func (m *UpdateMeteringValue) XXX_Size() int {
-	return xxx_messageInfo_UpdateMeteringValue.Size(m)
-}
-func (m *UpdateMeteringValue) XXX_DiscardUnknown() {
-	xxx_messageInfo_UpdateMeteringValue.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UpdateMeteringValue proto.InternalMessageInfo
-
-func (m *UpdateMeteringValue) GetMeteringValue() *MeteringValue {
-	if m != nil {
-		return m.MeteringValue
-	}
-	return nil
-}
-
-func (m *UpdateMeteringValue) GetType() UpdateMeteringValue_UpdateValueTypes {
-	if m != nil {
-		return m.Type
-	}
-	return UpdateMeteringValue_INCREMENTAL
-}
-
-type UpdateSkuMetering struct {
-	SkuId *wrappers.StringValue `protobuf:"bytes,1,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
-	// if the metering attributes of sku is only duration, this is nil
-	MeteringValues       []*UpdateMeteringValue `protobuf:"bytes,2,rep,name=metering_values,json=meteringValues,proto3" json:"metering_values,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
-	XXX_unrecognized     []byte                 `json:"-"`
-	XXX_sizecache        int32                  `json:"-"`
-}
-
-func (m *UpdateSkuMetering) Reset()         { *m = UpdateSkuMetering{} }
-func (m *UpdateSkuMetering) String() string { return proto.CompactTextString(m) }
-func (*UpdateSkuMetering) ProtoMessage()    {}
-func (*UpdateSkuMetering) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{83}
-}
-
-func (m *UpdateSkuMetering) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UpdateSkuMetering.Unmarshal(m, b)
-}
-func (m *UpdateSkuMetering) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UpdateSkuMetering.Marshal(b, m, deterministic)
-}
-func (m *UpdateSkuMetering) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateSkuMetering.Merge(m, src)
-}
-func (m *UpdateSkuMetering) XXX_Size() int {
-	return xxx_messageInfo_UpdateSkuMetering.Size(m)
-}
-func (m *UpdateSkuMetering) XXX_DiscardUnknown() {
-	xxx_messageInfo_UpdateSkuMetering.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UpdateSkuMetering proto.InternalMessageInfo
-
-func (m *UpdateSkuMetering) GetSkuId() *wrappers.StringValue {
-	if m != nil {
-		return m.SkuId
-	}
-	return nil
-}
-
-func (m *UpdateSkuMetering) GetMeteringValues() []*UpdateMeteringValue {
-	if m != nil {
-		return m.MeteringValues
-	}
-	return nil
-}
-
-// if sku_ids = [], mean is all skus of the reource
-type Resource struct {
-	ResourceId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
-	SkuIds               []string              `protobuf:"bytes,2,rep,name=sku_ids,json=skuIds,proto3" json:"sku_ids,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *Resource) Reset()         { *m = Resource{} }
-func (m *Resource) String() string { return proto.CompactTextString(m) }
-func (*Resource) ProtoMessage()    {}
-func (*Resource) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{84}
-}
-
-func (m *Resource) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Resource.Unmarshal(m, b)
-}
-func (m *Resource) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Resource.Marshal(b, m, deterministic)
-}
-func (m *Resource) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Resource.Merge(m, src)
-}
-func (m *Resource) XXX_Size() int {
-	return xxx_messageInfo_Resource.Size(m)
-}
-func (m *Resource) XXX_DiscardUnknown() {
-	xxx_messageInfo_Resource.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Resource proto.InternalMessageInfo
-
-func (m *Resource) GetResourceId() *wrappers.StringValue {
-	if m != nil {
-		return m.ResourceId
-	}
-	return nil
-}
-
-func (m *Resource) GetSkuIds() []string {
-	if m != nil {
-		return m.SkuIds
-	}
-	return nil
-}
-
-type InitMeteringRequest struct {
-	UserId               *wrappers.StringValue     `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	ResourceId           *wrappers.StringValue     `protobuf:"bytes,2,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
-	SkuMeterings         map[string]*MeteringValue `protobuf:"bytes,3,rep,name=sku_meterings,json=skuMeterings,proto3" json:"sku_meterings,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
-	XXX_unrecognized     []byte                    `json:"-"`
-	XXX_sizecache        int32                     `json:"-"`
-}
-
-func (m *InitMeteringRequest) Reset()         { *m = InitMeteringRequest{} }
-func (m *InitMeteringRequest) String() string { return proto.CompactTextString(m) }
-func (*InitMeteringRequest) ProtoMessage()    {}
-func (*InitMeteringRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{85}
-}
-
-func (m *InitMeteringRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_InitMeteringRequest.Unmarshal(m, b)
-}
-func (m *InitMeteringRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_InitMeteringRequest.Marshal(b, m, deterministic)
-}
-func (m *InitMeteringRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_InitMeteringRequest.Merge(m, src)
-}
-func (m *InitMeteringRequest) XXX_Size() int {
-	return xxx_messageInfo_InitMeteringRequest.Size(m)
-}
-func (m *InitMeteringRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_InitMeteringRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_InitMeteringRequest proto.InternalMessageInfo
-
-func (m *InitMeteringRequest) GetUserId() *wrappers.StringValue {
-	if m != nil {
-		return m.UserId
-	}
-	return nil
-}
-
-func (m *InitMeteringRequest) GetResourceId() *wrappers.StringValue {
-	if m != nil {
-		return m.ResourceId
-	}
-	return nil
-}
-
-func (m *InitMeteringRequest) GetSkuMeterings() map[string]*MeteringValue {
-	if m != nil {
-		return m.SkuMeterings
-	}
-	return nil
-}
-
-type StartMeteringsRequest struct {
-	Resources            []*Resource `protobuf:"bytes,1,rep,name=resources,proto3" json:"resources,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
-}
-
-func (m *StartMeteringsRequest) Reset()         { *m = StartMeteringsRequest{} }
-func (m *StartMeteringsRequest) String() string { return proto.CompactTextString(m) }
-func (*StartMeteringsRequest) ProtoMessage()    {}
-func (*StartMeteringsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{86}
-}
-
-func (m *StartMeteringsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_StartMeteringsRequest.Unmarshal(m, b)
-}
-func (m *StartMeteringsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_StartMeteringsRequest.Marshal(b, m, deterministic)
-}
-func (m *StartMeteringsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StartMeteringsRequest.Merge(m, src)
-}
-func (m *StartMeteringsRequest) XXX_Size() int {
-	return xxx_messageInfo_StartMeteringsRequest.Size(m)
-}
-func (m *StartMeteringsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_StartMeteringsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_StartMeteringsRequest proto.InternalMessageInfo
-
-func (m *StartMeteringsRequest) GetResources() []*Resource {
-	if m != nil {
-		return m.Resources
-	}
-	return nil
-}
-
-type UpdateMeteringRequest struct {
-	ResourceId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
-	SkuMeterings         []*UpdateSkuMetering  `protobuf:"bytes,2,rep,name=sku_meterings,json=skuMeterings,proto3" json:"sku_meterings,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *UpdateMeteringRequest) Reset()         { *m = UpdateMeteringRequest{} }
-func (m *UpdateMeteringRequest) String() string { return proto.CompactTextString(m) }
-func (*UpdateMeteringRequest) ProtoMessage()    {}
-func (*UpdateMeteringRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{87}
-}
-
-func (m *UpdateMeteringRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UpdateMeteringRequest.Unmarshal(m, b)
-}
-func (m *UpdateMeteringRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UpdateMeteringRequest.Marshal(b, m, deterministic)
-}
-func (m *UpdateMeteringRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateMeteringRequest.Merge(m, src)
-}
-func (m *UpdateMeteringRequest) XXX_Size() int {
-	return xxx_messageInfo_UpdateMeteringRequest.Size(m)
-}
-func (m *UpdateMeteringRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_UpdateMeteringRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UpdateMeteringRequest proto.InternalMessageInfo
-
-func (m *UpdateMeteringRequest) GetResourceId() *wrappers.StringValue {
-	if m != nil {
-		return m.ResourceId
-	}
-	return nil
-}
-
-func (m *UpdateMeteringRequest) GetSkuMeterings() []*UpdateSkuMetering {
-	if m != nil {
-		return m.SkuMeterings
-	}
-	return nil
-}
-
-type StopMeteringsRequest struct {
-	Resources            []*Resource `protobuf:"bytes,1,rep,name=resources,proto3" json:"resources,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
-}
-
-func (m *StopMeteringsRequest) Reset()         { *m = StopMeteringsRequest{} }
-func (m *StopMeteringsRequest) String() string { return proto.CompactTextString(m) }
-func (*StopMeteringsRequest) ProtoMessage()    {}
-func (*StopMeteringsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{88}
-}
-
-func (m *StopMeteringsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_StopMeteringsRequest.Unmarshal(m, b)
-}
-func (m *StopMeteringsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_StopMeteringsRequest.Marshal(b, m, deterministic)
-}
-func (m *StopMeteringsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StopMeteringsRequest.Merge(m, src)
-}
-func (m *StopMeteringsRequest) XXX_Size() int {
-	return xxx_messageInfo_StopMeteringsRequest.Size(m)
-}
-func (m *StopMeteringsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_StopMeteringsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_StopMeteringsRequest proto.InternalMessageInfo
-
-func (m *StopMeteringsRequest) GetResources() []*Resource {
-	if m != nil {
-		return m.Resources
-	}
-	return nil
-}
-
-type TerminateMeteringsRequest struct {
-	Resources            []*Resource `protobuf:"bytes,1,rep,name=resources,proto3" json:"resources,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
-}
-
-func (m *TerminateMeteringsRequest) Reset()         { *m = TerminateMeteringsRequest{} }
-func (m *TerminateMeteringsRequest) String() string { return proto.CompactTextString(m) }
-func (*TerminateMeteringsRequest) ProtoMessage()    {}
-func (*TerminateMeteringsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{89}
-}
-
-func (m *TerminateMeteringsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TerminateMeteringsRequest.Unmarshal(m, b)
-}
-func (m *TerminateMeteringsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TerminateMeteringsRequest.Marshal(b, m, deterministic)
-}
-func (m *TerminateMeteringsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TerminateMeteringsRequest.Merge(m, src)
-}
-func (m *TerminateMeteringsRequest) XXX_Size() int {
-	return xxx_messageInfo_TerminateMeteringsRequest.Size(m)
-}
-func (m *TerminateMeteringsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_TerminateMeteringsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TerminateMeteringsRequest proto.InternalMessageInfo
-
-func (m *TerminateMeteringsRequest) GetResources() []*Resource {
-	if m != nil {
-		return m.Resources
-	}
-	return nil
-}
-
-type CommonMeteringResponse struct {
-	ResourceId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *CommonMeteringResponse) Reset()         { *m = CommonMeteringResponse{} }
-func (m *CommonMeteringResponse) String() string { return proto.CompactTextString(m) }
-func (*CommonMeteringResponse) ProtoMessage()    {}
-func (*CommonMeteringResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{90}
-}
-
-func (m *CommonMeteringResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CommonMeteringResponse.Unmarshal(m, b)
-}
-func (m *CommonMeteringResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CommonMeteringResponse.Marshal(b, m, deterministic)
-}
-func (m *CommonMeteringResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CommonMeteringResponse.Merge(m, src)
-}
-func (m *CommonMeteringResponse) XXX_Size() int {
-	return xxx_messageInfo_CommonMeteringResponse.Size(m)
-}
-func (m *CommonMeteringResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CommonMeteringResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CommonMeteringResponse proto.InternalMessageInfo
-
-func (m *CommonMeteringResponse) GetResourceId() *wrappers.StringValue {
-	if m != nil {
-		return m.ResourceId
-	}
-	return nil
-}
-
-type CommonMeteringsResponse struct {
-	ResourceIds          []string `protobuf:"bytes,1,rep,name=resource_ids,json=resourceIds,proto3" json:"resource_ids,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CommonMeteringsResponse) Reset()         { *m = CommonMeteringsResponse{} }
-func (m *CommonMeteringsResponse) String() string { return proto.CompactTextString(m) }
-func (*CommonMeteringsResponse) ProtoMessage()    {}
-func (*CommonMeteringsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{91}
-}
-
-func (m *CommonMeteringsResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CommonMeteringsResponse.Unmarshal(m, b)
-}
-func (m *CommonMeteringsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CommonMeteringsResponse.Marshal(b, m, deterministic)
-}
-func (m *CommonMeteringsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CommonMeteringsResponse.Merge(m, src)
-}
-func (m *CommonMeteringsResponse) XXX_Size() int {
-	return xxx_messageInfo_CommonMeteringsResponse.Size(m)
-}
-func (m *CommonMeteringsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CommonMeteringsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CommonMeteringsResponse proto.InternalMessageInfo
-
-func (m *CommonMeteringsResponse) GetResourceIds() []string {
-	if m != nil {
-		return m.ResourceIds
-	}
-	return nil
-}
-
-type Leasing struct {
-	LeasingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=LeasingId,proto3" json:"LeasingId,omitempty"`
-	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=GroupId,proto3" json:"GroupId,omitempty"`
-	UserId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=UserId,proto3" json:"UserId,omitempty"`
-	ResourceId           *wrappers.StringValue `protobuf:"bytes,4,opt,name=ResourceId,proto3" json:"ResourceId,omitempty"`
-	SkuId                *wrappers.StringValue `protobuf:"bytes,5,opt,name=SkuId,proto3" json:"SkuId,omitempty"`
-	MeteringValues       map[string]float64    `protobuf:"bytes,6,rep,name=MeteringValues,proto3" json:"MeteringValues,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"fixed64,2,opt,name=value,proto3"`
-	Status               *wrappers.StringValue `protobuf:"bytes,7,opt,name=Status,proto3" json:"Status,omitempty"`
-	LeaseTime            *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=LeaseTime,proto3" json:"LeaseTime,omitempty"`
-	UpdateDurationTime   *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=UpdateDurationTime,proto3" json:"UpdateDurationTime,omitempty"`
-	RenewalTime          *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=RenewalTime,proto3" json:"RenewalTime,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,11,opt,name=CreateTime,proto3" json:"CreateTime,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,12,opt,name=StatusTime,proto3" json:"StatusTime,omitempty"`
-	StopTimes            map[string]string     `protobuf:"bytes,13,rep,name=StopTimes,proto3" json:"StopTimes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *Leasing) Reset()         { *m = Leasing{} }
-func (m *Leasing) String() string { return proto.CompactTextString(m) }
-func (*Leasing) ProtoMessage()    {}
-func (*Leasing) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{92}
-}
-
-func (m *Leasing) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Leasing.Unmarshal(m, b)
-}
-func (m *Leasing) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Leasing.Marshal(b, m, deterministic)
-}
-func (m *Leasing) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Leasing.Merge(m, src)
-}
-func (m *Leasing) XXX_Size() int {
-	return xxx_messageInfo_Leasing.Size(m)
-}
-func (m *Leasing) XXX_DiscardUnknown() {
-	xxx_messageInfo_Leasing.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Leasing proto.InternalMessageInfo
-
-func (m *Leasing) GetLeasingId() *wrappers.StringValue {
-	if m != nil {
-		return m.LeasingId
-	}
-	return nil
-}
-
-func (m *Leasing) GetGroupId() *wrappers.StringValue {
-	if m != nil {
-		return m.GroupId
-	}
-	return nil
-}
-
-func (m *Leasing) GetUserId() *wrappers.StringValue {
-	if m != nil {
-		return m.UserId
-	}
-	return nil
-}
-
-func (m *Leasing) GetResourceId() *wrappers.StringValue {
-	if m != nil {
-		return m.ResourceId
-	}
-	return nil
-}
-
-func (m *Leasing) GetSkuId() *wrappers.StringValue {
-	if m != nil {
-		return m.SkuId
-	}
-	return nil
-}
-
-func (m *Leasing) GetMeteringValues() map[string]float64 {
-	if m != nil {
-		return m.MeteringValues
-	}
-	return nil
-}
-
-func (m *Leasing) GetStatus() *wrappers.StringValue {
-	if m != nil {
-		return m.Status
-	}
-	return nil
-}
-
-func (m *Leasing) GetLeaseTime() *timestamp.Timestamp {
-	if m != nil {
-		return m.LeaseTime
-	}
-	return nil
-}
-
-func (m *Leasing) GetUpdateDurationTime() *timestamp.Timestamp {
-	if m != nil {
-		return m.UpdateDurationTime
-	}
-	return nil
-}
-
-func (m *Leasing) GetRenewalTime() *timestamp.Timestamp {
-	if m != nil {
-		return m.RenewalTime
-	}
-	return nil
-}
-
-func (m *Leasing) GetCreateTime() *timestamp.Timestamp {
-	if m != nil {
-		return m.CreateTime
-	}
-	return nil
-}
-
-func (m *Leasing) GetStatusTime() *timestamp.Timestamp {
-	if m != nil {
-		return m.StatusTime
-	}
-	return nil
-}
-
-func (m *Leasing) GetStopTimes() map[string]string {
-	if m != nil {
-		return m.StopTimes
-	}
-	return nil
-}
-
-type DescribeLeasingsRequest struct {
-	LeasingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=LeasingId,proto3" json:"LeasingId,omitempty"`
-	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=GroupId,proto3" json:"GroupId,omitempty"`
-	UserId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=UserId,proto3" json:"UserId,omitempty"`
-	ResourceId           *wrappers.StringValue `protobuf:"bytes,4,opt,name=ResourceId,proto3" json:"ResourceId,omitempty"`
-	SkuId                *wrappers.StringValue `protobuf:"bytes,5,opt,name=SkuId,proto3" json:"SkuId,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,6,opt,name=Status,proto3" json:"Status,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,7,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,8,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	Offset               uint32                `protobuf:"varint,9,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit                uint32                `protobuf:"varint,10,opt,name=limit,proto3" json:"limit,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *DescribeLeasingsRequest) Reset()         { *m = DescribeLeasingsRequest{} }
-func (m *DescribeLeasingsRequest) String() string { return proto.CompactTextString(m) }
-func (*DescribeLeasingsRequest) ProtoMessage()    {}
-func (*DescribeLeasingsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{93}
-}
-
-func (m *DescribeLeasingsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DescribeLeasingsRequest.Unmarshal(m, b)
-}
-func (m *DescribeLeasingsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DescribeLeasingsRequest.Marshal(b, m, deterministic)
-}
-func (m *DescribeLeasingsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeLeasingsRequest.Merge(m, src)
-}
-func (m *DescribeLeasingsRequest) XXX_Size() int {
-	return xxx_messageInfo_DescribeLeasingsRequest.Size(m)
-}
-func (m *DescribeLeasingsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_DescribeLeasingsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DescribeLeasingsRequest proto.InternalMessageInfo
-
-func (m *DescribeLeasingsRequest) GetLeasingId() *wrappers.StringValue {
-	if m != nil {
-		return m.LeasingId
-	}
-	return nil
-}
-
-func (m *DescribeLeasingsRequest) GetGroupId() *wrappers.StringValue {
-	if m != nil {
-		return m.GroupId
-	}
-	return nil
-}
-
-func (m *DescribeLeasingsRequest) GetUserId() *wrappers.StringValue {
-	if m != nil {
-		return m.UserId
-	}
-	return nil
-}
-
-func (m *DescribeLeasingsRequest) GetResourceId() *wrappers.StringValue {
-	if m != nil {
-		return m.ResourceId
-	}
-	return nil
-}
-
-func (m *DescribeLeasingsRequest) GetSkuId() *wrappers.StringValue {
-	if m != nil {
-		return m.SkuId
-	}
-	return nil
-}
-
-func (m *DescribeLeasingsRequest) GetStatus() *wrappers.StringValue {
-	if m != nil {
-		return m.Status
-	}
-	return nil
-}
-
-func (m *DescribeLeasingsRequest) GetSortKey() *wrappers.StringValue {
-	if m != nil {
-		return m.SortKey
-	}
-	return nil
-}
-
-func (m *DescribeLeasingsRequest) GetReverse() *wrappers.BoolValue {
-	if m != nil {
-		return m.Reverse
-	}
-	return nil
-}
-
-func (m *DescribeLeasingsRequest) GetOffset() uint32 {
-	if m != nil {
-		return m.Offset
-	}
-	return 0
-}
-
-func (m *DescribeLeasingsRequest) GetLimit() uint32 {
-	if m != nil {
-		return m.Limit
-	}
-	return 0
-}
-
-type DescribeLeasingsResponse struct {
-	Leasings             []*Leasing `protobuf:"bytes,1,rep,name=leasings,proto3" json:"leasings,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
-}
-
-func (m *DescribeLeasingsResponse) Reset()         { *m = DescribeLeasingsResponse{} }
-func (m *DescribeLeasingsResponse) String() string { return proto.CompactTextString(m) }
-func (*DescribeLeasingsResponse) ProtoMessage()    {}
-func (*DescribeLeasingsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{94}
-}
-
-func (m *DescribeLeasingsResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_DescribeLeasingsResponse.Unmarshal(m, b)
-}
-func (m *DescribeLeasingsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_DescribeLeasingsResponse.Marshal(b, m, deterministic)
-}
-func (m *DescribeLeasingsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeLeasingsResponse.Merge(m, src)
-}
-func (m *DescribeLeasingsResponse) XXX_Size() int {
-	return xxx_messageInfo_DescribeLeasingsResponse.Size(m)
-}
-func (m *DescribeLeasingsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_DescribeLeasingsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_DescribeLeasingsResponse proto.InternalMessageInfo
-
-func (m *DescribeLeasingsResponse) GetLeasings() []*Leasing {
-	if m != nil {
-		return m.Leasings
 	}
 	return nil
 }
@@ -5210,15 +4261,22 @@ func init() {
 	proto.RegisterType((*ModifySkuResponse)(nil), "openpitrix.ModifySkuResponse")
 	proto.RegisterType((*DeleteSkusRequest)(nil), "openpitrix.DeleteSkusRequest")
 	proto.RegisterType((*DeleteSkusResponse)(nil), "openpitrix.DeleteSkusResponse")
-	proto.RegisterType((*MeteringAttributeBinding)(nil), "openpitrix.MeteringAttributeBinding")
-	proto.RegisterType((*CreateMeteringAttributeBindingsRequest)(nil), "openpitrix.CreateMeteringAttributeBindingsRequest")
-	proto.RegisterType((*CreateMeteringAttributeBindingsResponse)(nil), "openpitrix.CreateMeteringAttributeBindingsResponse")
-	proto.RegisterType((*DescribeMeteringAttributeBindingsRequest)(nil), "openpitrix.DescribeMeteringAttributeBindingsRequest")
-	proto.RegisterType((*DescribeMeteringAttributeBindingsResponse)(nil), "openpitrix.DescribeMeteringAttributeBindingsResponse")
-	proto.RegisterType((*ModifyMeteringAttributeBindingRequest)(nil), "openpitrix.ModifyMeteringAttributeBindingRequest")
-	proto.RegisterType((*ModifyMeteringAttributeBindingResponse)(nil), "openpitrix.ModifyMeteringAttributeBindingResponse")
-	proto.RegisterType((*DeleteMeteringAttributeBindingsRequest)(nil), "openpitrix.DeleteMeteringAttributeBindingsRequest")
-	proto.RegisterType((*DeleteMeteringAttributeBindingsResponse)(nil), "openpitrix.DeleteMeteringAttributeBindingsResponse")
+	proto.RegisterType((*SkuMetering)(nil), "openpitrix.SkuMetering")
+	proto.RegisterMapType((map[string]float64)(nil), "openpitrix.SkuMetering.ValueEntry")
+	proto.RegisterType((*UpdateMeteringValue)(nil), "openpitrix.UpdateMeteringValue")
+	proto.RegisterType((*UpdateSkuMetering)(nil), "openpitrix.UpdateSkuMetering")
+	proto.RegisterType((*InitMeteringRequest)(nil), "openpitrix.InitMeteringRequest")
+	proto.RegisterType((*UpdateMeteringRequest)(nil), "openpitrix.UpdateMeteringRequest")
+	proto.RegisterType((*StopMeteringsRequest)(nil), "openpitrix.StopMeteringsRequest")
+	proto.RegisterType((*StartMeteringsRequest)(nil), "openpitrix.StartMeteringsRequest")
+	proto.RegisterType((*TerminateMeteringsRequest)(nil), "openpitrix.TerminateMeteringsRequest")
+	proto.RegisterType((*CommonMeteringResponse)(nil), "openpitrix.CommonMeteringResponse")
+	proto.RegisterType((*CommonMeteringsResponse)(nil), "openpitrix.CommonMeteringsResponse")
+	proto.RegisterType((*Leasing)(nil), "openpitrix.Leasing")
+	proto.RegisterMapType((map[string]float64)(nil), "openpitrix.Leasing.MeteringValuesEntry")
+	proto.RegisterMapType((map[string]string)(nil), "openpitrix.Leasing.StopTimesEntry")
+	proto.RegisterType((*DescribeLeasingsRequest)(nil), "openpitrix.DescribeLeasingsRequest")
+	proto.RegisterType((*DescribeLeasingsResponse)(nil), "openpitrix.DescribeLeasingsResponse")
 	proto.RegisterType((*Combination)(nil), "openpitrix.Combination")
 	proto.RegisterType((*CreateCombinationRequest)(nil), "openpitrix.CreateCombinationRequest")
 	proto.RegisterType((*CreateCombinationResponse)(nil), "openpitrix.CreateCombinationResponse")
@@ -5237,281 +4295,214 @@ func init() {
 	proto.RegisterType((*ModifyCombinationSkuResponse)(nil), "openpitrix.ModifyCombinationSkuResponse")
 	proto.RegisterType((*DeleteCombinationSkusRequest)(nil), "openpitrix.DeleteCombinationSkusRequest")
 	proto.RegisterType((*DeleteCombinationSkusResponse)(nil), "openpitrix.DeleteCombinationSkusResponse")
-	proto.RegisterType((*CombinationMABinding)(nil), "openpitrix.CombinationMABinding")
-	proto.RegisterType((*CreateCombinationMABindingRequest)(nil), "openpitrix.CreateCombinationMABindingRequest")
-	proto.RegisterType((*CreateCombinationMABindingResponse)(nil), "openpitrix.CreateCombinationMABindingResponse")
-	proto.RegisterType((*DescribeCombinationMABindingsRequest)(nil), "openpitrix.DescribeCombinationMABindingsRequest")
-	proto.RegisterType((*DescribeCombinationMABindingsResponse)(nil), "openpitrix.DescribeCombinationMABindingsResponse")
-	proto.RegisterType((*ModifyCombinationMABindingRequest)(nil), "openpitrix.ModifyCombinationMABindingRequest")
-	proto.RegisterType((*ModifyCombinationMABindingResponse)(nil), "openpitrix.ModifyCombinationMABindingResponse")
-	proto.RegisterType((*DeleteCombinationMABindingsRequest)(nil), "openpitrix.DeleteCombinationMABindingsRequest")
-	proto.RegisterType((*DeleteCombinationMABindingsResponse)(nil), "openpitrix.DeleteCombinationMABindingsResponse")
-	proto.RegisterType((*MeteringValue)(nil), "openpitrix.MeteringValue")
-	proto.RegisterType((*UpdateMeteringValue)(nil), "openpitrix.UpdateMeteringValue")
-	proto.RegisterType((*UpdateSkuMetering)(nil), "openpitrix.UpdateSkuMetering")
-	proto.RegisterType((*Resource)(nil), "openpitrix.Resource")
-	proto.RegisterType((*InitMeteringRequest)(nil), "openpitrix.InitMeteringRequest")
-	proto.RegisterMapType((map[string]*MeteringValue)(nil), "openpitrix.InitMeteringRequest.SkuMeteringsEntry")
-	proto.RegisterType((*StartMeteringsRequest)(nil), "openpitrix.StartMeteringsRequest")
-	proto.RegisterType((*UpdateMeteringRequest)(nil), "openpitrix.UpdateMeteringRequest")
-	proto.RegisterType((*StopMeteringsRequest)(nil), "openpitrix.StopMeteringsRequest")
-	proto.RegisterType((*TerminateMeteringsRequest)(nil), "openpitrix.TerminateMeteringsRequest")
-	proto.RegisterType((*CommonMeteringResponse)(nil), "openpitrix.CommonMeteringResponse")
-	proto.RegisterType((*CommonMeteringsResponse)(nil), "openpitrix.CommonMeteringsResponse")
-	proto.RegisterType((*Leasing)(nil), "openpitrix.Leasing")
-	proto.RegisterMapType((map[string]float64)(nil), "openpitrix.Leasing.MeteringValuesEntry")
-	proto.RegisterMapType((map[string]string)(nil), "openpitrix.Leasing.StopTimesEntry")
-	proto.RegisterType((*DescribeLeasingsRequest)(nil), "openpitrix.DescribeLeasingsRequest")
-	proto.RegisterType((*DescribeLeasingsResponse)(nil), "openpitrix.DescribeLeasingsResponse")
 }
 
 func init() { proto.RegisterFile("metering.proto", fileDescriptor_e3483aebeefa1096) }
 
 var fileDescriptor_e3483aebeefa1096 = []byte{
-	// 3883 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x5c, 0x49, 0x6c, 0x1c, 0xc7,
-	0xd5, 0xfe, 0x7b, 0x86, 0xeb, 0x1b, 0xae, 0xc5, 0x6d, 0xd8, 0xe2, 0x32, 0x2c, 0x4a, 0x22, 0x45,
-	0x49, 0xa4, 0x44, 0x5b, 0x5e, 0x24, 0x79, 0x19, 0x2e, 0xb0, 0xa9, 0xd5, 0xff, 0x50, 0x5e, 0xe0,
-	0xff, 0xff, 0xa1, 0x7f, 0xa8, 0x69, 0xd1, 0xf3, 0x37, 0x67, 0xf9, 0xa7, 0x7b, 0x2c, 0xf3, 0x12,
-	0x20, 0x8e, 0x91, 0xe4, 0x94, 0x00, 0x13, 0x04, 0x8e, 0x1d, 0xfb, 0x20, 0x20, 0x48, 0x82, 0x04,
-	0x01, 0x02, 0x5f, 0x82, 0x24, 0x08, 0x72, 0x48, 0x8e, 0x01, 0x82, 0x24, 0x40, 0x0e, 0xc9, 0xc1,
-	0x01, 0xe2, 0x4b, 0x2e, 0xc9, 0x31, 0xb9, 0x24, 0x08, 0xaa, 0xba, 0xba, 0xbb, 0xaa, 0xbb, 0x7a,
-	0x99, 0x19, 0x6a, 0xa3, 0x7d, 0x12, 0x35, 0xfd, 0xea, 0xf5, 0x7b, 0xdf, 0xfb, 0xde, 0x7b, 0x55,
-	0xdd, 0x55, 0x0d, 0x03, 0x25, 0xcd, 0xd4, 0x6a, 0xc5, 0xf2, 0xee, 0x72, 0xb5, 0x56, 0x31, 0x2b,
-	0x08, 0x2a, 0x55, 0xad, 0x5c, 0x2d, 0x9a, 0xb5, 0xe2, 0x5b, 0xea, 0xcc, 0x6e, 0xa5, 0xb2, 0xbb,
-	0xa7, 0xad, 0xd0, 0x2b, 0x3b, 0xf5, 0xdb, 0x2b, 0x77, 0x6a, 0xf9, 0x6a, 0x55, 0xab, 0x19, 0x96,
-	0xac, 0x3a, 0xeb, 0xbd, 0x6e, 0x16, 0x4b, 0x9a, 0x61, 0xe6, 0x4b, 0x55, 0x26, 0x30, 0xc5, 0x04,
-	0xf2, 0xd5, 0xe2, 0x4a, 0xbe, 0x5c, 0xae, 0x98, 0x79, 0xb3, 0x58, 0x29, 0xdb, 0xc3, 0x4f, 0xd1,
-	0x7f, 0x6e, 0x9d, 0xde, 0xd5, 0xca, 0xa7, 0x8d, 0x3b, 0xf9, 0xdd, 0x5d, 0xad, 0xb6, 0x52, 0xa9,
-	0x52, 0x09, 0xbf, 0x34, 0xfe, 0x5e, 0x12, 0xfa, 0xb3, 0xa6, 0x59, 0x2b, 0xee, 0xd4, 0x4d, 0xed,
-	0x5a, 0xbe, 0xa4, 0xa1, 0x17, 0x61, 0x38, 0x6f, 0xff, 0x70, 0xb3, 0x9c, 0x2f, 0x69, 0x37, 0x8b,
-	0x85, 0xb4, 0x92, 0x51, 0x16, 0x53, 0xab, 0x53, 0xcb, 0xd6, 0x9d, 0x97, 0x6d, 0xd3, 0x96, 0xb7,
-	0x4d, 0xe2, 0xe4, 0x2b, 0xf9, 0xbd, 0xba, 0x96, 0x1b, 0xcc, 0xf3, 0x7a, 0xb6, 0x0a, 0xe8, 0x0c,
-	0x74, 0x90, 0xf1, 0xe9, 0x44, 0x8c, 0xc1, 0x54, 0x12, 0x3d, 0x0b, 0xa9, 0x82, 0x66, 0xdc, 0xaa,
-	0x15, 0xa9, 0xbd, 0xe9, 0x64, 0x8c, 0x81, 0xfc, 0x00, 0x74, 0x1a, 0x3a, 0xcc, 0xfd, 0xaa, 0x96,
-	0xee, 0xc8, 0x28, 0x8b, 0x03, 0xab, 0x93, 0xcb, 0x2e, 0xea, 0xcb, 0x8e, 0x93, 0x37, 0xf6, 0xab,
-	0x5a, 0x8e, 0x8a, 0xa1, 0xc7, 0xa1, 0xcb, 0x30, 0xf3, 0x66, 0xdd, 0x48, 0x77, 0xc6, 0xb8, 0x13,
-	0x93, 0x45, 0x17, 0x20, 0x75, 0xab, 0xa6, 0xe5, 0x4d, 0xed, 0x26, 0x09, 0x4c, 0xba, 0x8b, 0x0e,
-	0x55, 0x7d, 0x43, 0x6f, 0xd8, 0x51, 0xcb, 0x81, 0x25, 0x4e, 0x7e, 0x20, 0x83, 0x2d, 0x35, 0xd6,
-	0xe0, 0xee, 0xe8, 0xc1, 0x96, 0x38, 0xf9, 0x01, 0xff, 0x4c, 0x01, 0x75, 0x9d, 0xea, 0x12, 0x42,
-	0x96, 0xd3, 0xfe, 0xbf, 0xae, 0x19, 0xa6, 0x83, 0xb7, 0xd2, 0x2a, 0xde, 0x89, 0x56, 0xf1, 0x4e,
-	0xc6, 0xc2, 0x1b, 0xef, 0xc2, 0x11, 0xa9, 0xf9, 0x46, 0xb5, 0x52, 0x36, 0x0e, 0x90, 0x79, 0xf8,
-	0xc3, 0x24, 0x4c, 0x6f, 0x50, 0x3b, 0x77, 0xc4, 0x7b, 0x19, 0x36, 0x56, 0x0f, 0x92, 0xe5, 0xcd,
-	0xa1, 0xc6, 0xb1, 0xb4, 0xa3, 0x09, 0x96, 0x3e, 0x09, 0x3d, 0x46, 0xa5, 0x66, 0xde, 0xd4, 0xb5,
-	0xfd, 0x58, 0xec, 0xee, 0x26, 0xd2, 0x97, 0xb5, 0x7d, 0xf4, 0x38, 0x74, 0xd7, 0xb4, 0x37, 0xb5,
-	0x9a, 0x11, 0x4c, 0xed, 0xb5, 0x4a, 0x65, 0x8f, 0x8d, 0x62, 0xa2, 0x68, 0x1c, 0xba, 0x2a, 0xb7,
-	0x6f, 0x1b, 0x9a, 0x49, 0x29, 0xdd, 0x9f, 0x63, 0xff, 0x43, 0xa3, 0xd0, 0xb9, 0x57, 0x2c, 0x15,
-	0xcd, 0x74, 0x0f, 0xfd, 0xd9, 0xfa, 0x0f, 0x2e, 0xc0, 0x4c, 0x50, 0x78, 0x18, 0x17, 0xd6, 0x60,
-	0x50, 0x8c, 0x8f, 0x91, 0x56, 0x32, 0xc9, 0xc5, 0x54, 0x00, 0x5c, 0x94, 0x47, 0x03, 0x42, 0x68,
-	0x0c, 0xfc, 0xa5, 0x04, 0xa8, 0x57, 0x2b, 0x85, 0xe2, 0xed, 0x7d, 0x69, 0xba, 0x7c, 0x7a, 0x0a,
-	0x1d, 0x49, 0x3c, 0x29, 0x10, 0x07, 0x9e, 0x78, 0x97, 0xe1, 0xc8, 0x86, 0xb6, 0xa7, 0x99, 0x01,
-	0x59, 0x77, 0x0a, 0x90, 0xef, 0x46, 0x56, 0x60, 0x7b, 0x73, 0x43, 0x1e, 0x5d, 0x06, 0xbe, 0x02,
-	0x53, 0x72, 0x65, 0xcc, 0xec, 0xe6, 0xb4, 0xfd, 0x34, 0xc1, 0x75, 0xba, 0x97, 0xcb, 0x45, 0x0f,
-	0x01, 0xea, 0xe5, 0xa2, 0xd9, 0xbc, 0xdb, 0x44, 0x4f, 0x4b, 0x04, 0x70, 0x93, 0x3a, 0xd9, 0x7a,
-	0xeb, 0xe9, 0x68, 0xa7, 0xf5, 0x74, 0x36, 0xd5, 0x7a, 0xae, 0xf9, 0x3a, 0x0f, 0x71, 0xbd, 0xe5,
-	0xce, 0x23, 0x69, 0x05, 0x96, 0x3e, 0x19, 0x23, 0xdb, 0x09, 0x0d, 0xfe, 0x6b, 0x42, 0xd2, 0x0a,
-	0xc8, 0x35, 0x79, 0x2b, 0x78, 0x24, 0x68, 0xc0, 0xd7, 0xf6, 0x8e, 0x16, 0x6b, 0x7b, 0x67, 0x2b,
-	0xb5, 0xbd, 0x4b, 0x5e, 0xdb, 0xbb, 0xa3, 0x6a, 0x3b, 0xc3, 0x5b, 0x56, 0xdb, 0x09, 0xe0, 0xe1,
-	0xb5, 0x9d, 0x12, 0x63, 0x40, 0xc0, 0xda, 0xc0, 0xdf, 0x50, 0x7c, 0xb5, 0x9d, 0x27, 0xe4, 0x03,
-	0x8c, 0xa9, 0xa4, 0xd8, 0xde, 0x23, 0x6a, 0xfb, 0x8b, 0xad, 0xc0, 0x6b, 0xa1, 0x3c, 0xb2, 0x1b,
-	0xf9, 0xcb, 0xa3, 0xa5, 0x4b, 0x56, 0x6c, 0xc5, 0xa0, 0x35, 0xa7, 0xed, 0x1f, 0x49, 0xe8, 0x75,
-	0x14, 0xa1, 0xe7, 0xa0, 0xcf, 0x1d, 0x1b, 0xd3, 0xdb, 0x94, 0x33, 0x62, 0xab, 0x20, 0x6f, 0x50,
-	0x89, 0x56, 0x5a, 0xb5, 0x14, 0xfd, 0x64, 0x2b, 0xc4, 0x58, 0x85, 0xce, 0x37, 0xc9, 0x95, 0x58,
-	0x19, 0x68, 0x89, 0x92, 0x31, 0x95, 0x3b, 0x65, 0xad, 0x16, 0x6b, 0x46, 0x66, 0x89, 0x72, 0x25,
-	0xa2, 0xab, 0xf5, 0x4e, 0xd1, 0xdd, 0x4e, 0xa7, 0xe8, 0x69, 0xaa, 0x53, 0xfc, 0x49, 0x81, 0x71,
-	0x4f, 0x69, 0x3f, 0xf8, 0x19, 0x97, 0x34, 0x8c, 0x89, 0xb6, 0xc2, 0x98, 0x8c, 0x1d, 0x46, 0xfc,
-	0x3a, 0x4c, 0xf8, 0x3c, 0x64, 0x69, 0xd2, 0x2e, 0xd5, 0xf1, 0xdf, 0x93, 0x30, 0xe9, 0xab, 0x9f,
-	0x4e, 0x4e, 0x1f, 0xd6, 0x4c, 0xb2, 0xb2, 0xa2, 0xa3, 0x95, 0xac, 0xe8, 0x6c, 0xb1, 0x71, 0x76,
-	0xb5, 0xd8, 0x38, 0xbb, 0x5b, 0x69, 0x9c, 0x3d, 0xf2, 0xc6, 0xd9, 0xcb, 0x37, 0xce, 0x6d, 0x50,
-	0x65, 0x81, 0x67, 0xc4, 0x3a, 0x07, 0xe0, 0xe0, 0x66, 0xf7, 0xcb, 0x31, 0x69, 0xbf, 0xcc, 0x71,
-	0x82, 0xf8, 0x6e, 0x02, 0xc6, 0x3d, 0xdd, 0xe8, 0xb0, 0x73, 0xa9, 0xd9, 0xaa, 0x4c, 0xd2, 0xd9,
-	0x07, 0xd1, 0x41, 0xa5, 0xf3, 0xb3, 0x30, 0xe1, 0x69, 0xab, 0x4e, 0x2e, 0xcf, 0x43, 0x3f, 0xaf,
-	0xdb, 0x6e, 0xa6, 0x7d, 0xdc, 0x70, 0x03, 0x3f, 0x07, 0x69, 0xff, 0x78, 0x66, 0x5c, 0x2c, 0x05,
-	0x7f, 0x4c, 0x40, 0x72, 0xbb, 0x5a, 0x47, 0x8f, 0x41, 0x97, 0x51, 0xad, 0xc7, 0xf5, 0xa1, 0xd3,
-	0xa8, 0xd6, 0xb7, 0x0a, 0xe8, 0x02, 0x40, 0xb5, 0x56, 0x29, 0xd4, 0x6f, 0xc5, 0xae, 0xaf, 0xbd,
-	0x4c, 0x9e, 0x4f, 0xeb, 0x64, 0x2b, 0x69, 0xdd, 0xd1, 0x7a, 0xb3, 0xeb, 0x6c, 0xa7, 0xd9, 0x75,
-	0x35, 0xd5, 0xec, 0xae, 0xc3, 0x90, 0xd5, 0x09, 0xb6, 0xab, 0x75, 0x3b, 0xae, 0x22, 0x68, 0x4a,
-	0x53, 0xa0, 0xe1, 0x17, 0x61, 0x98, 0x53, 0xc8, 0x02, 0xdd, 0x4a, 0xec, 0xf0, 0x57, 0x92, 0x30,
-	0x62, 0xd7, 0x93, 0xed, 0x6a, 0xdd, 0xa1, 0xdd, 0x61, 0x26, 0xc2, 0x43, 0xfd, 0xd0, 0xeb, 0x02,
-	0x8c, 0x8a, 0xf1, 0x70, 0xd2, 0xb8, 0xc3, 0xa8, 0xd6, 0xed, 0x9a, 0x3e, 0xc8, 0xd7, 0x74, 0x42,
-	0x02, 0x7a, 0x11, 0xbf, 0xa3, 0xc0, 0x90, 0x55, 0xa4, 0x38, 0xa6, 0xdd, 0xf7, 0x50, 0x12, 0x7a,
-	0x72, 0x56, 0xb4, 0x43, 0xcf, 0x53, 0x30, 0x6c, 0x15, 0x36, 0x9e, 0x9b, 0x13, 0xd0, 0x6d, 0x69,
-	0xb2, 0x6b, 0x59, 0x17, 0x15, 0x36, 0xf0, 0x69, 0x40, 0xbc, 0x34, 0xbb, 0x71, 0xa0, 0xf8, 0x2f,
-	0x49, 0xd1, 0xd3, 0xad, 0xa2, 0xa7, 0x37, 0x61, 0x99, 0x4e, 0x00, 0x72, 0xdd, 0x49, 0xc4, 0x47,
-	0xd5, 0x57, 0x8b, 0x93, 0xfe, 0x5a, 0xfc, 0xc8, 0x55, 0xb7, 0x3d, 0xa7, 0xba, 0xe9, 0xed, 0x71,
-	0xce, 0x87, 0x4e, 0x42, 0xd2, 0xa9, 0xdc, 0xd2, 0xa7, 0x8b, 0xdc, 0x6a, 0x36, 0x82, 0xf8, 0xb7,
-	0x09, 0xae, 0xf4, 0xe9, 0x62, 0xe9, 0xbb, 0x3f, 0x74, 0x38, 0x84, 0xcf, 0x75, 0xf8, 0xf2, 0xa5,
-	0x7b, 0xca, 0x97, 0x1e, 0x50, 0xbe, 0x74, 0x52, 0xbe, 0xf4, 0xba, 0x81, 0xef, 0xba, 0xe5, 0x4b,
-	0xa4, 0xd2, 0xc3, 0x93, 0x9d, 0x5c, 0x6d, 0x6b, 0x97, 0x7f, 0x6e, 0x6d, 0xd3, 0xc5, 0xda, 0xa6,
-	0x8b, 0xc5, 0x4a, 0xf7, 0xd4, 0x36, 0xdd, 0x53, 0xdb, 0xa4, 0xe2, 0xff, 0x4c, 0x40, 0xfa, 0x2a,
-	0x7b, 0xbb, 0xec, 0x4c, 0x0a, 0xd7, 0x8a, 0xe5, 0x42, 0xb1, 0xbc, 0x4b, 0x8a, 0xfb, 0x8e, 0xf5,
-	0x67, 0xec, 0xb9, 0x07, 0x93, 0x67, 0xd0, 0xea, 0x4d, 0x40, 0x4b, 0xe3, 0xe1, 0x9d, 0x21, 0x27,
-	0x9b, 0x5d, 0x45, 0x3c, 0x6a, 0x45, 0xf1, 0x6d, 0x05, 0x8e, 0x5b, 0x75, 0x2a, 0x28, 0x0a, 0xed,
-	0xd5, 0x9b, 0x58, 0xb5, 0xf2, 0x12, 0x2c, 0x44, 0xda, 0xc0, 0x88, 0x34, 0x0b, 0x29, 0x97, 0x12,
-	0x36, 0x99, 0xc0, 0x89, 0xba, 0x81, 0xff, 0x96, 0x80, 0x45, 0x3b, 0xb3, 0x23, 0x5d, 0xba, 0xff,
-	0x04, 0x3b, 0x84, 0xa5, 0xf4, 0xab, 0x0a, 0x9c, 0x88, 0x81, 0x38, 0x0b, 0xe0, 0x0e, 0x4c, 0x96,
-	0x82, 0x84, 0x58, 0xd5, 0x3d, 0xca, 0x57, 0xdd, 0x20, 0x8d, 0xb9, 0x60, 0x35, 0xf8, 0x0f, 0x0a,
-	0x1c, 0xb3, 0x8a, 0x5f, 0xe0, 0xe8, 0x07, 0x46, 0x80, 0x76, 0x2b, 0x0c, 0xd6, 0xe0, 0x78, 0x94,
-	0x6f, 0x0c, 0xea, 0x76, 0x9c, 0xc3, 0x5b, 0x70, 0xdc, 0xaa, 0xe3, 0x91, 0x49, 0x14, 0x99, 0x92,
-	0x97, 0x60, 0x21, 0x52, 0x55, 0xdc, 0xf4, 0x7e, 0xbf, 0x03, 0x52, 0xeb, 0x95, 0xd2, 0x4e, 0xb1,
-	0x4c, 0x37, 0xfe, 0xa0, 0x75, 0x18, 0xb8, 0xe5, 0xfe, 0x37, 0xae, 0x9f, 0xfd, 0xdc, 0x98, 0x07,
-	0xf2, 0xc6, 0xfb, 0xfe, 0x3d, 0x24, 0x7c, 0x1a, 0x48, 0xb9, 0xaf, 0x99, 0x71, 0x9b, 0x43, 0x2f,
-	0x95, 0xa6, 0x8d, 0xe5, 0x1c, 0xf4, 0x68, 0xe5, 0x42, 0xdc, 0x47, 0xee, 0xdd, 0x5a, 0xb9, 0x60,
-	0xf7, 0x23, 0xbe, 0x99, 0xf5, 0xb4, 0xd3, 0xcc, 0x7a, 0x9b, 0x6a, 0x66, 0xff, 0x52, 0x20, 0x6d,
-	0x35, 0x12, 0x8e, 0x22, 0x0f, 0x6e, 0x3f, 0x91, 0x08, 0x7d, 0xb2, 0x55, 0xe8, 0x3b, 0x62, 0x43,
-	0x8f, 0xff, 0x17, 0x26, 0x25, 0xfe, 0xb3, 0xdc, 0x3a, 0x88, 0x54, 0xc1, 0xdf, 0x4c, 0xc2, 0x11,
-	0xbb, 0xd8, 0x73, 0x37, 0x71, 0x8a, 0xc1, 0x03, 0xca, 0xc7, 0xcf, 0x1e, 0xca, 0xd0, 0x56, 0xfc,
-	0x5f, 0x30, 0x25, 0x0f, 0x8e, 0xd3, 0x11, 0xfa, 0x38, 0xa4, 0xed, 0x7e, 0x3b, 0xc1, 0xf7, 0x5b,
-	0x9e, 0x39, 0x82, 0x30, 0xfe, 0x05, 0x99, 0xaa, 0xd3, 0xce, 0x23, 0xc9, 0xae, 0x47, 0xb4, 0x0e,
-	0x8b, 0x29, 0xda, 0xd1, 0x6a, 0x8a, 0x76, 0x36, 0x95, 0xa2, 0x12, 0x10, 0x0f, 0x32, 0x45, 0x37,
-	0x60, 0xd2, 0x6a, 0xb7, 0xb2, 0xfc, 0x5c, 0x80, 0x41, 0xf1, 0x0e, 0x76, 0x93, 0x1d, 0x10, 0x94,
-	0x18, 0x78, 0x13, 0x54, 0x99, 0x16, 0x66, 0x68, 0x6c, 0x35, 0x5f, 0x4c, 0xc2, 0x00, 0xa7, 0x61,
-	0x5b, 0xaf, 0xa3, 0x4b, 0x80, 0xf8, 0xb1, 0x4d, 0xac, 0x29, 0x86, 0x6e, 0x09, 0x9a, 0xb6, 0x0a,
-	0x12, 0xc0, 0x12, 0xcd, 0xd3, 0xce, 0x9d, 0xc7, 0x25, 0x5b, 0x99, 0xc8, 0x3f, 0x1a, 0x0b, 0xbd,
-	0x77, 0x15, 0x7b, 0x8f, 0x92, 0x18, 0x8e, 0x03, 0x4d, 0xe0, 0x56, 0x66, 0xc4, 0xf8, 0xff, 0x60,
-	0x4a, 0x6e, 0x18, 0xe3, 0xda, 0x01, 0xf2, 0x05, 0xff, 0x38, 0xe9, 0xee, 0xe7, 0x11, 0x6f, 0xe7,
-	0x64, 0xc8, 0xa7, 0x99, 0x9e, 0x0f, 0x75, 0x73, 0x7b, 0x03, 0x66, 0x03, 0x43, 0xc7, 0xa8, 0xb2,
-	0x09, 0x43, 0x9e, 0xd8, 0xd9, 0x3d, 0x4e, 0x0d, 0xe8, 0x71, 0x84, 0x68, 0x83, 0x62, 0xdc, 0x0c,
-	0xfc, 0x67, 0xc5, 0xde, 0xf4, 0x24, 0xcf, 0x95, 0x43, 0x41, 0x11, 0x92, 0x77, 0x72, 0x27, 0xef,
-	0x41, 0xde, 0x5d, 0xb3, 0xf7, 0x63, 0x05, 0x24, 0xdd, 0x32, 0x8c, 0xf8, 0xef, 0x65, 0xf7, 0x94,
-	0x61, 0xaf, 0x3a, 0x03, 0x5f, 0x87, 0xe9, 0x00, 0x7d, 0xcc, 0xf8, 0x66, 0x15, 0x7e, 0x27, 0x09,
-	0xa3, 0x9c, 0xae, 0xab, 0x59, 0xfb, 0x19, 0x64, 0x0e, 0xc6, 0x79, 0x45, 0x4d, 0x2e, 0xa8, 0x47,
-	0xb9, 0xb1, 0x6b, 0xce, 0x83, 0x03, 0x39, 0xb2, 0x89, 0x96, 0xf8, 0xf3, 0xa9, 0x7b, 0x62, 0xf9,
-	0x43, 0x05, 0xe6, 0x7c, 0xfd, 0xc2, 0x89, 0xd7, 0xbd, 0x48, 0x51, 0x2f, 0xc4, 0x89, 0x66, 0x1f,
-	0xd9, 0xbc, 0x05, 0x38, 0xcc, 0x62, 0x46, 0xd9, 0x7b, 0xc0, 0x34, 0xfc, 0x5e, 0x12, 0x8e, 0x4a,
-	0x8a, 0xa6, 0x73, 0x73, 0x27, 0x01, 0x1f, 0x76, 0x9a, 0x1f, 0xc2, 0xe7, 0xa6, 0x9f, 0x57, 0xe0,
-	0x58, 0x44, 0x6c, 0x18, 0x33, 0x5e, 0x83, 0x09, 0x1e, 0xc8, 0x52, 0xde, 0x8e, 0x8f, 0xdd, 0xdd,
-	0x32, 0x01, 0xdd, 0xcd, 0x25, 0xd9, 0x18, 0xa7, 0xe0, 0x6a, 0xde, 0x79, 0x52, 0xfa, 0x4e, 0x02,
-	0xe6, 0x7c, 0x4d, 0xc0, 0x97, 0x4c, 0x87, 0xbd, 0x06, 0x92, 0x04, 0x0d, 0x43, 0xe1, 0x1e, 0x26,
-	0xe8, 0x7f, 0x03, 0xf6, 0x35, 0x32, 0x7f, 0x76, 0x3e, 0x21, 0x12, 0xc0, 0xff, 0x88, 0x74, 0x4c,
-	0xa6, 0xdc, 0xc0, 0xff, 0x03, 0xf3, 0xa1, 0xda, 0x99, 0x63, 0xad, 0xaa, 0x7f, 0x47, 0x81, 0x7e,
-	0xfb, 0x99, 0x2e, 0x75, 0xb2, 0xfd, 0x5d, 0x78, 0xce, 0x8e, 0xb7, 0x20, 0x26, 0x6c, 0x54, 0xea,
-	0x3b, 0x7b, 0x9a, 0xb0, 0xe3, 0xed, 0xd7, 0x0a, 0x8c, 0xbc, 0x5c, 0x2d, 0x70, 0xef, 0x8f, 0x2c,
-	0x63, 0x9e, 0x77, 0x0f, 0xae, 0xde, 0xb4, 0x94, 0x5a, 0xe6, 0x4c, 0xca, 0xde, 0x2f, 0xb0, 0x79,
-	0x55, 0x49, 0xd0, 0xb0, 0xc1, 0x0e, 0x26, 0x25, 0xe8, 0xc1, 0xa4, 0x33, 0xfc, 0x38, 0xc9, 0x0d,
-	0xd9, 0x6f, 0xf4, 0xef, 0x1b, 0xfb, 0x55, 0xcd, 0x60, 0xe7, 0x95, 0xce, 0xc0, 0x90, 0xf7, 0x0a,
-	0x1a, 0x84, 0xd4, 0xd6, 0xb5, 0xf5, 0xdc, 0xe6, 0xd5, 0xcd, 0x6b, 0x37, 0xb2, 0x57, 0x86, 0xfe,
-	0x03, 0xa5, 0xa0, 0x3b, 0xb7, 0xf9, 0xd2, 0x95, 0xec, 0xfa, 0xe6, 0x90, 0x82, 0x1b, 0x0a, 0x0c,
-	0x5b, 0x43, 0xb6, 0xf5, 0xba, 0x7d, 0x8f, 0xd6, 0x5e, 0xc0, 0xbd, 0x08, 0x83, 0x22, 0x08, 0xd6,
-	0x2b, 0xb8, 0xd4, 0xea, 0x6c, 0x84, 0x37, 0xb9, 0x01, 0x01, 0x0b, 0x03, 0xef, 0x40, 0x4f, 0x4e,
-	0x33, 0x2a, 0xf5, 0xda, 0x2d, 0x0d, 0x3d, 0x03, 0xa9, 0x1a, 0xfb, 0x3b, 0xae, 0x3d, 0x60, 0x0f,
-	0xd8, 0x2a, 0xf0, 0xaf, 0x83, 0x13, 0xc2, 0xeb, 0xe0, 0x9f, 0x27, 0x60, 0x64, 0xab, 0x5c, 0x34,
-	0x6d, 0x4b, 0xec, 0x04, 0x38, 0x07, 0xdd, 0x75, 0x43, 0xab, 0xc5, 0xbd, 0x57, 0x17, 0x11, 0xde,
-	0x2a, 0x78, 0xcd, 0x4c, 0x34, 0x69, 0xe6, 0x2b, 0xd0, 0x4f, 0xcc, 0xb4, 0x71, 0xb0, 0x5e, 0xb4,
-	0xa7, 0x56, 0xcf, 0xf2, 0xc8, 0x49, 0xac, 0x5d, 0xe6, 0x82, 0x66, 0x6c, 0x96, 0xcd, 0xda, 0x7e,
-	0xae, 0xcf, 0xe0, 0x7e, 0x52, 0x5f, 0x87, 0x61, 0x9f, 0x08, 0x1a, 0x82, 0x24, 0x69, 0x53, 0xc4,
-	0xbd, 0xde, 0x1c, 0xf9, 0x13, 0xad, 0x88, 0xb9, 0x10, 0x42, 0x5b, 0x4b, 0xee, 0x7c, 0xe2, 0x29,
-	0x05, 0x5f, 0x86, 0xb1, 0x6d, 0x33, 0x5f, 0x73, 0x6c, 0x72, 0x6a, 0xc8, 0x2a, 0xf4, 0xda, 0xae,
-	0xd9, 0x6d, 0x63, 0x94, 0xd7, 0x68, 0xc7, 0x36, 0xe7, 0x8a, 0xe1, 0xf7, 0x15, 0x18, 0x13, 0xa9,
-	0x61, 0x6b, 0x6b, 0x93, 0x00, 0x6b, 0x5e, 0x64, 0x2d, 0x4e, 0x4e, 0xfb, 0x39, 0xc9, 0x01, 0x25,
-	0xa2, 0x88, 0x2f, 0xc1, 0xe8, 0xb6, 0x59, 0xa9, 0x1e, 0x88, 0xa3, 0xd7, 0x61, 0xf2, 0x86, 0x56,
-	0x2b, 0x91, 0x12, 0xa7, 0x1d, 0x88, 0xc2, 0x57, 0x61, 0x7c, 0xbd, 0x52, 0x2a, 0x55, 0xca, 0x2e,
-	0x70, 0xac, 0xd8, 0xb6, 0x87, 0x1c, 0xbe, 0x08, 0x13, 0xa2, 0x62, 0xb7, 0x8c, 0xcf, 0x41, 0x1f,
-	0xa7, 0xd9, 0xae, 0xdd, 0x29, 0x77, 0xb0, 0x81, 0xbf, 0xdf, 0x0d, 0xdd, 0x57, 0xb4, 0xbc, 0x41,
-	0xca, 0xc9, 0x79, 0xe8, 0x65, 0x7f, 0x6e, 0xc5, 0x7c, 0x3b, 0xe8, 0x88, 0xa3, 0x27, 0xa0, 0xfb,
-	0x85, 0x5a, 0xa5, 0x5e, 0xdd, 0x8a, 0x97, 0x54, 0xb6, 0x30, 0x99, 0xc6, 0xbd, 0x4c, 0x53, 0x33,
-	0xde, 0x34, 0xce, 0x92, 0x45, 0x17, 0x01, 0x72, 0x8e, 0x13, 0xb1, 0x26, 0x72, 0x9c, 0x3c, 0x69,
-	0x29, 0x74, 0x9a, 0x10, 0xef, 0x98, 0x8a, 0x35, 0xa3, 0xb8, 0x0e, 0x03, 0x42, 0x86, 0x19, 0xe9,
-	0x2e, 0x1a, 0xf7, 0x05, 0x3e, 0xee, 0x0c, 0x0e, 0x31, 0x17, 0x59, 0xc2, 0x7b, 0x86, 0x13, 0xc7,
-	0xb7, 0xad, 0xf9, 0x6b, 0x77, 0x1c, 0xc7, 0x2d, 0x59, 0xf4, 0x94, 0x15, 0x22, 0xba, 0x6a, 0x8a,
-	0xf1, 0x22, 0xcd, 0x15, 0x26, 0xd3, 0x2b, 0x2b, 0x7f, 0x36, 0xea, 0x35, 0xda, 0xb6, 0x6f, 0xc4,
-	0x7b, 0x9d, 0x26, 0x19, 0x85, 0x2e, 0x42, 0x2a, 0xa7, 0x95, 0xb5, 0x3b, 0xf9, 0x3d, 0xaa, 0x04,
-	0x22, 0x95, 0xf0, 0xe2, 0xe8, 0x3c, 0xc0, 0xba, 0xb3, 0xf4, 0x4b, 0xa7, 0xa2, 0xd7, 0x7a, 0xae,
-	0x34, 0x19, 0xbb, 0xed, 0xac, 0xfc, 0xd2, 0x7d, 0xd1, 0x63, 0x5d, 0x69, 0xf4, 0x3c, 0xf4, 0x92,
-	0xf2, 0x40, 0x2f, 0xa6, 0xfb, 0x69, 0xf4, 0xb0, 0x2c, 0x7a, 0x8e, 0x90, 0x15, 0x38, 0x77, 0x90,
-	0x9a, 0x85, 0x11, 0x49, 0x68, 0x25, 0x85, 0x7a, 0x94, 0x2f, 0xd4, 0x0a, 0x57, 0x8d, 0xd5, 0x8b,
-	0x30, 0x20, 0xea, 0x8f, 0x1a, 0xdd, 0xcb, 0xd7, 0xf2, 0x2f, 0x77, 0xc0, 0x84, 0xbd, 0x42, 0x60,
-	0xe6, 0x3a, 0x45, 0xe9, 0xb3, 0xec, 0x0d, 0xce, 0x5e, 0x37, 0xd9, 0xba, 0x9a, 0x48, 0x36, 0x7e,
-	0xb1, 0xd8, 0xdd, 0xe2, 0x62, 0xb1, 0xa7, 0x95, 0xc5, 0x62, 0xaf, 0x7c, 0xb1, 0x08, 0xfc, 0x62,
-	0xf1, 0x32, 0xa4, 0xfd, 0x4c, 0x60, 0x75, 0x7f, 0x05, 0x7a, 0xf6, 0xd8, 0x6f, 0xac, 0x3d, 0x8d,
-	0x48, 0x88, 0x9e, 0x73, 0x84, 0x96, 0x4e, 0x70, 0x67, 0xc7, 0xc9, 0x74, 0x14, 0x01, 0x74, 0x5d,
-	0xbb, 0x9e, 0xbb, 0x4a, 0x27, 0xa2, 0x7d, 0xd0, 0x73, 0x75, 0xf3, 0xc6, 0x66, 0x6e, 0xeb, 0xda,
-	0x0b, 0x43, 0xca, 0xea, 0xc7, 0x33, 0x00, 0xa4, 0x05, 0xe7, 0xcb, 0xf9, 0x5d, 0xad, 0x86, 0xbe,
-	0xab, 0xc0, 0x88, 0xe4, 0xa3, 0x17, 0xe8, 0xb8, 0xb0, 0x00, 0x0d, 0xfc, 0xa8, 0x87, 0xba, 0x10,
-	0x29, 0x67, 0xf9, 0x84, 0x9f, 0x6f, 0x64, 0x27, 0xd0, 0x98, 0xf5, 0xcc, 0x28, 0xe3, 0x2c, 0x10,
-	0x32, 0xe5, 0x7c, 0x49, 0x7b, 0xfb, 0x77, 0x9f, 0x7c, 0x2d, 0x91, 0xc1, 0x47, 0x56, 0xde, 0x3c,
-	0xbb, 0x62, 0x4f, 0x20, 0x56, 0x1c, 0x91, 0x15, 0x22, 0x72, 0x5e, 0x59, 0x42, 0x1f, 0x29, 0x30,
-	0x2e, 0xff, 0x2c, 0x03, 0x3a, 0xc1, 0x5b, 0x11, 0xfa, 0x65, 0x0d, 0x75, 0x29, 0x8e, 0x28, 0xb3,
-	0x39, 0xdb, 0xc8, 0xaa, 0x28, 0x5d, 0x60, 0x42, 0x19, 0xcf, 0x17, 0x1f, 0xa8, 0xd9, 0x33, 0x68,
-	0x2a, 0xc4, 0x6c, 0x83, 0xe2, 0x2b, 0xf9, 0xb6, 0x81, 0x88, 0x6f, 0xf0, 0x57, 0x20, 0x44, 0x7c,
-	0x43, 0x3e, 0x92, 0xc0, 0xf0, 0x2d, 0x51, 0x09, 0x8f, 0xa5, 0x16, 0xbe, 0x6a, 0x14, 0xbe, 0x3f,
-	0x50, 0x60, 0x54, 0xf6, 0x41, 0x03, 0xb4, 0x20, 0x42, 0x16, 0xf8, 0xfd, 0x04, 0x75, 0x31, 0x5a,
-	0x90, 0x59, 0xbb, 0xd6, 0xc8, 0xa6, 0xd1, 0x78, 0x81, 0x8a, 0x48, 0x71, 0x9d, 0x5b, 0x0a, 0xc5,
-	0x95, 0xd8, 0x2b, 0xa1, 0x2e, 0xfd, 0x6e, 0x42, 0x18, 0x75, 0xb9, 0x43, 0xd8, 0xa1, 0xd4, 0xe5,
-	0x8f, 0x44, 0x07, 0x51, 0xb7, 0x5e, 0x2e, 0x9a, 0x11, 0xd4, 0x25, 0x22, 0x81, 0xd4, 0xa5, 0x07,
-	0x98, 0x23, 0xa8, 0xcb, 0x9f, 0x98, 0x8e, 0xa0, 0xae, 0x70, 0x1e, 0x3a, 0x98, 0xba, 0xf4, 0x40,
-	0x7b, 0x04, 0x75, 0xa9, 0x8c, 0x8c, 0xba, 0x7e, 0x7c, 0x83, 0x0f, 0xb9, 0x87, 0x52, 0x57, 0x82,
-	0xaf, 0x8f, 0xba, 0x2e, 0xbe, 0x6a, 0x14, 0xbe, 0x12, 0xea, 0x5a, 0xe8, 0x86, 0x51, 0x57, 0xc0,
-	0x76, 0x31, 0x5a, 0x30, 0x9c, 0xba, 0x2e, 0xae, 0xc1, 0xd4, 0xa5, 0x32, 0xc4, 0xde, 0x86, 0x02,
-	0x83, 0x1e, 0xc6, 0x21, 0x1c, 0x42, 0x47, 0xdb, 0xca, 0xf9, 0x50, 0x19, 0x66, 0xe0, 0x13, 0x8d,
-	0x2c, 0x42, 0x43, 0x5e, 0xba, 0x52, 0xd3, 0x8e, 0xe0, 0x71, 0xb9, 0x69, 0xc4, 0xa8, 0x0f, 0x14,
-	0x40, 0xfe, 0x13, 0x9e, 0xe8, 0x58, 0x28, 0xeb, 0x1c, 0x00, 0x8f, 0x47, 0x89, 0x31, 0xeb, 0x9e,
-	0x6c, 0x64, 0xc7, 0xd0, 0x88, 0x9f, 0x98, 0x16, 0x76, 0x93, 0x68, 0x42, 0x6e, 0xa0, 0x41, 0x31,
-	0xf3, 0xb0, 0x48, 0xc4, 0x4c, 0x7e, 0x8e, 0x54, 0xc4, 0x2c, 0xe0, 0x20, 0x25, 0xc3, 0xcc, 0x4b,
-	0x41, 0x0b, 0x33, 0x35, 0x04, 0xb3, 0x77, 0x15, 0x18, 0xf2, 0x1e, 0x80, 0x44, 0xf3, 0x21, 0x5c,
-	0x72, 0xf0, 0x3a, 0x1a, 0x2e, 0xc4, 0xec, 0x7a, 0xaa, 0x91, 0x1d, 0x41, 0xc3, 0x5e, 0xb2, 0x59,
-	0x58, 0x4d, 0x2d, 0x05, 0x61, 0x45, 0x2c, 0x33, 0xa1, 0xd7, 0x39, 0xa9, 0x87, 0xa6, 0xfc, 0xbc,
-	0x71, 0xcf, 0x69, 0xa9, 0xd3, 0x01, 0x57, 0x99, 0x0d, 0x4b, 0x8d, 0x6c, 0x1f, 0x62, 0x6f, 0x7b,
-	0x32, 0x46, 0xb5, 0x4e, 0x6f, 0x3e, 0x86, 0x87, 0x84, 0x9b, 0x1b, 0xd5, 0x3a, 0xb9, 0xeb, 0xe7,
-	0xa0, 0x8f, 0x3f, 0x44, 0x86, 0x66, 0x65, 0xac, 0xe0, 0x8e, 0x54, 0xa9, 0x99, 0x60, 0x01, 0x76,
-	0xfb, 0x93, 0x8d, 0xec, 0x20, 0xea, 0x77, 0x08, 0x63, 0x54, 0xeb, 0x96, 0xfb, 0x23, 0x68, 0xd8,
-	0x6b, 0x81, 0x41, 0xbc, 0x76, 0x0e, 0x80, 0x89, 0x5e, 0x7b, 0x4f, 0xa7, 0x89, 0x5e, 0xfb, 0x4e,
-	0x8d, 0x31, 0xaf, 0x19, 0x23, 0x1c, 0xaf, 0x55, 0xa9, 0xd7, 0xfb, 0x00, 0xee, 0xf1, 0x2f, 0x34,
-	0xed, 0x8f, 0x2c, 0xef, 0xf1, 0x4c, 0xd0, 0x65, 0x76, 0xe3, 0x53, 0x8d, 0x6c, 0x3f, 0x4a, 0xb1,
-	0x90, 0x3b, 0xde, 0x8e, 0x2f, 0xf9, 0xbd, 0x25, 0xb7, 0xfe, 0x82, 0xe2, 0xc4, 0x59, 0x97, 0xc7,
-	0x59, 0x0f, 0x8d, 0xb3, 0xfb, 0x7a, 0x18, 0x3f, 0xdd, 0xc8, 0x1e, 0x41, 0x93, 0x76, 0x9c, 0xf5,
-	0x7a, 0xa6, 0x72, 0x3b, 0x63, 0xbe, 0xa1, 0x65, 0xd8, 0xf1, 0x3a, 0x79, 0xd8, 0x75, 0x5f, 0xd8,
-	0xf5, 0xc0, 0xb0, 0xeb, 0x51, 0x61, 0xd7, 0x43, 0xc2, 0xae, 0x07, 0x85, 0x5d, 0x17, 0xc2, 0xae,
-	0xcb, 0xc3, 0xae, 0x87, 0x86, 0x5d, 0x0f, 0x0a, 0xbb, 0x1e, 0x10, 0x76, 0xdd, 0x13, 0x76, 0x3d,
-	0x20, 0xec, 0x7a, 0x78, 0xd8, 0xf5, 0xc0, 0xb0, 0xeb, 0x41, 0x61, 0xd7, 0xad, 0xb0, 0x7f, 0xa2,
-	0xc0, 0x6c, 0xc4, 0x09, 0x0b, 0xb4, 0xea, 0x0f, 0x77, 0xd4, 0xd6, 0x6f, 0xf5, 0xb1, 0xa6, 0xc6,
-	0x30, 0xd3, 0x5f, 0x6b, 0x64, 0x4f, 0xa2, 0x13, 0x8c, 0x38, 0xb6, 0xa9, 0xdc, 0x44, 0xc9, 0x7e,
-	0xb7, 0x45, 0x08, 0x65, 0x43, 0x7a, 0x14, 0xcf, 0x06, 0x34, 0xc9, 0x9d, 0x62, 0x79, 0x97, 0x48,
-	0x13, 0x37, 0xff, 0xa2, 0xc0, 0x5c, 0xe4, 0x49, 0x04, 0xf4, 0xb8, 0x8c, 0x4c, 0x91, 0xae, 0x9e,
-	0x6b, 0x72, 0x14, 0x73, 0xf6, 0xd5, 0x46, 0xf6, 0x34, 0x3a, 0xe9, 0xf0, 0x32, 0xa6, 0xbb, 0x73,
-	0x28, 0xc4, 0x5d, 0xcb, 0x8b, 0x8f, 0x15, 0x98, 0x09, 0x3f, 0x07, 0x80, 0xce, 0xfa, 0xb9, 0x1b,
-	0x71, 0x1e, 0x42, 0x5d, 0x6d, 0x66, 0x08, 0x73, 0xf1, 0x95, 0x46, 0x76, 0x09, 0x2d, 0xb2, 0x1c,
-	0x08, 0x76, 0x90, 0xf7, 0x6f, 0x5e, 0x9d, 0x09, 0xf7, 0xcf, 0x26, 0x6d, 0xc4, 0xb9, 0x01, 0x91,
-	0xb4, 0xf1, 0xce, 0x2b, 0x88, 0xa4, 0x8d, 0x79, 0x30, 0x81, 0x91, 0x96, 0xe5, 0x5b, 0x5c, 0xd2,
-	0x2e, 0x45, 0x45, 0xf1, 0xbc, 0xb2, 0xb4, 0xfa, 0x93, 0x61, 0x18, 0x79, 0xa9, 0x56, 0x29, 0x55,
-	0xd8, 0xfb, 0x4c, 0x7b, 0xa9, 0xfd, 0x81, 0x62, 0x9f, 0x20, 0xe5, 0xcf, 0x3b, 0x1c, 0xf5, 0x67,
-	0x9c, 0x7f, 0x37, 0xae, 0x7a, 0x2c, 0x42, 0x8a, 0x39, 0x75, 0xbe, 0x91, 0x1d, 0x45, 0x88, 0x65,
-	0x22, 0xf7, 0x8a, 0x8f, 0x5a, 0x3f, 0x8d, 0xd3, 0x82, 0xf5, 0xdc, 0x75, 0x12, 0x9d, 0x6f, 0x2b,
-	0xee, 0x09, 0x4a, 0x7e, 0x8b, 0xa8, 0x77, 0x0e, 0x1d, 0xb8, 0x55, 0xdc, 0x3b, 0x87, 0x0e, 0xde,
-	0xb6, 0x8c, 0x2f, 0xd0, 0x19, 0xbf, 0x93, 0x44, 0xfc, 0xae, 0x64, 0x6b, 0xce, 0x85, 0x26, 0x83,
-	0x4c, 0x35, 0x28, 0x8e, 0xbe, 0x97, 0xbb, 0x22, 0x8e, 0x41, 0xbb, 0x9a, 0x45, 0x1c, 0x03, 0xb7,
-	0xed, 0x32, 0x1c, 0x59, 0x06, 0xf8, 0x70, 0x54, 0x43, 0x71, 0xbc, 0xab, 0xd8, 0x07, 0x26, 0x05,
-	0x14, 0x8f, 0xf9, 0x49, 0x2a, 0xc3, 0xf0, 0x78, 0x94, 0x18, 0xb3, 0xf0, 0x22, 0x9b, 0x46, 0x53,
-	0xfa, 0xfa, 0xf0, 0x9b, 0x59, 0x0a, 0xc6, 0xcf, 0x5e, 0x2f, 0xc9, 0xb6, 0x68, 0xa2, 0x85, 0x50,
-	0x9e, 0x71, 0x6d, 0x74, 0x31, 0x5a, 0x50, 0x58, 0x2f, 0xf9, 0x39, 0x79, 0xd3, 0xa9, 0x8d, 0x78,
-	0x2a, 0xc8, 0x58, 0xbb, 0xd3, 0xfe, 0x48, 0x71, 0x9f, 0x9b, 0x7a, 0x36, 0x88, 0xa1, 0xa5, 0x08,
-	0xd6, 0xf1, 0x4d, 0xf8, 0x64, 0x2c, 0x59, 0x66, 0xf8, 0x3a, 0x9d, 0x0f, 0xc9, 0x48, 0x7a, 0xd3,
-	0xe9, 0xcf, 0xb3, 0x68, 0x3a, 0xcc, 0x76, 0x83, 0x22, 0x2d, 0xdb, 0x94, 0x87, 0x16, 0x42, 0x99,
-	0x18, 0x84, 0x74, 0xd8, 0xfe, 0x3e, 0x86, 0xb4, 0x9f, 0xb5, 0x2e, 0xd2, 0x6a, 0x24, 0xd2, 0x1f,
-	0x29, 0x30, 0x26, 0xdd, 0x88, 0x87, 0x16, 0x43, 0x99, 0xc9, 0xa3, 0x7c, 0x22, 0x86, 0x24, 0x33,
-	0x79, 0xa3, 0x91, 0x9d, 0x44, 0x13, 0x7e, 0x1a, 0xbb, 0x08, 0xe3, 0xa5, 0x70, 0x84, 0x89, 0xd1,
-	0xbf, 0x72, 0x3e, 0x3c, 0x2c, 0xdd, 0xf1, 0x77, 0x3a, 0x94, 0xab, 0xde, 0xcd, 0x31, 0xea, 0x72,
-	0x5c, 0x71, 0xe6, 0xc3, 0xf5, 0x46, 0x76, 0x16, 0x4d, 0x4b, 0x08, 0xee, 0x6e, 0xeb, 0xa1, 0x9e,
-	0x2c, 0x60, 0x1c, 0xe8, 0x49, 0x29, 0xcf, 0xf5, 0xc9, 0xdf, 0x2b, 0xee, 0x37, 0x21, 0xa5, 0xfb,
-	0x3c, 0xd0, 0x99, 0x08, 0x1e, 0xfb, 0x36, 0x9c, 0xa8, 0x67, 0x9b, 0x18, 0xc1, 0xfc, 0x7a, 0xa9,
-	0x91, 0xc5, 0x28, 0x23, 0xe5, 0x3f, 0xb7, 0x61, 0x89, 0xba, 0x76, 0x0c, 0xcd, 0x47, 0xbb, 0x66,
-	0xd0, 0x38, 0x05, 0x6f, 0xcb, 0x11, 0xe3, 0x14, 0xb9, 0x89, 0x49, 0x8c, 0x53, 0xf4, 0x6e, 0x1f,
-	0x16, 0x27, 0x49, 0x7a, 0x78, 0xe3, 0xa4, 0xc6, 0x8c, 0xd3, 0x6f, 0x14, 0xfb, 0x0b, 0x87, 0xf2,
-	0x28, 0x2d, 0x87, 0xe6, 0x81, 0x3f, 0x46, 0x2b, 0xb1, 0xe5, 0x99, 0x47, 0xff, 0xd9, 0xc8, 0x66,
-	0xd0, 0x8c, 0x24, 0x7b, 0xbc, 0xf1, 0x59, 0x5c, 0x8a, 0x13, 0x1f, 0x32, 0x79, 0xb9, 0xdb, 0x05,
-	0x83, 0xf6, 0xe4, 0xc9, 0x9e, 0xb8, 0x34, 0x14, 0xe8, 0xe3, 0x77, 0x45, 0x88, 0xcb, 0x3b, 0xc9,
-	0x7e, 0x09, 0x15, 0x7b, 0xb6, 0xaf, 0x49, 0x5e, 0x9b, 0xe3, 0x67, 0x1a, 0xd9, 0x19, 0x34, 0x55,
-	0x2c, 0x17, 0x4d, 0x6e, 0xfa, 0xb5, 0x53, 0xa9, 0x9b, 0x74, 0xd1, 0xe9, 0xae, 0x80, 0xb0, 0x7c,
-	0x05, 0xf4, 0x9e, 0x02, 0x03, 0xe2, 0xbe, 0x08, 0x34, 0x27, 0x7c, 0xdc, 0x41, 0xb6, 0x67, 0xc2,
-	0xf3, 0x00, 0x4d, 0xfe, 0xda, 0x1d, 0x3f, 0x47, 0x89, 0x42, 0x0f, 0x06, 0x85, 0x9a, 0x36, 0xa1,
-	0x22, 0xd1, 0x34, 0x32, 0x82, 0xd8, 0xf6, 0xa1, 0x02, 0x03, 0xe2, 0x2e, 0x0b, 0xd1, 0x36, 0xe9,
-	0x0e, 0x8c, 0x58, 0xa0, 0x6d, 0x34, 0xb2, 0xc7, 0xd0, 0x7c, 0x9d, 0x8e, 0x77, 0x6d, 0xa3, 0x2f,
-	0x18, 0x45, 0x0b, 0x2d, 0xec, 0x54, 0x39, 0x76, 0x5f, 0x57, 0xa0, 0x5f, 0xd8, 0x69, 0x81, 0x32,
-	0x22, 0x74, 0xfe, 0x4d, 0x18, 0xf1, 0x90, 0xb3, 0x62, 0x6a, 0x98, 0x95, 0x6a, 0x78, 0x4c, 0xbd,
-	0x76, 0x99, 0x95, 0x2a, 0xb1, 0xeb, 0x5b, 0x0a, 0x20, 0xff, 0xae, 0x0d, 0x71, 0xea, 0x14, 0xb8,
-	0xab, 0x23, 0x9e, 0x85, 0x6b, 0x8d, 0xec, 0x3c, 0x9a, 0x33, 0x6d, 0x25, 0xe1, 0x66, 0xca, 0x17,
-	0xdf, 0x6b, 0x1d, 0xaf, 0x27, 0xaa, 0x3b, 0x3b, 0x5d, 0xf4, 0x5d, 0xe0, 0x63, 0xff, 0x0e, 0x00,
-	0x00, 0xff, 0xff, 0x45, 0x4f, 0xf9, 0x97, 0x4c, 0x61, 0x00, 0x00,
+	// 3230 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x5b, 0x4d, 0x70, 0x1c, 0x47,
+	0x15, 0x66, 0x76, 0x57, 0xbb, 0xda, 0xb7, 0xfa, 0x59, 0xb5, 0x2c, 0x69, 0x35, 0x96, 0xec, 0xf5,
+	0x38, 0x8e, 0x15, 0xc5, 0x96, 0x82, 0x92, 0x10, 0xc7, 0x76, 0x7e, 0xd6, 0x92, 0x8a, 0x88, 0x58,
+	0x72, 0x6a, 0x57, 0x81, 0xaa, 0x70, 0x10, 0x2b, 0xed, 0x58, 0x59, 0x46, 0xda, 0x19, 0x76, 0x66,
+	0x62, 0x74, 0xe1, 0x10, 0x28, 0xb8, 0x71, 0x58, 0x8a, 0x0a, 0x84, 0xe4, 0x10, 0x8a, 0xa2, 0x28,
+	0xaa, 0xb8, 0xe4, 0x00, 0x45, 0x51, 0x9c, 0x72, 0xe2, 0x46, 0xc1, 0x81, 0x03, 0x17, 0xaa, 0xe0,
+	0x0c, 0x07, 0x0e, 0x50, 0x1c, 0x28, 0xaa, 0x7b, 0x7a, 0x66, 0xba, 0x67, 0x7a, 0x7e, 0x76, 0x57,
+	0xb1, 0x63, 0x87, 0x93, 0xad, 0x9d, 0xd7, 0xaf, 0x5f, 0x7f, 0xef, 0x7b, 0xef, 0x75, 0xf7, 0xbc,
+	0x81, 0x89, 0x63, 0xd5, 0x52, 0xbb, 0xed, 0xce, 0xe1, 0x8a, 0xd1, 0xd5, 0x2d, 0x1d, 0x81, 0x6e,
+	0xa8, 0x1d, 0xa3, 0x6d, 0x75, 0xdb, 0x5f, 0x97, 0xcf, 0x1d, 0xea, 0xfa, 0xe1, 0x91, 0xba, 0x4a,
+	0x9e, 0xec, 0xdb, 0x77, 0x57, 0xef, 0x75, 0x9b, 0x86, 0xa1, 0x76, 0x4d, 0x47, 0x56, 0x3e, 0x1f,
+	0x7c, 0x6e, 0xb5, 0x8f, 0x55, 0xd3, 0x6a, 0x1e, 0x1b, 0x54, 0x60, 0x81, 0x0a, 0x34, 0x8d, 0xf6,
+	0x6a, 0xb3, 0xd3, 0xd1, 0xad, 0xa6, 0xd5, 0xd6, 0x3b, 0xee, 0xf0, 0x2b, 0xe4, 0x9f, 0x83, 0xab,
+	0x87, 0x6a, 0xe7, 0xaa, 0x79, 0xaf, 0x79, 0x78, 0xa8, 0x76, 0x57, 0x75, 0x83, 0x48, 0x84, 0xa5,
+	0x95, 0x9f, 0x67, 0x61, 0xbc, 0x66, 0x59, 0xdd, 0xf6, 0xbe, 0x6d, 0xa9, 0x3b, 0xcd, 0x63, 0x15,
+	0xbd, 0x02, 0x53, 0x4d, 0xf7, 0x87, 0xbd, 0x4e, 0xf3, 0x58, 0xdd, 0x6b, 0xb7, 0x2a, 0x52, 0x55,
+	0x5a, 0x2a, 0xad, 0x2d, 0xac, 0x38, 0x33, 0xaf, 0xb8, 0xa6, 0xad, 0x34, 0x2c, 0xbc, 0xc8, 0x2f,
+	0x36, 0x8f, 0x6c, 0xb5, 0x3e, 0xd9, 0x64, 0xf5, 0x6c, 0xb5, 0xd0, 0x53, 0x90, 0xc3, 0xe3, 0x2b,
+	0x99, 0x14, 0x83, 0x89, 0x24, 0x7a, 0x11, 0x4a, 0x2d, 0xd5, 0x3c, 0xe8, 0xb6, 0x89, 0xbd, 0x95,
+	0x6c, 0x8a, 0x81, 0xec, 0x00, 0x74, 0x15, 0x72, 0xd6, 0x89, 0xa1, 0x56, 0x72, 0x55, 0x69, 0x69,
+	0x62, 0x6d, 0x7e, 0xc5, 0x47, 0x7d, 0xc5, 0x5b, 0xe4, 0xee, 0x89, 0xa1, 0xd6, 0x89, 0x18, 0x7a,
+	0x06, 0xf2, 0xa6, 0xd5, 0xb4, 0x6c, 0xb3, 0x32, 0x92, 0x62, 0x26, 0x2a, 0x8b, 0x6e, 0x40, 0xe9,
+	0xa0, 0xab, 0x36, 0x2d, 0x75, 0x0f, 0x3b, 0xa6, 0x92, 0x27, 0x43, 0xe5, 0xd0, 0xd0, 0x5d, 0xd7,
+	0x6b, 0x75, 0x70, 0xc4, 0xf1, 0x0f, 0x78, 0xb0, 0xa3, 0xc6, 0x19, 0x5c, 0x48, 0x1e, 0xec, 0x88,
+	0xe3, 0x1f, 0x94, 0xdf, 0x4a, 0x20, 0xaf, 0x13, 0x5d, 0x9c, 0xcb, 0xea, 0xea, 0xd7, 0x6c, 0xd5,
+	0xb4, 0x3c, 0xbc, 0xa5, 0x41, 0xf1, 0xce, 0x0c, 0x8a, 0x77, 0x36, 0x15, 0xde, 0xca, 0x21, 0x9c,
+	0x15, 0x9a, 0x6f, 0x1a, 0x7a, 0xc7, 0x3c, 0x45, 0xe6, 0x29, 0xef, 0x67, 0x61, 0x71, 0x83, 0xd8,
+	0xb9, 0xcf, 0xcf, 0x65, 0xba, 0x58, 0x3d, 0x48, 0x96, 0xf7, 0x87, 0x1a, 0xc3, 0xd2, 0x5c, 0x1f,
+	0x2c, 0x7d, 0x0e, 0x46, 0x4d, 0xbd, 0x6b, 0xed, 0x69, 0xea, 0x49, 0x2a, 0x76, 0x17, 0xb0, 0xf4,
+	0xab, 0xea, 0x09, 0x7a, 0x06, 0x0a, 0x5d, 0xf5, 0x2d, 0xb5, 0x6b, 0x46, 0x53, 0xfb, 0x96, 0xae,
+	0x1f, 0xd1, 0x51, 0x54, 0x14, 0xcd, 0x42, 0x5e, 0xbf, 0x7b, 0xd7, 0x54, 0x2d, 0x42, 0xe9, 0xf1,
+	0x3a, 0xfd, 0x0b, 0x9d, 0x81, 0x91, 0xa3, 0xf6, 0x71, 0xdb, 0xaa, 0x8c, 0x92, 0x9f, 0x9d, 0x3f,
+	0x94, 0x16, 0x9c, 0x8b, 0x72, 0x0f, 0xe5, 0xc2, 0x2d, 0x98, 0xe4, 0xfd, 0x63, 0x56, 0xa4, 0x6a,
+	0x76, 0xa9, 0x14, 0x01, 0x17, 0xe1, 0xd1, 0x04, 0xe7, 0x1a, 0x53, 0xf9, 0x4e, 0x06, 0xe4, 0x6d,
+	0xbd, 0xd5, 0xbe, 0x7b, 0x22, 0x0c, 0x97, 0x4f, 0x4f, 0xa2, 0xc3, 0x81, 0x27, 0x04, 0xe2, 0xd4,
+	0x03, 0xef, 0x55, 0x38, 0xbb, 0xa1, 0x1e, 0xa9, 0x56, 0x44, 0xd4, 0x5d, 0x01, 0x14, 0x9a, 0xc8,
+	0x71, 0x6c, 0xb1, 0x5e, 0x0e, 0xe8, 0x32, 0x95, 0xdb, 0xb0, 0x20, 0x56, 0x46, 0xcd, 0xee, 0x4f,
+	0xdb, 0x6f, 0x32, 0x4c, 0xa5, 0x7b, 0xbd, 0xd3, 0x0e, 0x10, 0xc0, 0xee, 0xb4, 0xad, 0xfe, 0x97,
+	0x8d, 0xf5, 0x0c, 0x44, 0x00, 0x3f, 0xa8, 0xb3, 0x83, 0x97, 0x9e, 0xdc, 0x30, 0xa5, 0x67, 0xa4,
+	0xaf, 0xd2, 0xb3, 0x13, 0xaa, 0x3c, 0x78, 0xe9, 0x03, 0x57, 0x1e, 0x41, 0x29, 0x70, 0xf4, 0x89,
+	0x18, 0x39, 0x8c, 0x6b, 0x94, 0xbf, 0x67, 0x04, 0xa5, 0x00, 0x3f, 0x13, 0x97, 0x82, 0x87, 0x82,
+	0x06, 0x6c, 0x6e, 0xcf, 0x0d, 0x98, 0xdb, 0x47, 0x06, 0xc9, 0xed, 0x79, 0x71, 0x6e, 0x2f, 0x24,
+	0xe5, 0x76, 0x8a, 0xb7, 0x28, 0xb7, 0x63, 0xc0, 0xe3, 0x73, 0x3b, 0x21, 0xc6, 0x04, 0x87, 0xb5,
+	0xa9, 0xfc, 0x40, 0x0a, 0xe5, 0x76, 0x96, 0x90, 0x0f, 0xd0, 0xa7, 0x82, 0x64, 0xfb, 0x31, 0x51,
+	0x3b, 0x9c, 0x6c, 0x39, 0x5e, 0x73, 0xe9, 0x91, 0x4e, 0x14, 0x4e, 0x8f, 0x8e, 0x2e, 0x51, 0xb2,
+	0xe5, 0x9d, 0xd6, 0x9f, 0xb6, 0x7f, 0x67, 0xa1, 0xe8, 0x29, 0x42, 0x2f, 0xc1, 0x98, 0x3f, 0x36,
+	0xe5, 0x6a, 0x4b, 0xde, 0x88, 0xad, 0x96, 0xb8, 0x40, 0x65, 0x06, 0x29, 0xd5, 0x42, 0xf4, 0xb3,
+	0x83, 0x10, 0x63, 0x0d, 0x46, 0xde, 0xc2, 0x4f, 0x52, 0x45, 0xa0, 0x23, 0x8a, 0xc7, 0xe8, 0xf7,
+	0x3a, 0x6a, 0x37, 0xd5, 0x8e, 0xcc, 0x11, 0x65, 0x52, 0x44, 0x7e, 0xf0, 0x4a, 0x51, 0x18, 0xa6,
+	0x52, 0x8c, 0xf6, 0x55, 0x29, 0xfe, 0x22, 0xc1, 0x6c, 0x20, 0xb5, 0x9f, 0xfe, 0x8e, 0x4b, 0xe8,
+	0xc6, 0xcc, 0x50, 0x6e, 0xcc, 0xa6, 0x76, 0xa3, 0xf2, 0x06, 0xcc, 0x85, 0x56, 0x48, 0xc3, 0x64,
+	0x58, 0xaa, 0x2b, 0xff, 0xca, 0xc2, 0x7c, 0x28, 0x7f, 0x7a, 0x31, 0xfd, 0xa8, 0x46, 0x92, 0x13,
+	0x15, 0xb9, 0x41, 0xa2, 0x62, 0x64, 0xc0, 0xc2, 0x99, 0x1f, 0xb0, 0x70, 0x16, 0x06, 0x29, 0x9c,
+	0xa3, 0xe2, 0xc2, 0x59, 0x64, 0x0b, 0x67, 0x03, 0x64, 0x91, 0xe3, 0x29, 0xb1, 0x9e, 0x05, 0xf0,
+	0x70, 0x73, 0xeb, 0xe5, 0x8c, 0xb0, 0x5e, 0xd6, 0x19, 0x41, 0xe5, 0x83, 0x0c, 0xcc, 0x06, 0xaa,
+	0xd1, 0xa3, 0xce, 0xa5, 0x7e, 0xb3, 0x32, 0x0e, 0xe7, 0x10, 0x44, 0xa7, 0x15, 0xce, 0x2f, 0xc2,
+	0x5c, 0xa0, 0xac, 0x7a, 0xb1, 0x7c, 0x11, 0xc6, 0x59, 0xdd, 0x6e, 0x31, 0x1d, 0x63, 0x86, 0x9b,
+	0xca, 0x4b, 0x50, 0x09, 0x8f, 0xa7, 0xc6, 0xa5, 0x52, 0xf0, 0xe7, 0x0c, 0x64, 0x1b, 0x86, 0x8d,
+	0x9e, 0x86, 0xbc, 0x69, 0xd8, 0x69, 0xd7, 0x30, 0x62, 0x1a, 0xf6, 0x56, 0x0b, 0xdd, 0x00, 0x30,
+	0xba, 0x7a, 0xcb, 0x3e, 0x48, 0x9d, 0x5f, 0x8b, 0x54, 0x9e, 0x0d, 0xeb, 0xec, 0x20, 0x61, 0x9d,
+	0x1b, 0xbc, 0xd8, 0x8d, 0x0c, 0x53, 0xec, 0xf2, 0x7d, 0x15, 0xbb, 0x3b, 0x50, 0x76, 0x2a, 0x41,
+	0xc3, 0xb0, 0x5d, 0xbf, 0xf2, 0xa0, 0x49, 0x7d, 0x81, 0xa6, 0xbc, 0x02, 0x53, 0x8c, 0x42, 0xea,
+	0xe8, 0x41, 0x7c, 0xa7, 0x7c, 0x37, 0x0b, 0xd3, 0x6e, 0x3e, 0x69, 0x18, 0xb6, 0x47, 0xbb, 0x47,
+	0x99, 0x08, 0x9f, 0xe8, 0x4b, 0xaf, 0x1b, 0x70, 0x86, 0xf7, 0x87, 0x17, 0xc6, 0x39, 0xd3, 0xb0,
+	0xdd, 0x9c, 0x3e, 0xc9, 0xe6, 0x74, 0x4c, 0x02, 0xf2, 0x50, 0xf9, 0x96, 0x04, 0x65, 0x27, 0x49,
+	0x31, 0x4c, 0xbb, 0xef, 0xae, 0xc4, 0xf4, 0x64, 0xac, 0x18, 0x86, 0x9e, 0x57, 0x60, 0xca, 0x49,
+	0x6c, 0x2c, 0x37, 0xe7, 0xa0, 0xe0, 0x68, 0x72, 0x73, 0x59, 0x9e, 0x08, 0x9b, 0xca, 0x55, 0x40,
+	0xac, 0x34, 0x9d, 0x38, 0x52, 0xfc, 0x3f, 0x38, 0xe9, 0x69, 0x4e, 0xd2, 0xd3, 0xfa, 0xb0, 0x4c,
+	0xc3, 0x00, 0xf9, 0xcb, 0xc9, 0xa4, 0x47, 0x35, 0x94, 0x8b, 0xb3, 0xe1, 0x5c, 0x8c, 0x9e, 0x81,
+	0x59, 0xf7, 0xbd, 0xd0, 0x1e, 0x2f, 0x9d, 0x23, 0xd2, 0x67, 0xdc, 0xa7, 0x35, 0x7e, 0xd4, 0xc3,
+	0xf5, 0x96, 0xe2, 0xc7, 0x92, 0x97, 0x14, 0xb5, 0xe1, 0xa8, 0x1a, 0x02, 0x35, 0xd3, 0x17, 0xa8,
+	0xd9, 0x68, 0x50, 0x99, 0x3c, 0xab, 0xf1, 0x44, 0xee, 0x97, 0x2e, 0xca, 0x1f, 0x32, 0x4c, 0x9e,
+	0xd5, 0xf8, 0x3c, 0x7b, 0x7f, 0xb8, 0xf7, 0x08, 0x5e, 0x22, 0xb1, 0xb9, 0x52, 0x0b, 0xe4, 0x4a,
+	0x2d, 0x22, 0x57, 0x6a, 0x38, 0x57, 0x6a, 0xb6, 0xa9, 0xfc, 0xc9, 0xcf, 0x95, 0x3c, 0x01, 0x1f,
+	0xf6, 0x54, 0xc0, 0xa4, 0xdf, 0x61, 0x59, 0xeb, 0xa7, 0x5f, 0x8d, 0x4f, 0xbf, 0x1a, 0x9f, 0x4f,
+	0xb5, 0x40, 0xfa, 0xd5, 0x02, 0xe9, 0x57, 0x28, 0xfe, 0x4b, 0x09, 0x4a, 0x0d, 0xcd, 0xde, 0xa6,
+	0x4b, 0x18, 0x0c, 0xfb, 0x6b, 0xee, 0x4e, 0x3e, 0x43, 0x7c, 0xad, 0x04, 0x7c, 0xed, 0x2a, 0x5f,
+	0x21, 0x83, 0x36, 0x3b, 0x56, 0xf7, 0x84, 0xee, 0xe7, 0xe5, 0x6b, 0x00, 0xfe, 0x8f, 0xa8, 0x0c,
+	0x59, 0x4c, 0x71, 0x3c, 0x73, 0xb1, 0x8e, 0xff, 0x8b, 0x29, 0xe7, 0x6a, 0x96, 0x96, 0x24, 0x3a,
+	0xea, 0x7a, 0xe6, 0x9a, 0xa4, 0xbc, 0x9d, 0x81, 0xe9, 0xd7, 0x8d, 0x56, 0xd3, 0x52, 0x5d, 0xf5,
+	0x44, 0xd1, 0xf0, 0x47, 0xa5, 0x35, 0x76, 0x4a, 0xd1, 0xc8, 0x0d, 0xdd, 0xde, 0x3f, 0x52, 0xb9,
+	0xcb, 0xa2, 0x0d, 0xee, 0x35, 0xe1, 0x53, 0xec, 0xfa, 0x05, 0x36, 0xd2, 0xdf, 0xc8, 0xff, 0x77,
+	0x4f, 0x0c, 0xd5, 0xa4, 0xaf, 0x7e, 0x9e, 0x82, 0x72, 0xf0, 0x09, 0x9a, 0x84, 0xd2, 0xd6, 0xce,
+	0x7a, 0x7d, 0x73, 0x7b, 0x73, 0x67, 0xb7, 0x76, 0xbb, 0xfc, 0x19, 0x54, 0x82, 0x42, 0x7d, 0xf3,
+	0xb5, 0xdb, 0xb5, 0xf5, 0xcd, 0xb2, 0xa4, 0xf4, 0x24, 0x98, 0x72, 0x86, 0x0c, 0xed, 0xc3, 0x57,
+	0x60, 0xd2, 0x63, 0x39, 0x59, 0x94, 0x49, 0xbd, 0x79, 0x3e, 0x61, 0x35, 0x75, 0xaf, 0x81, 0x82,
+	0xfc, 0x69, 0x2a, 0xbf, 0x93, 0x60, 0x7a, 0xab, 0xd3, 0xb6, 0x5c, 0x29, 0x97, 0xb2, 0xcf, 0x42,
+	0xc1, 0x36, 0xd5, 0x6e, 0x5a, 0xbb, 0xf2, 0x58, 0x78, 0xab, 0x85, 0x5e, 0x80, 0x52, 0x57, 0x35,
+	0x75, 0xbb, 0x7b, 0x90, 0xfa, 0xd0, 0x0a, 0xee, 0x80, 0xad, 0x16, 0xba, 0x09, 0xe3, 0x18, 0x0c,
+	0xd7, 0x46, 0x27, 0xc4, 0x4b, 0x6b, 0x73, 0x11, 0x1c, 0xad, 0x8f, 0x99, 0xfe, 0x1f, 0xa6, 0xf2,
+	0xae, 0x04, 0x33, 0xfc, 0x9a, 0xdd, 0xd5, 0x04, 0xcc, 0x92, 0xfa, 0x34, 0xeb, 0x56, 0xd0, 0x2c,
+	0x07, 0xec, 0xc5, 0x30, 0xd8, 0xd1, 0xc6, 0x75, 0xe0, 0x4c, 0xc3, 0xd2, 0x0d, 0xef, 0x87, 0x53,
+	0x32, 0x8d, 0xc9, 0x15, 0x19, 0x2e, 0x57, 0xe8, 0x30, 0xd3, 0xb0, 0x9a, 0x5d, 0xeb, 0xbe, 0x4d,
+	0x68, 0xc2, 0xfc, 0xae, 0xda, 0x3d, 0x6e, 0x77, 0x18, 0xfc, 0x3f, 0xf6, 0x49, 0xbf, 0x04, 0xb3,
+	0xeb, 0xfa, 0xf1, 0xb1, 0xde, 0xf1, 0x3d, 0x4e, 0x93, 0xe8, 0x70, 0x33, 0x2a, 0x37, 0x61, 0x8e,
+	0x57, 0xec, 0xa7, 0xe7, 0x0b, 0x30, 0xc6, 0x68, 0x76, 0x73, 0x74, 0xc9, 0x1f, 0x6c, 0x2a, 0xff,
+	0xcc, 0x43, 0xe1, 0xb6, 0xda, 0x34, 0x71, 0x80, 0x5f, 0x87, 0x22, 0xfd, 0xef, 0x56, 0xca, 0x53,
+	0xab, 0x27, 0x8e, 0x77, 0x20, 0xaf, 0x93, 0xc0, 0x4a, 0xb7, 0x03, 0x71, 0x64, 0xd1, 0x4d, 0x80,
+	0xba, 0x67, 0x4c, 0xaa, 0x3d, 0x08, 0x23, 0x8f, 0x53, 0x6a, 0x03, 0x83, 0x9b, 0xee, 0x2e, 0x9d,
+	0x88, 0xa2, 0x3b, 0x30, 0xc1, 0xa5, 0x19, 0xb3, 0x92, 0x27, 0x11, 0x72, 0x99, 0x8d, 0x10, 0xba,
+	0xac, 0x15, 0x5e, 0xd2, 0xa9, 0x30, 0x81, 0xe1, 0x78, 0xe1, 0x0d, 0x67, 0xeb, 0x55, 0x48, 0xb3,
+	0x70, 0x47, 0x16, 0x5d, 0x73, 0xa0, 0x26, 0x7b, 0xed, 0x14, 0xb7, 0xeb, 0xbe, 0x30, 0xfa, 0x02,
+	0x20, 0x27, 0x80, 0x37, 0xec, 0x2e, 0xe9, 0xe3, 0x22, 0x2a, 0x8a, 0x89, 0x2a, 0x04, 0xa3, 0xd0,
+	0x4d, 0x28, 0xd5, 0xd5, 0x8e, 0x7a, 0xaf, 0x79, 0x44, 0x94, 0x40, 0xa2, 0x12, 0x56, 0x1c, 0x5d,
+	0x07, 0x58, 0xf7, 0x0e, 0x0c, 0x95, 0x52, 0xf2, 0x09, 0xc1, 0x97, 0xc6, 0x63, 0x1b, 0xde, 0x79,
+	0xa1, 0x32, 0x96, 0x3c, 0xd6, 0x97, 0x46, 0x2f, 0x43, 0x11, 0xe7, 0x27, 0xf2, 0xb0, 0x32, 0x1e,
+	0xde, 0x1a, 0xb8, 0xde, 0xf3, 0x84, 0x1c, 0xc7, 0xf9, 0x83, 0xe4, 0x1a, 0x4c, 0x0b, 0x5c, 0xdb,
+	0xcf, 0x3e, 0x41, 0xbe, 0x09, 0x13, 0xbc, 0xfe, 0xa4, 0xd1, 0x45, 0x76, 0x97, 0xf1, 0xfb, 0x2c,
+	0xcc, 0xb9, 0xbb, 0x5b, 0x6a, 0xae, 0x97, 0x80, 0x3e, 0x0d, 0x51, 0xe8, 0x07, 0x4d, 0xbe, 0x8f,
+	0xa0, 0x61, 0xcf, 0x2b, 0x85, 0x01, 0xcf, 0x2b, 0xa3, 0x83, 0x9c, 0x57, 0x8a, 0xe2, 0xf3, 0x0a,
+	0xb0, 0xe7, 0x95, 0x57, 0xa1, 0x12, 0xf6, 0x28, 0xcd, 0xc3, 0xab, 0x30, 0x7a, 0x44, 0x7f, 0xa3,
+	0xe7, 0x96, 0x69, 0x01, 0x61, 0xeb, 0x9e, 0x90, 0xf2, 0x6e, 0x0e, 0x4a, 0xeb, 0xfa, 0xf1, 0x3e,
+	0x2e, 0x51, 0x6d, 0xbd, 0x83, 0xd6, 0x61, 0xe2, 0xc0, 0xff, 0x33, 0x6d, 0x95, 0x18, 0x67, 0xc6,
+	0x3c, 0x90, 0x1e, 0xa5, 0xfb, 0xf7, 0x5a, 0xe7, 0x79, 0x00, 0x13, 0xef, 0x21, 0xd2, 0x5e, 0x75,
+	0x14, 0x89, 0x34, 0x49, 0x27, 0xcf, 0xc2, 0xa8, 0xda, 0x69, 0xa5, 0xbd, 0xe6, 0x28, 0xa8, 0x9d,
+	0x96, 0x7b, 0x41, 0xc2, 0xde, 0xae, 0x8c, 0x0e, 0x73, 0xbb, 0x52, 0xec, 0xeb, 0x76, 0xe5, 0xbf,
+	0x12, 0x54, 0x9c, 0x54, 0xca, 0x50, 0xe4, 0xc1, 0x75, 0x80, 0xf2, 0xd0, 0x67, 0x07, 0x85, 0x3e,
+	0x97, 0x1a, 0x7a, 0xe5, 0x2b, 0x30, 0x2f, 0x58, 0x3f, 0x8d, 0xb5, 0xd3, 0x08, 0x15, 0xe5, 0x47,
+	0x59, 0x38, 0xeb, 0x46, 0x33, 0x33, 0x89, 0x97, 0xa3, 0x1f, 0x50, 0x3c, 0xfe, 0xff, 0x1a, 0x9d,
+	0xa4, 0xda, 0x2f, 0xc3, 0x82, 0xd8, 0x39, 0x94, 0x02, 0x37, 0x60, 0x8c, 0x41, 0xda, 0x4d, 0xb9,
+	0xdc, 0xd1, 0x8c, 0x65, 0x0e, 0x27, 0xac, 0x7c, 0x94, 0x81, 0x8a, 0x73, 0xc3, 0x22, 0x88, 0xae,
+	0x87, 0x34, 0x0f, 0xf3, 0x21, 0x9a, 0x1b, 0x34, 0x44, 0x47, 0xfa, 0x0a, 0x51, 0x01, 0x88, 0xa7,
+	0x19, 0xa2, 0x1b, 0x30, 0xef, 0x5c, 0x48, 0x89, 0xe2, 0xf3, 0x32, 0x4c, 0xf2, 0x33, 0xb8, 0x67,
+	0x9f, 0x09, 0x4e, 0x89, 0xa9, 0x6c, 0x82, 0x2c, 0xd2, 0x42, 0x0d, 0x4d, 0xad, 0xe6, 0xdb, 0x59,
+	0x98, 0x60, 0x34, 0x34, 0x34, 0x1b, 0xef, 0xd3, 0xd9, 0xb1, 0x7d, 0xdc, 0x9c, 0x94, 0x0f, 0x38,
+	0x4d, 0x5b, 0x2d, 0x01, 0x60, 0x99, 0xfe, 0x69, 0xe7, 0x5f, 0xdf, 0x64, 0xd3, 0x5f, 0xdf, 0x3c,
+	0x6c, 0x6f, 0x63, 0xdf, 0x91, 0xdc, 0xae, 0x52, 0xde, 0x1d, 0xa7, 0x1a, 0xc0, 0x3e, 0x92, 0x99,
+	0xf4, 0xd7, 0xad, 0x5f, 0x85, 0x05, 0xb1, 0x61, 0x94, 0x6b, 0xa7, 0xc8, 0x17, 0xe5, 0xd7, 0x59,
+	0xbf, 0x03, 0x93, 0x9f, 0xce, 0x8b, 0x90, 0x4f, 0x33, 0x3d, 0x3f, 0xd1, 0xc5, 0xed, 0x4d, 0x38,
+	0x1f, 0xe9, 0x3a, 0x4a, 0x95, 0x4d, 0x28, 0x07, 0x7c, 0xe7, 0xd6, 0x38, 0x39, 0xa2, 0xc6, 0x61,
+	0xa2, 0x4d, 0xf2, 0x7e, 0x33, 0x95, 0xbf, 0x4a, 0x6e, 0x9b, 0xaa, 0x38, 0x56, 0x1e, 0x09, 0x8a,
+	0xe0, 0xb8, 0x13, 0x2f, 0xf2, 0x63, 0x88, 0xbb, 0x1d, 0xb7, 0x83, 0x36, 0x22, 0xe8, 0x56, 0x60,
+	0x3a, 0x3c, 0x97, 0x5b, 0x53, 0xa6, 0x82, 0xea, 0x4c, 0xe5, 0x0e, 0x2c, 0x46, 0xe8, 0xa3, 0xc6,
+	0xf7, 0xa9, 0x70, 0xf9, 0x09, 0xe6, 0x03, 0x88, 0xdd, 0x13, 0x43, 0x45, 0x00, 0xf9, 0x9d, 0x3b,
+	0xf5, 0x6d, 0xf2, 0x0a, 0x60, 0x0c, 0x46, 0xb7, 0x37, 0x77, 0x37, 0xeb, 0x5b, 0x3b, 0x9f, 0x2f,
+	0x4b, 0x6b, 0x1f, 0xcd, 0x01, 0x34, 0x34, 0x7b, 0xbb, 0xd9, 0x69, 0x1e, 0xaa, 0x5d, 0xf4, 0x33,
+	0x09, 0xa6, 0x05, 0x5f, 0x6e, 0xa1, 0xc7, 0x39, 0xc6, 0x45, 0x7e, 0x99, 0x26, 0x5f, 0x4e, 0x94,
+	0x73, 0x96, 0xa4, 0xbc, 0xdc, 0xab, 0xcd, 0xa1, 0x19, 0xa7, 0x1e, 0x54, 0xbd, 0x17, 0x28, 0x55,
+	0xbc, 0x0f, 0x7a, 0xfb, 0x8f, 0x7f, 0xfb, 0x5e, 0xa6, 0xaa, 0x9c, 0x5d, 0x7d, 0xeb, 0xb3, 0xab,
+	0xee, 0x0d, 0xf7, 0xaa, 0x27, 0xb2, 0x8a, 0x45, 0xae, 0x4b, 0xcb, 0xe8, 0x43, 0x09, 0x66, 0xc5,
+	0xdf, 0x16, 0xa1, 0x27, 0x58, 0x2b, 0x62, 0x3f, 0x0f, 0x93, 0x97, 0xd3, 0x88, 0x52, 0x9b, 0x6b,
+	0xbd, 0x9a, 0x8c, 0x2a, 0x2d, 0x2a, 0x54, 0x0d, 0x7c, 0xb6, 0x44, 0xcc, 0x3e, 0x87, 0x16, 0x62,
+	0xcc, 0x36, 0x09, 0xbe, 0x82, 0x0f, 0x74, 0x78, 0x7c, 0xa3, 0x3f, 0x65, 0xe2, 0xf1, 0x8d, 0xf9,
+	0xd2, 0x87, 0xe2, 0x7b, 0x4c, 0x24, 0x02, 0x96, 0x3a, 0xf8, 0xca, 0x49, 0xf8, 0xfe, 0x42, 0x82,
+	0x33, 0xa2, 0xaf, 0x72, 0xd0, 0x65, 0x1e, 0xb2, 0xc8, 0x8f, 0x80, 0xe4, 0xa5, 0x64, 0x41, 0x6a,
+	0xed, 0xad, 0x5e, 0xad, 0x82, 0x66, 0x5b, 0x44, 0x44, 0x88, 0xeb, 0x85, 0xe5, 0x58, 0x5c, 0xb1,
+	0xbd, 0x02, 0xea, 0x92, 0x8f, 0x7f, 0xe2, 0xa8, 0xcb, 0x7c, 0x49, 0x10, 0x4b, 0x5d, 0xb6, 0xaf,
+	0x3f, 0x8a, 0xba, 0x76, 0xa7, 0x6d, 0x25, 0x50, 0x17, 0x8b, 0x44, 0x52, 0x97, 0x74, 0xe1, 0x27,
+	0x50, 0x97, 0x6d, 0xfb, 0x4f, 0xa0, 0x2e, 0xd7, 0xd4, 0x1f, 0x4d, 0x5d, 0xf2, 0x55, 0x46, 0x02,
+	0x75, 0x89, 0x8c, 0x88, 0xba, 0x61, 0x7c, 0xa3, 0xbf, 0xd4, 0x88, 0xa5, 0xae, 0x00, 0xdf, 0x10,
+	0x75, 0x7d, 0x7c, 0xe5, 0x24, 0x7c, 0x05, 0xd4, 0x75, 0xd0, 0x8d, 0xa3, 0x2e, 0x87, 0xed, 0x52,
+	0xb2, 0x60, 0x3c, 0x75, 0x7d, 0x5c, 0xa3, 0xa9, 0x4b, 0x64, 0xb0, 0xbd, 0x3d, 0x09, 0x26, 0x03,
+	0x8c, 0x43, 0x4a, 0x0c, 0x1d, 0x5d, 0x2b, 0x2f, 0xc6, 0xca, 0x50, 0x03, 0x3f, 0xd7, 0xab, 0x21,
+	0x54, 0x0e, 0xd2, 0x95, 0x98, 0x76, 0x56, 0x99, 0x15, 0x9b, 0x86, 0x8d, 0x7a, 0x4f, 0x02, 0x14,
+	0x6e, 0x53, 0x46, 0x97, 0x62, 0x59, 0xe7, 0x01, 0xf8, 0x78, 0x92, 0x18, 0xb5, 0xee, 0xb9, 0x5e,
+	0x6d, 0x06, 0x4d, 0x87, 0x89, 0xe9, 0x60, 0x37, 0x8f, 0xe6, 0xc4, 0x06, 0x9a, 0x04, 0xb3, 0x00,
+	0x8b, 0x78, 0xcc, 0xc4, 0xcd, 0xd0, 0x3c, 0x66, 0x11, 0xdd, 0xc0, 0x14, 0xb3, 0x20, 0x05, 0x1d,
+	0xcc, 0xe4, 0x18, 0xcc, 0xde, 0x91, 0xa0, 0x1c, 0xec, 0xe2, 0x45, 0x17, 0x63, 0xb8, 0xe4, 0xe1,
+	0xf5, 0x58, 0xbc, 0x10, 0xb5, 0xeb, 0x5a, 0xaf, 0x36, 0x8d, 0xa6, 0x82, 0x64, 0x73, 0xb0, 0x5a,
+	0x58, 0x8e, 0xc2, 0x0a, 0x5b, 0x66, 0x41, 0xd1, 0x6b, 0x37, 0x45, 0x0b, 0x61, 0xde, 0xf8, 0xcd,
+	0x86, 0xf2, 0x62, 0xc4, 0x53, 0x6a, 0xc3, 0x72, 0xaf, 0x36, 0x86, 0xe8, 0x49, 0xae, 0x6a, 0x1a,
+	0x36, 0x99, 0x7c, 0x46, 0x29, 0x73, 0x93, 0x9b, 0x86, 0x8d, 0x67, 0xfd, 0x06, 0x8c, 0xb1, 0x9d,
+	0x90, 0xe8, 0xbc, 0x88, 0x15, 0x4c, 0x5f, 0xa0, 0x5c, 0x8d, 0x16, 0xa0, 0xd3, 0x3f, 0xd9, 0xab,
+	0x4d, 0xa2, 0x71, 0x8f, 0x30, 0xa6, 0x61, 0x3b, 0xcb, 0x9f, 0x46, 0x53, 0x41, 0x0b, 0x4c, 0xbc,
+	0x6a, 0xaf, 0x8b, 0x91, 0x5f, 0x75, 0xb0, 0xc5, 0x92, 0x5f, 0x75, 0xa8, 0xf5, 0x91, 0xae, 0x9a,
+	0x32, 0xc2, 0x5b, 0xb5, 0x2c, 0x5c, 0xf5, 0x09, 0x80, 0xdf, 0xc3, 0x88, 0x16, 0xc3, 0x9e, 0x65,
+	0x57, 0x7c, 0x2e, 0xea, 0x31, 0x9d, 0xf8, 0x4a, 0xaf, 0x36, 0x8e, 0x4a, 0xd4, 0xe5, 0xde, 0x6a,
+	0x67, 0x97, 0xc3, 0xab, 0xc5, 0x53, 0x7f, 0x53, 0xf2, 0xfc, 0xac, 0x89, 0xfd, 0xac, 0xc5, 0xfa,
+	0xd9, 0xdf, 0x31, 0x2b, 0xcf, 0xf7, 0x6a, 0x67, 0xd1, 0xbc, 0xeb, 0x67, 0xcd, 0xae, 0xea, 0x77,
+	0xab, 0xd6, 0x9b, 0x6a, 0x95, 0xf6, 0x88, 0x8a, 0xdd, 0xae, 0x85, 0xdc, 0xae, 0x45, 0xba, 0x5d,
+	0x4b, 0x72, 0xbb, 0x16, 0xe3, 0x76, 0x2d, 0xca, 0xed, 0x1a, 0xe7, 0x76, 0x4d, 0xec, 0x76, 0x2d,
+	0xd6, 0xed, 0x5a, 0x94, 0xdb, 0xb5, 0x08, 0xb7, 0x6b, 0x01, 0xb7, 0x6b, 0x11, 0x6e, 0xd7, 0xe2,
+	0xdd, 0xae, 0x45, 0xba, 0x5d, 0x8b, 0x72, 0xbb, 0x46, 0xdc, 0xbe, 0xf6, 0x41, 0x1e, 0x26, 0xdd,
+	0x57, 0x9d, 0xee, 0x56, 0xbe, 0x27, 0xc1, 0x18, 0xdb, 0x48, 0xc3, 0x7b, 0x41, 0xd0, 0x62, 0x23,
+	0x2b, 0x81, 0x63, 0xa5, 0xa0, 0x8b, 0x41, 0x79, 0xa1, 0x57, 0x3b, 0x87, 0x16, 0xda, 0x9d, 0xb6,
+	0x55, 0x75, 0xad, 0xa8, 0x36, 0xf7, 0x75, 0xdb, 0x22, 0xdc, 0xf0, 0x0d, 0x55, 0x84, 0x86, 0xa2,
+	0xf7, 0x25, 0x98, 0xe0, 0x3b, 0x62, 0xd0, 0x85, 0xe8, 0x0e, 0xa1, 0x7e, 0x0c, 0xdb, 0xe8, 0xd5,
+	0x2e, 0xa1, 0x8b, 0x36, 0x19, 0xef, 0x9b, 0x46, 0xde, 0xc5, 0xf2, 0x06, 0x3a, 0xf6, 0xc9, 0x62,
+	0xfb, 0xbe, 0x2f, 0xc1, 0x38, 0xd7, 0x15, 0x83, 0x38, 0x6a, 0x8a, 0x1a, 0x66, 0x02, 0x55, 0x58,
+	0xdc, 0xa3, 0x41, 0x71, 0x33, 0x2d, 0xdd, 0x88, 0xc7, 0x2d, 0x68, 0x97, 0xa5, 0x1b, 0xd8, 0xae,
+	0x1f, 0x4a, 0x30, 0xc1, 0x77, 0xcf, 0xf0, 0xb8, 0x09, 0x3b, 0x6b, 0xd2, 0x59, 0xf6, 0x52, 0xaf,
+	0x76, 0x1e, 0x2d, 0x92, 0xab, 0xe0, 0x58, 0xd3, 0xe6, 0x64, 0x14, 0x30, 0xad, 0xd9, 0x25, 0xbb,
+	0xad, 0x9f, 0x48, 0x80, 0xc2, 0x8d, 0x36, 0xfc, 0x46, 0x21, 0xb2, 0x11, 0x27, 0x9d, 0x8d, 0xb7,
+	0x7a, 0xb5, 0x8b, 0xe8, 0x82, 0xe5, 0x2a, 0x89, 0x87, 0x30, 0x22, 0x46, 0xfe, 0x01, 0x30, 0xfd,
+	0x5a, 0x57, 0x3f, 0xd6, 0xe9, 0x41, 0xd9, 0x8d, 0x93, 0xf7, 0x24, 0xb7, 0x43, 0x98, 0x7d, 0x15,
+	0xfb, 0x58, 0x38, 0x39, 0x86, 0x5f, 0x14, 0xc8, 0x97, 0x12, 0xa4, 0xa8, 0xf9, 0xd7, 0x7b, 0xb5,
+	0x33, 0x08, 0xd1, 0x54, 0xca, 0x1c, 0xd7, 0x89, 0xbd, 0x8b, 0x4a, 0x85, 0xb3, 0x97, 0x79, 0x8e,
+	0xd1, 0xfd, 0xa9, 0xe4, 0x77, 0xc8, 0xb2, 0xb7, 0xd7, 0xc1, 0xbd, 0x6c, 0xe4, 0x5b, 0xac, 0xe0,
+	0x5e, 0x36, 0xfa, 0x8d, 0x8a, 0x72, 0x83, 0xec, 0xbc, 0xbd, 0x24, 0xcb, 0xbe, 0x30, 0x71, 0xf6,
+	0x3e, 0x68, 0x3e, 0xca, 0x54, 0x93, 0xe0, 0x18, 0xba, 0x82, 0xe1, 0x71, 0x8c, 0x7a, 0xe1, 0xc2,
+	0xe3, 0x18, 0xf9, 0x46, 0x81, 0xe2, 0x48, 0xb3, 0x71, 0x08, 0x47, 0x39, 0x16, 0xc7, 0x0f, 0x24,
+	0xb7, 0xb5, 0x95, 0x43, 0xf1, 0x52, 0x38, 0x0f, 0x8b, 0x30, 0x7c, 0x3c, 0x49, 0x8c, 0x5a, 0x78,
+	0x93, 0x6e, 0x67, 0x49, 0xda, 0x0e, 0xe1, 0x77, 0x6e, 0x39, 0x1a, 0x3f, 0xf7, 0xdc, 0x22, 0xba,
+	0x3d, 0x46, 0x97, 0x63, 0x79, 0xc6, 0x94, 0xb3, 0xa5, 0x64, 0x41, 0xee, 0xdc, 0x12, 0xe6, 0xe4,
+	0x9e, 0x9b, 0x22, 0x2f, 0x28, 0x0b, 0x51, 0xc6, 0xba, 0x15, 0xef, 0x57, 0x92, 0xdf, 0xdf, 0x12,
+	0xb8, 0xbb, 0x42, 0xcb, 0x09, 0xac, 0x63, 0x8b, 0xe1, 0x93, 0xa9, 0x64, 0xa9, 0xe1, 0xeb, 0x64,
+	0x5f, 0x22, 0x22, 0xe9, 0x9e, 0x97, 0x03, 0xce, 0xa3, 0xc5, 0x38, 0xdb, 0x4d, 0x82, 0xb4, 0xe8,
+	0xbe, 0x10, 0x5d, 0x8e, 0x65, 0x62, 0x14, 0xd2, 0x71, 0x57, 0x8f, 0x14, 0xe9, 0x30, 0x6b, 0x7d,
+	0xa4, 0xe5, 0x44, 0xa4, 0x3f, 0x94, 0x60, 0x46, 0x78, 0x47, 0x88, 0x96, 0x62, 0x99, 0xc9, 0xa2,
+	0xfc, 0x44, 0x0a, 0x49, 0xbf, 0x98, 0xce, 0xa3, 0xb9, 0x30, 0x8d, 0x7d, 0x84, 0x95, 0xe5, 0x78,
+	0x84, 0xaf, 0x4b, 0xcb, 0xb7, 0x72, 0x6f, 0x64, 0x8c, 0xfd, 0xfd, 0x3c, 0xb9, 0x55, 0x7d, 0xfa,
+	0x7f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x99, 0xac, 0xa9, 0xd6, 0x2a, 0x4d, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -5546,10 +4537,6 @@ type SkuManagerClient interface {
 	DescribeSkus(ctx context.Context, in *DescribeSkusRequest, opts ...grpc.CallOption) (*DescribeSkusResponse, error)
 	ModifySku(ctx context.Context, in *ModifySkuRequest, opts ...grpc.CallOption) (*ModifySkuResponse, error)
 	DeleteSkus(ctx context.Context, in *DeleteSkusRequest, opts ...grpc.CallOption) (*DeleteSkusResponse, error)
-	CreateMeteringAttributeBindings(ctx context.Context, in *CreateMeteringAttributeBindingsRequest, opts ...grpc.CallOption) (*CreateMeteringAttributeBindingsResponse, error)
-	DescribeMeteringAttributeBindings(ctx context.Context, in *DescribeMeteringAttributeBindingsRequest, opts ...grpc.CallOption) (*DescribeMeteringAttributeBindingsResponse, error)
-	ModifyMeteringAttributeBinding(ctx context.Context, in *ModifyMeteringAttributeBindingRequest, opts ...grpc.CallOption) (*ModifyMeteringAttributeBindingResponse, error)
-	DeleteMeteringAttributeBindings(ctx context.Context, in *DeleteMeteringAttributeBindingsRequest, opts ...grpc.CallOption) (*DeleteMeteringAttributeBindingsResponse, error)
 }
 
 type skuManagerClient struct {
@@ -5740,42 +4727,6 @@ func (c *skuManagerClient) DeleteSkus(ctx context.Context, in *DeleteSkusRequest
 	return out, nil
 }
 
-func (c *skuManagerClient) CreateMeteringAttributeBindings(ctx context.Context, in *CreateMeteringAttributeBindingsRequest, opts ...grpc.CallOption) (*CreateMeteringAttributeBindingsResponse, error) {
-	out := new(CreateMeteringAttributeBindingsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.SkuManager/CreateMeteringAttributeBindings", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *skuManagerClient) DescribeMeteringAttributeBindings(ctx context.Context, in *DescribeMeteringAttributeBindingsRequest, opts ...grpc.CallOption) (*DescribeMeteringAttributeBindingsResponse, error) {
-	out := new(DescribeMeteringAttributeBindingsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.SkuManager/DescribeMeteringAttributeBindings", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *skuManagerClient) ModifyMeteringAttributeBinding(ctx context.Context, in *ModifyMeteringAttributeBindingRequest, opts ...grpc.CallOption) (*ModifyMeteringAttributeBindingResponse, error) {
-	out := new(ModifyMeteringAttributeBindingResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.SkuManager/ModifyMeteringAttributeBinding", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *skuManagerClient) DeleteMeteringAttributeBindings(ctx context.Context, in *DeleteMeteringAttributeBindingsRequest, opts ...grpc.CallOption) (*DeleteMeteringAttributeBindingsResponse, error) {
-	out := new(DeleteMeteringAttributeBindingsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.SkuManager/DeleteMeteringAttributeBindings", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // SkuManagerServer is the server API for SkuManager service.
 type SkuManagerServer interface {
 	CreateAttributeName(context.Context, *CreateAttributeNameRequest) (*CreateAttributeNameResponse, error)
@@ -5798,10 +4749,6 @@ type SkuManagerServer interface {
 	DescribeSkus(context.Context, *DescribeSkusRequest) (*DescribeSkusResponse, error)
 	ModifySku(context.Context, *ModifySkuRequest) (*ModifySkuResponse, error)
 	DeleteSkus(context.Context, *DeleteSkusRequest) (*DeleteSkusResponse, error)
-	CreateMeteringAttributeBindings(context.Context, *CreateMeteringAttributeBindingsRequest) (*CreateMeteringAttributeBindingsResponse, error)
-	DescribeMeteringAttributeBindings(context.Context, *DescribeMeteringAttributeBindingsRequest) (*DescribeMeteringAttributeBindingsResponse, error)
-	ModifyMeteringAttributeBinding(context.Context, *ModifyMeteringAttributeBindingRequest) (*ModifyMeteringAttributeBindingResponse, error)
-	DeleteMeteringAttributeBindings(context.Context, *DeleteMeteringAttributeBindingsRequest) (*DeleteMeteringAttributeBindingsResponse, error)
 }
 
 func RegisterSkuManagerServer(s *grpc.Server, srv SkuManagerServer) {
@@ -6168,78 +5115,6 @@ func _SkuManager_DeleteSkus_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SkuManager_CreateMeteringAttributeBindings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateMeteringAttributeBindingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SkuManagerServer).CreateMeteringAttributeBindings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.SkuManager/CreateMeteringAttributeBindings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SkuManagerServer).CreateMeteringAttributeBindings(ctx, req.(*CreateMeteringAttributeBindingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SkuManager_DescribeMeteringAttributeBindings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DescribeMeteringAttributeBindingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SkuManagerServer).DescribeMeteringAttributeBindings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.SkuManager/DescribeMeteringAttributeBindings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SkuManagerServer).DescribeMeteringAttributeBindings(ctx, req.(*DescribeMeteringAttributeBindingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SkuManager_ModifyMeteringAttributeBinding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ModifyMeteringAttributeBindingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SkuManagerServer).ModifyMeteringAttributeBinding(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.SkuManager/ModifyMeteringAttributeBinding",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SkuManagerServer).ModifyMeteringAttributeBinding(ctx, req.(*ModifyMeteringAttributeBindingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SkuManager_DeleteMeteringAttributeBindings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteMeteringAttributeBindingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SkuManagerServer).DeleteMeteringAttributeBindings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.SkuManager/DeleteMeteringAttributeBindings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SkuManagerServer).DeleteMeteringAttributeBindings(ctx, req.(*DeleteMeteringAttributeBindingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _SkuManager_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "openpitrix.SkuManager",
 	HandlerType: (*SkuManagerServer)(nil),
@@ -6324,21 +5199,203 @@ var _SkuManager_serviceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteSkus",
 			Handler:    _SkuManager_DeleteSkus_Handler,
 		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "metering.proto",
+}
+
+// MeteringManagerClient is the client API for MeteringManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type MeteringManagerClient interface {
+	InitMetering(ctx context.Context, in *InitMeteringRequest, opts ...grpc.CallOption) (*CommonMeteringResponse, error)
+	UpdateMetering(ctx context.Context, in *UpdateMeteringRequest, opts ...grpc.CallOption) (*CommonMeteringResponse, error)
+	StopMeterings(ctx context.Context, in *StopMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error)
+	// start for stopped metering
+	StartMeterings(ctx context.Context, in *StartMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error)
+	TerminateMeterings(ctx context.Context, in *TerminateMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error)
+}
+
+type meteringManagerClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewMeteringManagerClient(cc *grpc.ClientConn) MeteringManagerClient {
+	return &meteringManagerClient{cc}
+}
+
+func (c *meteringManagerClient) InitMetering(ctx context.Context, in *InitMeteringRequest, opts ...grpc.CallOption) (*CommonMeteringResponse, error) {
+	out := new(CommonMeteringResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.MeteringManager/InitMetering", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *meteringManagerClient) UpdateMetering(ctx context.Context, in *UpdateMeteringRequest, opts ...grpc.CallOption) (*CommonMeteringResponse, error) {
+	out := new(CommonMeteringResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.MeteringManager/UpdateMetering", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *meteringManagerClient) StopMeterings(ctx context.Context, in *StopMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error) {
+	out := new(CommonMeteringsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.MeteringManager/StopMeterings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *meteringManagerClient) StartMeterings(ctx context.Context, in *StartMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error) {
+	out := new(CommonMeteringsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.MeteringManager/StartMeterings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *meteringManagerClient) TerminateMeterings(ctx context.Context, in *TerminateMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error) {
+	out := new(CommonMeteringsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.MeteringManager/TerminateMeterings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// MeteringManagerServer is the server API for MeteringManager service.
+type MeteringManagerServer interface {
+	InitMetering(context.Context, *InitMeteringRequest) (*CommonMeteringResponse, error)
+	UpdateMetering(context.Context, *UpdateMeteringRequest) (*CommonMeteringResponse, error)
+	StopMeterings(context.Context, *StopMeteringsRequest) (*CommonMeteringsResponse, error)
+	// start for stopped metering
+	StartMeterings(context.Context, *StartMeteringsRequest) (*CommonMeteringsResponse, error)
+	TerminateMeterings(context.Context, *TerminateMeteringsRequest) (*CommonMeteringsResponse, error)
+}
+
+func RegisterMeteringManagerServer(s *grpc.Server, srv MeteringManagerServer) {
+	s.RegisterService(&_MeteringManager_serviceDesc, srv)
+}
+
+func _MeteringManager_InitMetering_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InitMeteringRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeteringManagerServer).InitMetering(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.MeteringManager/InitMetering",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeteringManagerServer).InitMetering(ctx, req.(*InitMeteringRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MeteringManager_UpdateMetering_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMeteringRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeteringManagerServer).UpdateMetering(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.MeteringManager/UpdateMetering",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeteringManagerServer).UpdateMetering(ctx, req.(*UpdateMeteringRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MeteringManager_StopMeterings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StopMeteringsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeteringManagerServer).StopMeterings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.MeteringManager/StopMeterings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeteringManagerServer).StopMeterings(ctx, req.(*StopMeteringsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MeteringManager_StartMeterings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartMeteringsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeteringManagerServer).StartMeterings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.MeteringManager/StartMeterings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeteringManagerServer).StartMeterings(ctx, req.(*StartMeteringsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MeteringManager_TerminateMeterings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TerminateMeteringsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MeteringManagerServer).TerminateMeterings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.MeteringManager/TerminateMeterings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MeteringManagerServer).TerminateMeterings(ctx, req.(*TerminateMeteringsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _MeteringManager_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "openpitrix.MeteringManager",
+	HandlerType: (*MeteringManagerServer)(nil),
+	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateMeteringAttributeBindings",
-			Handler:    _SkuManager_CreateMeteringAttributeBindings_Handler,
+			MethodName: "InitMetering",
+			Handler:    _MeteringManager_InitMetering_Handler,
 		},
 		{
-			MethodName: "DescribeMeteringAttributeBindings",
-			Handler:    _SkuManager_DescribeMeteringAttributeBindings_Handler,
+			MethodName: "UpdateMetering",
+			Handler:    _MeteringManager_UpdateMetering_Handler,
 		},
 		{
-			MethodName: "ModifyMeteringAttributeBinding",
-			Handler:    _SkuManager_ModifyMeteringAttributeBinding_Handler,
+			MethodName: "StopMeterings",
+			Handler:    _MeteringManager_StopMeterings_Handler,
 		},
 		{
-			MethodName: "DeleteMeteringAttributeBindings",
-			Handler:    _SkuManager_DeleteMeteringAttributeBindings_Handler,
+			MethodName: "StartMeterings",
+			Handler:    _MeteringManager_StartMeterings_Handler,
+		},
+		{
+			MethodName: "TerminateMeterings",
+			Handler:    _MeteringManager_TerminateMeterings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -6357,10 +5414,6 @@ type PromotionSkuManagerClient interface {
 	DescribeCombinationSkus(ctx context.Context, in *DescribeCombinationSkusRequest, opts ...grpc.CallOption) (*DescribeCombinationSkusResponse, error)
 	ModifyCombinationSku(ctx context.Context, in *ModifyCombinationSkuRequest, opts ...grpc.CallOption) (*ModifyCombinationSkuResponse, error)
 	DeleteCombinationSkus(ctx context.Context, in *DeleteCombinationSkusRequest, opts ...grpc.CallOption) (*DeleteCombinationSkusResponse, error)
-	CreateCombinationMABinding(ctx context.Context, in *CreateCombinationMABindingRequest, opts ...grpc.CallOption) (*CreateCombinationMABindingResponse, error)
-	DescribeCombinationMABindings(ctx context.Context, in *DescribeCombinationMABindingsRequest, opts ...grpc.CallOption) (*DescribeCombinationMABindingsResponse, error)
-	ModifyCombinationMABinding(ctx context.Context, in *ModifyCombinationMABindingRequest, opts ...grpc.CallOption) (*ModifyCombinationMABindingResponse, error)
-	DeleteCombinationMABindings(ctx context.Context, in *DeleteCombinationMABindingsRequest, opts ...grpc.CallOption) (*DeleteCombinationMABindingsResponse, error)
 }
 
 type promotionSkuManagerClient struct {
@@ -6443,42 +5496,6 @@ func (c *promotionSkuManagerClient) DeleteCombinationSkus(ctx context.Context, i
 	return out, nil
 }
 
-func (c *promotionSkuManagerClient) CreateCombinationMABinding(ctx context.Context, in *CreateCombinationMABindingRequest, opts ...grpc.CallOption) (*CreateCombinationMABindingResponse, error) {
-	out := new(CreateCombinationMABindingResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.PromotionSkuManager/CreateCombinationMABinding", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *promotionSkuManagerClient) DescribeCombinationMABindings(ctx context.Context, in *DescribeCombinationMABindingsRequest, opts ...grpc.CallOption) (*DescribeCombinationMABindingsResponse, error) {
-	out := new(DescribeCombinationMABindingsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.PromotionSkuManager/DescribeCombinationMABindings", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *promotionSkuManagerClient) ModifyCombinationMABinding(ctx context.Context, in *ModifyCombinationMABindingRequest, opts ...grpc.CallOption) (*ModifyCombinationMABindingResponse, error) {
-	out := new(ModifyCombinationMABindingResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.PromotionSkuManager/ModifyCombinationMABinding", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *promotionSkuManagerClient) DeleteCombinationMABindings(ctx context.Context, in *DeleteCombinationMABindingsRequest, opts ...grpc.CallOption) (*DeleteCombinationMABindingsResponse, error) {
-	out := new(DeleteCombinationMABindingsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.PromotionSkuManager/DeleteCombinationMABindings", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PromotionSkuManagerServer is the server API for PromotionSkuManager service.
 type PromotionSkuManagerServer interface {
 	CreateCombination(context.Context, *CreateCombinationRequest) (*CreateCombinationResponse, error)
@@ -6489,10 +5506,6 @@ type PromotionSkuManagerServer interface {
 	DescribeCombinationSkus(context.Context, *DescribeCombinationSkusRequest) (*DescribeCombinationSkusResponse, error)
 	ModifyCombinationSku(context.Context, *ModifyCombinationSkuRequest) (*ModifyCombinationSkuResponse, error)
 	DeleteCombinationSkus(context.Context, *DeleteCombinationSkusRequest) (*DeleteCombinationSkusResponse, error)
-	CreateCombinationMABinding(context.Context, *CreateCombinationMABindingRequest) (*CreateCombinationMABindingResponse, error)
-	DescribeCombinationMABindings(context.Context, *DescribeCombinationMABindingsRequest) (*DescribeCombinationMABindingsResponse, error)
-	ModifyCombinationMABinding(context.Context, *ModifyCombinationMABindingRequest) (*ModifyCombinationMABindingResponse, error)
-	DeleteCombinationMABindings(context.Context, *DeleteCombinationMABindingsRequest) (*DeleteCombinationMABindingsResponse, error)
 }
 
 func RegisterPromotionSkuManagerServer(s *grpc.Server, srv PromotionSkuManagerServer) {
@@ -6643,78 +5656,6 @@ func _PromotionSkuManager_DeleteCombinationSkus_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PromotionSkuManager_CreateCombinationMABinding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateCombinationMABindingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PromotionSkuManagerServer).CreateCombinationMABinding(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.PromotionSkuManager/CreateCombinationMABinding",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PromotionSkuManagerServer).CreateCombinationMABinding(ctx, req.(*CreateCombinationMABindingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PromotionSkuManager_DescribeCombinationMABindings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DescribeCombinationMABindingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PromotionSkuManagerServer).DescribeCombinationMABindings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.PromotionSkuManager/DescribeCombinationMABindings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PromotionSkuManagerServer).DescribeCombinationMABindings(ctx, req.(*DescribeCombinationMABindingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PromotionSkuManager_ModifyCombinationMABinding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ModifyCombinationMABindingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PromotionSkuManagerServer).ModifyCombinationMABinding(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.PromotionSkuManager/ModifyCombinationMABinding",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PromotionSkuManagerServer).ModifyCombinationMABinding(ctx, req.(*ModifyCombinationMABindingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PromotionSkuManager_DeleteCombinationMABindings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteCombinationMABindingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PromotionSkuManagerServer).DeleteCombinationMABindings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.PromotionSkuManager/DeleteCombinationMABindings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PromotionSkuManagerServer).DeleteCombinationMABindings(ctx, req.(*DeleteCombinationMABindingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _PromotionSkuManager_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "openpitrix.PromotionSkuManager",
 	HandlerType: (*PromotionSkuManagerServer)(nil),
@@ -6750,220 +5691,6 @@ var _PromotionSkuManager_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteCombinationSkus",
 			Handler:    _PromotionSkuManager_DeleteCombinationSkus_Handler,
-		},
-		{
-			MethodName: "CreateCombinationMABinding",
-			Handler:    _PromotionSkuManager_CreateCombinationMABinding_Handler,
-		},
-		{
-			MethodName: "DescribeCombinationMABindings",
-			Handler:    _PromotionSkuManager_DescribeCombinationMABindings_Handler,
-		},
-		{
-			MethodName: "ModifyCombinationMABinding",
-			Handler:    _PromotionSkuManager_ModifyCombinationMABinding_Handler,
-		},
-		{
-			MethodName: "DeleteCombinationMABindings",
-			Handler:    _PromotionSkuManager_DeleteCombinationMABindings_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "metering.proto",
-}
-
-// MeteringManagerClient is the client API for MeteringManager service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type MeteringManagerClient interface {
-	InitMetering(ctx context.Context, in *InitMeteringRequest, opts ...grpc.CallOption) (*CommonMeteringResponse, error)
-	// start for stopped metering
-	StartMeterings(ctx context.Context, in *StartMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error)
-	UpdateMetering(ctx context.Context, in *UpdateMeteringRequest, opts ...grpc.CallOption) (*CommonMeteringResponse, error)
-	StopMeterings(ctx context.Context, in *StopMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error)
-	TerminateMeterings(ctx context.Context, in *TerminateMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error)
-}
-
-type meteringManagerClient struct {
-	cc *grpc.ClientConn
-}
-
-func NewMeteringManagerClient(cc *grpc.ClientConn) MeteringManagerClient {
-	return &meteringManagerClient{cc}
-}
-
-func (c *meteringManagerClient) InitMetering(ctx context.Context, in *InitMeteringRequest, opts ...grpc.CallOption) (*CommonMeteringResponse, error) {
-	out := new(CommonMeteringResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.MeteringManager/InitMetering", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *meteringManagerClient) StartMeterings(ctx context.Context, in *StartMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error) {
-	out := new(CommonMeteringsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.MeteringManager/StartMeterings", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *meteringManagerClient) UpdateMetering(ctx context.Context, in *UpdateMeteringRequest, opts ...grpc.CallOption) (*CommonMeteringResponse, error) {
-	out := new(CommonMeteringResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.MeteringManager/UpdateMetering", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *meteringManagerClient) StopMeterings(ctx context.Context, in *StopMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error) {
-	out := new(CommonMeteringsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.MeteringManager/StopMeterings", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *meteringManagerClient) TerminateMeterings(ctx context.Context, in *TerminateMeteringsRequest, opts ...grpc.CallOption) (*CommonMeteringsResponse, error) {
-	out := new(CommonMeteringsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.MeteringManager/TerminateMeterings", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// MeteringManagerServer is the server API for MeteringManager service.
-type MeteringManagerServer interface {
-	InitMetering(context.Context, *InitMeteringRequest) (*CommonMeteringResponse, error)
-	// start for stopped metering
-	StartMeterings(context.Context, *StartMeteringsRequest) (*CommonMeteringsResponse, error)
-	UpdateMetering(context.Context, *UpdateMeteringRequest) (*CommonMeteringResponse, error)
-	StopMeterings(context.Context, *StopMeteringsRequest) (*CommonMeteringsResponse, error)
-	TerminateMeterings(context.Context, *TerminateMeteringsRequest) (*CommonMeteringsResponse, error)
-}
-
-func RegisterMeteringManagerServer(s *grpc.Server, srv MeteringManagerServer) {
-	s.RegisterService(&_MeteringManager_serviceDesc, srv)
-}
-
-func _MeteringManager_InitMetering_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InitMeteringRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MeteringManagerServer).InitMetering(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.MeteringManager/InitMetering",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeteringManagerServer).InitMetering(ctx, req.(*InitMeteringRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MeteringManager_StartMeterings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StartMeteringsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MeteringManagerServer).StartMeterings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.MeteringManager/StartMeterings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeteringManagerServer).StartMeterings(ctx, req.(*StartMeteringsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MeteringManager_UpdateMetering_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateMeteringRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MeteringManagerServer).UpdateMetering(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.MeteringManager/UpdateMetering",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeteringManagerServer).UpdateMetering(ctx, req.(*UpdateMeteringRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MeteringManager_StopMeterings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StopMeteringsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MeteringManagerServer).StopMeterings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.MeteringManager/StopMeterings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeteringManagerServer).StopMeterings(ctx, req.(*StopMeteringsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MeteringManager_TerminateMeterings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TerminateMeteringsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MeteringManagerServer).TerminateMeterings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/openpitrix.MeteringManager/TerminateMeterings",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MeteringManagerServer).TerminateMeterings(ctx, req.(*TerminateMeteringsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _MeteringManager_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "openpitrix.MeteringManager",
-	HandlerType: (*MeteringManagerServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "InitMetering",
-			Handler:    _MeteringManager_InitMetering_Handler,
-		},
-		{
-			MethodName: "StartMeterings",
-			Handler:    _MeteringManager_StartMeterings_Handler,
-		},
-		{
-			MethodName: "UpdateMetering",
-			Handler:    _MeteringManager_UpdateMetering_Handler,
-		},
-		{
-			MethodName: "StopMeterings",
-			Handler:    _MeteringManager_StopMeterings_Handler,
-		},
-		{
-			MethodName: "TerminateMeterings",
-			Handler:    _MeteringManager_TerminateMeterings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

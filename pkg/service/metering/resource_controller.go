@@ -5,15 +5,16 @@
 package metering
 
 import (
-	"context"
-	"time"
 
-	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/manager"
-	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/stringutil"
+"context"
+
+"openpitrix.io/openpitrix/pkg/db"
+"openpitrix.io/openpitrix/pkg/manager"
+"openpitrix.io/openpitrix/pkg/models"
+"openpitrix.io/openpitrix/pkg/pb"
+"openpitrix.io/openpitrix/pkg/util/pbutil"
+"openpitrix.io/openpitrix/pkg/util/stringutil"
+
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -258,12 +259,7 @@ func insertCombinationSku(ctx context.Context, comSku *models.CombinationSku) er
 	return err
 }
 
-func leasingToEtcd(leasing models.Leasing) error {
-	//TODO: impl add leasing to etcd
-	return nil
-}
-
-func leasingToRedis(leasingId string, renewalTime time.Time) error {
+func leasingToRedis(leasing models.Leasing) error {
 	//TODO: impl add leasing to redis
 	return nil
 }

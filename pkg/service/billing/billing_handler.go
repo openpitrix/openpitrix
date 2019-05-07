@@ -16,8 +16,7 @@ import (
 func (s *Server) CreatePrice(ctx context.Context, req *pb.CreatePriceRequest) (*pb.CreatePriceResponse, error) {
 	price := models.PbToPrice(req)
 
-	//TODO: how to check bindId
-	//How about do not check bindId?
+	//TODO: how to check skuId and attributeId
 
 	//insert price
 	err := insertPrice(ctx, price)
