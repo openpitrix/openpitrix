@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-func (s *Server) InitMetering(ctx context.Context, req *pb.InitMeteringRequest) (*pb.CommonMeteringResponse, error) {
+func (s *Server) StartMetering(ctx context.Context, req *pb.StartMeteringRequest) (*pb.CommonMeteringResponse, error) {
 	var leasings []*models.Leasing
 	now := time.Now()
 	for _, skuM := range req.GetSkuMeterings() {
@@ -32,22 +32,14 @@ func (s *Server) InitMetering(ctx context.Context, req *pb.InitMeteringRequest) 
 	//TODO: How to guarantee consistency operations.
 	for _, l := range leasings {
 		err = leasingToRedis(*l)
-		//TODO: check if BillingService exist add billing task for pre-charging by curl TaskService
+		//TODO: check if BillingService exist, then add billing task for pre-charging by curl TaskService
 	}
 	return &pb.CommonMeteringResponse{ResourceId: req.GetResourceId()}, nil
 }
 
-func (s *Server) StartMeterings(ctx context.Context, req *pb.StartMeteringsRequest) (*pb.CommonMeteringsResponse, error) {
-	//TODO: get leasings by resource.ResourceId and resource.skuId(if skuIds is nil, get all leasings of resourceId)
-	//      update Status of skus to active
-	//TODO: Add leasing to REDIS and Etcd if duration exist.
-
-	return &pb.CommonMeteringsResponse{}, nil
-}
-
 //Can not update duration
 func (s *Server) UpdateMetering(ctx context.Context, req *pb.UpdateMeteringRequest) (*pb.CommonMeteringResponse, error) {
-	for _, metering := range req.GetSkuMeterings() {
+	for _, metering := range req.GetUpdateSkuMeterings() {
 		leasing, _ := getLeasing(ctx,
 			NIL_STR,
 			req.GetResourceId().GetValue(),
@@ -57,57 +49,52 @@ func (s *Server) UpdateMetering(ctx context.Context, req *pb.UpdateMeteringReque
 		//TODO: Update lesasing metering_values and save leasing
 		//      check attribute_name, make sure not duration
 		leasingToRedis(*leasing)
-		//TODO: check if BillingService exist add billing task for pre-charging by curl TaskService
+		//TODO: check if BillingService exist and if need to charging, then add billing task for pre-charging by curl TaskService
 	}
 
 	return &pb.CommonMeteringResponse{}, nil
+}
+
+func (s *Server) RestartMeterings(ctx context.Context, req *pb.RestartMeteringsRequest) (*pb.CommonMeteringsResponse, error) {
+	//TODO: get leasings by resource.ResourceId and resource.skuId(if skuIds is nil, get all leasings of resourceId)
+	//      update Status of skus to active
+	//TODO: Add leasing to REDIS
+
+	return &pb.CommonMeteringsResponse{}, nil
 }
 
 //Before StopMetering, need to call UpdateMetering if needed.
 func (s *Server) StopMeterings(ctx context.Context, req *pb.StopMeteringsRequest) (*pb.CommonMeteringsResponse, error) {
 	var leasings []*models.Leasing
 
-	for _, resource := range req.GetResources() {
-		for _, skuId := range resource.SkuIds {
-			leasing, _ := getLeasing(ctx, NIL_STR, resource.GetResourceId().GetValue(), skuId)
-			leasings = append(leasings, leasing)
-		}
+	for _, skuId := range req.GetSkuIds() {
+		leasing, _ := getLeasing(ctx, NIL_STR, req.GetResourceId().GetValue(), skuId)
+		leasings = append(leasings, leasing)
 	}
 
 	for _, leasing := range leasings {
 
-		//if duration in attributes
-		//.........................................
 		clearLeasingRedis(leasing.LeasingId)
-		//TODO: Update UpdateTime renewalTime of leasing and save it
-		leasingToEtcd(*leasing)
-		//.........................................
-
-		//TODO: Update Status(stoped) / StopTimes of leasing and save it
+		//TODO: Update UpdateTime/renewalTime/StopTimes/Status of leasing and save it
+		//TODO: if pre-charging, add refund task by curl TaskService
 	}
 	return &pb.CommonMeteringsResponse{}, nil
 }
 
-func (s *Server) TerminateMeterings(ctx context.Context, req *pb.TerminateMeteringRequest) (*pb.CommonMeteringsResponse, error) {
+func (s *Server) TerminateMeterings(ctx context.Context, req *pb.TerminateMeteringsRequest) (*pb.CommonMeteringsResponse, error) {
 	var leasings []*models.Leasing
 
-	for _, resource := range req.GetResources() {
-		for _, skuId := range resource.SkuIds {
-			leasing, _ := getLeasing(ctx, NIL_STR, resource.GetResourceId().GetValue(), skuId)
-			leasings = append(leasings, leasing)
-		}
+	for _, skuId := range req.GetSkuIds() {
+		leasing, _ := getLeasing(ctx, NIL_STR, req.GetResourceId().GetValue(), skuId)
+		leasings = append(leasings, leasing)
 	}
 
 	for _, leasing := range leasings {
 
-		//if duration in attributes
-		//.........................................
 		clearLeasingRedis(leasing.LeasingId)
-		//TODO: Update UpdateTime renewalTime of leasing and save it
-		leasingToEtcd(*leasing)
-		//.........................................
+		//TODO: Update UpdateTime/renewalTime/StopTimes/Status of leasing and save it
+		//TODO: if pre-charging, add refund task by curl TaskService
 
-		//TODO: Update StopTimes of leasing
 		toLeased(leasing)
 	}
 	return &pb.CommonMeteringsResponse{}, nil
@@ -115,15 +102,11 @@ func (s *Server) TerminateMeterings(ctx context.Context, req *pb.TerminateMeteri
 
 //meteringValues: map<attributeId>value
 func updateMeteringByRedis(ctx context.Context, leasingId string, updateTime time.Time) {
-
 	//TODO: get leasing by leasingId
 	leasing, _ := getLeasing(ctx, leasingId, NIL_STR, NIL_STR)
 	//TODO: update updataTIme and next renewalTime
-	renewalTime := time.Now()
-
-	//TODO: add to etcd
-	leasingToEtcd(*leasing)
-	leasingToRedis(leasingId, renewalTime)
+	//TODO: add billing task by curl task service
+	leasingToRedis(*leasing)
 	//TODO: guarantee consistency operations
 }
 

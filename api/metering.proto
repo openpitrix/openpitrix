@@ -508,7 +508,7 @@ message UpdateSkuMetering {
 	repeated UpdateMeteringValue metering_values = 2;
 }
 
-message InitMeteringRequest {
+message StartMeteringRequest {
 	google.protobuf.StringValue user_id = 1;
 	google.protobuf.StringValue resource_id = 2;
 	repeated SkuMetering sku_meterings = 3;
@@ -516,7 +516,7 @@ message InitMeteringRequest {
 
 message UpdateMeteringRequest {
 	google.protobuf.StringValue resource_id = 1;
-	repeated UpdateSkuMetering sku_meterings = 2;
+	repeated UpdateSkuMetering update_sku_meterings = 2;
 }
 
 message StopMeteringsRequest {
@@ -524,7 +524,7 @@ message StopMeteringsRequest {
 	repeated string sku_ids = 2;
 }
 
-message StartMeteringsRequest {
+message RestartMeteringsRequest {
 	google.protobuf.StringValue resource_id = 1;
 	repeated string sku_ids = 2;
 }
@@ -574,9 +574,9 @@ message DescribeLeasingsResponse {
 }
 
 service MeteringManager {
-	rpc InitMetering (InitMeteringRequest) returns (CommonMeteringResponse) {
+	rpc StartMetering (StartMeteringRequest) returns (CommonMeteringResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "init metering about the skus"
+			summary: "start metering about the skus"
 		};
 		option (google.api.http) = {
 			post: "/v1/metering/skus"
@@ -604,13 +604,13 @@ service MeteringManager {
 		};
 	}
 
-	//start for stopped metering
-	rpc StartMeterings (StartMeteringsRequest) returns (CommonMeteringsResponse) {
+	//restart for stopped metering
+	rpc RestartMeterings (RestartMeteringsRequest) returns (CommonMeteringsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "start metering about the skus"
+			summary: "restart metering about the skus"
 		};
 		option (google.api.http) = {
-			put: "/v1/metering/start"
+			put: "/v1/metering/restart"
 			body: "*"
 		};
 	}
