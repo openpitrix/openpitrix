@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixModifyRoleModuleRequest
 type OpenpitrixModifyRoleModuleRequest struct {
 
-	// module
+	// required, module info
 	Module *OpenpitrixModule `json:"module,omitempty"`
 
-	// role id
+	// required, use role id to modify role module
 	RoleID string `json:"role_id,omitempty"`
 }
 

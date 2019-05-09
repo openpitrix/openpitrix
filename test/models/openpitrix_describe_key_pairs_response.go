@@ -19,7 +19,7 @@ type OpenpitrixDescribeKeyPairsResponse struct {
 	// key pair set
 	KeyPairSet OpenpitrixDescribeKeyPairsResponseKeyPairSet `json:"key_pair_set"`
 
-	// total count
+	// total count of qualified key pair
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

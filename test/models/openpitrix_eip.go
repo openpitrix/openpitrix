@@ -16,13 +16,13 @@ import (
 // swagger:model openpitrixEip
 type OpenpitrixEip struct {
 
-	// addr
+	// eip address
 	Addr string `json:"addr,omitempty"`
 
-	// eip id
+	// elastic ip
 	EipID string `json:"eip_id,omitempty"`
 
-	// name
+	// eip name
 	Name string `json:"name,omitempty"`
 }
 

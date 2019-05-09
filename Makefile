@@ -194,7 +194,6 @@ release-%: ## Release version
 	cp -r deploy/docker-compose/. deploy/$*-docker-compose; \
 	echo `./deploy/version.sh $*` >> deploy/$*-docker-compose/.env; \
 	sed -i 's/ /\n/g' deploy/$*-docker-compose/.env; \
-	cp -r deploy/config/global_config.init.yaml deploy/$*-docker-compose/global_config.yaml; \
 	cd deploy/ && tar -czvf $*-docker-compose.tar.gz $*-docker-compose; \
 	fi
 

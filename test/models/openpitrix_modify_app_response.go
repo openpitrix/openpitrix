@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixModifyAppResponse
 type OpenpitrixModifyAppResponse struct {
 
-	// app id
+	// id of app modified
 	AppID string `json:"app_id,omitempty"`
 }
 

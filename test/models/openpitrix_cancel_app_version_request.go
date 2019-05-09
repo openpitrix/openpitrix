@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixCancelAppVersionRequest
 type OpenpitrixCancelAppVersionRequest struct {
 
-	// version id
+	// required, id of version to cancel
 	VersionID string `json:"version_id,omitempty"`
 }
 

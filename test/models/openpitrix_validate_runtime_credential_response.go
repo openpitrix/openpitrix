@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixValidateRuntimeCredentialResponse
 type OpenpitrixValidateRuntimeCredentialResponse struct {
 
-	// ok
+	// validte ok or not
 	Ok bool `json:"ok,omitempty"`
 }
 

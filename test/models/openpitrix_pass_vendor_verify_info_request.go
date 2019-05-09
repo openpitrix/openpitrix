@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixPassVendorVerifyInfoRequest
 type OpenpitrixPassVendorVerifyInfoRequest struct {
 
-	// user id
+	// required, id of user to pass
 	UserID string `json:"user_id,omitempty"`
 }
 

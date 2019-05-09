@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixIndexRepoRequest
 type OpenpitrixIndexRepoRequest struct {
 
-	// repo id
+	// id of repository to index
 	RepoID string `json:"repo_id,omitempty"`
 }
 

@@ -16,19 +16,19 @@ import (
 // swagger:model openpitrixModifyAppVersionRequest
 type OpenpitrixModifyAppVersionRequest struct {
 
-	// description
+	// app description
 	Description string `json:"description,omitempty"`
 
-	// name
+	// app name
 	Name string `json:"name,omitempty"`
 
-	// package
+	// package of app to replace other
 	Package strfmt.Base64 `json:"package,omitempty"`
 
-	// filename => file_content
+	// filename map to file_content
 	PackageFiles map[string]strfmt.Base64 `json:"package_files,omitempty"`
 
-	// version id
+	// required, version id of app to modify
 	VersionID string `json:"version_id,omitempty"`
 }
 

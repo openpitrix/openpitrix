@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeRuntimeCredentialsResponseRuntimeCredentialSet openpitrix describe runtime credentials response runtime credential set
+// OpenpitrixDescribeRuntimeCredentialsResponseRuntimeCredentialSet list of runtime credential
 // swagger:model openpitrixDescribeRuntimeCredentialsResponseRuntimeCredentialSet
 type OpenpitrixDescribeRuntimeCredentialsResponseRuntimeCredentialSet []*OpenpitrixRuntimeCredential
 

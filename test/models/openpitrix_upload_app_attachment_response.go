@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixUploadAppAttachmentResponse
 type OpenpitrixUploadAppAttachmentResponse struct {
 
-	// app id
+	// id of app to upload attachment
 	AppID string `json:"app_id,omitempty"`
 }
 

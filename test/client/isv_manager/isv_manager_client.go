@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-DescribeAppVendorStatistics describes app vendor statistics
+DescribeAppVendorStatistics gets statistics of vendor
 */
 func (a *Client) DescribeAppVendorStatistics(params *DescribeAppVendorStatisticsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVendorStatisticsOK, error) {
 	// TODO: Validate the params before sending
@@ -54,7 +54,7 @@ func (a *Client) DescribeAppVendorStatistics(params *DescribeAppVendorStatistics
 }
 
 /*
-DescribeVendorVerifyInfos describes vendor verify infos
+DescribeVendorVerifyInfos gets vendor verifies info can filer with these fields user id status default return all vendor verify infos
 */
 func (a *Client) DescribeVendorVerifyInfos(params *DescribeVendorVerifyInfosParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeVendorVerifyInfosOK, error) {
 	// TODO: Validate the params before sending
@@ -83,7 +83,7 @@ func (a *Client) DescribeVendorVerifyInfos(params *DescribeVendorVerifyInfosPara
 }
 
 /*
-GetVendorVerifyInfo gets isv by isv user Id
+GetVendorVerifyInfo gets vendor verify info
 */
 func (a *Client) GetVendorVerifyInfo(params *GetVendorVerifyInfoParams, authInfo runtime.ClientAuthInfoWriter) (*GetVendorVerifyInfoOK, error) {
 	// TODO: Validate the params before sending
@@ -112,7 +112,7 @@ func (a *Client) GetVendorVerifyInfo(params *GetVendorVerifyInfoParams, authInfo
 }
 
 /*
-PassVendorVerifyInfo passes vendor verify info
+PassVendorVerifyInfo passes vendor verify
 */
 func (a *Client) PassVendorVerifyInfo(params *PassVendorVerifyInfoParams, authInfo runtime.ClientAuthInfoWriter) (*PassVendorVerifyInfoOK, error) {
 	// TODO: Validate the params before sending
@@ -141,7 +141,7 @@ func (a *Client) PassVendorVerifyInfo(params *PassVendorVerifyInfoParams, authIn
 }
 
 /*
-RejectVendorVerifyInfo rejects vendor verify info
+RejectVendorVerifyInfo rejects vendor verify
 */
 func (a *Client) RejectVendorVerifyInfo(params *RejectVendorVerifyInfoParams, authInfo runtime.ClientAuthInfoWriter) (*RejectVendorVerifyInfoOK, error) {
 	// TODO: Validate the params before sending

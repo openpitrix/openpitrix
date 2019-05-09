@@ -62,9 +62,15 @@ for the get attachment operation typically these are written to a http.Request
 */
 type GetAttachmentParams struct {
 
-	/*AttachmentID*/
+	/*AttachmentID
+	  required, use attachment id to get attachment.
+
+	*/
 	AttachmentID *string
-	/*Filename*/
+	/*Filename
+	  filename, attachment contain one more file.
+
+	*/
 	Filename *string
 
 	timeout    time.Duration

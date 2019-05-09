@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeAppsResponseAppSet openpitrix describe apps response app set
+// OpenpitrixDescribeAppsResponseAppSet list of app
 // swagger:model openpitrixDescribeAppsResponseAppSet
 type OpenpitrixDescribeAppsResponseAppSet []*OpenpitrixApp
 

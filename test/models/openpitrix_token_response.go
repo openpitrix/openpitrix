@@ -16,19 +16,19 @@ import (
 // swagger:model openpitrixTokenResponse
 type OpenpitrixTokenResponse struct {
 
-	// access token
+	// access token, generator by jwt(key=secrete key)
 	AccessToken string `json:"access_token,omitempty"`
 
-	// expires in
+	// default 2h
 	ExpiresIn int32 `json:"expires_in,omitempty"`
 
-	// id token
+	// id token, generator by jwt(key="")
 	IDToken string `json:"id_token,omitempty"`
 
-	// refresh token
+	// refresh token, timeliness,default expired after 2 weeks
 	RefreshToken string `json:"refresh_token,omitempty"`
 
-	// token type
+	// token type.eg.[sender,bearer]
 	TokenType string `json:"token_type,omitempty"`
 }
 

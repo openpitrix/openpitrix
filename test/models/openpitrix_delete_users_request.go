@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteUsersRequest
 type OpenpitrixDeleteUsersRequest struct {
 
-	// user id
+	// required, ids of user to delete
 	UserID []string `json:"user_id"`
 }
 

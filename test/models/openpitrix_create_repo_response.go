@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixCreateRepoResponse
 type OpenpitrixCreateRepoResponse struct {
 
-	// repo id
+	// id of repository created
 	RepoID string `json:"repo_id,omitempty"`
 }
 

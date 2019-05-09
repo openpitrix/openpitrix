@@ -19,7 +19,7 @@ type OpenpitrixCluster struct {
 	// additional info
 	AdditionalInfo string `json:"additional_info,omitempty"`
 
-	// app id
+	// id of app run in cluster
 	AppID string `json:"app_id,omitempty"`
 
 	// cluster common set
@@ -40,25 +40,25 @@ type OpenpitrixCluster struct {
 	// cluster role set
 	ClusterRoleSet OpenpitrixClusterClusterRoleSet `json:"cluster_role_set"`
 
-	// cluster type
+	// cluster type, frontgate or normal cluster
 	ClusterType int64 `json:"cluster_type,omitempty"`
 
-	// create time
+	// the time when cluster create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// debug
+	// cluster used to debug or not
 	Debug bool `json:"debug,omitempty"`
 
-	// description
+	// cluster description
 	Description string `json:"description,omitempty"`
 
-	// endpoints
+	// endpoint of cluster
 	Endpoints string `json:"endpoints,omitempty"`
 
-	// env
+	// cluster env
 	Env string `json:"env,omitempty"`
 
-	// frontgate id
+	// frontgate id, a proxy for vpc to communicate
 	FrontgateID string `json:"frontgate_id,omitempty"`
 
 	// global uuid
@@ -67,43 +67,43 @@ type OpenpitrixCluster struct {
 	// metadata root access
 	MetadataRootAccess bool `json:"metadata_root_access,omitempty"`
 
-	// name
+	// cluster name
 	Name string `json:"name,omitempty"`
 
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// owner path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// runtime id
+	// cluster runtime id
 	RuntimeID string `json:"runtime_id,omitempty"`
 
-	// status
+	// cluster status eg.[active|used|enabled|disabled|deleted|stopped|ceased]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
-	// subnet id
+	// subnet id, cluster run in a subnet
 	SubnetID string `json:"subnet_id,omitempty"`
 
-	// transition status
+	// cluster transition status eg.[creating|deleting|upgrading|updating|rollbacking|stopping|starting|recovering|ceasing|resizing|scaling]
 	TransitionStatus string `json:"transition_status,omitempty"`
 
-	// upgrade status
+	// upgrade status, unused
 	UpgradeStatus string `json:"upgrade_status,omitempty"`
 
-	// upgrade time
+	// cluster upgraded time
 	UpgradeTime strfmt.DateTime `json:"upgrade_time,omitempty"`
 
-	// version id
+	// id of version of app run in cluster
 	VersionID string `json:"version_id,omitempty"`
 
-	// vpc id
+	// vpc id, a vpc contain one more subnet
 	VpcID string `json:"vpc_id,omitempty"`
 
-	// zone
+	// zone of cluster eg.[pek3a|pek3b]
 	Zone string `json:"zone,omitempty"`
 }
 

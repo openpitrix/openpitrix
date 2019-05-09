@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixCheckResourceResponse
 type OpenpitrixCheckResourceResponse struct {
 
-	// ok
+	// check ok or not
 	Ok bool `json:"ok,omitempty"`
 }
 

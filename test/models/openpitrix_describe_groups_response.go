@@ -19,7 +19,7 @@ type OpenpitrixDescribeGroupsResponse struct {
 	// group set
 	GroupSet OpenpitrixDescribeGroupsResponseGroupSet `json:"group_set"`
 
-	// total count
+	// total count of qualified group
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

@@ -16,13 +16,13 @@ import (
 // swagger:model openpitrixCreateGroupRequest
 type OpenpitrixCreateGroupRequest struct {
 
-	// description
+	// group description
 	Description string `json:"description,omitempty"`
 
-	// name
+	// required, group name
 	Name string `json:"name,omitempty"`
 
-	// parent group id
+	// required, parent group id
 	ParentGroupID string `json:"parent_group_id,omitempty"`
 }
 

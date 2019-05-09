@@ -16,13 +16,13 @@ import (
 // swagger:model openpitrixModuleElem
 type OpenpitrixModuleElem struct {
 
-	// data level
+	// access level of visiting data
 	DataLevel string `json:"data_level,omitempty"`
 
 	// feature set
 	FeatureSet OpenpitrixModuleElemFeatureSet `json:"feature_set"`
 
-	// is check all
+	// is all feature in module elem checked
 	IsCheckAll bool `json:"is_check_all,omitempty"`
 
 	// module id

@@ -14,75 +14,100 @@ import "protoc-gen-swagger/options/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 message EmailServiceConfig {
+	// protocol
 	google.protobuf.StringValue protocol = 1;
+	// email host
 	google.protobuf.StringValue email_host = 2;
+	// port
 	google.protobuf.UInt32Value port = 3;
+	// display sender
 	google.protobuf.StringValue display_sender = 4;
+	// email
 	google.protobuf.StringValue email = 5;
+	// password
 	google.protobuf.StringValue password = 6;
+	// use ssl or not
 	google.protobuf.BoolValue ssl_enable = 7;
 }
 
 message NotificationConfig {
+	// email service sonfig
 	EmailServiceConfig email_service_config = 1;
 }
 
 message RuntimeItemConfig {
+	// runtime name eg.[qingcloud|aliyun|aws|kubernetes]
 	google.protobuf.StringValue name = 1;
+	// whether runtime is available
 	google.protobuf.BoolValue enable = 2;
 }
 
 message RuntimeConfig {
+	// runtime item config
 	repeated RuntimeItemConfig config_set = 1;
 }
 
 message BasicConfig {
+	// platform name
 	google.protobuf.StringValue platform_name = 1;
+	// platform url
 	google.protobuf.StringValue platform_url = 2;
 }
 
 message SetServiceConfigRequest {
+	// notification config
 	NotificationConfig notification_config = 1;
+	// runtime config
 	RuntimeConfig runtime_config = 2;
+	// basic config
 	BasicConfig basic_config = 3;
 }
 
 message SetServiceConfigResponse {
+	// set service config ok or not
 	google.protobuf.BoolValue is_succ = 1;
 }
 
 message GetServiceConfigRequest {
+	// service type eg.[runtime]
 	repeated string service_type = 1;
 }
 
 message GetServiceConfigResponse {
+	// notification config
 	NotificationConfig notification_config = 1;
+	// runtime config
 	RuntimeConfig runtime_config = 2;
+	// basic config
 	BasicConfig basic_config = 3;
 }
 
 message  ValidateEmailServiceRequest{
+	// email service config
 	EmailServiceConfig email_service_config = 1;
 }
 
 
 message ValidateEmailServiceResponse{
+	// validate email service ok or not
 	google.protobuf.BoolValue is_succ = 1;
 }
 
 service ServiceConfig {
+	// Set service configration
 	rpc SetServiceConfig (SetServiceConfigRequest) returns (SetServiceConfigResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "set service configration"
+			summary: "Set service configration"
 		};
 		option (google.api.http) = {
 			post: "/v1/service_configs/set"
 			body: "*"
 		};
 	}
+	// Get service configration
 	rpc GetServiceConfig (GetServiceConfigRequest) returns (GetServiceConfigResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get service configration"
+			summary: "Get service configration"
 		};
 		option (google.api.http) = {
 			post: "/v1/service_configs/get"
@@ -90,10 +115,10 @@ service ServiceConfig {
 		};
 	}
 
-
+	// Validate email service
 	rpc ValidateEmailService(ValidateEmailServiceRequest)  returns (ValidateEmailServiceResponse){
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "validate email service"
+			summary: "Validate email service"
 		};
 		option (google.api.http) = {
 			post: "/v1/service_configs/validate_email_service"

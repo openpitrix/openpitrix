@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixDeleteAttachmentsResponse
 type OpenpitrixDeleteAttachmentsResponse struct {
 
-	// attachment id
+	// ids of attachment deleted
 	AttachmentID []string `json:"attachment_id"`
 
-	// filename
+	// filename, attachment contain one more file
 	Filename []string `json:"filename"`
 }
 

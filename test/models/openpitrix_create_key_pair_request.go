@@ -16,13 +16,13 @@ import (
 // swagger:model openpitrixCreateKeyPairRequest
 type OpenpitrixCreateKeyPairRequest struct {
 
-	// description
+	// keypair description
 	Description string `json:"description,omitempty"`
 
-	// name
+	// keypair name
 	Name string `json:"name,omitempty"`
 
-	// pub key
+	// public key
 	PubKey string `json:"pub_key,omitempty"`
 }
 

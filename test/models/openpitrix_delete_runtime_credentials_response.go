@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteRuntimeCredentialsResponse
 type OpenpitrixDeleteRuntimeCredentialsResponse struct {
 
-	// runtime credential id
+	// ids of runtime credential deleted
 	RuntimeCredentialID []string `json:"runtime_credential_id"`
 }
 

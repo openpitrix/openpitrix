@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixValidatePackageRequest
 type OpenpitrixValidatePackageRequest struct {
 
-	// version package
+	// required, version package eg.[the wordpress-0.0.1.tgz will be encoded to bytes]
 	VersionPackage strfmt.Base64 `json:"version_package,omitempty"`
 
-	// optional: vmbased/helm
+	// optional, vmbased/helm
 	VersionType string `json:"version_type,omitempty"`
 }
 

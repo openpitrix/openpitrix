@@ -63,29 +63,50 @@ for the describe categories operation typically these are written to a http.Requ
 */
 type DescribeCategoriesParams struct {
 
-	/*CategoryID*/
+	/*CategoryID
+	  category ids.
+
+	*/
 	CategoryID []string
-	/*DisplayColumns*/
+	/*DisplayColumns
+	  select column to display.
+
+	*/
 	DisplayColumns []string
 	/*Limit
-	  default is 20, max value is 200.
+	  data limit per page, default value 20, max value 200.
 
 	*/
 	Limit *int64
-	/*Name*/
+	/*Name
+	  category name.
+
+	*/
 	Name []string
 	/*Offset
-	  default is 0.
+	  data offset, default 0.
 
 	*/
 	Offset *int64
-	/*Owner*/
+	/*Owner
+	  owner.
+
+	*/
 	Owner []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*SearchWord*/
+	/*SearchWord
+	  query key, can fields with these fields(category_id, status, locale, owner, name), default return all categories.
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
 
 	timeout    time.Duration

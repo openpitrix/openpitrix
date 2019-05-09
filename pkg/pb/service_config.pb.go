@@ -28,16 +28,23 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type EmailServiceConfig struct {
-	Protocol             *wrappers.StringValue `protobuf:"bytes,1,opt,name=protocol,proto3" json:"protocol,omitempty"`
-	EmailHost            *wrappers.StringValue `protobuf:"bytes,2,opt,name=email_host,json=emailHost,proto3" json:"email_host,omitempty"`
-	Port                 *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=port,proto3" json:"port,omitempty"`
-	DisplaySender        *wrappers.StringValue `protobuf:"bytes,4,opt,name=display_sender,json=displaySender,proto3" json:"display_sender,omitempty"`
-	Email                *wrappers.StringValue `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
-	Password             *wrappers.StringValue `protobuf:"bytes,6,opt,name=password,proto3" json:"password,omitempty"`
-	SslEnable            *wrappers.BoolValue   `protobuf:"bytes,7,opt,name=ssl_enable,json=sslEnable,proto3" json:"ssl_enable,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// protocol
+	Protocol *wrappers.StringValue `protobuf:"bytes,1,opt,name=protocol,proto3" json:"protocol,omitempty"`
+	// email host
+	EmailHost *wrappers.StringValue `protobuf:"bytes,2,opt,name=email_host,json=emailHost,proto3" json:"email_host,omitempty"`
+	// port
+	Port *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=port,proto3" json:"port,omitempty"`
+	// display sender
+	DisplaySender *wrappers.StringValue `protobuf:"bytes,4,opt,name=display_sender,json=displaySender,proto3" json:"display_sender,omitempty"`
+	// email
+	Email *wrappers.StringValue `protobuf:"bytes,5,opt,name=email,proto3" json:"email,omitempty"`
+	// password
+	Password *wrappers.StringValue `protobuf:"bytes,6,opt,name=password,proto3" json:"password,omitempty"`
+	// use ssl or not
+	SslEnable            *wrappers.BoolValue `protobuf:"bytes,7,opt,name=ssl_enable,json=sslEnable,proto3" json:"ssl_enable,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *EmailServiceConfig) Reset()         { *m = EmailServiceConfig{} }
@@ -115,6 +122,7 @@ func (m *EmailServiceConfig) GetSslEnable() *wrappers.BoolValue {
 }
 
 type NotificationConfig struct {
+	// email service sonfig
 	EmailServiceConfig   *EmailServiceConfig `protobuf:"bytes,1,opt,name=email_service_config,json=emailServiceConfig,proto3" json:"email_service_config,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
@@ -154,11 +162,13 @@ func (m *NotificationConfig) GetEmailServiceConfig() *EmailServiceConfig {
 }
 
 type RuntimeItemConfig struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Enable               *wrappers.BoolValue   `protobuf:"bytes,2,opt,name=enable,proto3" json:"enable,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	// runtime name eg.[qingcloud|aliyun|aws|kubernetes]
+	Name *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// whether runtime is available
+	Enable               *wrappers.BoolValue `protobuf:"bytes,2,opt,name=enable,proto3" json:"enable,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *RuntimeItemConfig) Reset()         { *m = RuntimeItemConfig{} }
@@ -201,6 +211,7 @@ func (m *RuntimeItemConfig) GetEnable() *wrappers.BoolValue {
 }
 
 type RuntimeConfig struct {
+	// runtime item config
 	ConfigSet            []*RuntimeItemConfig `protobuf:"bytes,1,rep,name=config_set,json=configSet,proto3" json:"config_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
@@ -240,7 +251,9 @@ func (m *RuntimeConfig) GetConfigSet() []*RuntimeItemConfig {
 }
 
 type BasicConfig struct {
-	PlatformName         *wrappers.StringValue `protobuf:"bytes,1,opt,name=platform_name,json=platformName,proto3" json:"platform_name,omitempty"`
+	// platform name
+	PlatformName *wrappers.StringValue `protobuf:"bytes,1,opt,name=platform_name,json=platformName,proto3" json:"platform_name,omitempty"`
+	// platform url
 	PlatformUrl          *wrappers.StringValue `protobuf:"bytes,2,opt,name=platform_url,json=platformUrl,proto3" json:"platform_url,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
@@ -287,12 +300,15 @@ func (m *BasicConfig) GetPlatformUrl() *wrappers.StringValue {
 }
 
 type SetServiceConfigRequest struct {
-	NotificationConfig   *NotificationConfig `protobuf:"bytes,1,opt,name=notification_config,json=notificationConfig,proto3" json:"notification_config,omitempty"`
-	RuntimeConfig        *RuntimeConfig      `protobuf:"bytes,2,opt,name=runtime_config,json=runtimeConfig,proto3" json:"runtime_config,omitempty"`
-	BasicConfig          *BasicConfig        `protobuf:"bytes,3,opt,name=basic_config,json=basicConfig,proto3" json:"basic_config,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
-	XXX_unrecognized     []byte              `json:"-"`
-	XXX_sizecache        int32               `json:"-"`
+	// notification config
+	NotificationConfig *NotificationConfig `protobuf:"bytes,1,opt,name=notification_config,json=notificationConfig,proto3" json:"notification_config,omitempty"`
+	// runtime config
+	RuntimeConfig *RuntimeConfig `protobuf:"bytes,2,opt,name=runtime_config,json=runtimeConfig,proto3" json:"runtime_config,omitempty"`
+	// basic config
+	BasicConfig          *BasicConfig `protobuf:"bytes,3,opt,name=basic_config,json=basicConfig,proto3" json:"basic_config,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
 func (m *SetServiceConfigRequest) Reset()         { *m = SetServiceConfigRequest{} }
@@ -342,6 +358,7 @@ func (m *SetServiceConfigRequest) GetBasicConfig() *BasicConfig {
 }
 
 type SetServiceConfigResponse struct {
+	// set service config ok or not
 	IsSucc               *wrappers.BoolValue `protobuf:"bytes,1,opt,name=is_succ,json=isSucc,proto3" json:"is_succ,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
@@ -381,6 +398,7 @@ func (m *SetServiceConfigResponse) GetIsSucc() *wrappers.BoolValue {
 }
 
 type GetServiceConfigRequest struct {
+	// service type eg.[runtime]
 	ServiceType          []string `protobuf:"bytes,1,rep,name=service_type,json=serviceType,proto3" json:"service_type,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -420,12 +438,15 @@ func (m *GetServiceConfigRequest) GetServiceType() []string {
 }
 
 type GetServiceConfigResponse struct {
-	NotificationConfig   *NotificationConfig `protobuf:"bytes,1,opt,name=notification_config,json=notificationConfig,proto3" json:"notification_config,omitempty"`
-	RuntimeConfig        *RuntimeConfig      `protobuf:"bytes,2,opt,name=runtime_config,json=runtimeConfig,proto3" json:"runtime_config,omitempty"`
-	BasicConfig          *BasicConfig        `protobuf:"bytes,3,opt,name=basic_config,json=basicConfig,proto3" json:"basic_config,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
-	XXX_unrecognized     []byte              `json:"-"`
-	XXX_sizecache        int32               `json:"-"`
+	// notification config
+	NotificationConfig *NotificationConfig `protobuf:"bytes,1,opt,name=notification_config,json=notificationConfig,proto3" json:"notification_config,omitempty"`
+	// runtime config
+	RuntimeConfig *RuntimeConfig `protobuf:"bytes,2,opt,name=runtime_config,json=runtimeConfig,proto3" json:"runtime_config,omitempty"`
+	// basic config
+	BasicConfig          *BasicConfig `protobuf:"bytes,3,opt,name=basic_config,json=basicConfig,proto3" json:"basic_config,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
 func (m *GetServiceConfigResponse) Reset()         { *m = GetServiceConfigResponse{} }
@@ -475,6 +496,7 @@ func (m *GetServiceConfigResponse) GetBasicConfig() *BasicConfig {
 }
 
 type ValidateEmailServiceRequest struct {
+	// email service config
 	EmailServiceConfig   *EmailServiceConfig `protobuf:"bytes,1,opt,name=email_service_config,json=emailServiceConfig,proto3" json:"email_service_config,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
@@ -514,6 +536,7 @@ func (m *ValidateEmailServiceRequest) GetEmailServiceConfig() *EmailServiceConfi
 }
 
 type ValidateEmailServiceResponse struct {
+	// validate email service ok or not
 	IsSucc               *wrappers.BoolValue `protobuf:"bytes,1,opt,name=is_succ,json=isSucc,proto3" json:"is_succ,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
@@ -610,14 +633,14 @@ var fileDescriptor_452b382cbc0cfd24 = []byte{
 	0xf9, 0xc9, 0xac, 0x67, 0xf0, 0xd7, 0x19, 0x0e, 0x69, 0x0b, 0x4b, 0x32, 0x78, 0xeb, 0x13, 0xb7,
 	0x7e, 0xfc, 0x9f, 0x46, 0x03, 0x4a, 0xe3, 0x1b, 0x7e, 0xc7, 0xbe, 0xab, 0xaf, 0xb3, 0x90, 0x1f,
 	0xfe, 0x34, 0xbd, 0xb3, 0xe0, 0xd7, 0x9b, 0x99, 0x42, 0xff, 0x0d, 0xea, 0x9d, 0x70, 0xb7, 0x8a,
-	0xff, 0x4f, 0x07, 0x69, 0x99, 0xce, 0xce, 0xe5, 0x6e, 0x11, 0xd9, 0x82, 0xc8, 0xb2, 0x71, 0xa6,
-	0xac, 0x9d, 0xe1, 0x6a, 0xb5, 0xaf, 0x3e, 0x7e, 0x7a, 0x9b, 0x29, 0x39, 0x05, 0xf7, 0xfc, 0x9e,
-	0x3b, 0xec, 0x9c, 0x70, 0x05, 0x91, 0x5b, 0xd6, 0x9a, 0x12, 0x58, 0x9b, 0x2a, 0xb0, 0x96, 0x46,
-	0x60, 0x6d, 0xba, 0xc0, 0xe0, 0x1b, 0x04, 0x06, 0x5a, 0xe0, 0x07, 0x0b, 0x96, 0xc7, 0x6d, 0x0a,
-	0xdd, 0x19, 0xec, 0x3f, 0x25, 0x3c, 0xc5, 0xd5, 0xdb, 0x81, 0x46, 0xec, 0xc9, 0xe5, 0xae, 0x8d,
-	0xfe, 0x38, 0x37, 0x90, 0xb2, 0x8a, 0x4d, 0xa2, 0x5b, 0x49, 0x75, 0x9d, 0xb5, 0x71, 0x52, 0x13,
-	0x86, 0x37, 0x14, 0xd2, 0x2d, 0x6b, 0x6d, 0x2f, 0xfb, 0x2c, 0x13, 0x37, 0x9b, 0x73, 0x2a, 0x33,
-	0x9b, 0x5f, 0x03, 0x00, 0x00, 0xff, 0xff, 0x8c, 0x3a, 0x73, 0xb8, 0x6f, 0x09, 0x00, 0x00,
+	0xff, 0x4f, 0x07, 0x69, 0x99, 0xce, 0xce, 0xe5, 0x6e, 0x11, 0xf5, 0x53, 0x5b, 0x36, 0xce, 0x94,
+	0xb5, 0x33, 0x5c, 0xad, 0xf6, 0xd5, 0xc7, 0x4f, 0x6f, 0x33, 0x25, 0xa7, 0xe0, 0x9e, 0xdf, 0x73,
+	0x87, 0x9d, 0x13, 0xae, 0x20, 0x72, 0xcb, 0x5a, 0x53, 0x02, 0x6b, 0x53, 0x05, 0xd6, 0xd2, 0x08,
+	0xac, 0x4d, 0x17, 0x58, 0xfb, 0x06, 0x81, 0x81, 0x16, 0xf8, 0xc1, 0x82, 0xe5, 0x71, 0x9b, 0x42,
+	0x77, 0x06, 0xfb, 0x4f, 0x09, 0x4f, 0x71, 0xf5, 0x76, 0xa0, 0x11, 0x7b, 0x72, 0xb9, 0x6b, 0xa3,
+	0x3f, 0x12, 0x48, 0x59, 0xc5, 0x26, 0xd1, 0xad, 0xa4, 0xba, 0xce, 0xda, 0x38, 0xa9, 0xe7, 0x86,
+	0xe1, 0x0d, 0x85, 0x74, 0xcb, 0x5a, 0xdb, 0xcb, 0x3e, 0xcb, 0xc4, 0xcd, 0xe6, 0x9c, 0xca, 0xcc,
+	0xe6, 0xd7, 0x00, 0x00, 0x00, 0xff, 0xff, 0x7b, 0xae, 0xf0, 0x4d, 0x6f, 0x09, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -632,8 +655,11 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ServiceConfigClient interface {
+	// Set service configration
 	SetServiceConfig(ctx context.Context, in *SetServiceConfigRequest, opts ...grpc.CallOption) (*SetServiceConfigResponse, error)
+	// Get service configration
 	GetServiceConfig(ctx context.Context, in *GetServiceConfigRequest, opts ...grpc.CallOption) (*GetServiceConfigResponse, error)
+	// Validate email service
 	ValidateEmailService(ctx context.Context, in *ValidateEmailServiceRequest, opts ...grpc.CallOption) (*ValidateEmailServiceResponse, error)
 }
 
@@ -674,8 +700,11 @@ func (c *serviceConfigClient) ValidateEmailService(ctx context.Context, in *Vali
 
 // ServiceConfigServer is the server API for ServiceConfig service.
 type ServiceConfigServer interface {
+	// Set service configration
 	SetServiceConfig(context.Context, *SetServiceConfigRequest) (*SetServiceConfigResponse, error)
+	// Get service configration
 	GetServiceConfig(context.Context, *GetServiceConfigRequest) (*GetServiceConfigResponse, error)
+	// Validate email service
 	ValidateEmailService(context.Context, *ValidateEmailServiceRequest) (*ValidateEmailServiceResponse, error)
 }
 

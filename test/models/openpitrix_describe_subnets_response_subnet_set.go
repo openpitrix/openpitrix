@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeSubnetsResponseSubnetSet openpitrix describe subnets response subnet set
+// OpenpitrixDescribeSubnetsResponseSubnetSet list of subnet
 // swagger:model openpitrixDescribeSubnetsResponseSubnetSet
 type OpenpitrixDescribeSubnetsResponseSubnetSet []*OpenpitrixSubnet
 

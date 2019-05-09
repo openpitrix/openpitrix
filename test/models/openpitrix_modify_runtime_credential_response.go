@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixModifyRuntimeCredentialResponse
 type OpenpitrixModifyRuntimeCredentialResponse struct {
 
-	// runtime credential id
+	// id of runtime credential modified
 	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
 }
 

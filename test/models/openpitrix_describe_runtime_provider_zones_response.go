@@ -19,7 +19,7 @@ type OpenpitrixDescribeRuntimeProviderZonesResponse struct {
 	// runtime credential id
 	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
 
-	// zone
+	// list of zone
 	Zone []string `json:"zone"`
 }
 

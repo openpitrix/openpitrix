@@ -6,7 +6,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-im-service
-    version: ${VERSION}
+    version: ${IM_VERSION}
 spec:
   selector:
     app: openpitrix
@@ -25,7 +25,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-im-service
-    version: ${VERSION}
+    version: ${IM_VERSION}
 spec:
   selector:
     matchLabels:
@@ -37,7 +37,7 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-im-service
-        version: ${VERSION}
+        version: ${IM_VERSION}
     spec:
       initContainers:
       - name: wait-mysql

@@ -15,39 +15,55 @@ import "protoc-gen-swagger/options/annotations.proto";
 
 
 message IndexRepoRequest {
+	// id of repository to index
 	google.protobuf.StringValue repo_id = 1;
 }
 
 message IndexRepoResponse {
+	// repository event
 	RepoEvent repo_event = 1;
+	// id of repository indexed
 	google.protobuf.StringValue repo_id = 2;
 }
 
 message RepoEvent {
+	// repository event id
 	google.protobuf.StringValue repo_event_id = 1;
+	// repository id
 	google.protobuf.StringValue repo_id = 2;
+	// owner path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 3;
+	// repository event status eg.[failed|successful|working|pending]
 	google.protobuf.StringValue status = 4;
+	// result
 	google.protobuf.StringValue result = 5;
+	// repository event create time
 	google.protobuf.Timestamp create_time = 6;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 7;
+	// owner
 	google.protobuf.StringValue owner = 8;
 }
 
 message DescribeRepoEventsRequest {
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 5;
-
+	// repository event ids
 	repeated string repo_event_id = 11;
+	// repository ids
 	repeated string repo_id = 12;
+	// owner
 	repeated string owner = 13;
+	// repository event status eg.[failed|successful|working|pending]
 	repeated string status = 14;
 }
 
 message DescribeRepoEventsResponse {
+	// total count of repository event
 	uint32 total_count = 1;
+	// list of repository event
 	repeated RepoEvent repo_event_set = 2;
 }
 
@@ -76,18 +92,20 @@ message DescribeRepoEventsResponse {
 //}
 
 service RepoIndexer {
+	// Start index repository event
 	rpc IndexRepo (IndexRepoRequest) returns (IndexRepoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "start a index repo event"
+			summary: "Start index repository event"
 		};
 		option (google.api.http) = {
 			post: "/v1/repos/index"
 			body: "*"
 		};
 	}
+	// Get repository events
 	rpc DescribeRepoEvents (DescribeRepoEventsRequest) returns (DescribeRepoEventsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe repo events"
+			summary: "Get repository events"
 		};
 		option (google.api.http) = {
 			get: "/v1/repo_events"

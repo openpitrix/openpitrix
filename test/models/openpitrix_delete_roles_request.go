@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteRolesRequest
 type OpenpitrixDeleteRolesRequest struct {
 
-	// role id
+	// required, ids of role to delete
 	RoleID []string `json:"role_id"`
 }
 

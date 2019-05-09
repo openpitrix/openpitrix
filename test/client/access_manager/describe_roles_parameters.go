@@ -63,25 +63,55 @@ for the describe roles operation typically these are written to a http.Request
 */
 type DescribeRolesParams struct {
 
-	/*ActionBundleID*/
+	/*ActionBundleID
+	  action bundle ids.
+
+	*/
 	ActionBundleID []string
-	/*Limit*/
+	/*Limit
+	  data limit per page, default value 20, max value 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  data offset, default 0.
+
+	*/
 	Offset *int64
-	/*Portal*/
+	/*Portal
+	  portal eg.[global_admin|user|isv].
+
+	*/
 	Portal []string
-	/*Reverse*/
+	/*Reverse
+	  value = 0 sort ASC, value = 1 sort DESC.
+
+	*/
 	Reverse *bool
-	/*RoleID*/
+	/*RoleID
+	  role ids.
+
+	*/
 	RoleID []string
-	/*RoleName*/
+	/*RoleName
+	  name.
+
+	*/
 	RoleName []string
-	/*SearchWord*/
+	/*SearchWord
+	  query key, support these fields(role_id, portal, status).
+
+	*/
 	SearchWord *string
-	/*SortKey*/
+	/*SortKey
+	  sort key, order by sort_key, default create_time.
+
+	*/
 	SortKey *string
-	/*Status*/
+	/*Status
+	  status eg.[active|deleted].
+
+	*/
 	Status []string
 
 	timeout    time.Duration

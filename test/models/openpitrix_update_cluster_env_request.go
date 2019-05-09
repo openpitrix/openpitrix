@@ -19,7 +19,7 @@ type OpenpitrixUpdateClusterEnvRequest struct {
 	// advanced param
 	AdvancedParam []string `json:"advanced_param"`
 
-	// cluster id
+	// id of cluster to update env
 	ClusterID string `json:"cluster_id,omitempty"`
 
 	// env

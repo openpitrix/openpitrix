@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixJoinGroupRequest
 type OpenpitrixJoinGroupRequest struct {
 
-	// group id
+	// required, ids of group for user to join in
 	GroupID []string `json:"group_id"`
 
-	// user id
+	// required, ids of user to join
 	UserID []string `json:"user_id"`
 }
 

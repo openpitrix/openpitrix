@@ -16,13 +16,13 @@ import (
 // swagger:model openpitrixCreateClientResponse
 type OpenpitrixCreateClientResponse struct {
 
-	// client id
+	// client id of user
 	ClientID string `json:"client_id,omitempty"`
 
-	// client secret
+	// client secret,used for validate client credentials
 	ClientSecret string `json:"client_secret,omitempty"`
 
-	// user id
+	// user id of client
 	UserID string `json:"user_id,omitempty"`
 }
 

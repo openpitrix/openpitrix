@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixGetAppVersionPackageFilesResponse
 type OpenpitrixGetAppVersionPackageFilesResponse struct {
 
-	// files
+	// filename map to content
 	Files map[string]strfmt.Base64 `json:"files,omitempty"`
 
 	// version id

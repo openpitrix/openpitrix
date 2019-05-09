@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeUsersResponseUserSet openpitrix describe users response user set
+// OpenpitrixDescribeUsersResponseUserSet list of user
 // swagger:model openpitrixDescribeUsersResponseUserSet
 type OpenpitrixDescribeUsersResponseUserSet []*OpenpitrixUser
 

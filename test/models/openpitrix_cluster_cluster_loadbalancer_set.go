@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixClusterClusterLoadbalancerSet openpitrix cluster cluster loadbalancer set
+// OpenpitrixClusterClusterLoadbalancerSet lister of cluster loadbalancer
 // swagger:model openpitrixClusterClusterLoadbalancerSet
 type OpenpitrixClusterClusterLoadbalancerSet []*OpenpitrixClusterLoadbalancer
 

@@ -22,7 +22,7 @@ type OpenpitrixUserDetail struct {
 	// role set
 	RoleSet OpenpitrixUserDetailRoleSet `json:"role_set"`
 
-	// user
+	// user info
 	User *OpenpitrixUser `json:"user,omitempty"`
 }
 

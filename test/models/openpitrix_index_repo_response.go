@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixIndexRepoResponse
 type OpenpitrixIndexRepoResponse struct {
 
-	// repo event
+	// repository event
 	RepoEvent *OpenpitrixRepoEvent `json:"repo_event,omitempty"`
 
-	// repo id
+	// id of repository indexed
 	RepoID string `json:"repo_id,omitempty"`
 }
 

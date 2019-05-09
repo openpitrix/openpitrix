@@ -19,7 +19,7 @@ type OpenpitrixCreateAppResponse struct {
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
-	// version id
+	// version id of the app
 	VersionID string `json:"version_id,omitempty"`
 }
 

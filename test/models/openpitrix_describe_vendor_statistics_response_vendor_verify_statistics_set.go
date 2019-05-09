@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeVendorStatisticsResponseVendorVerifyStatisticsSet openpitrix describe vendor statistics response vendor verify statistics set
+// OpenpitrixDescribeVendorStatisticsResponseVendorVerifyStatisticsSet list of vendor statistic
 // swagger:model openpitrixDescribeVendorStatisticsResponseVendorVerifyStatisticsSet
 type OpenpitrixDescribeVendorStatisticsResponseVendorVerifyStatisticsSet []*OpenpitrixVendorStatistics
 

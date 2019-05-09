@@ -19,7 +19,7 @@ type OpenpitrixFeature struct {
 	// action bundle set
 	ActionBundleSet OpenpitrixFeatureActionBundleSet `json:"action_bundle_set"`
 
-	// checked action bundle id set
+	// list of checked action bundle
 	CheckedActionBundleIDSet []string `json:"checked_action_bundle_id_set"`
 
 	// feature id

@@ -16,10 +16,10 @@ import (
 // swagger:model openpitrixModifyRoleRequest
 type OpenpitrixModifyRoleRequest struct {
 
-	// description
+	// role description
 	Description string `json:"description,omitempty"`
 
-	// role id
+	// required, id of role to modify
 	RoleID string `json:"role_id,omitempty"`
 
 	// role name

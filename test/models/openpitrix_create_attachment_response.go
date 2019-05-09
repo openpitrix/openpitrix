@@ -19,7 +19,7 @@ type OpenpitrixCreateAttachmentResponse struct {
 	// attachment id
 	AttachmentID string `json:"attachment_id,omitempty"`
 
-	// filename
+	// file name
 	Filename []string `json:"filename"`
 }
 

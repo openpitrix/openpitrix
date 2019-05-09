@@ -16,25 +16,25 @@ import (
 // swagger:model openpitrixJob
 type OpenpitrixJob struct {
 
-	// app id
+	// id of app deployed in cluster
 	AppID string `json:"app_id,omitempty"`
 
-	// cluster id
+	// id of cluster run job
 	ClusterID string `json:"cluster_id,omitempty"`
 
-	// create time
+	// the time job create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// directive
+	// directive, a json string, describe the info of running the job action
 	Directive string `json:"directive,omitempty"`
 
-	// error code
+	// error code, if job run failed will return a error code
 	ErrorCode int64 `json:"error_code,omitempty"`
 
-	// executor
+	// host name of server
 	Executor string `json:"executor,omitempty"`
 
-	// job action
+	// describe job's action eg:[CreateCluster|StartClusters|...]
 	JobAction string `json:"job_action,omitempty"`
 
 	// job id
@@ -43,25 +43,25 @@ type OpenpitrixJob struct {
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// own path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// provider
+	// runtime provider eg:[qingcloud|aliyun|aws|kubernetes]
 	Provider string `json:"provider,omitempty"`
 
-	// runtime id
+	// id of runtime of cluster
 	RuntimeID string `json:"runtime_id,omitempty"`
 
-	// status
+	// status eg.[successful|failed|running|pending]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record the status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
-	// task count
+	// total count of task in job, a job contain one more task
 	TaskCount int64 `json:"task_count,omitempty"`
 
-	// version id
+	// id of specific app version
 	VersionID string `json:"version_id,omitempty"`
 }
 

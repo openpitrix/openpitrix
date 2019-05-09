@@ -19,7 +19,7 @@ type OpenpitrixDescribeRolesResponse struct {
 	// role set
 	RoleSet OpenpitrixDescribeRolesResponseRoleSet `json:"role_set"`
 
-	// total count
+	// total count of roles
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

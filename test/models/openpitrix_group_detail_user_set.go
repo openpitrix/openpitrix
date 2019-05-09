@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixGroupDetailUserSet openpitrix group detail user set
+// OpenpitrixGroupDetailUserSet users in group
 // swagger:model openpitrixGroupDetailUserSet
 type OpenpitrixGroupDetailUserSet []*OpenpitrixUser
 

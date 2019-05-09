@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// OpenpitrixAppVersionReviewPhaseOAIGen openpitrix app version review phase OAI gen
+// OpenpitrixAppVersionReviewPhaseOAIGen review phase, app need one more reviewer to review, when reviewer reviewed, status changed
 // swagger:model openpitrixAppVersionReviewPhaseOAIGen
 type OpenpitrixAppVersionReviewPhaseOAIGen map[string]OpenpitrixAppVersionReviewPhase
 

@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeRolesResponseRoleSet openpitrix describe roles response role set
+// OpenpitrixDescribeRolesResponseRoleSet list of role
 // swagger:model openpitrixDescribeRolesResponseRoleSet
 type OpenpitrixDescribeRolesResponseRoleSet []*OpenpitrixRole
 

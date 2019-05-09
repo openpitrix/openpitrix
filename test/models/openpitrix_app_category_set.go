@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixAppCategorySet openpitrix app category set
+// OpenpitrixAppCategorySet list of category, the app may belong to one more category
 // swagger:model openpitrixAppCategorySet
 type OpenpitrixAppCategorySet []*OpenpitrixResourceCategory
 

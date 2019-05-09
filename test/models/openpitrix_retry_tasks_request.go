@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixRetryTasksRequest
 type OpenpitrixRetryTasksRequest struct {
 
-	// task id
+	// ids of task to retry
 	TaskID []string `json:"task_id"`
 }
 

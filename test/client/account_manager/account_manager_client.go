@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-ChangePassword change password API
+ChangePassword changes user password
 */
 func (a *Client) ChangePassword(params *ChangePasswordParams, authInfo runtime.ClientAuthInfoWriter) (*ChangePasswordOK, error) {
 	// TODO: Validate the params before sending
@@ -54,7 +54,7 @@ func (a *Client) ChangePassword(params *ChangePasswordParams, authInfo runtime.C
 }
 
 /*
-CreateGroup groups
+CreateGroup creates group a group contain one more user
 */
 func (a *Client) CreateGroup(params *CreateGroupParams, authInfo runtime.ClientAuthInfoWriter) (*CreateGroupOK, error) {
 	// TODO: Validate the params before sending
@@ -83,7 +83,7 @@ func (a *Client) CreateGroup(params *CreateGroupParams, authInfo runtime.ClientA
 }
 
 /*
-CreatePasswordReset create password reset API
+CreatePasswordReset creates a request to reset user s passwo
 */
 func (a *Client) CreatePasswordReset(params *CreatePasswordResetParams, authInfo runtime.ClientAuthInfoWriter) (*CreatePasswordResetOK, error) {
 	// TODO: Validate the params before sending
@@ -112,7 +112,7 @@ func (a *Client) CreatePasswordReset(params *CreatePasswordResetParams, authInfo
 }
 
 /*
-CreateUser admins permission
+CreateUser creates user if user have admin permission
 */
 func (a *Client) CreateUser(params *CreateUserParams, authInfo runtime.ClientAuthInfoWriter) (*CreateUserOK, error) {
 	// TODO: Validate the params before sending
@@ -141,7 +141,7 @@ func (a *Client) CreateUser(params *CreateUserParams, authInfo runtime.ClientAut
 }
 
 /*
-DeleteGroups delete groups API
+DeleteGroups deletes groups
 */
 func (a *Client) DeleteGroups(params *DeleteGroupsParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteGroupsOK, error) {
 	// TODO: Validate the params before sending
@@ -170,7 +170,7 @@ func (a *Client) DeleteGroups(params *DeleteGroupsParams, authInfo runtime.Clien
 }
 
 /*
-DeleteUsers delete users API
+DeleteUsers deletes user by user id
 */
 func (a *Client) DeleteUsers(params *DeleteUsersParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteUsersOK, error) {
 	// TODO: Validate the params before sending
@@ -199,7 +199,7 @@ func (a *Client) DeleteUsers(params *DeleteUsersParams, authInfo runtime.ClientA
 }
 
 /*
-DescribeGroups describe groups API
+DescribeGroups gets groups can filter with these fields group id parent group id group path status default return all groups
 */
 func (a *Client) DescribeGroups(params *DescribeGroupsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeGroupsOK, error) {
 	// TODO: Validate the params before sending
@@ -228,7 +228,7 @@ func (a *Client) DescribeGroups(params *DescribeGroupsParams, authInfo runtime.C
 }
 
 /*
-DescribeGroupsDetail describe groups detail API
+DescribeGroupsDetail gets groups include all user in this group can filter with these fields group id parent group id group path status default return all groups
 */
 func (a *Client) DescribeGroupsDetail(params *DescribeGroupsDetailParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeGroupsDetailOK, error) {
 	// TODO: Validate the params before sending
@@ -257,7 +257,7 @@ func (a *Client) DescribeGroupsDetail(params *DescribeGroupsDetailParams, authIn
 }
 
 /*
-DescribeUsers describe users API
+DescribeUsers gets users filter with fields user id email phone number status default return all users
 */
 func (a *Client) DescribeUsers(params *DescribeUsersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeUsersOK, error) {
 	// TODO: Validate the params before sending
@@ -286,7 +286,7 @@ func (a *Client) DescribeUsers(params *DescribeUsersParams, authInfo runtime.Cli
 }
 
 /*
-DescribeUsersDetail describe users detail API
+DescribeUsersDetail gets users include user info of role and group filter with fields user id email phone number status default return all users
 */
 func (a *Client) DescribeUsersDetail(params *DescribeUsersDetailParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeUsersDetailOK, error) {
 	// TODO: Validate the params before sending
@@ -315,7 +315,7 @@ func (a *Client) DescribeUsersDetail(params *DescribeUsersDetailParams, authInfo
 }
 
 /*
-GetPasswordReset get password reset API
+GetPasswordReset gets a request of reset user s password
 */
 func (a *Client) GetPasswordReset(params *GetPasswordResetParams, authInfo runtime.ClientAuthInfoWriter) (*GetPasswordResetOK, error) {
 	// TODO: Validate the params before sending
@@ -344,7 +344,7 @@ func (a *Client) GetPasswordReset(params *GetPasswordResetParams, authInfo runti
 }
 
 /*
-IsvCreateUser isv create user API
+IsvCreateUser isvs of platform create user
 */
 func (a *Client) IsvCreateUser(params *IsvCreateUserParams, authInfo runtime.ClientAuthInfoWriter) (*IsvCreateUserOK, error) {
 	// TODO: Validate the params before sending
@@ -373,7 +373,7 @@ func (a *Client) IsvCreateUser(params *IsvCreateUserParams, authInfo runtime.Cli
 }
 
 /*
-JoinGroup join group API
+JoinGroup joins groups user can join in groups
 */
 func (a *Client) JoinGroup(params *JoinGroupParams, authInfo runtime.ClientAuthInfoWriter) (*JoinGroupOK, error) {
 	// TODO: Validate the params before sending
@@ -402,7 +402,7 @@ func (a *Client) JoinGroup(params *JoinGroupParams, authInfo runtime.ClientAuthI
 }
 
 /*
-LeaveGroup leave group API
+LeaveGroup leaves groups user can leave from groups
 */
 func (a *Client) LeaveGroup(params *LeaveGroupParams, authInfo runtime.ClientAuthInfoWriter) (*LeaveGroupOK, error) {
 	// TODO: Validate the params before sending
@@ -431,7 +431,7 @@ func (a *Client) LeaveGroup(params *LeaveGroupParams, authInfo runtime.ClientAut
 }
 
 /*
-ModifyGroup modify group API
+ModifyGroup modifies group info
 */
 func (a *Client) ModifyGroup(params *ModifyGroupParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyGroupOK, error) {
 	// TODO: Validate the params before sending
@@ -460,7 +460,7 @@ func (a *Client) ModifyGroup(params *ModifyGroupParams, authInfo runtime.ClientA
 }
 
 /*
-ModifyUser modify user API
+ModifyUser modifies user info
 */
 func (a *Client) ModifyUser(params *ModifyUserParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyUserOK, error) {
 	// TODO: Validate the params before sending
@@ -489,7 +489,7 @@ func (a *Client) ModifyUser(params *ModifyUserParams, authInfo runtime.ClientAut
 }
 
 /*
-ValidateUserPassword validate user password API
+ValidateUserPassword validates user and password
 */
 func (a *Client) ValidateUserPassword(params *ValidateUserPasswordParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateUserPasswordOK, error) {
 	// TODO: Validate the params before sending

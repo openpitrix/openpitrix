@@ -16,13 +16,13 @@ import (
 // swagger:model openpitrixGetAppVersionPackageResponse
 type OpenpitrixGetAppVersionPackageResponse struct {
 
-	// app id
+	// app id of package
 	AppID string `json:"app_id,omitempty"`
 
-	// package
+	// package of specific app version
 	Package strfmt.Base64 `json:"package,omitempty"`
 
-	// version id
+	// version id of package
 	VersionID string `json:"version_id,omitempty"`
 }
 

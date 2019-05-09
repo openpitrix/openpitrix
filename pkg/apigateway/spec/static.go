@@ -30,6 +30,7 @@ var Files = map[string]string{
   "paths": {
     "/v1/cando": {
       "post": {
+        "summary": "Validates whether the user[user_id] have permission to visit resource[url_method:url]",
         "operationId": "CanDo",
         "responses": {
           "200": {
@@ -56,6 +57,7 @@ var Files = map[string]string{
     },
     "/v1/groups": {
       "get": {
+        "summary": "Get groups, can filter with these fields(group_id, parent_group_id, group_path, status), default return all groups",
         "operationId": "DescribeGroups",
         "responses": {
           "200": {
@@ -68,18 +70,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(group_id, parent_group_id, group_path, status).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -87,6 +92,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -94,6 +100,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -101,6 +108,7 @@ var Files = map[string]string{
           },
           {
             "name": "root_group_id",
+            "description": "use root group ids to get all groups.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -111,6 +119,7 @@ var Files = map[string]string{
           },
           {
             "name": "parent_group_id",
+            "description": "parent group ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -121,6 +130,7 @@ var Files = map[string]string{
           },
           {
             "name": "group_id",
+            "description": "group ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -131,6 +141,7 @@ var Files = map[string]string{
           },
           {
             "name": "group_path",
+            "description": "group path, a concat string gid-xxx.gid-xxx.gid...",
             "in": "query",
             "required": false,
             "type": "array",
@@ -141,6 +152,7 @@ var Files = map[string]string{
           },
           {
             "name": "group_name",
+            "description": "group name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -151,6 +163,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -165,6 +178,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
+        "summary": "Delete groups",
         "operationId": "DeleteGroups",
         "responses": {
           "200": {
@@ -189,7 +203,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "group",
+        "summary": "Create group, a group contain one more user",
         "operationId": "CreateGroup",
         "responses": {
           "200": {
@@ -214,6 +228,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
+        "summary": "Modify group info",
         "operationId": "ModifyGroup",
         "responses": {
           "200": {
@@ -240,6 +255,7 @@ var Files = map[string]string{
     },
     "/v1/groups:join": {
       "post": {
+        "summary": "Join groups, user can join in groups",
         "operationId": "JoinGroup",
         "responses": {
           "200": {
@@ -266,6 +282,7 @@ var Files = map[string]string{
     },
     "/v1/groups:leave": {
       "post": {
+        "summary": "Leave groups, user can leave from groups",
         "operationId": "LeaveGroup",
         "responses": {
           "200": {
@@ -292,6 +309,7 @@ var Files = map[string]string{
     },
     "/v1/groups_detail": {
       "get": {
+        "summary": "Get groups, include all user in this group, can filter with these fields(group_id, parent_group_id, group_path, status), default return all groups",
         "operationId": "DescribeGroupsDetail",
         "responses": {
           "200": {
@@ -304,18 +322,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(group_id, parent_group_id, group_path, status).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -323,6 +344,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -330,6 +352,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -337,6 +360,7 @@ var Files = map[string]string{
           },
           {
             "name": "root_group_id",
+            "description": "use root group ids to get all groups.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -347,6 +371,7 @@ var Files = map[string]string{
           },
           {
             "name": "parent_group_id",
+            "description": "parent group ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -357,6 +382,7 @@ var Files = map[string]string{
           },
           {
             "name": "group_id",
+            "description": "group ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -367,6 +393,7 @@ var Files = map[string]string{
           },
           {
             "name": "group_path",
+            "description": "group path, a concat string gid-xxx.gid-xxx.gid...",
             "in": "query",
             "required": false,
             "type": "array",
@@ -377,6 +404,7 @@ var Files = map[string]string{
           },
           {
             "name": "group_name",
+            "description": "group name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -387,6 +415,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -403,6 +432,7 @@ var Files = map[string]string{
     },
     "/v1/isv_users": {
       "post": {
+        "summary": "Isv of platform create user",
         "operationId": "IsvCreateUser",
         "responses": {
           "200": {
@@ -429,6 +459,7 @@ var Files = map[string]string{
     },
     "/v1/oauth2/client": {
       "post": {
+        "summary": "Create client",
         "operationId": "CreateClient",
         "responses": {
           "200": {
@@ -455,6 +486,7 @@ var Files = map[string]string{
     },
     "/v1/oauth2/token": {
       "post": {
+        "summary": "Get users, include user info of role and group, filter with fields(user_id, email, phone_number, status), default return all users",
         "operationId": "Token",
         "responses": {
           "200": {
@@ -482,6 +514,7 @@ var Files = map[string]string{
     },
     "/v1/role": {
       "get": {
+        "summary": "Get role info",
         "operationId": "GetRole",
         "responses": {
           "200": {
@@ -494,6 +527,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "role_id",
+            "description": "required, use role id to get role info.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -506,7 +540,7 @@ var Files = map[string]string{
     },
     "/v1/roles": {
       "get": {
-        "summary": "admin permission",
+        "summary": "Get roles",
         "operationId": "DescribeRoles",
         "responses": {
           "200": {
@@ -519,18 +553,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(role_id, portal, status).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -538,6 +575,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -545,6 +583,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -552,6 +591,7 @@ var Files = map[string]string{
           },
           {
             "name": "role_id",
+            "description": "role ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -562,6 +602,7 @@ var Files = map[string]string{
           },
           {
             "name": "role_name",
+            "description": "name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -572,6 +613,7 @@ var Files = map[string]string{
           },
           {
             "name": "portal",
+            "description": "portal eg.[global_admin|user|isv].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -582,6 +624,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -592,6 +635,7 @@ var Files = map[string]string{
           },
           {
             "name": "action_bundle_id",
+            "description": "action bundle ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -606,6 +650,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
+        "summary": "Batch delete roles",
         "operationId": "DeleteRoles",
         "responses": {
           "200": {
@@ -630,6 +675,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
+        "summary": "Create role, different role has different permissions",
         "operationId": "CreateRole",
         "responses": {
           "200": {
@@ -654,6 +700,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
+        "summary": "Batch modify role info",
         "operationId": "ModifyRole",
         "responses": {
           "200": {
@@ -680,6 +727,7 @@ var Files = map[string]string{
     },
     "/v1/roles:module": {
       "get": {
+        "summary": "Get role module, different role has different permission to access different module",
         "operationId": "GetRoleModule",
         "responses": {
           "200": {
@@ -692,6 +740,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "role_id",
+            "description": "required, use role id to get role's module.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -702,6 +751,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
+        "summary": "Modify role module that can be visited",
         "operationId": "ModifyRoleModule",
         "responses": {
           "200": {
@@ -728,6 +778,7 @@ var Files = map[string]string{
     },
     "/v1/user:role": {
       "delete": {
+        "summary": "Unbind user and role",
         "operationId": "UnbindUserRole",
         "responses": {
           "200": {
@@ -752,6 +803,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
+        "summary": "Bind role and user, a user belong to a role",
         "operationId": "BindUserRole",
         "responses": {
           "200": {
@@ -778,6 +830,7 @@ var Files = map[string]string{
     },
     "/v1/users": {
       "get": {
+        "summary": "Get users, filter with fields(user_id, email, phone_number, status), default return all users",
         "operationId": "DescribeUsers",
         "responses": {
           "200": {
@@ -790,18 +843,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(user_id, email, phone_number, status).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -809,6 +865,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "data limit, default 20, max 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -816,6 +873,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -823,6 +881,7 @@ var Files = map[string]string{
           },
           {
             "name": "root_group_id",
+            "description": "use root group ids to get all group ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -833,6 +892,7 @@ var Files = map[string]string{
           },
           {
             "name": "group_id",
+            "description": "group ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -843,6 +903,7 @@ var Files = map[string]string{
           },
           {
             "name": "user_id",
+            "description": "user ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -853,6 +914,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -863,6 +925,7 @@ var Files = map[string]string{
           },
           {
             "name": "role_id",
+            "description": "role ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -873,6 +936,7 @@ var Files = map[string]string{
           },
           {
             "name": "username",
+            "description": "username.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -883,6 +947,7 @@ var Files = map[string]string{
           },
           {
             "name": "email",
+            "description": "email, eg.op@yunify.com.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -893,6 +958,7 @@ var Files = map[string]string{
           },
           {
             "name": "phone_number",
+            "description": "phone number, string of 11 digital.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -907,6 +973,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
+        "summary": "Delete user by user_id",
         "operationId": "DeleteUsers",
         "responses": {
           "200": {
@@ -931,7 +998,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "admin permission",
+        "summary": "Create user, if user have admin permission",
         "operationId": "CreateUser",
         "responses": {
           "200": {
@@ -956,6 +1023,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
+        "summary": "Modify user info",
         "operationId": "ModifyUser",
         "responses": {
           "200": {
@@ -982,6 +1050,7 @@ var Files = map[string]string{
     },
     "/v1/users/password:change": {
       "post": {
+        "summary": "Change user password",
         "operationId": "ChangePassword",
         "responses": {
           "200": {
@@ -1008,6 +1077,7 @@ var Files = map[string]string{
     },
     "/v1/users/password:reset": {
       "get": {
+        "summary": "Get a request of reset user's password",
         "operationId": "GetPasswordReset",
         "responses": {
           "200": {
@@ -1020,6 +1090,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "reset_id",
+            "description": "required, reset id.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -1030,6 +1101,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
+        "summary": "Create a request to reset user's passwo",
         "operationId": "CreatePasswordReset",
         "responses": {
           "200": {
@@ -1056,6 +1128,7 @@ var Files = map[string]string{
     },
     "/v1/users/password:validate": {
       "post": {
+        "summary": "Validate user and password",
         "operationId": "ValidateUserPassword",
         "responses": {
           "200": {
@@ -1082,6 +1155,7 @@ var Files = map[string]string{
     },
     "/v1/users_detail": {
       "get": {
+        "summary": "Get users, include user info of role and group, filter with fields(user_id, email, phone_number, status), default return all users",
         "operationId": "DescribeUsersDetail",
         "responses": {
           "200": {
@@ -1094,18 +1168,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(user_id, email, phone_number, status).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -1113,6 +1190,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "data limit, default 20, max 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1120,6 +1198,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1127,6 +1206,7 @@ var Files = map[string]string{
           },
           {
             "name": "root_group_id",
+            "description": "use root group ids to get all group ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1137,6 +1217,7 @@ var Files = map[string]string{
           },
           {
             "name": "group_id",
+            "description": "group ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1147,6 +1228,7 @@ var Files = map[string]string{
           },
           {
             "name": "user_id",
+            "description": "user ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1157,6 +1239,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1167,6 +1250,7 @@ var Files = map[string]string{
           },
           {
             "name": "role_id",
+            "description": "role ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1177,6 +1261,7 @@ var Files = map[string]string{
           },
           {
             "name": "username",
+            "description": "username.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1187,6 +1272,7 @@ var Files = map[string]string{
           },
           {
             "name": "email",
+            "description": "email, eg.op@yunify.com.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1197,6 +1283,7 @@ var Files = map[string]string{
           },
           {
             "name": "phone_number",
+            "description": "phone number, string of 11 digital.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1213,7 +1300,7 @@ var Files = map[string]string{
     },
     "/v1/active_app_versions": {
       "get": {
-        "summary": "describe app versions with filter",
+        "summary": "Get active versions of app, can filter with these fields(version_id, app_id, name, owner, description, package_name, status, type), default return all active app versions",
         "operationId": "DescribeActiveAppVersions",
         "responses": {
           "200": {
@@ -1226,18 +1313,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(version_id, app_id, name, owner, description, package_name, status, type).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -1245,7 +1335,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1253,7 +1343,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1261,6 +1351,7 @@ var Files = map[string]string{
           },
           {
             "name": "version_id",
+            "description": "app version ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1271,6 +1362,7 @@ var Files = map[string]string{
           },
           {
             "name": "app_id",
+            "description": "app ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1281,6 +1373,7 @@ var Files = map[string]string{
           },
           {
             "name": "name",
+            "description": "app version name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1291,6 +1384,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1301,6 +1395,7 @@ var Files = map[string]string{
           },
           {
             "name": "description",
+            "description": "description.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1311,6 +1406,7 @@ var Files = map[string]string{
           },
           {
             "name": "package_name",
+            "description": "app version package name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1321,6 +1417,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "app version status eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1331,6 +1428,7 @@ var Files = map[string]string{
           },
           {
             "name": "type",
+            "description": "app version type.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1341,6 +1439,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1357,7 +1456,7 @@ var Files = map[string]string{
     },
     "/v1/active_apps": {
       "get": {
-        "summary": "describe apps with filter",
+        "summary": "Get active apps, can filter with these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name), default return all apps",
         "operationId": "DescribeActiveApps",
         "responses": {
           "200": {
@@ -1370,18 +1469,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -1389,7 +1491,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1397,7 +1499,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1405,6 +1507,7 @@ var Files = map[string]string{
           },
           {
             "name": "app_id",
+            "description": "app ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1415,6 +1518,7 @@ var Files = map[string]string{
           },
           {
             "name": "name",
+            "description": "app name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1425,6 +1529,7 @@ var Files = map[string]string{
           },
           {
             "name": "repo_id",
+            "description": "app repository ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1435,6 +1540,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "app status eg.[modify|submit|review|cancel|release|delete|pass|reject|suspend|recover].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1445,6 +1551,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "app owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1455,6 +1562,7 @@ var Files = map[string]string{
           },
           {
             "name": "chart_name",
+            "description": "app chart name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1465,6 +1573,7 @@ var Files = map[string]string{
           },
           {
             "name": "category_id",
+            "description": "app category ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1475,6 +1584,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select column to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1491,7 +1601,7 @@ var Files = map[string]string{
     },
     "/v1/app/attachment": {
       "patch": {
-        "summary": "UploadAppAttachment",
+        "summary": "Upload app attachment",
         "operationId": "UploadAppAttachment",
         "responses": {
           "200": {
@@ -1518,7 +1628,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/cancel": {
       "post": {
-        "summary": "cancel app version",
+        "summary": "Cancel version of the app",
         "operationId": "CancelAppVersion",
         "responses": {
           "200": {
@@ -1545,7 +1655,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/delete": {
       "post": {
-        "summary": "delete app version",
+        "summary": "Delete version of the app",
         "operationId": "DeleteAppVersion",
         "responses": {
           "200": {
@@ -1572,7 +1682,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/pass/business": {
       "post": {
-        "summary": "operator type business pass app version",
+        "summary": "Operator of business pass version of the app",
         "operationId": "BusinessPassAppVersion",
         "responses": {
           "200": {
@@ -1599,7 +1709,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/pass/isv": {
       "post": {
-        "summary": "operator type isv pass app version",
+        "summary": "Operator of isv pass version of the app",
         "operationId": "IsvPassAppVersion",
         "responses": {
           "200": {
@@ -1626,7 +1736,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/pass/technical": {
       "post": {
-        "summary": "operator type technical pass app version",
+        "summary": "Operator of technical pass version of the app",
         "operationId": "TechnicalPassAppVersion",
         "responses": {
           "200": {
@@ -1653,7 +1763,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/recover": {
       "post": {
-        "summary": "recover app version",
+        "summary": "Recover version of app",
         "operationId": "RecoverAppVersion",
         "responses": {
           "200": {
@@ -1680,7 +1790,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/reject/business": {
       "post": {
-        "summary": "operator type business reject app version",
+        "summary": "Operator of business reject version of the app",
         "operationId": "BusinessRejectAppVersion",
         "responses": {
           "200": {
@@ -1707,7 +1817,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/reject/isv": {
       "post": {
-        "summary": "operator type isv reject app version",
+        "summary": "Operator of isv reject version of the app",
         "operationId": "IsvRejectAppVersion",
         "responses": {
           "200": {
@@ -1734,7 +1844,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/reject/technical": {
       "post": {
-        "summary": "operator type reject app version",
+        "summary": "Operator of technical reject version of the app",
         "operationId": "TechnicalRejectAppVersion",
         "responses": {
           "200": {
@@ -1761,7 +1871,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/release": {
       "post": {
-        "summary": "release app version",
+        "summary": "Release version of the app",
         "operationId": "ReleaseAppVersion",
         "responses": {
           "200": {
@@ -1788,7 +1898,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/review/business": {
       "post": {
-        "summary": "operator type business start review app version",
+        "summary": "Operator of business review version of the app",
         "operationId": "BusinessReviewAppVersion",
         "responses": {
           "200": {
@@ -1815,7 +1925,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/review/isv": {
       "post": {
-        "summary": "operator type isv start review app version",
+        "summary": "Operator of isv review version of the app",
         "operationId": "IsvReviewAppVersion",
         "responses": {
           "200": {
@@ -1842,7 +1952,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/review/technical": {
       "post": {
-        "summary": "operator type technical start review app version",
+        "summary": "Operator of technical review version of the app",
         "operationId": "TechnicalReviewAppVersion",
         "responses": {
           "200": {
@@ -1869,7 +1979,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/submit": {
       "post": {
-        "summary": "submit app version",
+        "summary": "Submit version of the app",
         "operationId": "SubmitAppVersion",
         "responses": {
           "200": {
@@ -1896,7 +2006,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/action/suspend": {
       "post": {
-        "summary": "suspend app version",
+        "summary": "Suspend app version",
         "operationId": "SuspendAppVersion",
         "responses": {
           "200": {
@@ -1923,7 +2033,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/package": {
       "get": {
-        "summary": "get the package content of app version",
+        "summary": "Get packages of version-specific app",
         "operationId": "GetAppVersionPackage",
         "responses": {
           "200": {
@@ -1936,6 +2046,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "version_id",
+            "description": "required, use version id to get package.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -1948,7 +2059,7 @@ var Files = map[string]string{
     },
     "/v1/app_version/package/files": {
       "get": {
-        "summary": "get the package files content of app version",
+        "summary": "Get app package files",
         "operationId": "GetAppVersionPackageFiles",
         "responses": {
           "200": {
@@ -1961,12 +2072,14 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "version_id",
+            "description": "use version id to get file of package.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "files",
+            "description": "files.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1983,7 +2096,7 @@ var Files = map[string]string{
     },
     "/v1/app_version_audits": {
       "get": {
-        "summary": "DescribeAppVersionAudits",
+        "summary": "Get audits information of version-specific app, can filter with these fields(version_id, app_id, status, operator, role), default return all app version audits",
         "operationId": "DescribeAppVersionAudits",
         "responses": {
           "200": {
@@ -1996,18 +2109,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(version_id, app_id, status, operator, role).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -2015,7 +2131,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2023,7 +2139,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2031,6 +2147,7 @@ var Files = map[string]string{
           },
           {
             "name": "app_id",
+            "description": "app ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2041,6 +2158,7 @@ var Files = map[string]string{
           },
           {
             "name": "version_id",
+            "description": "app version ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2051,6 +2169,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "app version audit status eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2061,6 +2180,7 @@ var Files = map[string]string{
           },
           {
             "name": "operator",
+            "description": "auditer of app version.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2071,6 +2191,7 @@ var Files = map[string]string{
           },
           {
             "name": "operator_type",
+            "description": "operator type eg.[global_admin|developer|business|technical|isv].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2081,6 +2202,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2097,7 +2219,7 @@ var Files = map[string]string{
     },
     "/v1/app_version_reviews": {
       "get": {
-        "summary": "DescribeAppVersionReviews",
+        "summary": "Get reviews of version-specific app, can filter with these fields(review_id, version_id, app_id, status, reviewer)",
         "operationId": "DescribeAppVersionReviews",
         "responses": {
           "200": {
@@ -2110,18 +2232,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(review_id, version_id, app_id, status, reviewer).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -2129,7 +2254,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2137,7 +2262,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2145,6 +2270,7 @@ var Files = map[string]string{
           },
           {
             "name": "app_id",
+            "description": "app ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2155,6 +2281,7 @@ var Files = map[string]string{
           },
           {
             "name": "version_id",
+            "description": "app version ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2165,6 +2292,7 @@ var Files = map[string]string{
           },
           {
             "name": "review_id",
+            "description": "app version review ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2175,6 +2303,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "app version status eg.[isv-in-review|isv-passed|isv-rejected|isv-draft|business-in-review|business-passed|business-rejected|develop-draft|develop-in-review|develop-passed|develop-rejected|develop-draft].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2185,6 +2314,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2195,6 +2325,7 @@ var Files = map[string]string{
           },
           {
             "name": "reviewer",
+            "description": "reviewer of app version eg.[global_admin|developer|business|technical|isv].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2211,7 +2342,7 @@ var Files = map[string]string{
     },
     "/v1/app_versions": {
       "get": {
-        "summary": "describe app versions with filter",
+        "summary": "Get versions of app, can filter with these fields(version_id, app_id, name, owner, description, package_name, status, type), default return all app versions",
         "operationId": "DescribeAppVersions",
         "responses": {
           "200": {
@@ -2224,18 +2355,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(version_id, app_id, name, owner, description, package_name, status, type).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -2243,7 +2377,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2251,7 +2385,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2259,6 +2393,7 @@ var Files = map[string]string{
           },
           {
             "name": "version_id",
+            "description": "app version ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2269,6 +2404,7 @@ var Files = map[string]string{
           },
           {
             "name": "app_id",
+            "description": "app ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2279,6 +2415,7 @@ var Files = map[string]string{
           },
           {
             "name": "name",
+            "description": "app version name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2289,6 +2426,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2299,6 +2437,7 @@ var Files = map[string]string{
           },
           {
             "name": "description",
+            "description": "description.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2309,6 +2448,7 @@ var Files = map[string]string{
           },
           {
             "name": "package_name",
+            "description": "app version package name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2319,6 +2459,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "app version status eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2329,6 +2470,7 @@ var Files = map[string]string{
           },
           {
             "name": "type",
+            "description": "app version type.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2339,6 +2481,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2353,7 +2496,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create app version",
+        "summary": "Create app of specific version",
         "operationId": "CreateAppVersion",
         "responses": {
           "200": {
@@ -2378,7 +2521,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
-        "summary": "modify app version",
+        "summary": "Modify version info of the app",
         "operationId": "ModifyAppVersion",
         "responses": {
           "200": {
@@ -2405,7 +2548,7 @@ var Files = map[string]string{
     },
     "/v1/apps": {
       "get": {
-        "summary": "describe apps with filter",
+        "summary": "Get apps, can filter with these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name), default return all apps",
         "operationId": "DescribeApps",
         "responses": {
           "200": {
@@ -2418,18 +2561,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(app_id, name, repo_id, description, status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -2437,7 +2583,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2445,7 +2591,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2453,6 +2599,7 @@ var Files = map[string]string{
           },
           {
             "name": "app_id",
+            "description": "app ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2463,6 +2610,7 @@ var Files = map[string]string{
           },
           {
             "name": "name",
+            "description": "app name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2473,6 +2621,7 @@ var Files = map[string]string{
           },
           {
             "name": "repo_id",
+            "description": "app repository ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2483,6 +2632,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "app status eg.[modify|submit|review|cancel|release|delete|pass|reject|suspend|recover].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2493,6 +2643,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "app owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2503,6 +2654,7 @@ var Files = map[string]string{
           },
           {
             "name": "chart_name",
+            "description": "app chart name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2513,6 +2665,7 @@ var Files = map[string]string{
           },
           {
             "name": "category_id",
+            "description": "app category ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2523,6 +2676,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select column to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2537,7 +2691,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete apps",
+        "summary": "Batch delete apps",
         "operationId": "DeleteApps",
         "responses": {
           "200": {
@@ -2562,7 +2716,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create app",
+        "summary": "Create app, user of isv can create app on the platform",
         "operationId": "CreateApp",
         "responses": {
           "200": {
@@ -2587,7 +2741,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
-        "summary": "modify app",
+        "summary": "Modify app info",
         "operationId": "ModifyApp",
         "responses": {
           "200": {
@@ -2614,7 +2768,7 @@ var Files = map[string]string{
     },
     "/v1/apps/statistics": {
       "get": {
-        "summary": "get app statistics",
+        "summary": "Get statistics info of apps",
         "operationId": "GetAppStatistics",
         "responses": {
           "200": {
@@ -2631,7 +2785,7 @@ var Files = map[string]string{
     },
     "/v1/apps/validate_package": {
       "post": {
-        "summary": "ValidatePackage",
+        "summary": "Validate format of package(pack by op tool)",
         "operationId": "ValidatePackage",
         "responses": {
           "200": {
@@ -2658,7 +2812,7 @@ var Files = map[string]string{
     },
     "/v1/attachments": {
       "get": {
-        "summary": "get attachment",
+        "summary": "Get attachment, use attachment id to get attachment",
         "operationId": "GetAttachment",
         "responses": {
           "200": {
@@ -2671,12 +2825,14 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "attachment_id",
+            "description": "required, use attachment id to get attachment.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "filename",
+            "description": "filename, attachment contain one more file.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -2689,7 +2845,7 @@ var Files = map[string]string{
     },
     "/v1/categories": {
       "get": {
-        "summary": "describe categories with filter",
+        "summary": "Get categories, support filter with these fields(category_id, status, locale, owner, name), default return all categories",
         "operationId": "DescribeCategories",
         "responses": {
           "200": {
@@ -2702,18 +2858,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, can fields with these fields(category_id, status, locale, owner, name), default return all categories.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -2721,7 +2880,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2729,7 +2888,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2737,6 +2896,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select column to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2747,6 +2907,7 @@ var Files = map[string]string{
           },
           {
             "name": "category_id",
+            "description": "category ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2757,6 +2918,7 @@ var Files = map[string]string{
           },
           {
             "name": "name",
+            "description": "category name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2767,6 +2929,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2781,7 +2944,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete categories",
+        "summary": "Batch delete categories",
         "operationId": "DeleteCategories",
         "responses": {
           "200": {
@@ -2806,7 +2969,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create category",
+        "summary": "Create category",
         "operationId": "CreateCategory",
         "responses": {
           "200": {
@@ -2831,7 +2994,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
-        "summary": "modify category",
+        "summary": "Modify category",
         "operationId": "ModifyCategory",
         "responses": {
           "200": {
@@ -2858,7 +3021,7 @@ var Files = map[string]string{
     },
     "/v1/clusters": {
       "get": {
-        "summary": "describe clusters",
+        "summary": "Get clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all clusters",
         "operationId": "DescribeClusters",
         "responses": {
           "200": {
@@ -2871,6 +3034,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "cluster_id",
+            "description": "cluster ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2881,6 +3045,7 @@ var Files = map[string]string{
           },
           {
             "name": "app_id",
+            "description": "app ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2891,6 +3056,7 @@ var Files = map[string]string{
           },
           {
             "name": "version_id",
+            "description": "version ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2901,6 +3067,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "cluster status eg.[active|used|enabled|disabled|deleted|stopped|ceased].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2911,6 +3078,7 @@ var Files = map[string]string{
           },
           {
             "name": "runtime_id",
+            "description": "runtime ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2921,6 +3089,7 @@ var Files = map[string]string{
           },
           {
             "name": "frontgate_id",
+            "description": "frontgate ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2931,13 +3100,14 @@ var Files = map[string]string{
           },
           {
             "name": "external_cluster_id",
+            "description": "external cluster id.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2945,7 +3115,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2953,18 +3123,21 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
+            "description": "query key, support these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -2972,6 +3145,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2982,12 +3156,14 @@ var Files = map[string]string{
           },
           {
             "name": "cluster_type",
+            "description": "cluster type, frontgate or normal cluster.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "with_detail",
+            "description": "get cluster detail info or not.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -2995,6 +3171,7 @@ var Files = map[string]string{
           },
           {
             "name": "created_date",
+            "description": "cluster created duration eg.[1 day].",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3002,6 +3179,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select column to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3018,7 +3196,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/add_nodes": {
       "post": {
-        "summary": "add cluster nodes",
+        "summary": "Batch add nodes to cluster",
         "operationId": "AddClusterNodes",
         "responses": {
           "200": {
@@ -3045,7 +3223,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/apps": {
       "get": {
-        "summary": "describe app clusters",
+        "summary": "Get app clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all app clusters",
         "operationId": "DescribeAppClusters",
         "responses": {
           "200": {
@@ -3058,6 +3236,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "app_id",
+            "description": "app ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3068,6 +3247,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|used|enabled|disabled|deleted|stopped|ceased].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3078,7 +3258,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3086,7 +3266,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3094,18 +3274,21 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
+            "description": "query key, support these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -3113,6 +3296,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3123,6 +3307,7 @@ var Files = map[string]string{
           },
           {
             "name": "with_detail",
+            "description": "get cluster with detail.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -3130,6 +3315,7 @@ var Files = map[string]string{
           },
           {
             "name": "created_date",
+            "description": "cluster created duration eg.[1 day].",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3137,6 +3323,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3153,7 +3340,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/cease": {
       "post": {
-        "summary": "cease clusters",
+        "summary": "Batch cease clusters",
         "operationId": "CeaseClusters",
         "responses": {
           "200": {
@@ -3180,7 +3367,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/create": {
       "post": {
-        "summary": "create cluster",
+        "summary": "Create cluster",
         "operationId": "CreateCluster",
         "responses": {
           "200": {
@@ -3207,7 +3394,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/delete": {
       "post": {
-        "summary": "delete clusters",
+        "summary": "Batch delete clusters",
         "operationId": "DeleteClusters",
         "responses": {
           "200": {
@@ -3234,7 +3421,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/delete_nodes": {
       "post": {
-        "summary": "delete cluster nodes",
+        "summary": "Batch delete nodes from cluster",
         "operationId": "DeleteClusterNodes",
         "responses": {
           "200": {
@@ -3261,7 +3448,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/key_pair/attach": {
       "post": {
-        "summary": "attach key pairs",
+        "summary": "Batch attach key pairs to node",
         "operationId": "AttachKeyPairs",
         "responses": {
           "200": {
@@ -3288,7 +3475,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/key_pair/detach": {
       "post": {
-        "summary": "detach key pairs",
+        "summary": "Batch detach key pairs from node",
         "operationId": "DetachKeyPairs",
         "responses": {
           "200": {
@@ -3315,7 +3502,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/key_pairs": {
       "get": {
-        "summary": "describe key pairs",
+        "summary": "Get key pairs, support filter with these fields(key_pair_id, name, owner), default return all key pairs",
         "operationId": "DescribeKeyPairs",
         "responses": {
           "200": {
@@ -3328,30 +3515,35 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "key_pair_id",
+            "description": "key pair id.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "name",
+            "description": "key pair name.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "description",
+            "description": "key pair description.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "pub_key",
+            "description": "public key.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3362,12 +3554,14 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
+            "description": "query key, can filter with these fields(key_pair_id, name, owner).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "limit",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3375,6 +3569,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3382,6 +3577,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3396,7 +3592,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete key pairs",
+        "summary": "Batch delete key pairs",
         "operationId": "DeleteKeyPairs",
         "responses": {
           "200": {
@@ -3421,7 +3617,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create key pair",
+        "summary": "Create key pair",
         "operationId": "CreateKeyPair",
         "responses": {
           "200": {
@@ -3448,7 +3644,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/modify": {
       "post": {
-        "summary": "modify cluster attributes",
+        "summary": "Modify cluster attributes",
         "operationId": "ModifyClusterAttributes",
         "responses": {
           "200": {
@@ -3475,7 +3671,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/modify_nodes": {
       "post": {
-        "summary": "modify cluster node attributes",
+        "summary": "Modify node attributes in the cluster",
         "operationId": "ModifyClusterNodeAttributes",
         "responses": {
           "200": {
@@ -3502,7 +3698,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/nodes": {
       "get": {
-        "summary": "describe cluster nodes",
+        "summary": "Get nodes in cluster, can filter with these fields(cluster_id, node_id, status, owner)",
         "operationId": "DescribeClusterNodes",
         "responses": {
           "200": {
@@ -3515,12 +3711,14 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "cluster_id",
+            "description": "cluster id.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "node_id",
+            "description": "node ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3531,6 +3729,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|used|enabled|disabled|deleted|stopped|ceased].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3541,7 +3740,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3549,7 +3748,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3557,18 +3756,21 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
+            "description": "query key, support these fields(cluster_id, node_id, status, owner).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -3576,6 +3778,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3586,6 +3789,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3602,7 +3806,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/recover": {
       "post": {
-        "summary": "recover clusters",
+        "summary": "Batch recover clusters",
         "operationId": "RecoverClusters",
         "responses": {
           "200": {
@@ -3629,7 +3833,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/resize": {
       "post": {
-        "summary": "resize cluster",
+        "summary": "Resize cluster",
         "operationId": "ResizeCluster",
         "responses": {
           "200": {
@@ -3656,7 +3860,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/rollback": {
       "post": {
-        "summary": "rollback cluster",
+        "summary": "Rollback cluster",
         "operationId": "RollbackCluster",
         "responses": {
           "200": {
@@ -3683,7 +3887,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/start": {
       "post": {
-        "summary": "start clusters",
+        "summary": "Batch start clusters",
         "operationId": "StartClusters",
         "responses": {
           "200": {
@@ -3710,7 +3914,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/statistics": {
       "get": {
-        "summary": "get cluster statistics",
+        "summary": "Get statistics of cluster",
         "operationId": "GetClusterStatistics",
         "responses": {
           "200": {
@@ -3727,7 +3931,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/stop": {
       "post": {
-        "summary": "stop clusters",
+        "summary": "Batch stop clusters",
         "operationId": "StopClusters",
         "responses": {
           "200": {
@@ -3754,7 +3958,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/subnets": {
       "get": {
-        "summary": "describe subnets",
+        "summary": "Get subnets",
         "operationId": "DescribeSubnets",
         "responses": {
           "200": {
@@ -3767,12 +3971,14 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "runtime_id",
+            "description": "required, id of runtime that contain subnet.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "limit",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3780,6 +3986,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3787,6 +3994,7 @@ var Files = map[string]string{
           },
           {
             "name": "subnet_type",
+            "description": "subnet type.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3794,6 +4002,7 @@ var Files = map[string]string{
           },
           {
             "name": "subnet_id",
+            "description": "subnet ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3804,6 +4013,7 @@ var Files = map[string]string{
           },
           {
             "name": "zone",
+            "description": "zone eg.[pek3a|pek3b|...].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3814,6 +4024,7 @@ var Files = map[string]string{
           },
           {
             "name": "advanced_param",
+            "description": "advanced param.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3830,7 +4041,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/update_env": {
       "patch": {
-        "summary": "update cluster env",
+        "summary": "Update env of cluster",
         "operationId": "UpdateClusterEnv",
         "responses": {
           "200": {
@@ -3857,7 +4068,7 @@ var Files = map[string]string{
     },
     "/v1/clusters/upgrade": {
       "post": {
-        "summary": "upgrade cluster",
+        "summary": "Upgrade cluster",
         "operationId": "UpgradeCluster",
         "responses": {
           "200": {
@@ -3884,7 +4095,7 @@ var Files = map[string]string{
     },
     "/v1/debug_clusters": {
       "get": {
-        "summary": "describe debug clusters",
+        "summary": "Get debug clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all debug clusters",
         "operationId": "DescribeDebugClusters",
         "responses": {
           "200": {
@@ -3897,6 +4108,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "cluster_id",
+            "description": "cluster ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3907,6 +4119,7 @@ var Files = map[string]string{
           },
           {
             "name": "app_id",
+            "description": "app ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3917,6 +4130,7 @@ var Files = map[string]string{
           },
           {
             "name": "version_id",
+            "description": "version ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3927,6 +4141,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "cluster status eg.[active|used|enabled|disabled|deleted|stopped|ceased].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3937,6 +4152,7 @@ var Files = map[string]string{
           },
           {
             "name": "runtime_id",
+            "description": "runtime ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3947,6 +4163,7 @@ var Files = map[string]string{
           },
           {
             "name": "frontgate_id",
+            "description": "frontgate ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3957,13 +4174,14 @@ var Files = map[string]string{
           },
           {
             "name": "external_cluster_id",
+            "description": "external cluster id.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3971,7 +4189,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3979,18 +4197,21 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
+            "description": "query key, support these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -3998,6 +4219,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4008,12 +4230,14 @@ var Files = map[string]string{
           },
           {
             "name": "cluster_type",
+            "description": "cluster type, frontgate or normal cluster.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "with_detail",
+            "description": "get cluster detail info or not.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -4021,6 +4245,7 @@ var Files = map[string]string{
           },
           {
             "name": "created_date",
+            "description": "cluster created duration eg.[1 day].",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4028,6 +4253,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select column to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4044,7 +4270,7 @@ var Files = map[string]string{
     },
     "/v1/debug_clusters/apps": {
       "get": {
-        "summary": "describe debug app clusters",
+        "summary": "Get debug app clusters, can filter with these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return all debug app clusters",
         "operationId": "DescribeDebugAppClusters",
         "responses": {
           "200": {
@@ -4057,6 +4283,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "app_id",
+            "description": "app ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4067,6 +4294,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|used|enabled|disabled|deleted|stopped|ceased].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4077,7 +4305,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4085,7 +4313,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4093,18 +4321,21 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
+            "description": "query key, support these fields(cluster_id, app_id, version_id, status, runtime_id, frontgate_id, owner, cluster_type).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -4112,6 +4343,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4122,6 +4354,7 @@ var Files = map[string]string{
           },
           {
             "name": "with_detail",
+            "description": "get cluster with detail.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -4129,6 +4362,7 @@ var Files = map[string]string{
           },
           {
             "name": "created_date",
+            "description": "cluster created duration eg.[1 day].",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4136,6 +4370,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4152,7 +4387,7 @@ var Files = map[string]string{
     },
     "/v1/debug_clusters/create": {
       "post": {
-        "summary": "create debug cluster",
+        "summary": "Create debug cluster",
         "operationId": "CreateDebugCluster",
         "responses": {
           "200": {
@@ -4179,7 +4414,7 @@ var Files = map[string]string{
     },
     "/v1/app_vendors": {
       "get": {
-        "summary": "DescribeVendorVerifyInfos",
+        "summary": "Get vendor verifies info, can filer with these fields(user_id, status), default return all VendorVerifyInfos",
         "operationId": "DescribeVendorVerifyInfos",
         "responses": {
           "200": {
@@ -4192,18 +4427,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(user_id, status).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -4211,7 +4449,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4219,7 +4457,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4227,6 +4465,7 @@ var Files = map[string]string{
           },
           {
             "name": "user_id",
+            "description": "user ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4237,6 +4476,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[draft|submitted|passed|rejected|suspended|in-review|new].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4247,6 +4487,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select column to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4257,6 +4498,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4271,7 +4513,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "SubmitVendorVerifyInfo",
+        "summary": "Submit vendor verify info",
         "operationId": "SubmitVendorVerifyInfo",
         "responses": {
           "200": {
@@ -4298,7 +4540,7 @@ var Files = map[string]string{
     },
     "/v1/app_vendors/app_vendor": {
       "get": {
-        "summary": "get isv by isv user Id",
+        "summary": "Get vendor verify info",
         "operationId": "GetVendorVerifyInfo",
         "responses": {
           "200": {
@@ -4311,6 +4553,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "user_id",
+            "description": "required, use user id to get vendor verify info.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -4323,7 +4566,7 @@ var Files = map[string]string{
     },
     "/v1/app_vendors/app_vendor_statistics": {
       "get": {
-        "summary": "DescribeAppVendorStatistics",
+        "summary": "Get statistics of vendor",
         "operationId": "DescribeAppVendorStatistics",
         "responses": {
           "200": {
@@ -4336,18 +4579,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(user_id, status).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -4355,7 +4601,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4363,7 +4609,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4371,6 +4617,7 @@ var Files = map[string]string{
           },
           {
             "name": "user_id",
+            "description": "user ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4381,6 +4628,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[draft|submitted|passed|rejected|suspended|in-review|new].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4391,6 +4639,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select column to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4401,6 +4650,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4417,7 +4667,7 @@ var Files = map[string]string{
     },
     "/v1/app_vendors/pass": {
       "post": {
-        "summary": "PassVendorVerifyInfo",
+        "summary": "Pass vendor verify",
         "operationId": "PassVendorVerifyInfo",
         "responses": {
           "200": {
@@ -4444,7 +4694,7 @@ var Files = map[string]string{
     },
     "/v1/app_vendors/reject": {
       "post": {
-        "summary": "RejectVendorVerifyInfo",
+        "summary": "Reject vendor verify",
         "operationId": "RejectVendorVerifyInfo",
         "responses": {
           "200": {
@@ -4471,7 +4721,7 @@ var Files = map[string]string{
     },
     "/v1/jobs": {
       "get": {
-        "summary": "describe jobs with filter",
+        "summary": "Get job, filter with these fields(job_id, cluster_id, app_id, version_id, executor, provider, status, owner), default return all jobs",
         "operationId": "DescribeJobs",
         "responses": {
           "200": {
@@ -4484,18 +4734,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(job_id, cluster_id, app_id, version_id, executor, provider, status, owner).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -4503,7 +4756,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4511,7 +4764,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4519,6 +4772,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select column to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4529,6 +4783,7 @@ var Files = map[string]string{
           },
           {
             "name": "job_id",
+            "description": "job ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4539,42 +4794,49 @@ var Files = map[string]string{
           },
           {
             "name": "cluster_id",
+            "description": "cluster id.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "app_id",
+            "description": "app id.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "version_id",
+            "description": "specific app version id to filter result.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "executor",
+            "description": "host name of server.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "provider",
+            "description": "runtime provider eg.[qingcloud|aliyun|aws|kubernetes].",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "runtime_id",
+            "description": "runtime id.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "status",
+            "description": "status eg.[successful|failed|running|pending].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4585,6 +4847,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4601,7 +4864,7 @@ var Files = map[string]string{
     },
     "/v1/market_users": {
       "get": {
-        "summary": "describe users with filter",
+        "summary": "Get users with filter",
         "operationId": "DescribeMarketUsers",
         "responses": {
           "200": {
@@ -4620,12 +4883,14 @@ var Files = map[string]string{
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -4685,7 +4950,7 @@ var Files = map[string]string{
     },
     "/v1/markets": {
       "get": {
-        "summary": "describe markets with filter",
+        "summary": "Describe markets with filter",
         "operationId": "DescribeMarkets",
         "responses": {
           "200": {
@@ -4704,12 +4969,14 @@ var Files = map[string]string{
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -4797,7 +5064,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete markets",
+        "summary": "Delete markets",
         "operationId": "DeleteMarkets",
         "responses": {
           "200": {
@@ -4822,7 +5089,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create market",
+        "summary": "Create market",
         "operationId": "CreateMarket",
         "responses": {
           "200": {
@@ -4847,7 +5114,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
-        "summary": "modify market",
+        "summary": "Modify market",
         "operationId": "ModifyMarket",
         "responses": {
           "200": {
@@ -4874,7 +5141,7 @@ var Files = map[string]string{
     },
     "/v1/markets:join": {
       "post": {
-        "summary": "user join market",
+        "summary": "Join market",
         "operationId": "UserJoinMarket",
         "responses": {
           "200": {
@@ -4901,7 +5168,7 @@ var Files = map[string]string{
     },
     "/v1/markets:leave": {
       "post": {
-        "summary": "user leave market",
+        "summary": "Leave market",
         "operationId": "UserLeaveMarket",
         "responses": {
           "200": {
@@ -4928,7 +5195,7 @@ var Files = map[string]string{
     },
     "/v1/repos": {
       "get": {
-        "summary": "describe repos with filter",
+        "summary": "Get repositories ,filter with these fields(repo_id, name, type, visibility, status, app_default_status, owner, controller), default return all repositories",
         "operationId": "DescribeRepos",
         "responses": {
           "200": {
@@ -4941,18 +5208,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(repo_id, name, type, visibility, status, app_default_status, owner, controller).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -4960,7 +5230,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4968,7 +5238,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4976,6 +5246,7 @@ var Files = map[string]string{
           },
           {
             "name": "repo_id",
+            "description": "repository ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4986,6 +5257,7 @@ var Files = map[string]string{
           },
           {
             "name": "name",
+            "description": "repository name.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4996,6 +5268,7 @@ var Files = map[string]string{
           },
           {
             "name": "type",
+            "description": "repository type.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5006,6 +5279,7 @@ var Files = map[string]string{
           },
           {
             "name": "visibility",
+            "description": "visibility eg:[public|private].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5016,6 +5290,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5026,6 +5301,7 @@ var Files = map[string]string{
           },
           {
             "name": "provider",
+            "description": "runtime provider eg.[qingcloud|aliyun|aws|kubernetes].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5036,18 +5312,21 @@ var Files = map[string]string{
           },
           {
             "name": "label",
+            "description": "a kv string, tags of server.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "selector",
+            "description": "selector of label.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "category_id",
+            "description": "category ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5058,6 +5337,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5068,6 +5348,7 @@ var Files = map[string]string{
           },
           {
             "name": "app_default_status",
+            "description": "app default status eg.[draft|active].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5078,13 +5359,14 @@ var Files = map[string]string{
           },
           {
             "name": "user_id",
+            "description": "user id.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "controller",
-            "description": "0 for self resource; 1 for openpitrix resource.",
+            "description": "controller, value 0 for self resource, value1 for openpitrix resource.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5096,7 +5378,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete repos",
+        "summary": "Batch delete repositories",
         "operationId": "DeleteRepos",
         "responses": {
           "200": {
@@ -5121,7 +5403,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create repo",
+        "summary": "Create repository, repository used to store package of app",
         "operationId": "CreateRepo",
         "responses": {
           "200": {
@@ -5146,7 +5428,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
-        "summary": "modify repo",
+        "summary": "Modify repository",
         "operationId": "ModifyRepo",
         "responses": {
           "200": {
@@ -5173,7 +5455,7 @@ var Files = map[string]string{
     },
     "/v1/repos/validate": {
       "get": {
-        "summary": "validate repo",
+        "summary": "Validate repository",
         "operationId": "ValidateRepo",
         "responses": {
           "200": {
@@ -5186,18 +5468,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "type",
+            "description": "required, type of repository.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "url",
+            "description": "required, url of visiting the repository.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "credential",
+            "description": "required, credential of visiting the repository.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -5210,7 +5495,7 @@ var Files = map[string]string{
     },
     "/v1/repo_events": {
       "get": {
-        "summary": "describe repo events",
+        "summary": "Get repository events",
         "operationId": "DescribeRepoEvents",
         "responses": {
           "200": {
@@ -5223,7 +5508,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5231,7 +5516,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5239,6 +5524,7 @@ var Files = map[string]string{
           },
           {
             "name": "repo_event_id",
+            "description": "repository event ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5249,6 +5535,7 @@ var Files = map[string]string{
           },
           {
             "name": "repo_id",
+            "description": "repository ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5259,6 +5546,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5269,6 +5557,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "repository event status eg.[failed|successful|working|pending].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5285,7 +5574,7 @@ var Files = map[string]string{
     },
     "/v1/repos/index": {
       "post": {
-        "summary": "start a index repo event",
+        "summary": "Start index repository event",
         "operationId": "IndexRepo",
         "responses": {
           "200": {
@@ -5312,7 +5601,7 @@ var Files = map[string]string{
     },
     "/v1/debug_runtimes": {
       "get": {
-        "summary": "describe debug runtime",
+        "summary": "Get debug runtimes, can filter with these fields(runtime_id, provider, zone, status, owner), default return all debug runtimes",
         "operationId": "DescribeDebugRuntimes",
         "responses": {
           "200": {
@@ -5325,18 +5614,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(runtime_id, provider, zone, status, owner).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -5344,7 +5636,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5352,7 +5644,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5360,6 +5652,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5370,6 +5663,7 @@ var Files = map[string]string{
           },
           {
             "name": "runtime_id",
+            "description": "runtime ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5380,6 +5674,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5390,6 +5685,7 @@ var Files = map[string]string{
           },
           {
             "name": "provider",
+            "description": "runtime provider eg.[qingcloud|aliyun|aws|kubernetes].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5400,6 +5696,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5414,7 +5711,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create debug runtime",
+        "summary": "Create debug runtime",
         "operationId": "CreateDebugRuntime",
         "responses": {
           "200": {
@@ -5441,7 +5738,7 @@ var Files = map[string]string{
     },
     "/v1/debug_runtimes/credentials": {
       "get": {
-        "summary": "describe debug runtime credentials",
+        "summary": "Get debug runtime credentials, filter with these fields(runtime_credential_id, status, provider, owner), default return all debug runtime credentials",
         "operationId": "DescribeDebugRuntimeCredentials",
         "responses": {
           "200": {
@@ -5454,18 +5751,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -5473,7 +5773,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5481,7 +5781,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5489,6 +5789,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5499,6 +5800,7 @@ var Files = map[string]string{
           },
           {
             "name": "runtime_credential_id",
+            "description": "runtime credential ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5509,6 +5811,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5519,6 +5822,7 @@ var Files = map[string]string{
           },
           {
             "name": "provider",
+            "description": "runtime provider eg.[qingcloud|aliyun|aws|kubernetes].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5529,6 +5833,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5543,7 +5848,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create debug runtime credential",
+        "summary": "Create debug runtime credential",
         "operationId": "CreateDebugRuntimeCredential",
         "responses": {
           "200": {
@@ -5570,7 +5875,7 @@ var Files = map[string]string{
     },
     "/v1/runtimes": {
       "get": {
-        "summary": "describe runtime",
+        "summary": "Get runtimes, can filter with these fields(runtime_id, provider, zone, status, owner), default return all runtimes",
         "operationId": "DescribeRuntimes",
         "responses": {
           "200": {
@@ -5583,18 +5888,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(runtime_id, provider, zone, status, owner).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -5602,7 +5910,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5610,7 +5918,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5618,6 +5926,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5628,6 +5937,7 @@ var Files = map[string]string{
           },
           {
             "name": "runtime_id",
+            "description": "runtime ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5638,6 +5948,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5648,6 +5959,7 @@ var Files = map[string]string{
           },
           {
             "name": "provider",
+            "description": "runtime provider eg.[qingcloud|aliyun|aws|kubernetes].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5658,6 +5970,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5672,7 +5985,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete runtimes",
+        "summary": "Delete runtimes",
         "operationId": "DeleteRuntimes",
         "responses": {
           "200": {
@@ -5697,7 +6010,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create runtime",
+        "summary": "Create runtime",
         "operationId": "CreateRuntime",
         "responses": {
           "200": {
@@ -5722,7 +6035,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
-        "summary": "modify runtime",
+        "summary": "Modify runtime",
         "operationId": "ModifyRuntime",
         "responses": {
           "200": {
@@ -5749,7 +6062,7 @@ var Files = map[string]string{
     },
     "/v1/runtimes/credentials": {
       "get": {
-        "summary": "describe runtime credentials",
+        "summary": "Get runtime credentials, filter with these fields(runtime_credential_id, status, provider, owner), default return all runtime credentials",
         "operationId": "DescribeRuntimeCredentials",
         "responses": {
           "200": {
@@ -5762,18 +6075,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -5781,7 +6097,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5789,7 +6105,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -5797,6 +6113,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5807,6 +6124,7 @@ var Files = map[string]string{
           },
           {
             "name": "runtime_credential_id",
+            "description": "runtime credential ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5817,6 +6135,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "status eg.[active|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5827,6 +6146,7 @@ var Files = map[string]string{
           },
           {
             "name": "provider",
+            "description": "runtime provider eg.[qingcloud|aliyun|aws|kubernetes].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5837,6 +6157,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5851,7 +6172,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete runtime credentials",
+        "summary": "Batch delete runtime credentials",
         "operationId": "DeleteRuntimeCredentials",
         "responses": {
           "200": {
@@ -5901,7 +6222,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
-        "summary": "modify runtime credential",
+        "summary": "Modify runtime credential",
         "operationId": "ModifyRuntimeCredential",
         "responses": {
           "200": {
@@ -5928,7 +6249,7 @@ var Files = map[string]string{
     },
     "/v1/runtimes/credentials:validate": {
       "post": {
-        "summary": "validate runtime credential",
+        "summary": "Validate runtime credential",
         "operationId": "ValidateRuntimeCredential",
         "responses": {
           "200": {
@@ -5955,7 +6276,7 @@ var Files = map[string]string{
     },
     "/v1/runtimes/statistics": {
       "get": {
-        "summary": "get runtime statistics",
+        "summary": "get statistics of runtime",
         "operationId": "GetRuntimeStatistics",
         "responses": {
           "200": {
@@ -5972,7 +6293,7 @@ var Files = map[string]string{
     },
     "/v1/runtimes/zones": {
       "get": {
-        "summary": "describe runtime provider zones",
+        "summary": "Get runtime provider zones",
         "operationId": "DescribeRuntimeProviderZones",
         "responses": {
           "200": {
@@ -5985,6 +6306,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "runtime_credential_id",
+            "description": "required, use runtime credential id to get run time provider zones.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -5997,7 +6319,7 @@ var Files = map[string]string{
     },
     "/v1/service_configs/get": {
       "post": {
-        "summary": "get service configration",
+        "summary": "Get service configration",
         "operationId": "GetServiceConfig",
         "responses": {
           "200": {
@@ -6024,7 +6346,7 @@ var Files = map[string]string{
     },
     "/v1/service_configs/set": {
       "post": {
-        "summary": "set service configration",
+        "summary": "Set service configration",
         "operationId": "SetServiceConfig",
         "responses": {
           "200": {
@@ -6051,7 +6373,7 @@ var Files = map[string]string{
     },
     "/v1/service_configs/validate_email_service": {
       "post": {
-        "summary": "validate email service",
+        "summary": "Validate email service",
         "operationId": "ValidateEmailService",
         "responses": {
           "200": {
@@ -6078,7 +6400,7 @@ var Files = map[string]string{
     },
     "/v1/tasks": {
       "get": {
-        "summary": "describe tasks with filter",
+        "summary": "Get tasks, can filter with these fields(job_id, task_id, executor, status, owner), default return all tasks",
         "operationId": "DescribeTasks",
         "responses": {
           "200": {
@@ -6091,18 +6413,21 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
+            "description": "query key, support these fields(job_id, task_id, executor, status, owner).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -6110,7 +6435,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -6118,7 +6443,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -6126,6 +6451,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -6136,6 +6462,7 @@ var Files = map[string]string{
           },
           {
             "name": "task_id",
+            "description": "task ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -6146,6 +6473,7 @@ var Files = map[string]string{
           },
           {
             "name": "job_id",
+            "description": "job ids.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -6156,18 +6484,21 @@ var Files = map[string]string{
           },
           {
             "name": "executor",
+            "description": "host name of server.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "target",
+            "description": "target eg.[runtime|pilot].",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "status",
+            "description": "task status eg.[running|successful|failed|pending].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -6178,6 +6509,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -6194,7 +6526,7 @@ var Files = map[string]string{
     },
     "/v1/tasks/retry": {
       "post": {
-        "summary": "retry tasks",
+        "summary": "Retry tasks",
         "operationId": "RetryTasks",
         "responses": {
           "200": {
@@ -6225,16 +6557,19 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "action_bundle_id": {
-          "type": "string"
+          "type": "string",
+          "title": "bundle of action, bundle contain one more api"
         },
         "action_bundle_name": {
-          "type": "string"
+          "type": "string",
+          "title": "name of bundle"
         },
         "api_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixApi"
-          }
+          },
+          "title": "list of api in bundle"
         }
       }
     },
@@ -6242,16 +6577,20 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "api_id": {
-          "type": "string"
+          "type": "string",
+          "title": "api id"
         },
         "api_method": {
-          "type": "string"
+          "type": "string",
+          "title": "api method, rpc method eg.[Token|CanDo|...]"
         },
         "url_method": {
-          "type": "string"
+          "type": "string",
+          "title": "url method, http verb"
         },
         "url": {
-          "type": "string"
+          "type": "string",
+          "title": "request url"
         }
       }
     },
@@ -6262,13 +6601,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of user to bind"
         },
         "role_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of role for user to bind with"
         }
       }
     },
@@ -6279,13 +6620,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of user bind"
         },
         "role_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of role for user to bind with"
         }
       }
     },
@@ -6293,16 +6636,20 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of user to check whether has permission"
         },
         "url": {
-          "type": "string"
+          "type": "string",
+          "title": "required, request uri"
         },
         "url_method": {
-          "type": "string"
+          "type": "string",
+          "title": "required, url method, http verb"
         },
         "api_method": {
-          "type": "string"
+          "type": "string",
+          "title": "rpc method eg.[Token|CanDo|...]"
         }
       }
     },
@@ -6310,13 +6657,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of user to check whether has permission"
         },
         "access_path": {
-          "type": "string"
+          "type": "string",
+          "title": "access path of user"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path of user, concat string group_path:user_id"
         }
       }
     },
@@ -6324,10 +6674,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "new_password": {
-          "type": "string"
+          "type": "string",
+          "title": "required, new password for reset"
         },
         "reset_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, reset id"
         }
       }
     },
@@ -6335,7 +6687,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of user that changed password"
         }
       }
     },
@@ -6343,7 +6696,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, user id for create client"
         }
       }
     },
@@ -6351,13 +6705,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "user id of client"
         },
         "client_id": {
-          "type": "string"
+          "type": "string",
+          "title": "client id of user"
         },
         "client_secret": {
-          "type": "string"
+          "type": "string",
+          "title": "client secret,used for validate client credentials"
         }
       }
     },
@@ -6365,13 +6722,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "parent_group_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, parent group id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "required, group name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "group description"
         }
       }
     },
@@ -6379,7 +6739,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "group_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of group created"
         }
       }
     },
@@ -6387,10 +6748,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of user to create reset password action"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "title": "required, user password"
         }
       }
     },
@@ -6398,10 +6761,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of user that reset password"
         },
         "reset_id": {
-          "type": "string"
+          "type": "string",
+          "title": "reset id, used to change password"
         }
       }
     },
@@ -6409,13 +6774,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role_name": {
-          "type": "string"
+          "type": "string",
+          "title": "required, role name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "role description"
         },
         "portal": {
-          "type": "string"
+          "type": "string",
+          "title": "required, portal of role eg.[global_admin|user|isv]"
         }
       }
     },
@@ -6423,7 +6791,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of role created"
         }
       }
     },
@@ -6431,19 +6800,24 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "email": {
-          "type": "string"
+          "type": "string",
+          "title": "required, user email"
         },
         "phone_number": {
-          "type": "string"
+          "type": "string",
+          "title": "user phone number"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "title": "required, user password"
         },
         "role_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, user role_id"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "user description"
         }
       }
     },
@@ -6451,7 +6825,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of user created"
         }
       }
     },
@@ -6462,7 +6837,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of group to delete"
         }
       }
     },
@@ -6473,7 +6849,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of group deleted"
         }
       }
     },
@@ -6484,7 +6861,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of role to delete"
         }
       }
     },
@@ -6495,7 +6873,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of roles deleted"
         }
       }
     },
@@ -6506,7 +6885,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of user to delete"
         }
       }
     },
@@ -6517,7 +6897,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of deleted user"
         }
       }
     },
@@ -6526,13 +6907,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of group with detail info"
         },
         "group_detail_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixGroupDetail"
-          }
+          },
+          "title": "list of group with detail info"
         }
       }
     },
@@ -6541,13 +6924,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified group"
         },
         "group_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixGroup"
-          }
+          },
+          "title": "list of group"
         }
       }
     },
@@ -6556,13 +6941,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of roles"
         },
         "role_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRole"
-          }
+          },
+          "title": "list of role"
         }
       }
     },
@@ -6571,13 +6958,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified user"
         },
         "user_detail_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixUserDetail"
-          }
+          },
+          "title": "list of user with detail info"
         }
       }
     },
@@ -6586,13 +6975,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified user"
         },
         "user_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixUser"
-          }
+          },
+          "title": "list of user"
         }
       }
     },
@@ -6600,22 +6991,26 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "feature_id": {
-          "type": "string"
+          "type": "string",
+          "title": "feature id"
         },
         "feature_name": {
-          "type": "string"
+          "type": "string",
+          "title": "feature name"
         },
         "action_bundle_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixActionBundle"
-          }
+          },
+          "title": "list of action bundle"
         },
         "checked_action_bundle_id_set": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "list of checked action bundle"
         }
       }
     },
@@ -6623,10 +7018,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "reset_id": {
-          "type": "string"
+          "type": "string",
+          "title": "reset id"
         },
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of user changed password"
         }
       }
     },
@@ -6634,10 +7031,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "string",
+          "title": "role id"
         },
         "module": {
-          "$ref": "#/definitions/openpitrixModule"
+          "$ref": "#/definitions/openpitrixModule",
+          "title": "module info of role"
         }
       }
     },
@@ -6645,7 +7044,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role": {
-          "$ref": "#/definitions/openpitrixRole"
+          "$ref": "#/definitions/openpitrixRole",
+          "title": "role info"
         }
       }
     },
@@ -6653,34 +7053,43 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "parent_group_id": {
-          "type": "string"
+          "type": "string",
+          "title": "parent group id"
         },
         "group_id": {
-          "type": "string"
+          "type": "string",
+          "title": "group id"
         },
         "group_path": {
-          "type": "string"
+          "type": "string",
+          "description": "group path, a concat string gid-xxx.gid-xxx.gid..."
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "group name"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "group status eg.[active|deleted]"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "group description"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when user create"
         },
         "update_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when group update"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record group status changed time"
         }
       }
     },
@@ -6688,13 +7097,15 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "group": {
-          "$ref": "#/definitions/openpitrixGroup"
+          "$ref": "#/definitions/openpitrixGroup",
+          "title": "group base info"
         },
         "user_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixUser"
-          }
+          },
+          "title": "users in group"
         }
       }
     },
@@ -6705,13 +7116,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of group for user to join in"
         },
         "user_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of user to join"
         }
       }
     },
@@ -6722,13 +7135,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of group for user to join in"
         },
         "user_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of user to join"
         }
       }
     },
@@ -6739,13 +7154,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of group for user to leave from"
         },
         "user_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of user to leave"
         }
       }
     },
@@ -6756,13 +7173,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of group for user to leave from"
         },
         "user_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of user to leave"
         }
       }
     },
@@ -6770,16 +7189,20 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "group_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of group to modify"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "group name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "group description"
         },
         "parent_group_id": {
-          "type": "string"
+          "type": "string",
+          "title": "parent group id"
         }
       }
     },
@@ -6787,7 +7210,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "group_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of group modified"
         }
       }
     },
@@ -6795,10 +7219,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, use role id to modify role module"
         },
         "module": {
-          "$ref": "#/definitions/openpitrixModule"
+          "$ref": "#/definitions/openpitrixModule",
+          "title": "required, module info"
         }
       }
     },
@@ -6806,7 +7232,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "string",
+          "title": "role id used to modify role module"
         }
       }
     },
@@ -6814,13 +7241,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of role to modify"
         },
         "role_name": {
-          "type": "string"
+          "type": "string",
+          "title": "role name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "role description"
         }
       }
     },
@@ -6828,7 +7258,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of role modified"
         }
       }
     },
@@ -6836,22 +7267,28 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of user to be modify"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "title": "user email, eg.op@yunify.com"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "title": "user name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "user description"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "title": "user password"
         },
         "phone_number": {
-          "type": "string"
+          "type": "string",
+          "title": "user phone number, string of 11 digital"
         }
       }
     },
@@ -6859,7 +7296,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of user modified"
         }
       }
     },
@@ -6870,7 +7308,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixModuleElem"
-          }
+          },
+          "title": "list of module elem"
         }
       }
     },
@@ -6878,23 +7317,28 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "module_id": {
-          "type": "string"
+          "type": "string",
+          "title": "module id"
         },
         "module_name": {
-          "type": "string"
+          "type": "string",
+          "title": "module name"
         },
         "feature_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixFeature"
-          }
+          },
+          "title": "list of feature"
         },
         "data_level": {
-          "type": "string"
+          "type": "string",
+          "title": "access level of visiting data"
         },
         "is_check_all": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "is all feature in module elem checked"
         }
       }
     },
@@ -6902,40 +7346,51 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "string",
+          "title": "role id"
         },
         "role_name": {
-          "type": "string"
+          "type": "string",
+          "title": "role name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "role description"
         },
         "portal": {
-          "type": "string"
+          "type": "string",
+          "title": "portal eg.[global_admin|user|isv]"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "own"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path, concat string group_path:user_id"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "status eg.[active|deleted]"
         },
         "controller": {
-          "type": "string"
+          "type": "string",
+          "title": "controller eg.[self|pitrix]"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when role create"
         },
         "update_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when role update"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record change time of status"
         }
       }
     },
@@ -6943,25 +7398,32 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "grant_type": {
-          "type": "string"
+          "type": "string",
+          "title": "required, type of client request verification.eg.[client_credentials or password or refresh_token]"
         },
         "client_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, client id"
         },
         "client_secret": {
-          "type": "string"
+          "type": "string",
+          "title": "required, used for validate client credentials"
         },
         "scope": {
-          "type": "string"
+          "type": "string",
+          "title": "scope"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "title": "required or not depend on grant_type, user's name"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "title": "required or not depend on grant_type, user's password"
         },
         "refresh_token": {
-          "type": "string"
+          "type": "string",
+          "title": "required or not depend on grant_type, refresh token to check whether token expired"
         }
       }
     },
@@ -6969,20 +7431,25 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "token_type": {
-          "type": "string"
+          "type": "string",
+          "title": "token type.eg.[sender,bearer]"
         },
         "expires_in": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "default 2h"
         },
         "access_token": {
-          "type": "string"
+          "type": "string",
+          "title": "access token, generator by jwt(key=secrete key)"
         },
         "refresh_token": {
-          "type": "string"
+          "type": "string",
+          "title": "refresh token, timeliness,default expired after 2 weeks"
         },
         "id_token": {
-          "type": "string"
+          "type": "string",
+          "title": "id token, generator by jwt(key=\"\")"
         }
       }
     },
@@ -6993,13 +7460,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of user to unbind"
         },
         "role_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of role for user to unbind with"
         }
       }
     },
@@ -7010,13 +7479,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of user to unbind"
         },
         "role_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of role for user to unbind with"
         }
       }
     },
@@ -7024,34 +7495,43 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "user id, user belong to different group and role, has different permissions"
         },
         "username": {
-          "type": "string"
+          "type": "string",
+          "title": "user name"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "title": "user email"
         },
         "phone_number": {
-          "type": "string"
+          "type": "string",
+          "title": "user phone number"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "user description"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "user status eg.[active|deleted]"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when user create"
         },
         "update_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when user update"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record changed time of status"
         }
       }
     },
@@ -7059,19 +7539,22 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user": {
-          "$ref": "#/definitions/openpitrixUser"
+          "$ref": "#/definitions/openpitrixUser",
+          "title": "user info"
         },
         "role_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRole"
-          }
+          },
+          "title": "list of user's role"
         },
         "group_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixGroup"
-          }
+          },
+          "title": "list of user's group"
         }
       }
     },
@@ -7079,10 +7562,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "email": {
-          "type": "string"
+          "type": "string",
+          "title": "required, user email"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "title": "required, user password"
         }
       }
     },
@@ -7091,7 +7576,8 @@ var Files = map[string]string{
       "properties": {
         "validated": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "validate password ok or not"
         }
       }
     },
@@ -7099,99 +7585,128 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "app id"
         },
         "active": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "whether there is a released version in the app"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "app name"
         },
         "repo_id": {
-          "type": "string"
+          "type": "string",
+          "title": "repository(store app package) id"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "app description"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "status eg.[modify|submit|review|cancel|release|delete|pass|reject|suspend|recover]"
         },
         "home": {
-          "type": "string"
+          "type": "string",
+          "title": "app home page"
         },
         "icon": {
-          "type": "string"
+          "type": "string",
+          "title": "app icon"
         },
         "screenshots": {
-          "type": "string"
+          "type": "string",
+          "title": "app screenshots"
         },
         "maintainers": {
-          "type": "string"
+          "type": "string",
+          "title": "app maintainers"
         },
         "keywords": {
-          "type": "string"
+          "type": "string",
+          "title": "app key words"
         },
         "sources": {
-          "type": "string"
+          "type": "string",
+          "title": "sources of app"
         },
         "readme": {
-          "type": "string"
+          "type": "string",
+          "title": "app instructions"
         },
         "chart_name": {
-          "type": "string"
+          "type": "string",
+          "title": "chart name of app"
         },
         "abstraction": {
-          "type": "string"
+          "type": "string",
+          "title": "abstraction of app"
         },
         "tos": {
-          "type": "string"
+          "type": "string",
+          "title": "tos of app"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner of app"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when app create"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "update_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when app update"
         },
         "category_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixResourceCategory"
-          }
+          },
+          "title": "list of category, the app may belong to one more category"
         },
         "latest_app_version": {
-          "$ref": "#/definitions/openpitrixAppVersion"
+          "$ref": "#/definitions/openpitrixAppVersion",
+          "title": "latest version of app"
         },
         "app_version_types": {
-          "type": "string"
+          "type": "string",
+          "title": "app version types eg.[vmbased|helm]"
         },
         "company_name": {
-          "type": "string"
+          "type": "string",
+          "title": "company name"
         },
         "company_website": {
-          "type": "string"
+          "type": "string",
+          "title": "company website"
         },
         "company_profile": {
-          "type": "string"
+          "type": "string",
+          "title": "company profile"
         },
         "company_join_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "company join time"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path of the app, concat string group_path:user_id"
         },
         "isv": {
-          "type": "string"
+          "type": "string",
+          "title": "the isv user who create the app"
         }
       }
     },
@@ -7199,78 +7714,101 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "version id of app"
         },
         "active": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "active or not"
         },
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "app id"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "version name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "description of app of specific version"
         },
         "home": {
-          "type": "string"
+          "type": "string",
+          "title": "home of app of specific version"
         },
         "icon": {
-          "type": "string"
+          "type": "string",
+          "title": "icon of app of specific version"
         },
         "screenshots": {
-          "type": "string"
+          "type": "string",
+          "title": "screenshots of app of specific version"
         },
         "maintainers": {
-          "type": "string"
+          "type": "string",
+          "title": "maintainers of app of specific version"
         },
         "keywords": {
-          "type": "string"
+          "type": "string",
+          "title": "keywords of app of specific version"
         },
         "sources": {
-          "type": "string"
+          "type": "string",
+          "title": "sources of app of specific version"
         },
         "readme": {
-          "type": "string"
+          "type": "string",
+          "title": "readme of app of specific version"
         },
         "package_name": {
-          "type": "string"
+          "type": "string",
+          "title": "package name of app of specific version"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "status of app of specific version eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended]"
         },
         "review_id": {
-          "type": "string"
+          "type": "string",
+          "title": "review id of app of specific version"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when app version create"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "update_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when app version update"
         },
         "sequence": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "sequence of app of specific version"
         },
         "message": {
-          "type": "string"
+          "type": "string",
+          "title": "message path of app of specific version"
         },
         "type": {
-          "type": "string"
+          "type": "string",
+          "title": "type of app of specific version"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path of app of specific version, concat string group_path:user_id"
         }
       }
     },
@@ -7278,38 +7816,49 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of version to audit"
         },
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of specific version app"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "audit status, eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended]"
         },
         "version_name": {
-          "type": "string"
+          "type": "string",
+          "title": "version name"
         },
         "app_name": {
-          "type": "string"
+          "type": "string",
+          "title": "name of specific version app"
         },
         "operator": {
-          "type": "string"
+          "type": "string",
+          "title": "user of auditer"
         },
         "operator_type": {
-          "type": "string"
+          "type": "string",
+          "title": "operator of auditer eg.[global_admin|developer|business|technical|isv]"
         },
         "message": {
-          "type": "string"
+          "type": "string",
+          "title": "audit message"
         },
         "review_id": {
-          "type": "string"
+          "type": "string",
+          "title": "review id"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "version_type": {
-          "type": "string"
+          "type": "string",
+          "title": "version type"
         }
       }
     },
@@ -7317,38 +7866,48 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "review_id": {
-          "type": "string"
+          "type": "string",
+          "title": "review id"
         },
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of app version"
         },
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "app id"
         },
         "version_name": {
-          "type": "string"
+          "type": "string",
+          "title": "version name of specific app version"
         },
         "app_name": {
-          "type": "string"
+          "type": "string",
+          "title": "app name"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "review status eg.[isv-in-review|isv-passed|isv-rejected|isv-draft|business-in-review|business-passed|business-rejected|develop-draft|develop-in-review|develop-passed|develop-rejected|develop-draft]"
         },
         "phase": {
           "type": "object",
           "additionalProperties": {
             "$ref": "#/definitions/openpitrixAppVersionReviewPhase"
-          }
+          },
+          "title": "review phase, app need one more reviewer to review, when reviewer reviewed, status changed"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "reviewer": {
-          "type": "string"
+          "type": "string",
+          "title": "user who review the app version"
         },
         "version_type": {
-          "type": "string"
+          "type": "string",
+          "title": "version type"
         }
       }
     },
@@ -7356,24 +7915,30 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "review status of app version eg.[isv-in-review|isv-passed|isv-rejected|isv-draft|business-in-review|business-passed|business-rejected|develop-draft|develop-in-review|develop-passed|develop-rejected|develop-draft]"
         },
         "operator": {
-          "type": "string"
+          "type": "string",
+          "title": "user of reviewer"
         },
         "operator_type": {
-          "type": "string"
+          "type": "string",
+          "title": "operator type of reviewer eg.[global_admin|developer|business|technical|isv]"
         },
         "message": {
-          "type": "string"
+          "type": "string",
+          "title": "review message"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "review_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "app version review time"
         }
       }
     },
@@ -7381,7 +7946,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version to cancel"
         }
       }
     },
@@ -7389,7 +7955,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version canceled"
         }
       }
     },
@@ -7397,25 +7964,26 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "required, app name"
         },
         "version_type": {
           "type": "string",
-          "title": "optional: vmbased/helm"
+          "title": "optional, vmbased/helm"
         },
         "version_package": {
           "type": "string",
           "format": "byte",
-          "title": "create app version with specify package"
+          "title": "required, version with specific app package"
         },
         "version_name": {
           "type": "string",
-          "title": "create app version with specify name"
+          "title": "required, version name of the app"
         },
         "icon": {
           "type": "string",
           "format": "byte",
-          "title": "set the app icon"
+          "title": "app icon"
         }
       }
     },
@@ -7423,10 +7991,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "app id"
         },
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "version id of the app"
         }
       }
     },
@@ -7434,13 +8004,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of app to create new version"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "required, version name eg.[0.1.0|0.1.3|...]"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "description of app of specific version"
         },
         "type": {
           "type": "string",
@@ -7448,7 +8021,8 @@ var Files = map[string]string{
         },
         "package": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "package of app of specific version"
         }
       }
     },
@@ -7456,7 +8030,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "version id"
         }
       }
     },
@@ -7464,7 +8039,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version to delete"
         }
       }
     },
@@ -7472,7 +8048,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version deleted"
         }
       }
     },
@@ -7483,7 +8060,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of app to delete"
         }
       }
     },
@@ -7494,7 +8072,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of app deleted"
         }
       }
     },
@@ -7503,13 +8082,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of audits of app with specific version"
         },
         "app_version_audit_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixAppVersionAudit"
-          }
+          },
+          "title": "list of audit"
         }
       }
     },
@@ -7518,13 +8099,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of reviews of app with specific version"
         },
         "app_version_review_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixAppVersionReview"
-          }
+          },
+          "title": "list of reviews of app with specific version"
         }
       }
     },
@@ -7533,13 +8116,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified app version"
         },
         "app_version_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixAppVersion"
-          }
+          },
+          "title": "list of app vaesion"
         }
       }
     },
@@ -7548,13 +8133,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified app"
         },
         "app_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixApp"
-          }
+          },
+          "title": "list of app"
         }
       }
     },
@@ -7567,7 +8154,7 @@ var Files = map[string]string{
             "type": "integer",
             "format": "int64"
           },
-          "title": "app create time range -> app count, max length is 14"
+          "title": "range of app created time map to app count, max length is 14"
         },
         "top_ten_repos": {
           "type": "object",
@@ -7575,15 +8162,17 @@ var Files = map[string]string{
             "type": "integer",
             "format": "int64"
           },
-          "title": "repo id -> app count, max length is 10"
+          "title": "repo id map to app count, max length is 10"
         },
         "app_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total app count"
         },
         "repo_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total repository count"
         }
       }
     },
@@ -7595,10 +8184,12 @@ var Files = map[string]string{
           "additionalProperties": {
             "type": "string",
             "format": "byte"
-          }
+          },
+          "title": "filename map to content"
         },
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "version id"
         }
       }
     },
@@ -7607,13 +8198,16 @@ var Files = map[string]string{
       "properties": {
         "package": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "package of specific app version"
         },
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "app id of package"
         },
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "version id of package"
         }
       }
     },
@@ -7621,37 +8215,48 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of app to modify"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "name of the app"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "description of the app"
         },
         "home": {
-          "type": "string"
+          "type": "string",
+          "title": "home page of the app"
         },
         "maintainers": {
-          "type": "string"
+          "type": "string",
+          "title": "maintainers who maintainer the app"
         },
         "sources": {
-          "type": "string"
+          "type": "string",
+          "title": "sources of app"
         },
         "readme": {
-          "type": "string"
+          "type": "string",
+          "title": "instructions of the app"
         },
         "abstraction": {
-          "type": "string"
+          "type": "string",
+          "title": "abstraction of app"
         },
         "tos": {
-          "type": "string"
+          "type": "string",
+          "title": "tos of app"
         },
         "category_id": {
-          "type": "string"
+          "type": "string",
+          "title": "category id of the app"
         },
         "keywords": {
-          "type": "string"
+          "type": "string",
+          "title": "key words of the app"
         }
       }
     },
@@ -7659,7 +8264,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of app modified"
         }
       }
     },
@@ -7667,17 +8273,21 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, version id of app to modify"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "app name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "app description"
         },
         "package": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "package of app to replace other"
         },
         "package_files": {
           "type": "object",
@@ -7685,7 +8295,7 @@ var Files = map[string]string{
             "type": "string",
             "format": "byte"
           },
-          "title": "filename => file_content"
+          "title": "filename map to file_content"
         }
       }
     },
@@ -7693,7 +8303,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, version id"
         }
       }
     },
@@ -7701,7 +8312,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version to pass"
         }
       }
     },
@@ -7709,7 +8321,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of version passed"
         }
       }
     },
@@ -7717,7 +8330,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version to recover"
         }
       }
     },
@@ -7725,7 +8339,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of version recovered"
         }
       }
     },
@@ -7733,10 +8348,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version to reject"
         },
         "message": {
-          "type": "string"
+          "type": "string",
+          "title": "reject message"
         }
       }
     },
@@ -7744,7 +8361,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of version rejected"
         }
       }
     },
@@ -7752,7 +8370,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version to release"
         }
       }
     },
@@ -7760,7 +8379,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version released"
         }
       }
     },
@@ -7793,7 +8413,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version to review"
         }
       }
     },
@@ -7801,7 +8422,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of version reviewed"
         }
       }
     },
@@ -7809,7 +8431,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version to submit"
         }
       }
     },
@@ -7817,7 +8440,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version submitted"
         }
       }
     },
@@ -7825,7 +8449,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of version to suspend"
         }
       }
     },
@@ -7833,7 +8458,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of version suspended"
         }
       }
     },
@@ -7842,10 +8468,12 @@ var Files = map[string]string{
       "properties": {
         "failed": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "synchronized ok or not"
         },
         "result": {
-          "type": "string"
+          "type": "string",
+          "title": "result"
         }
       }
     },
@@ -7853,7 +8481,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of app to upload attachment"
         },
         "type": {
           "$ref": "#/definitions/openpitrixUploadAppAttachmentRequestType",
@@ -7861,7 +8490,8 @@ var Files = map[string]string{
         },
         "attachment_content": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "required, content of attachment"
         },
         "sequence": {
           "type": "integer",
@@ -7882,7 +8512,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of app to upload attachment"
         }
       }
     },
@@ -7891,11 +8522,12 @@ var Files = map[string]string{
       "properties": {
         "version_type": {
           "type": "string",
-          "title": "optional: vmbased/helm"
+          "title": "optional, vmbased/helm"
         },
         "version_package": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "required, version package eg.[the wordpress-0.0.1.tgz will be encoded to bytes]"
         }
       }
     },
@@ -7907,16 +8539,19 @@ var Files = map[string]string{
           "additionalProperties": {
             "type": "string"
           },
-          "title": "filename => detail"
+          "title": "filename map to detail"
         },
         "error": {
-          "type": "string"
+          "type": "string",
+          "title": "error eg.[json error]"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "app name eg.[wordpress|mysql|...]"
         },
         "version_name": {
-          "type": "string"
+          "type": "string",
+          "title": "app version name.eg.[0.1.0]"
         }
       }
     },
@@ -7924,13 +8559,15 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "attachment_id": {
-          "type": "string"
+          "type": "string",
+          "title": "attachment id"
         },
         "filename": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "filename, attachment contain one more file"
         }
       }
     },
@@ -7938,7 +8575,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "attachment_id": {
-          "type": "string"
+          "type": "string",
+          "title": "attachment id"
         },
         "attachment_content": {
           "type": "object",
@@ -7946,11 +8584,12 @@ var Files = map[string]string{
             "type": "string",
             "format": "byte"
           },
-          "title": "filename => content"
+          "title": "filename map to content"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time attachment create"
         }
       }
     },
@@ -7958,13 +8597,15 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "attachment_id": {
-          "type": "string"
+          "type": "string",
+          "title": "attachment id"
         },
         "filename": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "file name"
         }
       }
     },
@@ -7975,13 +8616,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of attachment deleted"
         },
         "filename": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "filename, attachment contain one more file"
         }
       }
     },
@@ -7990,10 +8633,12 @@ var Files = map[string]string{
       "properties": {
         "content": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "file content of attachment"
         },
         "etag": {
-          "type": "string"
+          "type": "string",
+          "title": "tell server to pack file"
         }
       }
     },
@@ -8005,7 +8650,7 @@ var Files = map[string]string{
           "additionalProperties": {
             "$ref": "#/definitions/openpitrixAttachment"
           },
-          "title": "attachment_id => Attachment"
+          "title": "attachment_id map to Attachment"
         }
       }
     },
@@ -8013,13 +8658,15 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "attachment_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of attachment replaced"
         },
         "filename": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "filename, attachment contain one more file"
         }
       }
     },
@@ -8027,33 +8674,42 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "category_id": {
-          "type": "string"
+          "type": "string",
+          "title": "category id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "category name,app belong to a category,eg.[AI|Firewall|cache|...]"
         },
         "locale": {
-          "type": "string"
+          "type": "string",
+          "title": "the i18n of this category, json format, sample: {\"zh_cn\": \"数据库\", \"en\": \"database\"}"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path, concat string group_path:user_id"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when category create"
         },
         "update_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when category update"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "category description"
         },
         "icon": {
-          "type": "string"
+          "type": "string",
+          "title": "category icon"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -8061,18 +8717,21 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "required, category name"
         },
         "locale": {
           "type": "string",
           "title": "the i18n of this category, json format, sample: {\"zh_cn\": \"数据库\", \"en\": \"database\"}"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "category description"
         },
         "icon": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "category icon"
         }
       }
     },
@@ -8080,7 +8739,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "category_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of category created"
         }
       }
     },
@@ -8091,7 +8751,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of category to delete"
         }
       }
     },
@@ -8102,7 +8763,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of category to deleted"
         }
       }
     },
@@ -8111,13 +8773,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified category"
         },
         "category_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixCategory"
-          }
+          },
+          "title": "list of category"
         }
       }
     },
@@ -8125,21 +8789,25 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "category_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of category to modify"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "category name"
         },
         "locale": {
           "type": "string",
           "title": "the i18n of this category, json format, sample: {\"zh_cn\": \"数据库\", \"en\": \"database\"}"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "category description"
         },
         "icon": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "category icon"
         }
       }
     },
@@ -8147,7 +8815,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "category_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of category modified"
         }
       }
     },
@@ -8155,20 +8824,24 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of cluster to add node"
         },
         "role": {
-          "type": "string"
+          "type": "string",
+          "title": "required, role eg:[mysql|wordpress|...]"
         },
         "node_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "number of node added to cluster"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -8176,10 +8849,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster added node"
         },
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of job of add node to cluster"
         }
       }
     },
@@ -8193,13 +8868,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of key pairs to attach"
         },
         "node_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of node to attached"
         }
       }
     },
@@ -8210,7 +8887,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of jobs of attach key pair"
         }
       }
     },
@@ -8221,13 +8899,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of cluster to cease"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -8238,13 +8918,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of cluster ceased"
         },
         "job_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of job of cease cluster"
         }
       }
     },
@@ -8252,115 +8934,144 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster description"
         },
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of app run in cluster"
         },
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of version of app run in cluster"
         },
         "subnet_id": {
-          "type": "string"
+          "type": "string",
+          "title": "subnet id, cluster run in a subnet"
         },
         "vpc_id": {
-          "type": "string"
+          "type": "string",
+          "title": "vpc id, a vpc contain one more subnet"
         },
         "frontgate_id": {
-          "type": "string"
+          "type": "string",
+          "title": "frontgate id, a proxy for vpc to communicate"
         },
         "cluster_type": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "cluster type, frontgate or normal cluster"
         },
         "endpoints": {
-          "type": "string"
+          "type": "string",
+          "title": "endpoint of cluster"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster status eg.[active|used|enabled|disabled|deleted|stopped|ceased]"
         },
         "transition_status": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster transition status eg.[creating|deleting|upgrading|updating|rollbacking|stopping|starting|recovering|ceasing|resizing|scaling]"
         },
         "metadata_root_access": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "metadata root access"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path, concat string group_path:user_id"
         },
         "global_uuid": {
-          "type": "string"
+          "type": "string",
+          "title": "global uuid"
         },
         "upgrade_status": {
-          "type": "string"
+          "type": "string",
+          "title": "upgrade status, unused"
         },
         "upgrade_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "cluster upgraded time"
         },
         "runtime_id": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster runtime id"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when cluster create"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "additional_info": {
           "type": "string"
         },
         "env": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster env"
         },
         "debug": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "cluster used to debug or not"
         },
         "zone": {
-          "type": "string"
+          "type": "string",
+          "title": "zone of cluster eg.[pek3a|pek3b]"
         },
         "cluster_node_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixClusterNode"
-          }
+          },
+          "title": "list of cluster node"
         },
         "cluster_role_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixClusterRole"
-          }
+          },
+          "title": "list of cluster role"
         },
         "cluster_link_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixClusterLink"
-          }
+          },
+          "title": "list of cluster link"
         },
         "cluster_common_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixClusterCommon"
-          }
+          },
+          "title": "list of cluster common"
         },
         "cluster_loadbalancer_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixClusterLoadbalancer"
-          }
+          },
+          "title": "lister of cluster loadbalancer"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -8368,85 +9079,110 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster id"
         },
         "role": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster role"
         },
         "server_id_upper_bound": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "bound of server id(index number), some service(zookeeper) need the index to be bounded"
         },
         "advanced_actions": {
-          "type": "string"
+          "type": "string",
+          "title": "action of cluster support.eg.[change_vxnet|scale_horizontal]"
         },
         "init_service": {
-          "type": "string"
+          "type": "string",
+          "title": "init service config, a json string"
         },
         "start_service": {
-          "type": "string"
+          "type": "string",
+          "title": "start service config, a json string"
         },
         "stop_service": {
-          "type": "string"
+          "type": "string",
+          "title": "stop service config, a json string"
         },
         "scale_out_service": {
-          "type": "string"
+          "type": "string",
+          "title": "scale out service config, a json string"
         },
         "scale_in_service": {
-          "type": "string"
+          "type": "string",
+          "title": "scale in service config, a json string"
         },
         "restart_service": {
-          "type": "string"
+          "type": "string",
+          "title": "restart service config, a json string"
         },
         "destroy_service": {
-          "type": "string"
+          "type": "string",
+          "title": "destroy service config, a json string"
         },
         "upgrade_service": {
-          "type": "string"
+          "type": "string",
+          "title": "upgrade service config, a json string"
         },
         "custom_service": {
-          "type": "string"
+          "type": "string",
+          "title": "custom service config, a json string"
         },
         "backup_service": {
-          "type": "string"
+          "type": "string",
+          "title": "backup service config, a json string"
         },
         "restore_service": {
-          "type": "string"
+          "type": "string",
+          "title": "restore service config, a json string"
         },
         "delete_snapshot_service": {
-          "type": "string"
+          "type": "string",
+          "title": "delete snapshot service config, a json string"
         },
         "health_check": {
-          "type": "string"
+          "type": "string",
+          "title": "health check config,a json string"
         },
         "monitor": {
-          "type": "string"
+          "type": "string",
+          "title": "monitor config,a json string"
         },
         "passphraseless": {
           "type": "string"
         },
         "vertical_scaling_policy": {
-          "type": "string"
+          "type": "string",
+          "title": "vertical scaling policy.eg.[parallel|sequential]"
         },
         "agent_installed": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "agent install or not"
         },
         "custom_metadata_script": {
-          "type": "string"
+          "type": "string",
+          "title": "custom metadata script, a json string"
         },
         "image_id": {
-          "type": "string"
+          "type": "string",
+          "title": "image id"
         },
         "backup_policy": {
-          "type": "string"
+          "type": "string",
+          "title": "policy of backup"
         },
         "incremental_backup_supported": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "support incremental backup or not"
         },
         "hypervisor": {
-          "type": "string"
+          "type": "string",
+          "title": "hypervisor.eg.[docker|kvm|...]"
         }
       }
     },
@@ -8454,19 +9190,24 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster link name eg.[mysql|wordpress|...]"
         },
         "external_cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "external cluster id"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path, concat string group_path:user_id"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -8474,20 +9215,25 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster id"
         },
         "role": {
-          "type": "string"
+          "type": "string",
+          "title": "role of balancer"
         },
         "loadbalancer_listener_id": {
-          "type": "string"
+          "type": "string",
+          "title": "listener id"
         },
         "loadbalancer_port": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "port"
         },
         "loadbalancer_policy_id": {
-          "type": "string"
+          "type": "string",
+          "title": "policy id"
         }
       }
     },
@@ -8495,101 +9241,130 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "node_id": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster node(cluster contain one more node) id"
         },
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "name, default empty"
         },
         "instance_id": {
-          "type": "string"
+          "type": "string",
+          "title": "instance id"
         },
         "volume_id": {
-          "type": "string"
+          "type": "string",
+          "title": "volume id, if mount volume"
         },
         "device": {
-          "type": "string"
+          "type": "string",
+          "title": "device"
         },
         "subnet_id": {
-          "type": "string"
+          "type": "string",
+          "title": "subnet id"
         },
         "private_ip": {
-          "type": "string"
+          "type": "string",
+          "title": "private ip"
         },
         "eip": {
-          "type": "string"
+          "type": "string",
+          "title": "elastic ip, if attach ip"
         },
         "server_id": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "server id"
         },
         "role": {
-          "type": "string"
+          "type": "string",
+          "title": "role eg.[wordpress|mysql|...]"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "status eg.[active|used|enabled|disabled|deleted|stopped|ceased|successful|failed]"
         },
         "transition_status": {
-          "type": "string"
+          "type": "string",
+          "title": "transition status eg.[creating|deleting|upgrading|updating|rollbacking|stopping|starting|recovering|ceasing|resizing|scaling]"
         },
         "group_id": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "group id"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "own path, concat string group_path:user_id"
         },
         "global_server_id": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "global server id"
         },
         "custom_metadata": {
-          "type": "string"
+          "type": "string",
+          "title": "custom metadata"
         },
         "pub_key": {
-          "type": "string"
+          "type": "string",
+          "title": "public key"
         },
         "health_status": {
-          "type": "string"
+          "type": "string",
+          "title": "health status default empty eg.[healthy|unhealthy|\"\"]"
         },
         "is_backup": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "backup or not"
         },
         "auto_backup": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "auto backup or not"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when cluster node create"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record cluster node status changed time"
         },
         "host_id": {
-          "type": "string"
+          "type": "string",
+          "title": "host id"
         },
         "host_ip": {
-          "type": "string"
+          "type": "string",
+          "title": "host ip"
         },
         "cluster_role": {
-          "$ref": "#/definitions/openpitrixClusterRole"
+          "$ref": "#/definitions/openpitrixClusterRole",
+          "title": "cluster role"
         },
         "cluster_common": {
-          "$ref": "#/definitions/openpitrixClusterCommon"
+          "$ref": "#/definitions/openpitrixClusterCommon",
+          "title": "cluster common info"
         },
         "key_pair_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "list of ssh key pair id"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -8597,53 +9372,67 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster id"
         },
         "role": {
-          "type": "string"
+          "type": "string",
+          "title": "role.eg.[wordpress|mysql|...]"
         },
         "cpu": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "number of cpu"
         },
         "gpu": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "number of gpu"
         },
         "memory": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "size of memory"
         },
         "instance_size": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "size of instance"
         },
         "storage_size": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "size of storage"
         },
         "mount_point": {
-          "type": "string"
+          "type": "string",
+          "title": "mount point, a dir.eg.[/data]"
         },
         "mount_options": {
-          "type": "string"
+          "type": "string",
+          "title": "mount_options"
         },
         "file_system": {
-          "type": "string"
+          "type": "string",
+          "title": "file system eg.[ext|ext4|...]"
         },
         "env": {
-          "type": "string"
+          "type": "string",
+          "title": "env of cluster"
         },
         "replicas": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "number of replica"
         },
         "ready_replicas": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "number of replica on ready"
         },
         "api_version": {
-          "type": "string"
+          "type": "string",
+          "title": "api version"
         }
       }
     },
@@ -8651,22 +9440,27 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of app to run in cluster"
         },
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of app version"
         },
         "runtime_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of runtime"
         },
         "conf": {
-          "type": "string"
+          "type": "string",
+          "title": "required, conf a json string, include cpu, memory info of cluster"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -8674,10 +9468,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster created"
         },
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of job"
         }
       }
     },
@@ -8685,13 +9481,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "keypair name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "keypair description"
         },
         "pub_key": {
-          "type": "string"
+          "type": "string",
+          "title": "public key"
         }
       }
     },
@@ -8699,7 +9498,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "key_pair_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of key pair created"
         }
       }
     },
@@ -8707,19 +9507,22 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of cluster to delete node"
         },
         "node_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, node ids"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -8727,10 +9530,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster deleted node"
         },
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "job id"
         }
       }
     },
@@ -8741,13 +9546,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of clusters to delete"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -8758,13 +9565,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of clusters deleted"
         },
         "job_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of jobs"
         }
       }
     },
@@ -8775,7 +9584,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of key pairs to delete"
         }
       }
     },
@@ -8786,7 +9596,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of key pairs deleted"
         }
       }
     },
@@ -8798,13 +9609,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of cluster of app"
         },
         "cluster_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixCluster"
-          }
+          },
+          "title": "list of cluster"
         }
       }
     },
@@ -8813,13 +9626,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of node in the cluster"
         },
         "cluster_node_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixClusterNode"
-          }
+          },
+          "title": "list of cluster node"
         }
       }
     },
@@ -8828,13 +9643,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified cluster"
         },
         "cluster_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixCluster"
-          }
+          },
+          "title": "list of cluster"
         }
       }
     },
@@ -8843,13 +9660,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified key pair"
         },
         "key_pair_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixKeyPair"
-          }
+          },
+          "title": "list of key pair"
         }
       }
     },
@@ -8858,13 +9677,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of subnet"
         },
         "subnet_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixSubnet"
-          }
+          },
+          "title": "list of subnet"
         }
       }
     },
@@ -8875,13 +9696,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of key pairs to detach"
         },
         "node_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of nodes to detached"
         }
       }
     },
@@ -8892,7 +9715,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of jobs of detach key pair"
         }
       }
     },
@@ -8905,7 +9729,7 @@ var Files = map[string]string{
             "type": "integer",
             "format": "int64"
           },
-          "title": "cluster create time range -> cluster count, max length is 14"
+          "title": "cluster create time range map to cluster count, max length is 14"
         },
         "top_ten_runtimes": {
           "type": "object",
@@ -8913,15 +9737,17 @@ var Files = map[string]string{
             "type": "integer",
             "format": "int64"
           },
-          "title": "runtime id -> cluster count, max length is 10"
+          "title": "runtime id map to cluster count, max length is 10"
         },
         "cluster_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "number of cluster"
         },
         "runtime_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "number of runtime"
         },
         "top_ten_apps": {
           "type": "object",
@@ -8929,7 +9755,7 @@ var Files = map[string]string{
             "type": "integer",
             "format": "int64"
           },
-          "title": "app id -> cluster count, max length is 10"
+          "title": "app id map to cluster count, max length is 10"
         }
       }
     },
@@ -8937,36 +9763,45 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "key_pair_id": {
-          "type": "string"
+          "type": "string",
+          "title": "ssh key pair id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "key pair name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "key pair description"
         },
         "pub_key": {
-          "type": "string"
+          "type": "string",
+          "title": "public key"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path, concat string group_path:user_id"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when key pair create"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "node_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "list of node used the keypair"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -8974,13 +9809,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of cluster to modify"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster description"
         }
       }
     },
@@ -8988,7 +9826,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster modified"
         }
       }
     },
@@ -8996,10 +9835,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "node_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of cluster node to modify"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "node name"
         }
       }
     },
@@ -9007,7 +9848,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "node_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster node modified"
         }
       }
     },
@@ -9015,7 +9857,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "node_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster node modified"
         }
       }
     },
@@ -9023,7 +9866,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster modified"
         }
       }
     },
@@ -9031,10 +9875,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "node_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of node with key pair"
         },
         "key_pair_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of key pair in node"
         }
       }
     },
@@ -9045,13 +9891,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of clusters to recover"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -9062,13 +9910,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of cluster recovered"
         },
         "job_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of job of recover cluster"
         }
       }
     },
@@ -9076,19 +9926,22 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of cluster to resize"
         },
         "role_resource": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRoleResource"
-          }
+          },
+          "title": "list of role resource"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -9096,10 +9949,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster resized"
         },
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "job id"
         }
       }
     },
@@ -9107,27 +9962,33 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role": {
-          "type": "string"
+          "type": "string",
+          "title": "role.eg:[mysql|wordpress]"
         },
         "cpu": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "number of cpu"
         },
         "gpu": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "number of gpu"
         },
         "memory": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "size of memory"
         },
         "instance_size": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "size of instance"
         },
         "storage_size": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "size of storage"
         }
       }
     },
@@ -9135,13 +9996,15 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of cluster to rollback"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -9149,10 +10012,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster to rollbacked"
         },
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "job id"
         }
       }
     },
@@ -9163,13 +10028,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of cluster to start"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -9180,13 +10047,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of clusters started"
         },
         "job_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "job ids"
         }
       }
     },
@@ -9197,13 +10066,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of cluster to stop"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -9214,13 +10085,15 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of clusters stopped"
         },
         "job_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "job ids"
         }
       }
     },
@@ -9228,33 +10101,41 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "subnet_id": {
-          "type": "string"
+          "type": "string",
+          "title": "subnet id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "subnet name"
         },
         "zone": {
-          "type": "string"
+          "type": "string",
+          "title": "subnet zone"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when subnet create"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "subnet description"
         },
         "instance_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "instance ids, subnet belong to one more instance"
         },
         "vpc_id": {
-          "type": "string"
+          "type": "string",
+          "title": "vpc id, a vpc contain one more subnet"
         },
         "subnet_type": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "subnet type"
         }
       }
     },
@@ -9262,16 +10143,19 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster to update env"
         },
         "env": {
-          "type": "string"
+          "type": "string",
+          "title": "env"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -9279,10 +10163,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster to updated env"
         },
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "job id"
         }
       }
     },
@@ -9290,16 +10176,19 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of cluster to upgrade"
         },
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "app version id"
         },
         "advanced_param": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "advanced param"
         }
       }
     },
@@ -9307,10 +10196,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster upgraded"
         },
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "job id"
         }
       }
     },
@@ -9324,13 +10215,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of vendor statistic"
         },
         "vendor_verify_statistics_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixVendorStatistics"
-          }
+          },
+          "title": "list of vendor statistic"
         }
       }
     },
@@ -9339,13 +10232,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of vendor"
         },
         "vendor_verify_info_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixVendorVerifyInfo"
-          }
+          },
+          "title": "list of vendor verify info"
         }
       }
     },
@@ -9353,7 +10248,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "vendor_verify_info": {
-          "$ref": "#/definitions/openpitrixVendorVerifyInfo"
+          "$ref": "#/definitions/openpitrixVendorVerifyInfo",
+          "title": "vendor verify info"
         }
       }
     },
@@ -9361,7 +10257,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of user to pass"
         }
       }
     },
@@ -9369,7 +10266,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of user passed"
         }
       }
     },
@@ -9377,10 +10275,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of user to reject"
         },
         "reject_message": {
-          "type": "string"
+          "type": "string",
+          "title": "reject message"
         }
       }
     },
@@ -9388,7 +10288,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of user rejected"
         }
       }
     },
@@ -9396,34 +10297,44 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of user to submit"
         },
         "company_name": {
-          "type": "string"
+          "type": "string",
+          "title": "required, company name"
         },
         "company_website": {
-          "type": "string"
+          "type": "string",
+          "title": "company website"
         },
         "company_profile": {
-          "type": "string"
+          "type": "string",
+          "title": "company profile"
         },
         "authorizer_name": {
-          "type": "string"
+          "type": "string",
+          "title": "required, authorizer name"
         },
         "authorizer_email": {
-          "type": "string"
+          "type": "string",
+          "title": "required, authorizer email eg. xxx@yunify.com"
         },
         "authorizer_phone": {
-          "type": "string"
+          "type": "string",
+          "title": "authorizer phone, string of 11 digit"
         },
         "bank_name": {
-          "type": "string"
+          "type": "string",
+          "title": "bank name"
         },
         "bank_account_name": {
-          "type": "string"
+          "type": "string",
+          "title": "bank account name"
         },
         "bank_account_number": {
-          "type": "string"
+          "type": "string",
+          "title": "bank account number"
         }
       }
     },
@@ -9431,7 +10342,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of user submitted"
         }
       }
     },
@@ -9439,22 +10351,27 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "use user id to statistic"
         },
         "company_name": {
-          "type": "string"
+          "type": "string",
+          "title": "company name"
         },
         "active_app_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "number of user's active app"
         },
         "cluster_count_month": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of cluster last month"
         },
         "cluster_count_total": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of cluster"
         }
       }
     },
@@ -9462,57 +10379,74 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string"
+          "type": "string",
+          "title": "user id"
         },
         "company_name": {
-          "type": "string"
+          "type": "string",
+          "title": "company name"
         },
         "company_website": {
-          "type": "string"
+          "type": "string",
+          "title": "company website"
         },
         "company_profile": {
-          "type": "string"
+          "type": "string",
+          "title": "company profile"
         },
         "authorizer_name": {
-          "type": "string"
+          "type": "string",
+          "title": "authorizer name"
         },
         "authorizer_email": {
-          "type": "string"
+          "type": "string",
+          "title": "authorizer email eg.***@yunify.com"
         },
         "authorizer_phone": {
-          "type": "string"
+          "type": "string",
+          "title": "authorizer phone, string of 11 digit"
         },
         "bank_name": {
-          "type": "string"
+          "type": "string",
+          "title": "bank name"
         },
         "bank_account_name": {
-          "type": "string"
+          "type": "string",
+          "title": "name of bank account"
         },
         "bank_account_number": {
-          "type": "string"
+          "type": "string",
+          "title": "number of bank account"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "status eg.[draft|submitted|passed|rejected|suspended|in-review|new]"
         },
         "reject_message": {
-          "type": "string"
+          "type": "string",
+          "title": "reject message"
         },
         "approver": {
-          "type": "string"
+          "type": "string",
+          "title": "approver who approve the vendor verify"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner who own the vendor verify"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path, concat string group_path:user_id"
         },
         "submit_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "submit time of vendor verify"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         }
       }
     },
@@ -9520,19 +10454,24 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of job created"
         },
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster run job"
         },
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of app deploy in cluster"
         },
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of specific app version"
         },
         "runtime_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of runtime of cluster"
         }
       }
     },
@@ -9541,13 +10480,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of job"
         },
         "job_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixJob"
-          }
+          },
+          "title": "list of job"
         }
       }
     },
@@ -9555,56 +10496,72 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "job id"
         },
         "cluster_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of cluster run job"
         },
         "app_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of app deployed in cluster"
         },
         "version_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of specific app version"
         },
         "job_action": {
-          "type": "string"
+          "type": "string",
+          "title": "describe job's action eg:[CreateCluster|StartClusters|...]"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "status eg.[successful|failed|running|pending]"
         },
         "error_code": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "error code, if job run failed will return a error code"
         },
         "directive": {
-          "type": "string"
+          "type": "string",
+          "title": "directive, a json string, describe the info of running the job action"
         },
         "executor": {
-          "type": "string"
+          "type": "string",
+          "title": "host name of server"
         },
         "task_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of task in job, a job contain one more task"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "own path, concat string group_path:user_id"
         },
         "provider": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime provider eg:[qingcloud|aliyun|aws|kubernetes]"
         },
         "runtime_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of runtime of cluster"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time job create"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record the status changed time"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -9837,40 +10794,51 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "required, repository name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "repository description"
         },
         "type": {
-          "type": "string"
+          "type": "string",
+          "title": "repository type"
         },
         "url": {
-          "type": "string"
+          "type": "string",
+          "title": "required, url of visiting the repository"
         },
         "credential": {
-          "type": "string"
+          "type": "string",
+          "title": "required, credential of visiting the repository"
         },
         "visibility": {
-          "type": "string"
+          "type": "string",
+          "title": "required, visibility eg:[public|private]"
         },
         "providers": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]"
         },
         "labels": {
-          "type": "string"
+          "type": "string",
+          "title": "a kv string, tags of server"
         },
         "selectors": {
-          "type": "string"
+          "type": "string",
+          "title": "selectors of label"
         },
         "category_id": {
-          "type": "string"
+          "type": "string",
+          "title": "category id"
         },
         "app_default_status": {
-          "type": "string"
+          "type": "string",
+          "title": "required app default status.eg:[draft|active]"
         }
       }
     },
@@ -9878,7 +10846,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "repo_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of repository created"
         }
       }
     },
@@ -9889,7 +10858,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of repository to delete"
         }
       }
     },
@@ -9900,7 +10870,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of repository deleted"
         }
       }
     },
@@ -9909,13 +10880,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of repository"
         },
         "repo_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRepo"
-          }
+          },
+          "title": "list of repository"
         }
       }
     },
@@ -9923,43 +10896,55 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "repo_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of repository to modify"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "repository name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "repository description"
         },
         "type": {
-          "type": "string"
+          "type": "string",
+          "title": "repository type"
         },
         "url": {
-          "type": "string"
+          "type": "string",
+          "title": "url of visiting the repository"
         },
         "credential": {
-          "type": "string"
+          "type": "string",
+          "title": "credential of visiting the repository"
         },
         "visibility": {
-          "type": "string"
+          "type": "string",
+          "title": "visibility eg:[public|private]"
         },
         "providers": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "runtime provider eg.[qingcloud|aliyun|aws|kubernetes]"
         },
         "labels": {
-          "type": "string"
+          "type": "string",
+          "title": "a kv string, tags of server"
         },
         "selectors": {
-          "type": "string"
+          "type": "string",
+          "title": "selectors of label"
         },
         "category_id": {
-          "type": "string"
+          "type": "string",
+          "title": "category id"
         },
         "app_default_status": {
-          "type": "string"
+          "type": "string",
+          "title": "app default status eg:[draft|active]"
         }
       }
     },
@@ -9967,7 +10952,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "repo_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of repository modified"
         }
       }
     },
@@ -9975,74 +10961,91 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "repo_id": {
-          "type": "string"
+          "type": "string",
+          "title": "repository id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "repository name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "repository description"
         },
         "type": {
-          "type": "string"
+          "type": "string",
+          "title": "type of repository eg.[http|https|s3]"
         },
         "url": {
-          "type": "string"
+          "type": "string",
+          "title": "url of visiting the repository"
         },
         "credential": {
-          "type": "string"
+          "type": "string",
+          "title": "credential of visiting the repository"
         },
         "visibility": {
-          "type": "string"
+          "type": "string",
+          "title": "visibility.eg:[public|private]"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path, concat string group_path:user_id"
         },
         "providers": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "runtime provider eg.[qingcloud|aliyun|aws|kubernetes]"
         },
         "labels": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRepoLabel"
-          }
+          },
+          "title": "labels"
         },
         "selectors": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRepoSelector"
-          }
+          },
+          "title": "selectors of label"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "status eg.[active|deleted]"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when repository create"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "category_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixResourceCategory"
-          }
+          },
+          "title": "list category"
         },
         "app_default_status": {
-          "type": "string"
+          "type": "string",
+          "title": "app default status eg[active|draft]"
         },
         "controller": {
           "type": "integer",
           "format": "int32",
-          "title": "0 for self resource; 1 for openpitrix resource"
+          "title": "controller, value 0 for self resource, value 1 for openpitrix resource"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -10050,14 +11053,17 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "label_key": {
-          "type": "string"
+          "type": "string",
+          "title": "label key"
         },
         "label_value": {
-          "type": "string"
+          "type": "string",
+          "title": "label value"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when repository label create"
         }
       }
     },
@@ -10065,14 +11071,17 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "selector_key": {
-          "type": "string"
+          "type": "string",
+          "title": "selector key"
         },
         "selector_value": {
-          "type": "string"
+          "type": "string",
+          "title": "selector value"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when repository selector create"
         }
       }
     },
@@ -10081,11 +11090,13 @@ var Files = map[string]string{
       "properties": {
         "ok": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "validate repository ok or not"
         },
         "errorCode": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "if validate error,return error code"
         }
       }
     },
@@ -10094,13 +11105,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of repository event"
         },
         "repo_event_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRepoEvent"
-          }
+          },
+          "title": "list of repository event"
         }
       }
     },
@@ -10108,7 +11121,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "repo_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of repository to index"
         }
       }
     },
@@ -10116,10 +11130,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "repo_event": {
-          "$ref": "#/definitions/openpitrixRepoEvent"
+          "$ref": "#/definitions/openpitrixRepoEvent",
+          "title": "repository event"
         },
         "repo_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of repository indexed"
         }
       }
     },
@@ -10127,30 +11143,38 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "repo_event_id": {
-          "type": "string"
+          "type": "string",
+          "title": "repository event id"
         },
         "repo_id": {
-          "type": "string"
+          "type": "string",
+          "title": "repository id"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path, concat string group_path:user_id"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "repository event status eg.[failed|successful|working|pending]"
         },
         "result": {
-          "type": "string"
+          "type": "string",
+          "title": "result"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "repository event create time"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -10158,19 +11182,24 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_url": {
-          "type": "string"
+          "type": "string",
+          "title": "required, runtime url"
         },
         "runtime_credential_content": {
-          "type": "string"
+          "type": "string",
+          "title": "required, runtime credential content, a json file"
         },
         "provider": {
-          "type": "string"
+          "type": "string",
+          "title": "required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential description"
         }
       }
     },
@@ -10178,7 +11207,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_credential_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of runtime credential created"
         }
       }
     },
@@ -10186,19 +11216,24 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "required, runtime name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime description"
         },
         "provider": {
-          "type": "string"
+          "type": "string",
+          "title": "required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]"
         },
         "runtime_credential_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, runtime credential id"
         },
         "zone": {
-          "type": "string"
+          "type": "string",
+          "title": "required, runtime zone eg.[pek3a|pek3b|...]"
         }
       }
     },
@@ -10206,7 +11241,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of runtime created"
         }
       }
     },
@@ -10217,7 +11253,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of runtime credential to delete"
         }
       }
     },
@@ -10228,7 +11265,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of runtime credential deleted"
         }
       }
     },
@@ -10239,7 +11277,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, ids of runtime to delete"
         }
       }
     },
@@ -10250,7 +11289,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of runtime deleted"
         }
       }
     },
@@ -10259,13 +11299,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of runtime credential"
         },
         "runtime_credential_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRuntimeCredential"
-          }
+          },
+          "title": "list of runtime credential"
         }
       }
     },
@@ -10274,13 +11316,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of runtime"
         },
         "runtime_detail_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRuntimeDetail"
-          }
+          },
+          "title": "list of runtime detail info"
         }
       }
     },
@@ -10288,13 +11332,15 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_credential_id": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential id"
         },
         "zone": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "list of zone"
         }
       }
     },
@@ -10303,13 +11349,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of runtime"
         },
         "runtime_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRuntime"
-          }
+          },
+          "title": "list of runtime"
         }
       }
     },
@@ -10322,7 +11370,7 @@ var Files = map[string]string{
             "type": "integer",
             "format": "int64"
           },
-          "title": "runtime create time range -> runtime count, max length is 14"
+          "title": "runtime create time range map to runtime count, max length is 14"
         },
         "top_ten_providers": {
           "type": "object",
@@ -10330,15 +11378,17 @@ var Files = map[string]string{
             "type": "integer",
             "format": "int64"
           },
-          "title": "provider id -> runtime count, max length is 10"
+          "title": "provider id map to runtime count, max length is 10"
         },
         "runtime_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of runtime"
         },
         "provider_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of provider"
         }
       }
     },
@@ -10346,16 +11396,20 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_credential_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of runtime credential to modify"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential description"
         },
         "runtime_credential_content": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential content, a json file"
         }
       }
     },
@@ -10363,7 +11417,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_credential_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of runtime credential modified"
         }
       }
     },
@@ -10371,16 +11426,20 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, id of runtime to modify"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime description"
         },
         "runtime_credential_id": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential id"
         }
       }
     },
@@ -10388,7 +11447,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of runtime modified"
         }
       }
     },
@@ -10396,43 +11456,55 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_id": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "runtime name,create by owner."
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime description"
         },
         "provider": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime provider.eg.[qingcloud|aliyun|aws|kubernetes]"
         },
         "runtime_credential_id": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential id"
         },
         "zone": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime zone eg.[pek3a|pek3b|...]"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path, concat string group_path:user_id"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "status eg.[active|deleted]"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when runtime create"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "debug": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "debug or not"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -10440,43 +11512,55 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_credential_id": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential description"
         },
         "runtime_url": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime url eg.[http://www.qingyun.com]"
         },
         "runtime_credential_content": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential content"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "own path, concat string group_path:user_id"
         },
         "provider": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime provider eg.[qingcloud|aliyun|aws|kubernetes]"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime credential status eg.[active|deleted]"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when runtime credential create"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record status changed time"
         },
         "debug": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "debug or not"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -10484,10 +11568,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime": {
-          "$ref": "#/definitions/openpitrixRuntime"
+          "$ref": "#/definitions/openpitrixRuntime",
+          "title": "runtime"
         },
         "runtime_credential": {
-          "$ref": "#/definitions/openpitrixRuntimeCredential"
+          "$ref": "#/definitions/openpitrixRuntimeCredential",
+          "title": "runtime credential"
         }
       }
     },
@@ -10495,13 +11581,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "runtime_url": {
-          "type": "string"
+          "type": "string",
+          "title": "required, runtime url"
         },
         "runtime_credential_content": {
-          "type": "string"
+          "type": "string",
+          "title": "required, runtime url"
         },
         "provider": {
-          "type": "string"
+          "type": "string",
+          "title": "required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]"
         }
       }
     },
@@ -10510,7 +11599,8 @@ var Files = map[string]string{
       "properties": {
         "ok": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "validte ok or not"
         }
       }
     },
@@ -10519,7 +11609,8 @@ var Files = map[string]string{
       "properties": {
         "ok": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "check ok or not"
         }
       }
     },
@@ -10527,7 +11618,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster": {
-          "$ref": "#/definitions/openpitrixCluster"
+          "$ref": "#/definitions/openpitrixCluster",
+          "title": "cluster info"
         }
       }
     },
@@ -10535,7 +11627,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "vpc": {
-          "$ref": "#/definitions/openpitrixVpc"
+          "$ref": "#/definitions/openpitrixVpc",
+          "title": "vpc"
         }
       }
     },
@@ -10546,7 +11639,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "list of zones in runtime provider"
         }
       }
     },
@@ -10554,13 +11648,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "eip_id": {
-          "type": "string"
+          "type": "string",
+          "title": "elastic ip"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "eip name"
         },
         "addr": {
-          "type": "string"
+          "type": "string",
+          "title": "eip address"
         }
       }
     },
@@ -10568,7 +11665,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "task": {
-          "$ref": "#/definitions/openpitrixTask"
+          "$ref": "#/definitions/openpitrixTask",
+          "title": "task handled"
         }
       }
     },
@@ -10576,7 +11674,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster": {
-          "$ref": "#/definitions/openpitrixCluster"
+          "$ref": "#/definitions/openpitrixCluster",
+          "title": "cluster"
         }
       }
     },
@@ -10585,7 +11684,8 @@ var Files = map[string]string{
       "properties": {
         "ok": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "register ok or not"
         }
       }
     },
@@ -10593,7 +11693,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "taskLayer": {
-          "$ref": "#/definitions/openpitrixTaskLayer"
+          "$ref": "#/definitions/openpitrixTaskLayer",
+          "title": "job will split to TaskLayer"
         }
       }
     },
@@ -10601,50 +11702,64 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "task_id": {
-          "type": "string"
+          "type": "string",
+          "title": "task id"
         },
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "job id,job will be split to one more task"
         },
         "task_action": {
-          "type": "string"
+          "type": "string",
+          "title": "describe the action of the task eg.[WaitFrontgateAvailable|PingFrontgate|AttachVolumes|StartInstances|...]"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "task status eg.[running|successful|failed|pending]"
         },
         "error_code": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "error code"
         },
         "directive": {
-          "type": "string"
+          "type": "string",
+          "title": "directive,a json string, describe the info of running the task action"
         },
         "executor": {
-          "type": "string"
+          "type": "string",
+          "title": "host name of server"
         },
         "owner_path": {
-          "type": "string"
+          "type": "string",
+          "title": "owner path, concat string group_path:user_id"
         },
         "target": {
-          "type": "string"
+          "type": "string",
+          "title": "describe where the task running eg.[runtime|pilot]"
         },
         "node_id": {
-          "type": "string"
+          "type": "string",
+          "title": "the cluster contain one more node"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when task create"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "record the status changed time"
         },
         "failure_allowed": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "allow task run failed or not"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "owner"
         }
       }
     },
@@ -10655,10 +11770,12 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixTask"
-          }
+          },
+          "title": "task in task layer, a task layer contain one more task"
         },
         "child": {
-          "$ref": "#/definitions/openpitrixTaskLayer"
+          "$ref": "#/definitions/openpitrixTaskLayer",
+          "title": "a task layer point to another task layer"
         }
       }
     },
@@ -10667,7 +11784,8 @@ var Files = map[string]string{
       "properties": {
         "ok": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "validate ok or not"
         }
       }
     },
@@ -10675,32 +11793,40 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "vpc_id": {
-          "type": "string"
+          "type": "string",
+          "title": "vpc id"
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "vpc name"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the time when vpc create"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "title": "vpc description"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster status eg.[pending|running|stopped|suspended|terminated|ceased]"
         },
         "transition_status": {
-          "type": "string"
+          "type": "string",
+          "title": "cluster transition status eg.[creating|starting|stopping|restarting|suspending|resuming|terminating|recovering|resetting]"
         },
         "subnets": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "list subnet, a vpc contain one more subnet"
         },
         "eip": {
-          "$ref": "#/definitions/openpitrixEip"
+          "$ref": "#/definitions/openpitrixEip",
+          "title": "elastic ip, a vpc has a eip"
         }
       }
     },
@@ -10708,7 +11834,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "task": {
-          "$ref": "#/definitions/openpitrixTask"
+          "$ref": "#/definitions/openpitrixTask",
+          "title": "task waited"
         }
       }
     },
@@ -10716,10 +11843,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "platform_name": {
-          "type": "string"
+          "type": "string",
+          "title": "platform name"
         },
         "platform_url": {
-          "type": "string"
+          "type": "string",
+          "title": "platform url"
         }
       }
     },
@@ -10727,27 +11856,34 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "protocol": {
-          "type": "string"
+          "type": "string",
+          "title": "protocol"
         },
         "email_host": {
-          "type": "string"
+          "type": "string",
+          "title": "email host"
         },
         "port": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "port"
         },
         "display_sender": {
-          "type": "string"
+          "type": "string",
+          "title": "display sender"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "title": "email"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "title": "password"
         },
         "ssl_enable": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "use ssl or not"
         }
       }
     },
@@ -10758,7 +11894,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "service type eg.[runtime]"
         }
       }
     },
@@ -10766,13 +11903,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "notification_config": {
-          "$ref": "#/definitions/openpitrixNotificationConfig"
+          "$ref": "#/definitions/openpitrixNotificationConfig",
+          "title": "notification config"
         },
         "runtime_config": {
-          "$ref": "#/definitions/openpitrixRuntimeConfig"
+          "$ref": "#/definitions/openpitrixRuntimeConfig",
+          "title": "runtime config"
         },
         "basic_config": {
-          "$ref": "#/definitions/openpitrixBasicConfig"
+          "$ref": "#/definitions/openpitrixBasicConfig",
+          "title": "basic config"
         }
       }
     },
@@ -10780,7 +11920,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "email_service_config": {
-          "$ref": "#/definitions/openpitrixEmailServiceConfig"
+          "$ref": "#/definitions/openpitrixEmailServiceConfig",
+          "title": "email service sonfig"
         }
       }
     },
@@ -10791,7 +11932,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRuntimeItemConfig"
-          }
+          },
+          "title": "runtime item config"
         }
       }
     },
@@ -10799,11 +11941,13 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "title": "runtime name eg.[qingcloud|aliyun|aws|kubernetes]"
         },
         "enable": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "whether runtime is available"
         }
       }
     },
@@ -10811,13 +11955,16 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "notification_config": {
-          "$ref": "#/definitions/openpitrixNotificationConfig"
+          "$ref": "#/definitions/openpitrixNotificationConfig",
+          "title": "notification config"
         },
         "runtime_config": {
-          "$ref": "#/definitions/openpitrixRuntimeConfig"
+          "$ref": "#/definitions/openpitrixRuntimeConfig",
+          "title": "runtime config"
         },
         "basic_config": {
-          "$ref": "#/definitions/openpitrixBasicConfig"
+          "$ref": "#/definitions/openpitrixBasicConfig",
+          "title": "basic config"
         }
       }
     },
@@ -10826,7 +11973,8 @@ var Files = map[string]string{
       "properties": {
         "is_succ": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "set service config ok or not"
         }
       }
     },
@@ -10834,7 +11982,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "email_service_config": {
-          "$ref": "#/definitions/openpitrixEmailServiceConfig"
+          "$ref": "#/definitions/openpitrixEmailServiceConfig",
+          "title": "email service config"
         }
       }
     },
@@ -10843,7 +11992,8 @@ var Files = map[string]string{
       "properties": {
         "is_succ": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "validate email service ok or not"
         }
       }
     },
@@ -10851,10 +12001,12 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "task_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of task created"
         },
         "job_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of job created"
         }
       }
     },
@@ -10863,13 +12015,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of task"
         },
         "task_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixTask"
-          }
+          },
+          "title": "list of task"
         }
       }
     },
@@ -10880,7 +12034,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "ids of task to retry"
         }
       }
     },
@@ -10891,7 +12046,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixTask"
-          }
+          },
+          "title": "list of task retried"
         }
       }
     }

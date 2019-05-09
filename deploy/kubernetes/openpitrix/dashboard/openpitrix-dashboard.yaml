@@ -6,7 +6,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-dashboard
-    version: ${VERSION}
+    version: ${DASHBOARD_VERSION}
 spec:
   type: NodePort
   selector:
@@ -32,7 +32,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-dashboard
-    version: ${VERSION}
+    version: ${DASHBOARD_VERSION}
 spec:
   selector:
     matchLabels:
@@ -44,7 +44,7 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-dashboard
-        version: ${VERSION}
+        version: ${DASHBOARD_VERSION}
     spec:
       containers:
       - name: openpitrix-dashboard

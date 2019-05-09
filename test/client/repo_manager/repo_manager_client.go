@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-CreateRepo creates repo
+CreateRepo creates repository repository used to store package of app
 */
 func (a *Client) CreateRepo(params *CreateRepoParams, authInfo runtime.ClientAuthInfoWriter) (*CreateRepoOK, error) {
 	// TODO: Validate the params before sending
@@ -54,7 +54,7 @@ func (a *Client) CreateRepo(params *CreateRepoParams, authInfo runtime.ClientAut
 }
 
 /*
-DeleteRepos deletes repos
+DeleteRepos batches delete repositories
 */
 func (a *Client) DeleteRepos(params *DeleteReposParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteReposOK, error) {
 	// TODO: Validate the params before sending
@@ -83,7 +83,7 @@ func (a *Client) DeleteRepos(params *DeleteReposParams, authInfo runtime.ClientA
 }
 
 /*
-DescribeRepos describes repos with filter
+DescribeRepos gets repositories filter with these fields repo id name type visibility status app default status owner controller default return all repositories
 */
 func (a *Client) DescribeRepos(params *DescribeReposParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeReposOK, error) {
 	// TODO: Validate the params before sending
@@ -112,7 +112,7 @@ func (a *Client) DescribeRepos(params *DescribeReposParams, authInfo runtime.Cli
 }
 
 /*
-ModifyRepo modifies repo
+ModifyRepo modifies repository
 */
 func (a *Client) ModifyRepo(params *ModifyRepoParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyRepoOK, error) {
 	// TODO: Validate the params before sending
@@ -141,7 +141,7 @@ func (a *Client) ModifyRepo(params *ModifyRepoParams, authInfo runtime.ClientAut
 }
 
 /*
-ValidateRepo validates repo
+ValidateRepo validates repository
 */
 func (a *Client) ValidateRepo(params *ValidateRepoParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateRepoOK, error) {
 	// TODO: Validate the params before sending

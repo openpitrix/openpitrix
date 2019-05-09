@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeAppVersionAuditsResponseAppVersionAuditSet openpitrix describe app version audits response app version audit set
+// OpenpitrixDescribeAppVersionAuditsResponseAppVersionAuditSet list of audit
 // swagger:model openpitrixDescribeAppVersionAuditsResponseAppVersionAuditSet
 type OpenpitrixDescribeAppVersionAuditsResponseAppVersionAuditSet []*OpenpitrixAppVersionAudit
 

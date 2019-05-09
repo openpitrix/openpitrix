@@ -16,43 +16,43 @@ import (
 // swagger:model openpitrixTask
 type OpenpitrixTask struct {
 
-	// create time
+	// the time when task create
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// directive
+	// directive,a json string, describe the info of running the task action
 	Directive string `json:"directive,omitempty"`
 
 	// error code
 	ErrorCode int64 `json:"error_code,omitempty"`
 
-	// executor
+	// host name of server
 	Executor string `json:"executor,omitempty"`
 
-	// failure allowed
+	// allow task run failed or not
 	FailureAllowed bool `json:"failure_allowed,omitempty"`
 
-	// job id
+	// job id,job will be split to one more task
 	JobID string `json:"job_id,omitempty"`
 
-	// node id
+	// the cluster contain one more node
 	NodeID string `json:"node_id,omitempty"`
 
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// owner path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// status
+	// task status eg.[running|successful|failed|pending]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record the status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
-	// target
+	// describe where the task running eg.[runtime|pilot]
 	Target string `json:"target,omitempty"`
 
-	// task action
+	// describe the action of the task eg.[WaitFrontgateAvailable|PingFrontgate|AttachVolumes|StartInstances|...]
 	TaskAction string `json:"task_action,omitempty"`
 
 	// task id

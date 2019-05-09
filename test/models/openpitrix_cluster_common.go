@@ -16,82 +16,82 @@ import (
 // swagger:model openpitrixClusterCommon
 type OpenpitrixClusterCommon struct {
 
-	// advanced actions
+	// action of cluster support.eg.[change_vxnet|scale_horizontal]
 	AdvancedActions string `json:"advanced_actions,omitempty"`
 
-	// agent installed
+	// agent install or not
 	AgentInstalled bool `json:"agent_installed,omitempty"`
 
-	// backup policy
+	// policy of backup
 	BackupPolicy string `json:"backup_policy,omitempty"`
 
-	// backup service
+	// backup service config, a json string
 	BackupService string `json:"backup_service,omitempty"`
 
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
-	// custom metadata script
+	// custom metadata script, a json string
 	CustomMetadataScript string `json:"custom_metadata_script,omitempty"`
 
-	// custom service
+	// custom service config, a json string
 	CustomService string `json:"custom_service,omitempty"`
 
-	// delete snapshot service
+	// delete snapshot service config, a json string
 	DeleteSnapshotService string `json:"delete_snapshot_service,omitempty"`
 
-	// destroy service
+	// destroy service config, a json string
 	DestroyService string `json:"destroy_service,omitempty"`
 
-	// health check
+	// health check config,a json string
 	HealthCheck string `json:"health_check,omitempty"`
 
-	// hypervisor
+	// hypervisor.eg.[docker|kvm|...]
 	Hypervisor string `json:"hypervisor,omitempty"`
 
 	// image id
 	ImageID string `json:"image_id,omitempty"`
 
-	// incremental backup supported
+	// support incremental backup or not
 	IncrementalBackupSupported bool `json:"incremental_backup_supported,omitempty"`
 
-	// init service
+	// init service config, a json string
 	InitService string `json:"init_service,omitempty"`
 
-	// monitor
+	// monitor config,a json string
 	Monitor string `json:"monitor,omitempty"`
 
 	// passphraseless
 	Passphraseless string `json:"passphraseless,omitempty"`
 
-	// restart service
+	// restart service config, a json string
 	RestartService string `json:"restart_service,omitempty"`
 
-	// restore service
+	// restore service config, a json string
 	RestoreService string `json:"restore_service,omitempty"`
 
-	// role
+	// cluster role
 	Role string `json:"role,omitempty"`
 
-	// scale in service
+	// scale in service config, a json string
 	ScaleInService string `json:"scale_in_service,omitempty"`
 
-	// scale out service
+	// scale out service config, a json string
 	ScaleOutService string `json:"scale_out_service,omitempty"`
 
-	// server id upper bound
+	// bound of server id(index number), some service(zookeeper) need the index to be bounded
 	ServerIDUpperBound int64 `json:"server_id_upper_bound,omitempty"`
 
-	// start service
+	// start service config, a json string
 	StartService string `json:"start_service,omitempty"`
 
-	// stop service
+	// stop service config, a json string
 	StopService string `json:"stop_service,omitempty"`
 
-	// upgrade service
+	// upgrade service config, a json string
 	UpgradeService string `json:"upgrade_service,omitempty"`
 
-	// vertical scaling policy
+	// vertical scaling policy.eg.[parallel|sequential]
 	VerticalScalingPolicy string `json:"vertical_scaling_policy,omitempty"`
 }
 

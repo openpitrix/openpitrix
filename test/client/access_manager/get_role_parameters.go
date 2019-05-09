@@ -62,7 +62,10 @@ for the get role operation typically these are written to a http.Request
 */
 type GetRoleParams struct {
 
-	/*RoleID*/
+	/*RoleID
+	  required, use role id to get role info.
+
+	*/
 	RoleID *string
 
 	timeout    time.Duration

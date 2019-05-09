@@ -19,7 +19,7 @@ type OpenpitrixDescribeTasksResponse struct {
 	// task set
 	TaskSet OpenpitrixDescribeTasksResponseTaskSet `json:"task_set"`
 
-	// total count
+	// total count of task
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

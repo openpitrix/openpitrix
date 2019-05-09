@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixValidateUserPasswordResponse
 type OpenpitrixValidateUserPasswordResponse struct {
 
-	// validated
+	// validate password ok or not
 	Validated bool `json:"validated,omitempty"`
 }
 

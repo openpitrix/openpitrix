@@ -19,13 +19,13 @@ type OpenpitrixAddClusterNodesRequest struct {
 	// advanced param
 	AdvancedParam []string `json:"advanced_param"`
 
-	// cluster id
+	// required, id of cluster to add node
 	ClusterID string `json:"cluster_id,omitempty"`
 
-	// node count
+	// number of node added to cluster
 	NodeCount int64 `json:"node_count,omitempty"`
 
-	// role
+	// required, role eg:[mysql|wordpress|...]
 	Role string `json:"role,omitempty"`
 }
 

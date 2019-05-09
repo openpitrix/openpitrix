@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixGroupDetail
 type OpenpitrixGroupDetail struct {
 
-	// group
+	// group base info
 	Group *OpenpitrixGroup `json:"group,omitempty"`
 
 	// user set

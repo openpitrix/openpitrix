@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixCreateClientRequest
 type OpenpitrixCreateClientRequest struct {
 
-	// user id
+	// required, user id for create client
 	UserID string `json:"user_id,omitempty"`
 }
 

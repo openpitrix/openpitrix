@@ -15,165 +15,246 @@ import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
 message RuntimeCredential {
+	// runtime credential id
 	google.protobuf.StringValue runtime_credential_id = 1;
+	// runtime credential name
 	google.protobuf.StringValue name = 2;
+	// runtime credential description
 	google.protobuf.StringValue description = 3;
+	// runtime url eg.[http://www.qingyun.com]
 	google.protobuf.StringValue runtime_url = 4;
+	// runtime credential content
 	google.protobuf.StringValue runtime_credential_content = 5;
+	// own path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 6;
+	// runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	google.protobuf.StringValue provider = 7;
+	// runtime credential status eg.[active|deleted]
 	google.protobuf.StringValue status = 8;
+	// the time when runtime credential create
 	google.protobuf.Timestamp create_time = 9;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 10;
+	// debug or not
 	google.protobuf.BoolValue debug = 11;
+	// owner
 	google.protobuf.StringValue owner = 12;
 }
 
 message Runtime {
+	// runtime id
 	google.protobuf.StringValue runtime_id = 1;
+	// runtime name,create by owner.
 	google.protobuf.StringValue name = 2;
+	// runtime description
 	google.protobuf.StringValue description = 3;
+	// runtime provider.eg.[qingcloud|aliyun|aws|kubernetes]
 	google.protobuf.StringValue provider = 4;
+	// runtime credential id
 	google.protobuf.StringValue runtime_credential_id = 5;
+	// runtime zone eg.[pek3a|pek3b|...]
 	google.protobuf.StringValue zone = 6;
+	// owner path, concat string group_path:user_id
 	google.protobuf.StringValue owner_path = 7;
+	// status eg.[active|deleted]
 	google.protobuf.StringValue status = 8;
+	// the time when runtime create
 	google.protobuf.Timestamp create_time = 9;
+	// record status changed time
 	google.protobuf.Timestamp status_time = 10;
+	// debug or not
 	google.protobuf.BoolValue debug = 11;
+	// owner
 	google.protobuf.StringValue owner = 12;
 }
 
 message RuntimeDetail {
+	// runtime
 	Runtime runtime = 1;
+	// runtime credential
 	RuntimeCredential runtime_credential = 2;
 }
 
 message CreateRuntimeRequest {
+	// required, runtime name
 	google.protobuf.StringValue name = 1;
+	// runtime description
 	google.protobuf.StringValue description = 2;
+	// required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	google.protobuf.StringValue provider = 3;
+	// required, runtime credential id
 	google.protobuf.StringValue runtime_credential_id = 4;
+	// required, runtime zone eg.[pek3a|pek3b|...]
 	google.protobuf.StringValue zone = 5;
 }
 
 message CreateRuntimeResponse {
+	// id of runtime created
 	google.protobuf.StringValue runtime_id = 1;
 }
 
 message DescribeRuntimesRequest {
+	// query key, support these fields(runtime_id, provider, zone, status, owner)
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 5;
+	// select columns to display
 	repeated string display_columns = 6;
 
+	// runtime ids
 	repeated string runtime_id = 11;
+	// status eg.[active|deleted]
 	repeated string status = 12;
+	// runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	repeated string provider = 13;
+	// owner
 	repeated string owner = 14;
 }
 
 message DescribeRuntimesResponse {
+	// total count of runtime
 	uint32 total_count = 1;
+	// list of runtime
 	repeated Runtime runtime_set = 2;
 }
 
 message DescribeRuntimeDetailsResponse {
+	// total count of runtime
 	uint32 total_count = 1;
+	// list of runtime detail info
 	repeated RuntimeDetail runtime_detail_set = 2;
 }
 
 message ModifyRuntimeRequest {
+	// required, id of runtime to modify
 	google.protobuf.StringValue runtime_id = 1;
+	// runtime name
 	google.protobuf.StringValue name = 2;
+	// runtime description
 	google.protobuf.StringValue description = 3;
+	// runtime credential id
 	google.protobuf.StringValue runtime_credential_id = 4;
 }
 
 message ModifyRuntimeResponse {
+	// id of runtime modified
 	google.protobuf.StringValue runtime_id = 1;
 }
 
 message DeleteRuntimesRequest {
+	// required, ids of runtime to delete
 	repeated string runtime_id = 1;
 }
 
 message DeleteRuntimesResponse {
+	// ids of runtime deleted
 	repeated string runtime_id = 1;
 }
 
 message CreateRuntimeCredentialRequest {
+	// required, runtime url
 	google.protobuf.StringValue runtime_url = 1;
+	// required, runtime credential content, a json file
 	google.protobuf.StringValue runtime_credential_content = 2;
+	// required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	google.protobuf.StringValue provider = 3;
+	// runtime credential name
 	google.protobuf.StringValue name = 4;
+	// runtime credential description
 	google.protobuf.StringValue description = 5;
 }
 
 message CreateRuntimeCredentialResponse {
+	// id of runtime credential created
 	google.protobuf.StringValue runtime_credential_id = 1;
 }
 
 message ValidateRuntimeCredentialRequest {
+	// required, runtime url
 	google.protobuf.StringValue runtime_url = 1;
+	// required, runtime url
 	google.protobuf.StringValue runtime_credential_content = 2;
+	// required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	google.protobuf.StringValue provider = 3;
 }
 
 message ValidateRuntimeCredentialResponse {
+	// validte ok or not
 	google.protobuf.BoolValue ok = 1;
 }
 
 message DescribeRuntimeCredentialsRequest {
+	// query key
 	google.protobuf.StringValue search_word = 1;
+	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;
+	// value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 3;
-	// default is 20, max value is 200
+	// data limit per page, default value 20, max value 200
 	uint32 limit = 4;
-	// default is 0
+	// data offset, default 0
 	uint32 offset = 5;
+	// select columns to display
 	repeated string display_columns = 6;
 
+	// runtime credential ids
 	repeated string runtime_credential_id = 11;
+	// status eg.[active|deleted]
 	repeated string status = 12;
+	// runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
 	repeated string provider = 13;
+	// owner
 	repeated string owner = 14;
 }
 
 message DescribeRuntimeCredentialsResponse {
+	// total count of runtime credential
 	uint32 total_count = 1;
+	// list of runtime credential
 	repeated RuntimeCredential runtime_credential_set = 2;
 }
 
 message ModifyRuntimeCredentialRequest {
+	// required, id of runtime credential to modify
 	google.protobuf.StringValue runtime_credential_id = 1;
+	// runtime credential name
 	google.protobuf.StringValue name = 2;
+	// runtime credential description
 	google.protobuf.StringValue description = 3;
+	// runtime credential content, a json file
 	google.protobuf.StringValue runtime_credential_content = 4;
 }
 
 message ModifyRuntimeCredentialResponse {
+	// id of runtime credential modified
 	google.protobuf.StringValue runtime_credential_id = 1;
 }
 
 message DeleteRuntimeCredentialsRequest {
+	// required, ids of runtime credential to delete
 	repeated string runtime_credential_id = 1;
 }
 
 message DeleteRuntimeCredentialsResponse {
+	// ids of runtime credential deleted
 	repeated string runtime_credential_id = 1;
 }
 
 message DescribeRuntimeProviderZonesRequest {
+	// required, use runtime credential id to get run time provider zones
 	google.protobuf.StringValue runtime_credential_id = 1;
 }
 
 message DescribeRuntimeProviderZonesResponse {
+	// runtime credential id
 	google.protobuf.StringValue runtime_credential_id = 1;
+	// list of zone
 	repeated string zone = 2;
 }
 
@@ -182,73 +263,77 @@ message GetRuntimeStatisticsRequest {
 }
 
 message GetRuntimeStatisticsResponse {
-	// runtime create time range -> runtime count, max length is 14
+	// runtime create time range map to runtime count, max length is 14
 	map<string, uint32> last_two_week_created = 1;
-	// provider id -> runtime count, max length is 10
+	// provider id map to runtime count, max length is 10
 	map<string, uint32> top_ten_providers = 2;
+	// total count of runtime
 	uint32 runtime_count = 3;
+	// total count of provider
 	uint32 provider_count = 4;
 }
 
 service RuntimeManager {
+	// create runtime
 	rpc CreateRuntime (CreateRuntimeRequest) returns (CreateRuntimeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create runtime"
+			summary: "Create runtime"
 		};
 		option (google.api.http) = {
 			post: "/v1/runtimes"
 			body: "*"
 		};
 	}
+	// create debug runtime
 	rpc CreateDebugRuntime (CreateRuntimeRequest) returns (CreateRuntimeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create debug runtime"
+			summary: "Create debug runtime"
 		};
 		option (google.api.http) = {
 			post: "/v1/debug_runtimes"
 			body: "*"
 		};
 	}
-
 	rpc DescribeRuntimeDetails (DescribeRuntimesRequest) returns (DescribeRuntimeDetailsResponse);
+	// Get runtimes, can filter with these fields(runtime_id, provider, zone, status, owner), default return all runtimes
 	rpc DescribeRuntimes (DescribeRuntimesRequest) returns (DescribeRuntimesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe runtime"
+			summary: "Get runtimes, can filter with these fields(runtime_id, provider, zone, status, owner), default return all runtimes"
 		};
 		option (google.api.http) = {
 			get: "/v1/runtimes"
 		};
 	}
-
+	// Get debug runtimes, can filter with these fields(runtime_id, provider, zone, status, owner), default return all debug runtimes
 	rpc DescribeDebugRuntimes (DescribeRuntimesRequest) returns (DescribeRuntimesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe debug runtime"
+			summary: "Get debug runtimes, can filter with these fields(runtime_id, provider, zone, status, owner), default return all debug runtimes"
 		};
 		option (google.api.http) = {
 			get: "/v1/debug_runtimes"
 		};
 	}
-
+	// Modify runtime
 	rpc ModifyRuntime (ModifyRuntimeRequest) returns (ModifyRuntimeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify runtime"
+			summary: "Modify runtime"
 		};
 		option (google.api.http) = {
 			patch: "/v1/runtimes"
 			body: "*"
 		};
 	}
-
+	// Batch delete runtimes
 	rpc DeleteRuntimes (DeleteRuntimesRequest) returns (DeleteRuntimesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete runtimes"
+			summary: "Delete runtimes"
 		};
 		option (google.api.http) = {
 			delete: "/v1/runtimes"
 			body: "*"
 		};
 	}
-
+	// Create runtime credential
 	rpc CreateRuntimeCredential (CreateRuntimeCredentialRequest) returns (CreateRuntimeCredentialResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create runtime credential"
@@ -258,77 +343,77 @@ service RuntimeManager {
 			body: "*"
 		};
 	}
-
+	// Create debug runtime credential
 	rpc CreateDebugRuntimeCredential (CreateRuntimeCredentialRequest) returns (CreateRuntimeCredentialResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create debug runtime credential"
+			summary: "Create debug runtime credential"
 		};
 		option (google.api.http) = {
 			post: "/v1/debug_runtimes/credentials"
 			body: "*"
 		};
 	}
-
+	// Get runtime credentials, filter with these fields(runtime_credential_id, status, provider, owner), default return all runtime credentials
 	rpc DescribeRuntimeCredentials (DescribeRuntimeCredentialsRequest) returns (DescribeRuntimeCredentialsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe runtime credentials"
+			summary: "Get runtime credentials, filter with these fields(runtime_credential_id, status, provider, owner), default return all runtime credentials"
 		};
 		option (google.api.http) = {
 			get: "/v1/runtimes/credentials"
 		};
 	}
-
+	// Get debug runtime credentials, filter with these fields(runtime_credential_id, status, provider, owner), default return all debug runtime credentials
 	rpc DescribeDebugRuntimeCredentials (DescribeRuntimeCredentialsRequest) returns (DescribeRuntimeCredentialsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe debug runtime credentials"
+			summary: "Get debug runtime credentials, filter with these fields(runtime_credential_id, status, provider, owner), default return all debug runtime credentials"
 		};
 		option (google.api.http) = {
 			get: "/v1/debug_runtimes/credentials"
 		};
 	}
-
+	// Modify runtime credential
 	rpc ModifyRuntimeCredential (ModifyRuntimeCredentialRequest) returns (ModifyRuntimeCredentialResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify runtime credential"
+			summary: "Modify runtime credential"
 		};
 		option (google.api.http) = {
 			patch: "/v1/runtimes/credentials"
 			body: "*"
 		};
 	}
-
+	// Batch delete runtime credentials
 	rpc DeleteRuntimeCredentials (DeleteRuntimeCredentialsRequest) returns (DeleteRuntimeCredentialsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete runtime credentials"
+			summary: "Batch delete runtime credentials"
 		};
 		option (google.api.http) = {
 			delete: "/v1/runtimes/credentials"
 			body: "*"
 		};
 	}
-
+	// Validate runtime credential
 	rpc ValidateRuntimeCredential (ValidateRuntimeCredentialRequest) returns (ValidateRuntimeCredentialResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "validate runtime credential"
+			summary: "Validate runtime credential"
 		};
 		option (google.api.http) = {
 			post: "/v1/runtimes/credentials:validate"
 			body: "*"
 		};
 	}
-
+	// Get runtime provider zones
 	rpc DescribeRuntimeProviderZones (DescribeRuntimeProviderZonesRequest) returns (DescribeRuntimeProviderZonesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe runtime provider zones"
+			summary: "Get runtime provider zones"
 		};
 		option (google.api.http) = {
 			get: "/v1/runtimes/zones"
 		};
 	}
-
+	// Get statistics of runtime
 	rpc GetRuntimeStatistics (GetRuntimeStatisticsRequest) returns (GetRuntimeStatisticsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get runtime statistics"
+			summary: "get statistics of runtime"
 		};
 		option (google.api.http) = {
 			get: "/v1/runtimes/statistics"

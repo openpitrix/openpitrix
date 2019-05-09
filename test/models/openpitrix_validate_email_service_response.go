@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixValidateEmailServiceResponse
 type OpenpitrixValidateEmailServiceResponse struct {
 
-	// is succ
+	// validate email service ok or not
 	IsSucc bool `json:"is_succ,omitempty"`
 }
 

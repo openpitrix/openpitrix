@@ -16,13 +16,13 @@ import (
 // swagger:model openpitrixCanDoResponse
 type OpenpitrixCanDoResponse struct {
 
-	// access path
+	// access path of user
 	AccessPath string `json:"access_path,omitempty"`
 
-	// owner path
+	// owner path of user, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// user id
+	// id of user to check whether has permission
 	UserID string `json:"user_id,omitempty"`
 }
 

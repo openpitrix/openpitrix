@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixRollbackClusterResponse
 type OpenpitrixRollbackClusterResponse struct {
 
-	// cluster id
+	// id of cluster to rollbacked
 	ClusterID string `json:"cluster_id,omitempty"`
 
 	// job id

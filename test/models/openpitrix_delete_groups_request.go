@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteGroupsRequest
 type OpenpitrixDeleteGroupsRequest struct {
 
-	// group id
+	// required, ids of group to delete
 	GroupID []string `json:"group_id"`
 }
 

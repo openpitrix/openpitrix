@@ -19,7 +19,7 @@ type OpenpitrixDescribeJobsResponse struct {
 	// job set
 	JobSet OpenpitrixDescribeJobsResponseJobSet `json:"job_set"`
 
-	// total count
+	// total count of job
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 

@@ -33,12 +33,12 @@ pull:
 compose-clean:
 	docker-compose down
 
-.PHONY: compose-put-global-config
-compose-put-global-config:
-	@test -s ./global_config.yaml || { echo "[./global_config.yaml] not exist"; exit 1; }
-	cat ./global_config.yaml | docker run -i --rm openpitrix/openpitrix:latest opctl validate_global_config
-	cat ./global_config.yaml | docker-compose exec -T openpitrix-etcd /bin/sh -c "export ETCDCTL_API=3 && etcdctl put openpitrix/global_config"
-
 .PHONY: compose-get-global-config
 compose-get-global-config:
-	docker-compose exec -T openpitrix-etcd /bin/sh -c "export ETCDCTL_API=3 && etcdctl get openpitrix/global_config --print-value-only" > deploy/config/global_config.yaml
+	docker-compose exec -T openpitrix-etcd /bin/sh -c "export ETCDCTL_API=3 && etcdctl get openpitrix/global_config --print-value-only" > ./global_config.yaml
+
+.PHONY: compose-put-global-config
+compose-put-global-config:
+	@test -s ./global_config.yaml || { echo "[./global_config.yaml] not exist, please get it by command [make compose-get-global-config], then retry..."; exit 1; }
+	cat ./global_config.yaml | docker-compose exec -T openpitrix-api-gateway opctl validate_global_config
+	cat ./global_config.yaml | docker-compose exec -T openpitrix-etcd /bin/sh -c "export ETCDCTL_API=3 && etcdctl put openpitrix/global_config"

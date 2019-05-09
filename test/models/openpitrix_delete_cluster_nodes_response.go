@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixDeleteClusterNodesResponse
 type OpenpitrixDeleteClusterNodesResponse struct {
 
-	// cluster id
+	// id of cluster deleted node
 	ClusterID string `json:"cluster_id,omitempty"`
 
 	// job id

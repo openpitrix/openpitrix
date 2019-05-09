@@ -14,7 +14,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeClustersResponseClusterSet openpitrix describe clusters response cluster set
+// OpenpitrixDescribeClustersResponseClusterSet list of cluster
 // swagger:model openpitrixDescribeClustersResponseClusterSet
 type OpenpitrixDescribeClustersResponseClusterSet []*OpenpitrixCluster
 

@@ -16,28 +16,28 @@ import (
 // swagger:model openpitrixRepoEvent
 type OpenpitrixRepoEvent struct {
 
-	// create time
+	// repository event create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// owner path
+	// owner path, concat string group_path:user_id
 	OwnerPath string `json:"owner_path,omitempty"`
 
-	// repo event id
+	// repository event id
 	RepoEventID string `json:"repo_event_id,omitempty"`
 
-	// repo id
+	// repository id
 	RepoID string `json:"repo_id,omitempty"`
 
 	// result
 	Result string `json:"result,omitempty"`
 
-	// status
+	// repository event status eg.[failed|successful|working|pending]
 	Status string `json:"status,omitempty"`
 
-	// status time
+	// record status changed time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 }
 

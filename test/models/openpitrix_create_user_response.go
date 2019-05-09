@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixCreateUserResponse
 type OpenpitrixCreateUserResponse struct {
 
-	// user id
+	// id of user created
 	UserID string `json:"user_id,omitempty"`
 }
 

@@ -1,757 +1,1026 @@
 - action: BindUserRole
   request: BindUserRoleRequest
+  description: Bind role and user, a user belong to a role
   service: AccessManager
   body:
     role_id:
+      help: required, ids of role for user to bind with
       type: '[]string'
     user_id:
+      help: required, ids of user to bind
       type: '[]string'
 - action: CanDo
   request: CanDoRequest
+  description: Validates whether the user[user_id] have permission to visit resource[url_method:url]
   service: AccessManager
   body:
     api_method:
+      help: rpc method eg.[Token|CanDo|...]
       type: string
     url:
+      help: required, request uri
       type: string
     url_method:
+      help: required, url method, http verb
       type: string
     user_id:
+      help: required, id of user to check whether has permission
       type: string
 - action: CreateRole
   request: CreateRoleRequest
+  description: Create role, different role has different permissions
   service: AccessManager
   body:
     description:
+      help: role description
       type: string
     portal:
+      help: required, portal of role eg.[global_admin|user|isv]
       type: string
     role_name:
+      help: required, role name
       type: string
 - action: DeleteRoles
   request: DeleteRolesRequest
+  description: Batch delete roles
   service: AccessManager
   body:
     role_id:
+      help: required, ids of role to delete
       type: '[]string'
 - action: DescribeRoles
   request: DescribeRolesRequest
-  description: admin permission
+  description: Get roles
   service: AccessManager
   query:
     action_bundle_id:
+      help: action bundle ids.
       type: '[]string'
     limit:
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
+      help: data offset, default 0.
       type: int64
     portal:
+      help: portal eg.[global_admin|user|isv].
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     role_id:
+      help: role ids.
       type: '[]string'
     role_name:
+      help: name.
       type: '[]string'
     search_word:
+      help: query key, support these fields(role_id, portal, status).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|deleted].
       type: '[]string'
 - action: GetRole
   request: GetRoleRequest
+  description: Get role info
   service: AccessManager
   query:
     role_id:
+      help: required, use role id to get role info.
       type: string
 - action: GetRoleModule
   request: GetRoleModuleRequest
+  description: Get role module, different role has different permission to access
+    different module
   service: AccessManager
   query:
     role_id:
+      help: required, use role id to get role's module.
       type: string
 - action: ModifyRole
   request: ModifyRoleRequest
+  description: Batch modify role info
   service: AccessManager
   body:
     description:
+      help: role description
       type: string
     role_id:
+      help: required, id of role to modify
       type: string
     role_name:
+      help: role name
       type: string
 - action: ModifyRoleModule
   request: ModifyRoleModuleRequest
+  description: Modify role module that can be visited
   service: AccessManager
   body:
-    module: {}
+    module:
+      help: required, module info
     role_id:
+      help: required, use role id to modify role module
       type: string
 - action: UnbindUserRole
   request: UnbindUserRoleRequest
+  description: Unbind user and role
   service: AccessManager
   body:
     role_id:
+      help: ids of role for user to unbind with
       type: '[]string'
     user_id:
+      help: ids of user to unbind
       type: '[]string'
 - action: ChangePassword
   request: ChangePasswordRequest
+  description: Change user password
   service: AccountManager
   body:
     new_password:
+      help: required, new password for reset
       type: string
     reset_id:
+      help: required, reset id
       type: string
 - action: CreateGroup
   request: CreateGroupRequest
-  description: group
+  description: Create group, a group contain one more user
   service: AccountManager
   body:
     description:
+      help: group description
       type: string
     name:
+      help: required, group name
       type: string
     parent_group_id:
+      help: required, parent group id
       type: string
 - action: CreatePasswordReset
   request: CreatePasswordResetRequest
+  description: Create a request to reset user's passwo
   service: AccountManager
   body:
     password:
+      help: required, user password
       type: string
     user_id:
+      help: required, id of user to create reset password action
       type: string
 - action: CreateUser
   request: CreateUserRequest
-  description: admin permission
+  description: Create user, if user have admin permission
   service: AccountManager
   body:
     description:
+      help: user description
       type: string
     email:
+      help: required, user email
       type: string
     password:
+      help: required, user password
       type: string
     phone_number:
+      help: user phone number
       type: string
     role_id:
+      help: required, user role_id
       type: string
 - action: DeleteGroups
   request: DeleteGroupsRequest
+  description: Delete groups
   service: AccountManager
   body:
     group_id:
+      help: required, ids of group to delete
       type: '[]string'
 - action: DeleteUsers
   request: DeleteUsersRequest
+  description: Delete user by user_id
   service: AccountManager
   body:
     user_id:
+      help: required, ids of user to delete
       type: '[]string'
 - action: DescribeGroups
   request: DescribeGroupsRequest
+  description: Get groups, can filter with these fields(group_id, parent_group_id,
+    group_path, status), default return all groups
   service: AccountManager
   query:
     group_id:
+      help: group ids.
       type: '[]string'
     group_name:
+      help: group name.
       type: '[]string'
     group_path:
+      help: group path, a concat string gid-xxx.gid-xxx.gid...
       type: '[]string'
     limit:
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
+      help: data offset, default 0.
       type: int64
     parent_group_id:
+      help: parent group ids.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     root_group_id:
+      help: use root group ids to get all groups.
       type: '[]string'
     search_word:
+      help: query key, support these fields(group_id, parent_group_id, group_path,
+        status).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|deleted].
       type: '[]string'
 - action: DescribeGroupsDetail
   request: DescribeGroupsDetailRequest
+  description: Get groups, include all user in this group, can filter with these fields(group_id,
+    parent_group_id, group_path, status), default return all groups
   service: AccountManager
   query:
     group_id:
+      help: group ids.
       type: '[]string'
     group_name:
+      help: group name.
       type: '[]string'
     group_path:
+      help: group path, a concat string gid-xxx.gid-xxx.gid...
       type: '[]string'
     limit:
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
+      help: data offset, default 0.
       type: int64
     parent_group_id:
+      help: parent group ids.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     root_group_id:
+      help: use root group ids to get all groups.
       type: '[]string'
     search_word:
+      help: query key, support these fields(group_id, parent_group_id, group_path,
+        status).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|deleted].
       type: '[]string'
 - action: DescribeUsers
   request: DescribeUsersRequest
+  description: Get users, filter with fields(user_id, email, phone_number, status),
+    default return all users
   service: AccountManager
   query:
     email:
+      help: email, eg.op@yunify.com.
       type: '[]string'
     group_id:
+      help: group ids.
       type: '[]string'
     limit:
+      help: data limit, default 20, max 200.
       type: int64
     offset:
+      help: data offset, default 0.
       type: int64
     phone_number:
+      help: phone number, string of 11 digital.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     role_id:
+      help: role ids.
       type: '[]string'
     root_group_id:
+      help: use root group ids to get all group ids.
       type: '[]string'
     search_word:
+      help: query key, support these fields(user_id, email, phone_number, status).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|deleted].
       type: '[]string'
     user_id:
+      help: user ids.
       type: '[]string'
     username:
+      help: username.
       type: '[]string'
 - action: DescribeUsersDetail
   request: DescribeUsersDetailRequest
+  description: Get users, include user info of role and group, filter with fields(user_id,
+    email, phone_number, status), default return all users
   service: AccountManager
   query:
     email:
+      help: email, eg.op@yunify.com.
       type: '[]string'
     group_id:
+      help: group ids.
       type: '[]string'
     limit:
+      help: data limit, default 20, max 200.
       type: int64
     offset:
+      help: data offset, default 0.
       type: int64
     phone_number:
+      help: phone number, string of 11 digital.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     role_id:
+      help: role ids.
       type: '[]string'
     root_group_id:
+      help: use root group ids to get all group ids.
       type: '[]string'
     search_word:
+      help: query key, support these fields(user_id, email, phone_number, status).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|deleted].
       type: '[]string'
     user_id:
+      help: user ids.
       type: '[]string'
     username:
+      help: username.
       type: '[]string'
 - action: GetPasswordReset
   request: GetPasswordResetRequest
+  description: Get a request of reset user's password
   service: AccountManager
   query:
     reset_id:
+      help: required, reset id.
       type: string
 - action: IsvCreateUser
   request: CreateUserRequest
+  description: Isv of platform create user
   service: AccountManager
   body:
     description:
+      help: user description
       type: string
     email:
+      help: required, user email
       type: string
     password:
+      help: required, user password
       type: string
     phone_number:
+      help: user phone number
       type: string
     role_id:
+      help: required, user role_id
       type: string
 - action: JoinGroup
   request: JoinGroupRequest
+  description: Join groups, user can join in groups
   service: AccountManager
   body:
     group_id:
+      help: required, ids of group for user to join in
       type: '[]string'
     user_id:
+      help: required, ids of user to join
       type: '[]string'
 - action: LeaveGroup
   request: LeaveGroupRequest
+  description: Leave groups, user can leave from groups
   service: AccountManager
   body:
     group_id:
+      help: required, ids of group for user to leave from
       type: '[]string'
     user_id:
+      help: required, ids of user to leave
       type: '[]string'
 - action: ModifyGroup
   request: ModifyGroupRequest
+  description: Modify group info
   service: AccountManager
   body:
     description:
+      help: group description
       type: string
     group_id:
+      help: required, id of group to modify
       type: string
     name:
+      help: group name
       type: string
     parent_group_id:
+      help: parent group id
       type: string
 - action: ModifyUser
   request: ModifyUserRequest
+  description: Modify user info
   service: AccountManager
   body:
     description:
+      help: user description
       type: string
     email:
+      help: user email, eg.op@yunify.com
       type: string
     password:
+      help: user password
       type: string
     phone_number:
+      help: user phone number, string of 11 digital
       type: string
     user_id:
+      help: required, id of user to be modify
       type: string
     username:
+      help: user name
       type: string
 - action: ValidateUserPassword
   request: ValidateUserPasswordRequest
+  description: Validate user and password
   service: AccountManager
   body:
     email:
+      help: required, user email
       type: string
     password:
+      help: required, user password
       type: string
 - action: BusinessPassAppVersion
   request: PassAppVersionRequest
-  description: operator type business pass app version
+  description: Operator of business pass version of the app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to pass
       type: string
 - action: BusinessRejectAppVersion
   request: RejectAppVersionRequest
-  description: operator type business reject app version
+  description: Operator of business reject version of the app
   service: AppManager
   body:
     message:
+      help: reject message
       type: string
     version_id:
+      help: required, id of version to reject
       type: string
 - action: BusinessReviewAppVersion
   request: ReviewAppVersionRequest
-  description: operator type business start review app version
+  description: Operator of business review version of the app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to review
       type: string
 - action: CancelAppVersion
   request: CancelAppVersionRequest
-  description: cancel app version
+  description: Cancel version of the app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to cancel
       type: string
 - action: CreateApp
   request: CreateAppRequest
-  description: create app
+  description: Create app, user of isv can create app on the platform
   service: AppManager
   body:
     icon:
-      help: set the app icon
+      help: app icon
       type: byte
     name:
+      help: required, app name
       type: string
     version_name:
-      help: create app version with specify name
+      help: required, version name of the app
       type: string
     version_package:
-      help: create app version with specify package
+      help: required, version with specific app package
       type: byte
     version_type:
-      help: 'optional: vmbased/helm'
+      help: optional, vmbased/helm
       type: string
 - action: CreateAppVersion
   request: CreateAppVersionRequest
-  description: create app version
+  description: Create app of specific version
   service: AppManager
   body:
     app_id:
+      help: required, id of app to create new version
       type: string
     description:
+      help: description of app of specific version
       type: string
     name:
+      help: required, version name eg.[0.1.0|0.1.3|...]
       type: string
     package:
+      help: package of app of specific version
       type: byte
     type:
       help: 'optional: vmbased/helm'
       type: string
 - action: DeleteAppVersion
   request: DeleteAppVersionRequest
-  description: delete app version
+  description: Delete version of the app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to delete
       type: string
 - action: DeleteApps
   request: DeleteAppsRequest
-  description: delete apps
+  description: Batch delete apps
   service: AppManager
   body:
     app_id:
+      help: required, ids of app to delete
       type: '[]string'
 - action: DescribeActiveAppVersions
   request: DescribeActiveAppVersionsRequest
-  description: describe app versions with filter
+  description: Get active versions of app, can filter with these fields(version_id,
+    app_id, name, owner, description, package_name, status, type), default return
+    all active app versions
   service: AppManager
   query:
     app_id:
+      help: app ids.
       type: '[]string'
     description:
+      help: description.
       type: '[]string'
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     name:
+      help: app version name.
       type: '[]string'
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     package_name:
+      help: app version package name.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(version_id, app_id, name, owner, description,
+        package_name, status, type).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: app version status eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended].
       type: '[]string'
     type:
+      help: app version type.
       type: '[]string'
     version_id:
+      help: app version ids.
       type: '[]string'
 - action: DescribeActiveApps
   request: DescribeActiveAppsRequest
-  description: describe apps with filter
+  description: Get active apps, can filter with these fields(app_id, name, repo_id,
+    description, status, home, icon, screenshots, maintainers, sources, readme, owner,
+    chart_name), default return all apps
   service: AppManager
   query:
     app_id:
+      help: app ids.
       type: '[]string'
     category_id:
+      help: app category ids.
       type: '[]string'
     chart_name:
+      help: app chart name.
       type: '[]string'
     display_columns:
+      help: select column to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default is 20, max value is 200.
       type: int64
     name:
+      help: app name.
       type: '[]string'
     offset:
-      help: default is 0.
+      help: data offset, default is 0.
       type: int64
     owner:
+      help: app owner.
       type: '[]string'
     repo_id:
+      help: app repository ids.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(app_id, name, repo_id, description, status,
+        home, icon, screenshots, maintainers, sources, readme, owner, chart_name).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: app status eg.[modify|submit|review|cancel|release|delete|pass|reject|suspend|recover].
       type: '[]string'
 - action: DescribeAppVersionAudits
   request: DescribeAppVersionAuditsRequest
-  description: DescribeAppVersionAudits
+  description: Get audits information of version-specific app, can filter with these
+    fields(version_id, app_id, status, operator, role), default return all app version
+    audits
   service: AppManager
   query:
     app_id:
+      help: app ids.
       type: '[]string'
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default is 20, max value is 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default is 0.
       type: int64
     operator:
+      help: auditer of app version.
       type: '[]string'
     operator_type:
+      help: operator type eg.[global_admin|developer|business|technical|isv].
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(version_id, app_id, status, operator,
+        role).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: app version audit status eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended].
       type: '[]string'
     version_id:
+      help: app version ids.
       type: '[]string'
 - action: DescribeAppVersionReviews
   request: DescribeAppVersionReviewsRequest
-  description: DescribeAppVersionReviews
+  description: Get reviews of version-specific app, can filter with these fields(review_id,
+    version_id, app_id, status, reviewer)
   service: AppManager
   query:
     app_id:
+      help: app ids.
       type: '[]string'
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default is 20, max value is 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default is 0.
       type: int64
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     review_id:
+      help: app version review ids.
       type: '[]string'
     reviewer:
+      help: reviewer of app version eg.[global_admin|developer|business|technical|isv].
       type: '[]string'
     search_word:
+      help: query key, support these fields(review_id, version_id, app_id, status,
+        reviewer).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: app version status eg.[isv-in-review|isv-passed|isv-rejected|isv-draft|business-in-review|business-passed|business-rejected|develop-draft|develop-in-review|develop-passed|develop-rejected|develop-draft].
       type: '[]string'
     version_id:
+      help: app version ids.
       type: '[]string'
 - action: DescribeAppVersions
   request: DescribeAppVersionsRequest
-  description: describe app versions with filter
+  description: Get versions of app, can filter with these fields(version_id, app_id,
+    name, owner, description, package_name, status, type), default return all app
+    versions
   service: AppManager
   query:
     app_id:
+      help: app ids.
       type: '[]string'
     description:
+      help: description.
       type: '[]string'
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     name:
+      help: app version name.
       type: '[]string'
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     package_name:
+      help: app version package name.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(version_id, app_id, name, owner, description,
+        package_name, status, type).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: app version status eg.[draft|submitted|passed|rejected|active|in-review|deleted|suspended].
       type: '[]string'
     type:
+      help: app version type.
       type: '[]string'
     version_id:
+      help: app version ids.
       type: '[]string'
 - action: DescribeApps
   request: DescribeAppsRequest
-  description: describe apps with filter
+  description: Get apps, can filter with these fields(app_id, name, repo_id, description,
+    status, home, icon, screenshots, maintainers, sources, readme, owner, chart_name),
+    default return all apps
   service: AppManager
   query:
     app_id:
+      help: app ids.
       type: '[]string'
     category_id:
+      help: app category ids.
       type: '[]string'
     chart_name:
+      help: app chart name.
       type: '[]string'
     display_columns:
+      help: select column to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default is 20, max value is 200.
       type: int64
     name:
+      help: app name.
       type: '[]string'
     offset:
-      help: default is 0.
+      help: data offset, default is 0.
       type: int64
     owner:
+      help: app owner.
       type: '[]string'
     repo_id:
+      help: app repository ids.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(app_id, name, repo_id, description, status,
+        home, icon, screenshots, maintainers, sources, readme, owner, chart_name).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: app status eg.[modify|submit|review|cancel|release|delete|pass|reject|suspend|recover].
       type: '[]string'
 - action: GetAppStatistics
   request: GetAppStatisticsRequest
-  description: get app statistics
+  description: Get statistics info of apps
   service: AppManager
 - action: GetAppVersionPackage
   request: GetAppVersionPackageRequest
-  description: get the package content of app version
+  description: Get packages of version-specific app
   service: AppManager
   query:
     version_id:
+      help: required, use version id to get package.
       type: string
 - action: GetAppVersionPackageFiles
   request: GetAppVersionPackageFilesRequest
-  description: get the package files content of app version
+  description: Get app package files
   service: AppManager
   query:
     files:
+      help: files.
       type: '[]string'
     version_id:
+      help: use version id to get file of package.
       type: string
 - action: IsvPassAppVersion
   request: PassAppVersionRequest
-  description: operator type isv pass app version
+  description: Operator of isv pass version of the app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to pass
       type: string
 - action: IsvRejectAppVersion
   request: RejectAppVersionRequest
-  description: operator type isv reject app version
+  description: Operator of isv reject version of the app
   service: AppManager
   body:
     message:
+      help: reject message
       type: string
     version_id:
+      help: required, id of version to reject
       type: string
 - action: IsvReviewAppVersion
   request: ReviewAppVersionRequest
-  description: operator type isv start review app version
+  description: Operator of isv review version of the app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to review
       type: string
 - action: ModifyApp
   request: ModifyAppRequest
-  description: modify app
+  description: Modify app info
   service: AppManager
   body:
     abstraction:
+      help: abstraction of app
       type: string
     app_id:
+      help: required, id of app to modify
       type: string
     category_id:
+      help: category id of the app
       type: string
     description:
+      help: description of the app
       type: string
     home:
+      help: home page of the app
       type: string
     keywords:
+      help: key words of the app
       type: string
     maintainers:
+      help: maintainers who maintainer the app
       type: string
     name:
+      help: name of the app
       type: string
     readme:
+      help: instructions of the app
       type: string
     sources:
+      help: sources of app
       type: string
     tos:
+      help: tos of app
       type: string
 - action: ModifyAppVersion
   request: ModifyAppVersionRequest
-  description: modify app version
+  description: Modify version info of the app
   service: AppManager
   body:
     description:
+      help: app description
       type: string
     name:
+      help: app name
       type: string
     package:
+      help: package of app to replace other
       type: byte
     package_files:
-      help: filename => file_content
+      help: filename map to file_content
       type: object
     version_id:
+      help: required, version id of app to modify
       type: string
 - action: RecoverAppVersion
   request: RecoverAppVersionRequest
-  description: recover app version
+  description: Recover version of app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to recover
       type: string
 - action: ReleaseAppVersion
   request: ReleaseAppVersionRequest
-  description: release app version
+  description: Release version of the app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to release
       type: string
 - action: SubmitAppVersion
   request: SubmitAppVersionRequest
-  description: submit app version
+  description: Submit version of the app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to submit
       type: string
 - action: SuspendAppVersion
   request: SuspendAppVersionRequest
-  description: suspend app version
+  description: Suspend app version
   service: AppManager
   body:
     version_id:
+      help: required, id of version to suspend
       type: string
 - action: TechnicalPassAppVersion
   request: PassAppVersionRequest
-  description: operator type technical pass app version
+  description: Operator of technical pass version of the app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to pass
       type: string
 - action: TechnicalRejectAppVersion
   request: RejectAppVersionRequest
-  description: operator type reject app version
+  description: Operator of technical reject version of the app
   service: AppManager
   body:
     message:
+      help: reject message
       type: string
     version_id:
+      help: required, id of version to reject
       type: string
 - action: TechnicalReviewAppVersion
   request: ReviewAppVersionRequest
-  description: operator type technical start review app version
+  description: Operator of technical review version of the app
   service: AppManager
   body:
     version_id:
+      help: required, id of version to review
       type: string
 - action: UploadAppAttachment
   request: UploadAppAttachmentRequest
-  description: UploadAppAttachment
+  description: Upload app attachment
   service: AppManager
   body:
     app_id:
+      help: required, id of app to upload attachment
       type: string
     attachment_content:
+      help: required, content of attachment
       type: byte
     sequence:
       help: 'only for screenshot, range: [0, 5]'
@@ -760,635 +1029,836 @@
       help: 'optional: icon/screenshot'
 - action: ValidatePackage
   request: ValidatePackageRequest
-  description: ValidatePackage
+  description: Validate format of package(pack by op tool)
   service: AppManager
   body:
     version_package:
+      help: required, version package eg.[the wordpress-0.0.1.tgz will be encoded
+        to bytes]
       type: byte
     version_type:
-      help: 'optional: vmbased/helm'
+      help: optional, vmbased/helm
       type: string
 - action: GetAttachment
   request: GetAttachmentRequest
-  description: get attachment
+  description: Get attachment, use attachment id to get attachment
   service: AttachmentService
   query:
     attachment_id:
+      help: required, use attachment id to get attachment.
       type: string
     filename:
+      help: filename, attachment contain one more file.
       type: string
 - action: CreateCategory
   request: CreateCategoryRequest
-  description: create category
+  description: Create category
   service: CategoryManager
   body:
     description:
+      help: category description
       type: string
     icon:
+      help: category icon
       type: byte
     locale:
       help: 'the i18n of this category, json format, sample: {"zh_cn": "数据库", "en":
         "database"}'
       type: string
     name:
+      help: required, category name
       type: string
 - action: DeleteCategories
   request: DeleteCategoriesRequest
-  description: delete categories
+  description: Batch delete categories
   service: CategoryManager
   body:
     category_id:
+      help: required, ids of category to delete
       type: '[]string'
 - action: DescribeCategories
   request: DescribeCategoriesRequest
-  description: describe categories with filter
+  description: Get categories, support filter with these fields(category_id, status,
+    locale, owner, name), default return all categories
   service: CategoryManager
   query:
     category_id:
+      help: category ids.
       type: '[]string'
     display_columns:
+      help: select column to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     name:
+      help: category name.
       type: '[]string'
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, can fields with these fields(category_id, status, locale, owner,
+        name), default return all categories.
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
 - action: ModifyCategory
   request: ModifyCategoryRequest
-  description: modify category
+  description: Modify category
   service: CategoryManager
   body:
     category_id:
+      help: required, id of category to modify
       type: string
     description:
+      help: category description
       type: string
     icon:
+      help: category icon
       type: byte
     locale:
       help: 'the i18n of this category, json format, sample: {"zh_cn": "数据库", "en":
         "database"}'
       type: string
     name:
+      help: category name
       type: string
 - action: AddClusterNodes
   request: AddClusterNodesRequest
-  description: add cluster nodes
+  description: Batch add nodes to cluster
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: required, id of cluster to add node
       type: string
     node_count:
+      help: number of node added to cluster
       type: integer
     role:
+      help: required, role eg:[mysql|wordpress|...]
       type: string
 - action: AttachKeyPairs
   request: AttachKeyPairsRequest
-  description: attach key pairs
+  description: Batch attach key pairs to node
   service: ClusterManager
   body:
     key_pair_id:
+      help: ids of key pairs to attach
       type: '[]string'
     node_id:
+      help: ids of node to attached
       type: '[]string'
 - action: CeaseClusters
   request: CeaseClustersRequest
-  description: cease clusters
+  description: Batch cease clusters
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: required, ids of cluster to cease
       type: '[]string'
 - action: CreateCluster
   request: CreateClusterRequest
-  description: create cluster
+  description: Create cluster
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     app_id:
+      help: required, id of app to run in cluster
       type: string
     conf:
+      help: required, conf a json string, include cpu, memory info of cluster
       type: string
     runtime_id:
+      help: required, id of runtime
       type: string
     version_id:
+      help: required, id of app version
       type: string
 - action: CreateDebugCluster
   request: CreateClusterRequest
-  description: create debug cluster
+  description: Create debug cluster
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     app_id:
+      help: required, id of app to run in cluster
       type: string
     conf:
+      help: required, conf a json string, include cpu, memory info of cluster
       type: string
     runtime_id:
+      help: required, id of runtime
       type: string
     version_id:
+      help: required, id of app version
       type: string
 - action: CreateKeyPair
   request: CreateKeyPairRequest
-  description: create key pair
+  description: Create key pair
   service: ClusterManager
   body:
     description:
+      help: keypair description
       type: string
     name:
+      help: keypair name
       type: string
     pub_key:
+      help: public key
       type: string
 - action: DeleteClusterNodes
   request: DeleteClusterNodesRequest
-  description: delete cluster nodes
+  description: Batch delete nodes from cluster
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: required, id of cluster to delete node
       type: string
     node_id:
+      help: required, node ids
       type: '[]string'
 - action: DeleteClusters
   request: DeleteClustersRequest
-  description: delete clusters
+  description: Batch delete clusters
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: required, ids of clusters to delete
       type: '[]string'
 - action: DeleteKeyPairs
   request: DeleteKeyPairsRequest
-  description: delete key pairs
+  description: Batch delete key pairs
   service: ClusterManager
   body:
     key_pair_id:
+      help: required, ids of key pairs to delete
       type: '[]string'
 - action: DescribeAppClusters
   request: DescribeAppClustersRequest
-  description: describe app clusters
+  description: Get app clusters, can filter with these fields(cluster_id, app_id,
+    version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return
+    all app clusters
   service: ClusterManager
   query:
     app_id:
+      help: app ids.
       type: '[]string'
     created_date:
+      help: cluster created duration eg.[1 day].
       type: int64
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(cluster_id, app_id, version_id, status,
+        runtime_id, frontgate_id, owner, cluster_type).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|used|enabled|disabled|deleted|stopped|ceased].
       type: '[]string'
     with_detail:
+      help: get cluster with detail.
       type: boolean
 - action: DescribeClusterNodes
   request: DescribeClusterNodesRequest
-  description: describe cluster nodes
+  description: Get nodes in cluster, can filter with these fields(cluster_id, node_id,
+    status, owner)
   service: ClusterManager
   query:
     cluster_id:
+      help: cluster id.
       type: string
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     node_id:
+      help: node ids.
       type: '[]string'
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(cluster_id, node_id, status, owner).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|used|enabled|disabled|deleted|stopped|ceased].
       type: '[]string'
 - action: DescribeClusters
   request: DescribeClustersRequest
-  description: describe clusters
+  description: Get clusters, can filter with these fields(cluster_id, app_id, version_id,
+    status, runtime_id, frontgate_id, owner, cluster_type), default return all clusters
   service: ClusterManager
   query:
     app_id:
+      help: app ids.
       type: '[]string'
     cluster_id:
+      help: cluster ids.
       type: '[]string'
     cluster_type:
+      help: cluster type, frontgate or normal cluster.
       type: string
     created_date:
+      help: cluster created duration eg.[1 day].
       type: int64
     display_columns:
+      help: select column to display.
       type: '[]string'
     external_cluster_id:
+      help: external cluster id.
       type: string
     frontgate_id:
+      help: frontgate ids.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     runtime_id:
+      help: runtime ids.
       type: '[]string'
     search_word:
+      help: query key, support these fields(cluster_id, app_id, version_id, status,
+        runtime_id, frontgate_id, owner, cluster_type).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: cluster status eg.[active|used|enabled|disabled|deleted|stopped|ceased].
       type: '[]string'
     version_id:
+      help: version ids.
       type: '[]string'
     with_detail:
+      help: get cluster detail info or not.
       type: boolean
 - action: DescribeDebugAppClusters
   request: DescribeDebugAppClustersRequest
-  description: describe debug app clusters
+  description: Get debug app clusters, can filter with these fields(cluster_id, app_id,
+    version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return
+    all debug app clusters
   service: ClusterManager
   query:
     app_id:
+      help: app ids.
       type: '[]string'
     created_date:
+      help: cluster created duration eg.[1 day].
       type: int64
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(cluster_id, app_id, version_id, status,
+        runtime_id, frontgate_id, owner, cluster_type).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|used|enabled|disabled|deleted|stopped|ceased].
       type: '[]string'
     with_detail:
+      help: get cluster with detail.
       type: boolean
 - action: DescribeDebugClusters
   request: DescribeDebugClustersRequest
-  description: describe debug clusters
+  description: Get debug clusters, can filter with these fields(cluster_id, app_id,
+    version_id, status, runtime_id, frontgate_id, owner, cluster_type), default return
+    all debug clusters
   service: ClusterManager
   query:
     app_id:
+      help: app ids.
       type: '[]string'
     cluster_id:
+      help: cluster ids.
       type: '[]string'
     cluster_type:
+      help: cluster type, frontgate or normal cluster.
       type: string
     created_date:
+      help: cluster created duration eg.[1 day].
       type: int64
     display_columns:
+      help: select column to display.
       type: '[]string'
     external_cluster_id:
+      help: external cluster id.
       type: string
     frontgate_id:
+      help: frontgate ids.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     runtime_id:
+      help: runtime ids.
       type: '[]string'
     search_word:
+      help: query key, support these fields(cluster_id, app_id, version_id, status,
+        runtime_id, frontgate_id, owner, cluster_type).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: cluster status eg.[active|used|enabled|disabled|deleted|stopped|ceased].
       type: '[]string'
     version_id:
+      help: version ids.
       type: '[]string'
     with_detail:
+      help: get cluster detail info or not.
       type: boolean
 - action: DescribeKeyPairs
   request: DescribeKeyPairsRequest
-  description: describe key pairs
+  description: Get key pairs, support filter with these fields(key_pair_id, name,
+    owner), default return all key pairs
   service: ClusterManager
   query:
     description:
+      help: key pair description.
       type: string
     display_columns:
+      help: select columns to display.
       type: '[]string'
     key_pair_id:
+      help: key pair id.
       type: string
     limit:
+      help: data limit per page, default value 20, max value 200.
       type: int64
     name:
+      help: key pair name.
       type: string
     offset:
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     pub_key:
+      help: public key.
       type: string
     search_word:
+      help: query key, can filter with these fields(key_pair_id, name, owner).
       type: string
 - action: DescribeSubnets
   request: DescribeSubnetsRequest
-  description: describe subnets
+  description: Get subnets
   service: ClusterManager
   query:
     advanced_param:
+      help: advanced param.
       type: '[]string'
     limit:
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
+      help: data offset, default 0.
       type: int64
     runtime_id:
+      help: required, id of runtime that contain subnet.
       type: string
     subnet_id:
+      help: subnet ids.
       type: '[]string'
     subnet_type:
+      help: subnet type.
       type: int64
     zone:
+      help: zone eg.[pek3a|pek3b|...].
       type: '[]string'
 - action: DetachKeyPairs
   request: DetachKeyPairsRequest
-  description: detach key pairs
+  description: Batch detach key pairs from node
   service: ClusterManager
   body:
     key_pair_id:
+      help: ids of key pairs to detach
       type: '[]string'
     node_id:
+      help: ids of nodes to detached
       type: '[]string'
 - action: GetClusterStatistics
   request: GetClusterStatisticsRequest
-  description: get cluster statistics
+  description: Get statistics of cluster
   service: ClusterManager
 - action: ModifyClusterAttributes
   request: ModifyClusterAttributesRequest
-  description: modify cluster attributes
+  description: Modify cluster attributes
   service: ClusterManager
   body:
     cluster_id:
+      help: required, id of cluster to modify
       type: string
     description:
+      help: cluster description
       type: string
     name:
+      help: cluster name
       type: string
 - action: ModifyClusterNodeAttributes
   request: ModifyClusterNodeAttributesRequest
-  description: modify cluster node attributes
+  description: Modify node attributes in the cluster
   service: ClusterManager
   body:
     name:
+      help: node name
       type: string
     node_id:
+      help: required, id of cluster node to modify
       type: string
 - action: RecoverClusters
   request: RecoverClustersRequest
-  description: recover clusters
+  description: Batch recover clusters
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: required, ids of clusters to recover
       type: '[]string'
 - action: ResizeCluster
   request: ResizeClusterRequest
-  description: resize cluster
+  description: Resize cluster
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: required, id of cluster to resize
       type: string
     role_resource:
+      help: list of role resource
       type: '[]'
 - action: RollbackCluster
   request: RollbackClusterRequest
-  description: rollback cluster
+  description: Rollback cluster
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: required, id of cluster to rollback
       type: string
 - action: StartClusters
   request: StartClustersRequest
-  description: start clusters
+  description: Batch start clusters
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: required, ids of cluster to start
       type: '[]string'
 - action: StopClusters
   request: StopClustersRequest
-  description: stop clusters
+  description: Batch stop clusters
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: required, ids of cluster to stop
       type: '[]string'
 - action: UpdateClusterEnv
   request: UpdateClusterEnvRequest
-  description: update cluster env
+  description: Update env of cluster
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: id of cluster to update env
       type: string
     env:
+      help: env
       type: string
 - action: UpgradeCluster
   request: UpgradeClusterRequest
-  description: upgrade cluster
+  description: Upgrade cluster
   service: ClusterManager
   body:
     advanced_param:
+      help: advanced param
       type: '[]string'
     cluster_id:
+      help: required, id of cluster to upgrade
       type: string
     version_id:
+      help: app version id
       type: string
 - action: DescribeAppVendorStatistics
   request: DescribeAppVendorStatisticsRequest
-  description: DescribeAppVendorStatistics
+  description: Get statistics of vendor
   service: IsvManager
   query:
     display_columns:
+      help: select column to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(user_id, status).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[draft|submitted|passed|rejected|suspended|in-review|new].
       type: '[]string'
     user_id:
+      help: user ids.
       type: '[]string'
 - action: DescribeVendorVerifyInfos
   request: DescribeVendorVerifyInfosRequest
-  description: DescribeVendorVerifyInfos
+  description: Get vendor verifies info, can filer with these fields(user_id, status),
+    default return all VendorVerifyInfos
   service: IsvManager
   query:
     display_columns:
+      help: select column to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(user_id, status).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[draft|submitted|passed|rejected|suspended|in-review|new].
       type: '[]string'
     user_id:
+      help: user ids.
       type: '[]string'
 - action: GetVendorVerifyInfo
   request: GetVendorVerifyInfoRequest
-  description: get isv by isv user Id
+  description: Get vendor verify info
   service: IsvManager
   query:
     user_id:
+      help: required, use user id to get vendor verify info.
       type: string
 - action: PassVendorVerifyInfo
   request: PassVendorVerifyInfoRequest
-  description: PassVendorVerifyInfo
+  description: Pass vendor verify
   service: IsvManager
   body:
     user_id:
+      help: required, id of user to pass
       type: string
 - action: RejectVendorVerifyInfo
   request: RejectVendorVerifyInfoRequest
-  description: RejectVendorVerifyInfo
+  description: Reject vendor verify
   service: IsvManager
   body:
     reject_message:
+      help: reject message
       type: string
     user_id:
+      help: required, id of user to reject
       type: string
 - action: SubmitVendorVerifyInfo
   request: SubmitVendorVerifyInfoRequest
-  description: SubmitVendorVerifyInfo
+  description: Submit vendor verify info
   service: IsvManager
   body:
     authorizer_email:
+      help: required, authorizer email eg. xxx@yunify.com
       type: string
     authorizer_name:
+      help: required, authorizer name
       type: string
     authorizer_phone:
+      help: authorizer phone, string of 11 digit
       type: string
     bank_account_name:
+      help: bank account name
       type: string
     bank_account_number:
+      help: bank account number
       type: string
     bank_name:
+      help: bank name
       type: string
     company_name:
+      help: required, company name
       type: string
     company_profile:
+      help: company profile
       type: string
     company_website:
+      help: company website
       type: string
     user_id:
+      help: required, id of user to submit
       type: string
 - action: DescribeJobs
   request: DescribeJobsRequest
-  description: describe jobs with filter
+  description: Get job, filter with these fields(job_id, cluster_id, app_id, version_id,
+    executor, provider, status, owner), default return all jobs
   service: JobManager
   query:
     app_id:
+      help: app id.
       type: string
     cluster_id:
+      help: cluster id.
       type: string
     display_columns:
+      help: select column to display.
       type: '[]string'
     executor:
+      help: host name of server.
       type: string
     job_id:
+      help: job ids.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     provider:
+      help: runtime provider eg.[qingcloud|aliyun|aws|kubernetes].
       type: string
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     runtime_id:
+      help: runtime id.
       type: string
     search_word:
+      help: query key, support these fields(job_id, cluster_id, app_id, version_id,
+        executor, provider, status, owner).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[successful|failed|running|pending].
       type: '[]string'
     version_id:
+      help: specific app version id to filter result.
       type: string
 - action: CreateMarket
   request: CreateMarketRequest
-  description: create market
+  description: Create market
   service: MarketManager
   body:
     description:
@@ -1399,14 +1869,14 @@
       type: string
 - action: DeleteMarkets
   request: DeleteMarketsRequest
-  description: delete markets
+  description: Delete markets
   service: MarketManager
   body:
     market_id:
       type: '[]string'
 - action: DescribeMarketUsers
   request: DescribeMarketUsersRequest
-  description: describe users with filter
+  description: Get users with filter
   service: MarketManager
   query:
     limit:
@@ -1420,16 +1890,18 @@
     owner:
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     user_id:
       type: '[]string'
 - action: DescribeMarkets
   request: DescribeMarketsRequest
-  description: describe markets with filter
+  description: Describe markets with filter
   service: MarketManager
   query:
     limit:
@@ -1445,10 +1917,12 @@
     owner:
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
       type: '[]string'
@@ -1458,7 +1932,7 @@
       type: '[]string'
 - action: ModifyMarket
   request: ModifyMarketRequest
-  description: modify market
+  description: Modify market
   service: MarketManager
   body:
     description:
@@ -1473,7 +1947,7 @@
       type: string
 - action: UserJoinMarket
   request: UserJoinMarketRequest
-  description: user join market
+  description: Join market
   service: MarketManager
   body:
     market_id:
@@ -1482,7 +1956,7 @@
       type: '[]string'
 - action: UserLeaveMarket
   request: UserLeaveMarketRequest
-  description: user leave market
+  description: Leave market
   service: MarketManager
   body:
     market_id:
@@ -1491,192 +1965,256 @@
       type: '[]string'
 - action: DescribeRepoEvents
   request: DescribeRepoEventsRequest
-  description: describe repo events
+  description: Get repository events
   service: RepoIndexer
   query:
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     repo_event_id:
+      help: repository event ids.
       type: '[]string'
     repo_id:
+      help: repository ids.
       type: '[]string'
     status:
+      help: repository event status eg.[failed|successful|working|pending].
       type: '[]string'
 - action: IndexRepo
   request: IndexRepoRequest
-  description: start a index repo event
+  description: Start index repository event
   service: RepoIndexer
   body:
     repo_id:
+      help: id of repository to index
       type: string
 - action: CreateRepo
   request: CreateRepoRequest
-  description: create repo
+  description: Create repository, repository used to store package of app
   service: RepoManager
   body:
     app_default_status:
+      help: required app default status.eg:[draft|active]
       type: string
     category_id:
+      help: category id
       type: string
     credential:
+      help: required, credential of visiting the repository
       type: string
     description:
+      help: repository description
       type: string
     labels:
+      help: a kv string, tags of server
       type: string
     name:
+      help: required, repository name
       type: string
     providers:
+      help: required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
       type: '[]string'
     selectors:
+      help: selectors of label
       type: string
     type:
+      help: repository type
       type: string
     url:
+      help: required, url of visiting the repository
       type: string
     visibility:
+      help: required, visibility eg:[public|private]
       type: string
 - action: DeleteRepos
   request: DeleteReposRequest
-  description: delete repos
+  description: Batch delete repositories
   service: RepoManager
   body:
     repo_id:
+      help: required, ids of repository to delete
       type: '[]string'
 - action: DescribeRepos
   request: DescribeReposRequest
-  description: describe repos with filter
+  description: Get repositories ,filter with these fields(repo_id, name, type, visibility,
+    status, app_default_status, owner, controller), default return all repositories
   service: RepoManager
   query:
     app_default_status:
+      help: app default status eg.[draft|active].
       type: '[]string'
     category_id:
+      help: category ids.
       type: '[]string'
     controller:
-      help: 0 for self resource; 1 for openpitrix resource.
+      help: controller, value 0 for self resource, value1 for openpitrix resource.
       type: int32
     label:
+      help: a kv string, tags of server.
       type: string
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     name:
+      help: repository name.
       type: '[]string'
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     provider:
+      help: runtime provider eg.[qingcloud|aliyun|aws|kubernetes].
       type: '[]string'
     repo_id:
+      help: repository ids.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(repo_id, name, type, visibility, status,
+        app_default_status, owner, controller).
       type: string
     selector:
+      help: selector of label.
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|deleted].
       type: '[]string'
     type:
+      help: repository type.
       type: '[]string'
     user_id:
+      help: user id.
       type: string
     visibility:
+      help: visibility eg:[public|private].
       type: '[]string'
 - action: ModifyRepo
   request: ModifyRepoRequest
-  description: modify repo
+  description: Modify repository
   service: RepoManager
   body:
     app_default_status:
+      help: app default status eg:[draft|active]
       type: string
     category_id:
+      help: category id
       type: string
     credential:
+      help: credential of visiting the repository
       type: string
     description:
+      help: repository description
       type: string
     labels:
+      help: a kv string, tags of server
       type: string
     name:
+      help: repository name
       type: string
     providers:
+      help: runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
       type: '[]string'
     repo_id:
+      help: required, id of repository to modify
       type: string
     selectors:
+      help: selectors of label
       type: string
     type:
+      help: repository type
       type: string
     url:
+      help: url of visiting the repository
       type: string
     visibility:
+      help: visibility eg:[public|private]
       type: string
 - action: ValidateRepo
   request: ValidateRepoRequest
-  description: validate repo
+  description: Validate repository
   service: RepoManager
   query:
     credential:
+      help: required, credential of visiting the repository.
       type: string
     type:
+      help: required, type of repository.
       type: string
     url:
+      help: required, url of visiting the repository.
       type: string
 - action: CreateDebugRuntime
   request: CreateRuntimeRequest
-  description: create debug runtime
+  description: Create debug runtime
   service: RuntimeManager
   body:
     description:
+      help: runtime description
       type: string
     name:
+      help: required, runtime name
       type: string
     provider:
+      help: required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
       type: string
     runtime_credential_id:
+      help: required, runtime credential id
       type: string
     zone:
+      help: required, runtime zone eg.[pek3a|pek3b|...]
       type: string
 - action: CreateDebugRuntimeCredential
   request: CreateRuntimeCredentialRequest
-  description: create debug runtime credential
+  description: Create debug runtime credential
   service: RuntimeManager
   body:
     description:
+      help: runtime credential description
       type: string
     name:
+      help: runtime credential name
       type: string
     provider:
+      help: required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
       type: string
     runtime_credential_content:
+      help: required, runtime credential content, a json file
       type: string
     runtime_url:
+      help: required, runtime url
       type: string
 - action: CreateRuntime
   request: CreateRuntimeRequest
-  description: create runtime
+  description: Create runtime
   service: RuntimeManager
   body:
     description:
+      help: runtime description
       type: string
     name:
+      help: required, runtime name
       type: string
     provider:
+      help: required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
       type: string
     runtime_credential_id:
+      help: required, runtime credential id
       type: string
     zone:
+      help: required, runtime zone eg.[pek3a|pek3b|...]
       type: string
 - action: CreateRuntimeCredential
   request: CreateRuntimeCredentialRequest
@@ -1684,266 +2222,351 @@
   service: RuntimeManager
   body:
     description:
+      help: runtime credential description
       type: string
     name:
+      help: runtime credential name
       type: string
     provider:
+      help: required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
       type: string
     runtime_credential_content:
+      help: required, runtime credential content, a json file
       type: string
     runtime_url:
+      help: required, runtime url
       type: string
 - action: DeleteRuntimeCredentials
   request: DeleteRuntimeCredentialsRequest
-  description: delete runtime credentials
+  description: Batch delete runtime credentials
   service: RuntimeManager
   body:
     runtime_credential_id:
+      help: required, ids of runtime credential to delete
       type: '[]string'
 - action: DeleteRuntimes
   request: DeleteRuntimesRequest
-  description: delete runtimes
+  description: Delete runtimes
   service: RuntimeManager
   body:
     runtime_id:
+      help: required, ids of runtime to delete
       type: '[]string'
 - action: DescribeDebugRuntimeCredentials
   request: DescribeDebugRuntimeCredentialsRequest
-  description: describe debug runtime credentials
+  description: Get debug runtime credentials, filter with these fields(runtime_credential_id,
+    status, provider, owner), default return all debug runtime credentials
   service: RuntimeManager
   query:
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     provider:
+      help: runtime provider eg.[qingcloud|aliyun|aws|kubernetes].
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     runtime_credential_id:
+      help: runtime credential ids.
       type: '[]string'
     search_word:
+      help: query key.
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|deleted].
       type: '[]string'
 - action: DescribeDebugRuntimes
   request: DescribeDebugRuntimesRequest
-  description: describe debug runtime
+  description: Get debug runtimes, can filter with these fields(runtime_id, provider,
+    zone, status, owner), default return all debug runtimes
   service: RuntimeManager
   query:
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     provider:
+      help: runtime provider eg.[qingcloud|aliyun|aws|kubernetes].
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     runtime_id:
+      help: runtime ids.
       type: '[]string'
     search_word:
+      help: query key, support these fields(runtime_id, provider, zone, status, owner).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|deleted].
       type: '[]string'
 - action: DescribeRuntimeCredentials
   request: DescribeRuntimeCredentialsRequest
-  description: describe runtime credentials
+  description: Get runtime credentials, filter with these fields(runtime_credential_id,
+    status, provider, owner), default return all runtime credentials
   service: RuntimeManager
   query:
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     provider:
+      help: runtime provider eg.[qingcloud|aliyun|aws|kubernetes].
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     runtime_credential_id:
+      help: runtime credential ids.
       type: '[]string'
     search_word:
+      help: query key.
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|deleted].
       type: '[]string'
 - action: DescribeRuntimeProviderZones
   request: DescribeRuntimeProviderZonesRequest
-  description: describe runtime provider zones
+  description: Get runtime provider zones
   service: RuntimeManager
   query:
     runtime_credential_id:
+      help: required, use runtime credential id to get run time provider zones.
       type: string
 - action: DescribeRuntimes
   request: DescribeRuntimesRequest
-  description: describe runtime
+  description: Get runtimes, can filter with these fields(runtime_id, provider, zone,
+    status, owner), default return all runtimes
   service: RuntimeManager
   query:
     display_columns:
+      help: select columns to display.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     provider:
+      help: runtime provider eg.[qingcloud|aliyun|aws|kubernetes].
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     runtime_id:
+      help: runtime ids.
       type: '[]string'
     search_word:
+      help: query key, support these fields(runtime_id, provider, zone, status, owner).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: status eg.[active|deleted].
       type: '[]string'
 - action: GetRuntimeStatistics
   request: GetRuntimeStatisticsRequest
-  description: get runtime statistics
+  description: get statistics of runtime
   service: RuntimeManager
 - action: ModifyRuntime
   request: ModifyRuntimeRequest
-  description: modify runtime
+  description: Modify runtime
   service: RuntimeManager
   body:
     description:
+      help: runtime description
       type: string
     name:
+      help: runtime name
       type: string
     runtime_credential_id:
+      help: runtime credential id
       type: string
     runtime_id:
+      help: required, id of runtime to modify
       type: string
 - action: ModifyRuntimeCredential
   request: ModifyRuntimeCredentialRequest
-  description: modify runtime credential
+  description: Modify runtime credential
   service: RuntimeManager
   body:
     description:
+      help: runtime credential description
       type: string
     name:
+      help: runtime credential name
       type: string
     runtime_credential_content:
+      help: runtime credential content, a json file
       type: string
     runtime_credential_id:
+      help: required, id of runtime credential to modify
       type: string
 - action: ValidateRuntimeCredential
   request: ValidateRuntimeCredentialRequest
-  description: validate runtime credential
+  description: Validate runtime credential
   service: RuntimeManager
   body:
     provider:
+      help: required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]
       type: string
     runtime_credential_content:
+      help: required, runtime url
       type: string
     runtime_url:
+      help: required, runtime url
       type: string
 - action: GetServiceConfig
   request: GetServiceConfigRequest
-  description: get service configration
+  description: Get service configration
   service: ServiceConfig
   body:
     service_type:
+      help: service type eg.[runtime]
       type: '[]string'
 - action: SetServiceConfig
   request: SetServiceConfigRequest
-  description: set service configration
+  description: Set service configration
   service: ServiceConfig
   body:
-    basic_config: {}
-    notification_config: {}
-    runtime_config: {}
+    basic_config:
+      help: basic config
+    notification_config:
+      help: notification config
+    runtime_config:
+      help: runtime config
 - action: ValidateEmailService
   request: ValidateEmailServiceRequest
-  description: validate email service
+  description: Validate email service
   service: ServiceConfig
   body:
-    email_service_config: {}
+    email_service_config:
+      help: email service config
 - action: DescribeTasks
   request: DescribeTasksRequest
-  description: describe tasks with filter
+  description: Get tasks, can filter with these fields(job_id, task_id, executor,
+    status, owner), default return all tasks
   service: TaskManager
   query:
     display_columns:
+      help: select columns to display.
       type: '[]string'
     executor:
+      help: host name of server.
       type: string
     job_id:
+      help: job ids.
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
+      help: data limit per page, default value 20, max value 200.
       type: int64
     offset:
-      help: default is 0.
+      help: data offset, default 0.
       type: int64
     owner:
+      help: owner.
       type: '[]string'
     reverse:
+      help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
     search_word:
+      help: query key, support these fields(job_id, task_id, executor, status, owner).
       type: string
     sort_key:
+      help: sort key, order by sort_key, default create_time.
       type: string
     status:
+      help: task status eg.[running|successful|failed|pending].
       type: '[]string'
     target:
+      help: target eg.[runtime|pilot].
       type: string
     task_id:
+      help: task ids.
       type: '[]string'
 - action: RetryTasks
   request: RetryTasksRequest
-  description: retry tasks
+  description: Retry tasks
   service: TaskManager
   body:
     task_id:
+      help: ids of task to retry
       type: '[]string'
 - action: CreateClient
   request: CreateClientRequest
+  description: Create client
   service: TokenManager
   body:
     user_id:
+      help: required, user id for create client
       type: string
 - action: Token
   request: TokenRequest
+  description: Get users, include user info of role and group, filter with fields(user_id,
+    email, phone_number, status), default return all users
   service: TokenManager
   body:
     client_id:
+      help: required, client id
       type: string
     client_secret:
+      help: required, used for validate client credentials
       type: string
     grant_type:
+      help: required, type of client request verification.eg.[client_credentials or
+        password or refresh_token]
       type: string
     password:
+      help: required or not depend on grant_type, user's password
       type: string
     refresh_token:
+      help: required or not depend on grant_type, refresh token to check whether token
+        expired
       type: string
     scope:
+      help: scope
       type: string
     username:
+      help: required or not depend on grant_type, user's name
       type: string
   insecurity: true
