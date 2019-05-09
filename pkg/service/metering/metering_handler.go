@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-func (s *Server) StartMetering(ctx context.Context, req *pb.StartMeteringRequest) (*pb.CommonMeteringResponse, error) {
+func (s *Server) InitMetering(ctx context.Context, req *pb.InitMeteringRequest) (*pb.CommonMeteringResponse, error) {
 	var leasings []*models.Leasing
 	now := time.Now()
 	for _, skuM := range req.GetSkuMeterings() {
@@ -55,7 +55,7 @@ func (s *Server) UpdateMetering(ctx context.Context, req *pb.UpdateMeteringReque
 	return &pb.CommonMeteringResponse{}, nil
 }
 
-func (s *Server) RestartMeterings(ctx context.Context, req *pb.RestartMeteringsRequest) (*pb.CommonMeteringsResponse, error) {
+func (s *Server) StartMeterings(ctx context.Context, req *pb.StartMeteringsRequest) (*pb.CommonMeteringsResponse, error) {
 	//TODO: get leasings by resource.ResourceId and resource.skuId(if skuIds is nil, get all leasings of resourceId)
 	//      update Status of skus to active
 	//TODO: Add leasing to REDIS

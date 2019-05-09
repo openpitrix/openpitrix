@@ -41,26 +41,6 @@ func (s *Server) DeletePrices(ctx context.Context, req *pb.DeletePricesRequest) 
 	return &pb.DeletePricesResponse{}, nil
 }
 
-func (s *Server) CreateAccount(ctx context.Context, req *pb.CreateAccountRequest) (*pb.CreateAccountResponse, error) {
-	//TODO: impl CreateAccount
-	return &pb.CreateAccountResponse{}, nil
-}
-
-func (s *Server) DescribeAccounts(ctx context.Context, req *pb.DescribeAccountsRequest) (*pb.DescribeAccountsResponse, error) {
-	//TODO: impl DescribeAccounts
-	return &pb.DescribeAccountsResponse{}, nil
-}
-
-func (s *Server) ModifyAccount(ctx context.Context, req *pb.ModifyAccountRequest) (*pb.ModifyAccountResponse, error) {
-	//TODO: impl ModifyAccount
-	return &pb.ModifyAccountResponse{}, nil
-}
-
-func (s *Server) DeleteAccounts(ctx context.Context, req *pb.DeleteAccountsRequest) (*pb.DeleteAccountsResponse, error) {
-	//TODO: impl DeleteAccounts
-	return &pb.DeleteAccountsResponse{}, nil
-}
-
 type Metering struct {
 	LeasingId      string
 	ReourceId      string
@@ -109,7 +89,7 @@ func Billing(ctx context.Context, metering Metering) {
 	}
 
 	//charge due_fee from account
- 	if contract.DueFee > 0 {
+	if contract.DueFee > 0 {
 		_, err := charge(contract)
 		if err != nil {
 			if err.Error() == "balance not enough" {
