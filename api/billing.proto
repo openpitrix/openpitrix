@@ -326,6 +326,39 @@ message DescribeIncomesResponse {
 	repeated Income incomes = 1;
 }
 
+message Withdraw {
+	google.protobuf.StringValue withdraw_id = 1;
+	google.protobuf.StringValue user_id = 2;
+	google.protobuf.DoubleValue balance = 3;
+	google.protobuf.Timestamp create_time = 4;
+	google.protobuf.StringValue status = 5;
+	google.protobuf.StringValue description = 6;
+}
+
+message CreateWithdrawRequest {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.DoubleValue balance = 2;
+	google.protobuf.StringValue description = 3;
+}
+
+message CreateWithdrawResponse {
+	google.protobuf.StringValue withdraw_id = 1;
+}
+
+message DescribeWithdrawsRequest {
+	google.protobuf.StringValue withdraw_id = 1;
+	google.protobuf.StringValue user_id = 2;
+	google.protobuf.StringValue status = 3;
+	google.protobuf.StringValue sort_key = 4;
+	google.protobuf.BoolValue reverse = 5;
+	uint32 offset = 6;
+	uint32 limit = 7;
+}
+
+message DescribeWithdrawsResponse {
+	repeated Withdraw withdraws = 1;
+}
+
 service BillingManager {
 	rpc CreatePrice (CreatePriceRequest) returns (CreatePriceResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -469,6 +502,23 @@ service BillingManager {
 		};
 	}
 
+	rpc CreateWithdraw (CreateWithdrawRequest) returns (CreateWithdrawResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create withdraw"
+		};
+		option (google.api.http) = {
+			post: "/v1/billing/withdraw"
+		};
+	}
+
+	rpc DescribeWithdraws (DescribeWithdrawsRequest) returns (DescribeWithdrawsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe withdraws"
+		};
+		option (google.api.http) = {
+			get: "/v1/billing/withdraws"
+		};
+	}
 }
 
 
@@ -552,14 +602,15 @@ service BillingBackendManager {
 
 }
 
-
 //////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////// 			End         //////////////////////////////////////
 ////////////////////////// Billing Backend APIs //////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-//************************************* Promotion *************************
+//*************************************************************************
+//*************************** Promotion ***********************************
+//*************************************************************************
 //combination_price
 message CombinationPrice {
     google.protobuf.StringValue combination_price_id = 1;
@@ -619,9 +670,6 @@ message DeleteCombinationPricesResponse {
 	repeated string combination_price_ids = 1;
 }
 
-//*************************************************************************
-//*************************** Promotion ***********************************
-//*************************************************************************
 //probation
 message Probation {
 	google.protobuf.StringValue probation_id = 1;
