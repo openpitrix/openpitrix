@@ -65,7 +65,8 @@ message DescribePricesRequest {
 }
 
 message DescribePricesResponse {
-	repeated Price prices = 1;
+	uint32 total_count = 1;
+	repeated Price price_set = 2;
 }
 
 message ModifyPriceRequest {
@@ -125,7 +126,8 @@ message DescribeAccountsRequest {
 }
 
 message DescribeAccountsResponse {
-	repeated Account accounts = 1;
+	uint32 total_count = 1;
+	repeated Account account_set = 2;
 }
 
 message ModifyAccountRequest {
@@ -183,7 +185,8 @@ message DescribeLeasingContractsRequest {
 }
 
 message DescribeLeasingContractsResponse {
-	repeated LeasingContract leasing_contracts = 1;
+	uint32 total_count = 1;
+	repeated LeasingContract leasing_contract_set = 2;
 }
 
 message LeasedContract {
@@ -219,7 +222,8 @@ message DescribeLeasedContractsRequest {
 }
 
 message DescribeLeasedContractsResponse {
-	repeated LeasedContract leased_contracts = 1;
+	uint32 total_count = 1;
+	repeated LeasedContract leased_contract_set = 2;
 }
 
 message Recharge {
@@ -251,7 +255,8 @@ message DescribeRechargesRequest {
 }
 
 message DescribeRechargesResponse {
-	repeated Recharge recharges = 1;
+	uint32 total_count = 1;
+	repeated Recharge recharge_set = 2;
 }
 
 message Charge {
@@ -276,7 +281,8 @@ message DescribeChargesRequest {
 }
 
 message DescribeChargesResponse {
-	repeated Charge charges = 1;
+	uint32 total_count = 1;
+	repeated Charge charge_set = 2;
 }
 
 message Refund {
@@ -300,7 +306,8 @@ message DescribeRefundsRequest {
 }
 
 message DescribeRefundsResponse {
-	repeated Refund refunds = 1;
+	uint32 total_count = 1;
+	repeated Refund refund_set = 2;
 }
 
 message Income {
@@ -323,7 +330,8 @@ message DescribeIncomesRequest {
 }
 
 message DescribeIncomesResponse {
-	repeated Income incomes = 1;
+	uint32 total_count = 1;
+	repeated Income income_set = 2;
 }
 
 message Withdraw {
@@ -356,7 +364,8 @@ message DescribeWithdrawsRequest {
 }
 
 message DescribeWithdrawsResponse {
-	repeated Withdraw withdraws = 1;
+	uint32 total_count = 1;
+	repeated Withdraw withdraw_set = 2;
 }
 
 service BillingManager {
@@ -646,7 +655,8 @@ message DescribeCombinationPricesRequest {
 }
 
 message DescribeCombinationPricesResponse {
-	repeated CombinationPrice combination_prices = 1;
+	uint32 total_count = 1;
+	repeated CombinationPrice combination_price_set = 2;
 }
 
 message ModifyCombinationPriceRequest {
@@ -704,7 +714,8 @@ message DescribeProbationsRequest {
 }
 
 message DescribeProbationsResponse {
-	repeated Probation probations = 1;
+	uint32 total_count = 1;
+	repeated Probation probation_set = 2;
 }
 
 message ModifyProbationRequest {
@@ -770,7 +781,8 @@ message DescribeDiscountsRequest {
 }
 
 message DescribeDiscountsResponse {
-	repeated Discount discounts = 1;
+	uint32 total_count = 1;
+	repeated Discount discount_set = 2;
 }
 
 message ModifyDiscountRequest {
@@ -840,7 +852,8 @@ message DescribeCouponsRequest {
 }
 
 message DescribeCouponsResponse {
-	repeated Coupon coupons = 1;
+	uint32 total_count = 1;
+	repeated Coupon coupon_set = 2;
 }
 
 message ModifyCouponRequest {
@@ -897,7 +910,8 @@ message DescribeCouponReceivedsRequest {
 }
 
 message DescribeCouponReceivedsResponse {
-	repeated CouponReceived coupon_receiveds = 1;
+	uint32 total_count = 1;
+	repeated CouponReceived coupon_received_set = 2;
 }
 
 message DeleteCouponReceivedsRequest {

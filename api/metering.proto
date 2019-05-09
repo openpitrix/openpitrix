@@ -55,7 +55,8 @@ message DescribeAttributeNamesRequest {
 }
 
 message DescribeAttributeNamesResponse {
-	repeated AttributeName attribute_names = 1;
+	uint32 total_count = 1;
+	repeated AttributeName attribute_name_set = 2;
 }
 
 message ModifyAttributeNameRequest {
@@ -105,7 +106,8 @@ message DescribeAttributeUnitsRequest {
 }
 
 message DescribeAttributeUnitsResponse {
-	repeated AttributeUnit attribute_units = 1;
+	uint32 total_count = 1;
+	repeated AttributeUnit attribute_unit_set = 2;
 }
 
 message ModifyAttributeUnitRequest {
@@ -161,7 +163,8 @@ message DescribeAttributesRequest {
 }
 
 message DescribeAttributesResponse {
-	repeated Attribute attributes = 1;
+	uint32 total_count = 1;
+	repeated Attribute attribute_set = 2;
 }
 
 message ModifyAttributeRequest {
@@ -213,7 +216,8 @@ message DescribeSpusRequest {
 }
 
 message DescribeSpusResponse {
-	repeated Spu spus = 1;
+	uint32 total_count = 1;
+	repeated Spu spu_set = 2;
 }
 
 message ModifySpuRequest {
@@ -265,7 +269,8 @@ message DescribeSkusRequest {
 }
 
 message DescribeSkusResponse {
-	repeated Sku skus = 1;
+	uint32 total_count = 1;
+	repeated Sku sku_set = 2;
 }
 
 message ModifySkuRequest {
@@ -572,7 +577,8 @@ message DescribeLeasingsRequest {
 }
 
 message DescribeLeasingsResponse {
-	repeated Leasing leasings = 1;
+	uint32 total_count = 1;
+	repeated Leasing leasing_set = 2;
 }
 
 service MeteringManager {
@@ -668,7 +674,8 @@ message DescribeCombinationsRequest {
 }
 
 message DescribeCombinationsResponse {
-	repeated Combination combinations = 1;
+	uint32 total_count = 1;
+	repeated Combination combination_set = 2;
 }
 
 message ModifyCombinationRequest {
@@ -722,7 +729,8 @@ message DescribeCombinationSkusRequest {
 }
 
 message DescribeCombinationSkusResponse {
-	repeated CombinationSku combination_skus = 1;
+	uint32 total_count = 1;
+	repeated CombinationSku combination_sku_set = 2;
 }
 
 message ModifyCombinationSkuRequest {
