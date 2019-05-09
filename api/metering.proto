@@ -19,8 +19,9 @@ enum AttributeType {
 	METERING = 1;
 }
 
-//************************************* Sku *************************
-//the values of status are: active/deleted
+//***************************************************
+//********************* Sku *************************
+//***************************************************
 //attribute_name
 message AttributeName {
 	google.protobuf.StringValue attribute_name_id = 1;
@@ -484,8 +485,9 @@ service SkuManager {
 }
 
 
-//************************** metering ****************************
-
+//********************************************************************
+//************************** metering ********************************
+//********************************************************************
 message SkuMetering {
 	google.protobuf.StringValue sku_id = 1;
 	map<string, double> value = 2; //{attribute_id: value}
@@ -508,7 +510,7 @@ message UpdateSkuMetering {
 	repeated UpdateMeteringValue metering_values = 2;
 }
 
-message StartMeteringRequest {
+message InitMeteringRequest {
 	google.protobuf.StringValue user_id = 1;
 	google.protobuf.StringValue resource_id = 2;
 	repeated SkuMetering sku_meterings = 3;
@@ -524,7 +526,7 @@ message StopMeteringsRequest {
 	repeated string sku_ids = 2;
 }
 
-message RestartMeteringsRequest {
+message StartMeteringsRequest {
 	google.protobuf.StringValue resource_id = 1;
 	repeated string sku_ids = 2;
 }
@@ -574,12 +576,12 @@ message DescribeLeasingsResponse {
 }
 
 service MeteringManager {
-	rpc StartMetering (StartMeteringRequest) returns (CommonMeteringResponse) {
+	rpc InitMetering (InitMeteringRequest) returns (CommonMeteringResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "start metering about the skus"
+			summary: "init metering about the skus"
 		};
 		option (google.api.http) = {
-			post: "/v1/metering/skus"
+			post: "/v1/metering"
 			body: "*"
 		};
 	}
@@ -589,7 +591,7 @@ service MeteringManager {
 			summary: "update metering value about the sku"
 		};
 		option (google.api.http) = {
-			put: "/v1/metering/skus"
+			put: "/v1/metering"
 			body: "*"
 		};
 	}
@@ -604,13 +606,13 @@ service MeteringManager {
 		};
 	}
 
-	//restart for stopped metering
-	rpc RestartMeterings (RestartMeteringsRequest) returns (CommonMeteringsResponse) {
+	//start for stopped metering
+	rpc StartMeterings (StartMeteringsRequest) returns (CommonMeteringsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "restart metering about the skus"
+			summary: "start metering about the skus"
 		};
 		option (google.api.http) = {
-			put: "/v1/metering/restart"
+			put: "/v1/metering/start"
 			body: "*"
 		};
 	}
@@ -620,14 +622,16 @@ service MeteringManager {
             summary: "terminate metering about the skus"
         };
 		option (google.api.http) = {
-            delete: "/v1/metering/skus"
+            delete: "/v1/metering"
             body: "*"
         };
 	}
 }
 
 
-//************************************* Promotion *************************
+//*************************************************************************
+//*************************** Promotion ***********************************
+//*************************************************************************
 //combination
 message Combination {
 	google.protobuf.StringValue combination_id = 1;
