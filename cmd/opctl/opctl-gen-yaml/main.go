@@ -28,7 +28,7 @@ type Gen struct {
 func init() {
 	//read cmd_black_list
 	path, _ := filepath.Abs(".")
-	blackListFile := fmt.Sprintf("%s/../cmd_black_list.yaml", path)
+	blackListFile := fmt.Sprintf("%s/../cmd/opctl/cmd_black_list.yaml", path)
 	content, err := ioutil.ReadFile(blackListFile)
 	if err != nil {
 		Error(err, fmt.Sprintf("Failed to read %s", blackListFile))
