@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -18,8 +19,21 @@ import (
 	. "openpitrix.io/openpitrix/cmd/opctl/common"
 )
 
+var CmdBlackList []string
+
 type Gen struct {
 	swagger spec.Swagger
+}
+
+func init() {
+	//read cmd_black_list
+	path, _ := filepath.Abs(".")
+	blackListFile := fmt.Sprintf("%s/../cmd_black_list.yaml", path)
+	content, err := ioutil.ReadFile(blackListFile)
+	if err != nil {
+		Error(err, fmt.Sprintf("Failed to read %s", blackListFile))
+	}
+	yaml.Unmarshal(content, &CmdBlackList)
 }
 
 func toString(a spec.StringOrArray) string {
@@ -31,6 +45,17 @@ func toString(a spec.StringOrArray) string {
 
 func getName(str string) string {
 	return strings.Replace(str, ".", "_", -1)
+}
+
+func cmdInBlack(cmd string) bool {
+	black := false
+	for _, blackCmd := range CmdBlackList {
+		if cmd == blackCmd {
+			black = true
+			break
+		}
+	}
+	return black
 }
 
 func (g *Gen) GetCmdFromOperation(op *spec.Operation) Cmd {
@@ -136,7 +161,7 @@ func (g *Gen) Parse(content []byte) {
 			path.Patch,
 		}
 		for _, op := range ops {
-			if op != nil {
+			if op != nil && !cmdInBlack(op.ID) {
 				cmd := g.GetCmdFromOperation(op)
 				cmds = append(cmds, cmd)
 			}
