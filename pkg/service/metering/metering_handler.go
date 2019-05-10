@@ -134,5 +134,5 @@ func (s *Server) DescribeLeasings(ctx context.Context, req *pb.DescribeLeasingsR
 
 	//TODO: get leasings by DescribeLeasingsRequest
 
-	return &pb.DescribeLeasingsResponse{Leasings: leasings}, nil
+	return &pb.DescribeLeasingsResponse{LeasingSet: leasings}, nil
 }
