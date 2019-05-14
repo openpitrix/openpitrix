@@ -7,10 +7,13 @@
 package app
 
 import (
+	"bytes"
 	"io/ioutil"
 	"os"
 	"path"
 	"testing"
+
+	"openpitrix.io/openpitrix/pkg/util/archiveutil"
 
 	"github.com/go-openapi/strfmt"
 	"github.com/stretchr/testify/require"
@@ -109,6 +112,48 @@ func preparePackage(t *testing.T, v string) strfmt.Base64 {
 	return strfmt.Base64(content)
 }
 
+func preparePackageFile(t *testing.T, v string) map[string]strfmt.Base64 {
+	var testAppName = "e2e_test_app"
+
+	cfile := &opapp.Metadata{
+		Name:        testAppName,
+		Description: "An OpenPitrix app",
+		Version:     v,
+		AppVersion:  "1.0",
+		ApiVersion:  devkit.ApiVersionV1,
+	}
+
+	os.MkdirAll(testTmpDir, 0755)
+	_, err := devkit.Create(cfile, testTmpDir)
+
+	testutil.NoError(t, err, Service)
+
+	ch, err := devkit.LoadDir(path.Join(testTmpDir, testAppName))
+
+	testutil.NoError(t, err, Service)
+
+	name, err := devkit.Save(ch, testTmpDir)
+
+	testutil.NoError(t, err, Service)
+
+	t.Logf("save [%s] success", name)
+
+	content, err := ioutil.ReadFile(name)
+
+	files, err := archiveutil.Load(bytes.NewReader(content))
+
+	encodedFiles := make(map[string]strfmt.Base64)
+	for k, f := range files {
+		encodedFiles[k] = strfmt.Base64(f)
+	}
+
+	testutil.NoError(t, err, Service)
+
+	require.NoError(t, os.RemoveAll(testTmpDir))
+
+	return encodedFiles
+}
+
 func testVersionPackage(t *testing.T, appId string) {
 	client := testutil.GetClient(clientConfig)
 
@@ -172,6 +217,16 @@ func testVersionPackage(t *testing.T, appId string) {
 		&models.OpenpitrixModifyAppVersionRequest{
 			VersionID: versionId2,
 			Package:   preparePackage(t, "0.0.4"),
+		})
+	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
+
+	testutil.NoError(t, err, Service)
+
+	modifyAppVersionParams = app_manager.NewModifyAppVersionParams()
+	modifyAppVersionParams.WithBody(
+		&models.OpenpitrixModifyAppVersionRequest{
+			VersionID:    versionId2,
+			PackageFiles: preparePackageFile(t, "0.0.4"),
 		})
 	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
 

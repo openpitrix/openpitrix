@@ -11,6 +11,9 @@ import (
 	"strings"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/devkit"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
+
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	accessclient "openpitrix.io/openpitrix/pkg/client/access"
 	accountclient "openpitrix.io/openpitrix/pkg/client/account"
@@ -651,16 +654,37 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		return nil, err
 	}
 
-	pkg := req.GetPackage().GetValue()
-	if len(pkg) > 0 {
-		_, err = repoiface.LoadPackage(ctx, version.Type, pkg)
+	pkgFiles := req.GetPackageFiles()
+	if len(pkgFiles) > 0 {
+		// can not support to modify helm package files
+		if version.Type == repoiface.Helm {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCannotModifyHelmPackageFile)
+		}
+		content, err := newVersionProxy(version).GetPackageFile(ctx)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+			return nil, err
 		}
 
-		attachmentContent, err := archiveutil.Load(bytes.NewReader(pkg))
+		c := &opapp.OpApp{}
+		for name, file := range pkgFiles {
+			content[name] = file
+			if name == devkit.ClusterJsonTmpl {
+				c.ClusterConfTemplate = &opapp.ClusterConfTemplate{Raw: string(file)}
+			}
+			if name == devkit.ConfigJson {
+				m, err := opapp.DecodeConfigJson(file)
+				if err != nil {
+					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDecodeConfigJsonFailed)
+
+				}
+				c.ConfigTemplate = m
+			}
+		}
+		config := c.ConfigTemplate.GetDefaultConfig()
+		err = opapp.ValidateClusterConfTmpl(c.ClusterConfTemplate, config)
+
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidatePackageFilesFailed)
 		}
 
 		attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
@@ -670,10 +694,36 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 
 		_, err = attachmentManagerClient.ReplaceAttachment(ctx, &pb.ReplaceAttachmentRequest{
 			AttachmentId:      version.PackageName,
-			AttachmentContent: attachmentContent,
+			AttachmentContent: content,
 		})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+	} else {
+		pkg := req.GetPackage().GetValue()
+		if len(pkg) > 0 {
+			_, err = repoiface.LoadPackage(ctx, version.Type, pkg)
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+			}
+
+			attachmentContent, err := archiveutil.Load(bytes.NewReader(pkg))
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+			}
+
+			attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+
+			_, err = attachmentManagerClient.ReplaceAttachment(ctx, &pb.ReplaceAttachmentRequest{
+				AttachmentId:      version.PackageName,
+				AttachmentContent: attachmentContent,
+			})
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
 		}
 	}
 

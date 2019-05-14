@@ -492,4 +492,19 @@ var (
 		en:   "validate email service failed",
 		zhCN: "验证邮件服务配置失败",
 	}
+	ErrorCannotModifyHelmPackageFile = ErrorMessage{
+		Name: "error_cannot_modify_helm_package_file",
+		en:   "can not modify helm package file",
+		zhCN: "不支持修改helm包里边的配置文件",
+	}
+	ErrorValidatePackageFilesFailed = ErrorMessage{
+		Name: "error_validate_package_files_failed",
+		en:   "validate package files failed",
+		zhCN: "验证包文件失败",
+	}
+	ErrorDecodeConfigJsonFailed = ErrorMessage{
+		Name: "error_decode_config_json_failed",
+		en:   "decode config json failed",
+		zhCN: "解码配置文件失败",
+	}
 )
