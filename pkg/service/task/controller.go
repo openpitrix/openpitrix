@@ -19,7 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/sender"
@@ -467,8 +467,7 @@ func (c *Controller) HandleTasks(ctx context.Context) {
 	}
 }
 
-func (c *Controller) Serve() {
-	ctx := context.Background()
+func (c *Controller) Serve(ctx context.Context) {
 	err := c.UpdateWorkingTasks(ctx)
 	if err != nil {
 		logger.Error(ctx, "Failed to update working tasks: %+v", err)

@@ -4,6 +4,7 @@
 
 FROM dhoer/flyway:5.1.4-mysql-8.0.11-alpine
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache mysql-client
 
 COPY ./schema /flyway/sql

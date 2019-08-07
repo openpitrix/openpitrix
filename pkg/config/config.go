@@ -16,11 +16,12 @@ import (
 )
 
 type Config struct {
-	Log   LogConfig
-	Grpc  GrpcConfig
-	Mysql MysqlConfig
-	Etcd  EtcdConfig
-	IAM   IAMConfig
+	Log         LogConfig
+	Grpc        GrpcConfig
+	Mysql       MysqlConfig
+	Etcd        EtcdConfig
+	IAM         IAMConfig
+	DisableGops bool `default:"false"`
 }
 
 type IAMConfig struct {

@@ -5,12 +5,14 @@
 package task
 
 import (
+	"context"
 	"os"
 
 	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -30,10 +32,13 @@ func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
 	taskController := NewController(hostname)
 	s := Server{controller: taskController}
-	go taskController.Serve()
+	ctx := context.Background()
+	ctx = db.NewContext(ctx, cfg.Mysql)
+	go taskController.Serve(ctx)
 
 	manager.NewGrpcServer("task-controller", constants.TaskManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithMysqlConfig(cfg.Mysql).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterTaskManagerServer(server, &s)
 		})

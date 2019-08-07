@@ -23,6 +23,7 @@ func Serve(cfg *config.Config) {
 	manager.NewGrpcServer("app-manager", constants.AppManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
+		WithMysqlConfig(cfg.Mysql).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterAppManagerServer(server, &s)
 		})

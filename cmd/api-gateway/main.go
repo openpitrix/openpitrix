@@ -11,6 +11,8 @@ import (
 )
 
 func main() {
+
 	cfg := config.LoadConf()
+
 	apigateway.Serve(cfg)
 }

@@ -29,7 +29,7 @@ type Pi struct {
 
 var global *Pi
 var mutex sync.RWMutex
-var globalMutex sync.RWMutex
+var globalOnce sync.Once
 
 func NewPi(cfg *config.Config) *Pi {
 	p := &Pi{cfg: cfg}
@@ -37,24 +37,24 @@ func NewPi(cfg *config.Config) *Pi {
 	p.openEtcd()
 	p.watchGlobalCfg()
 
-	if err := agent.Listen(agent.Options{
-		ShutdownCleanup: true,
-	}); err != nil {
-		logger.Critical(nil, "failed to start gops agent")
+	if !cfg.DisableGops {
+		if err := agent.Listen(agent.Options{
+			ShutdownCleanup: true,
+		}); err != nil {
+			logger.Critical(nil, "failed to start gops agent")
+		}
 	}
 
 	return p
 }
 
 func SetGlobal(cfg *config.Config) {
-	globalMutex.Lock()
-	global = NewPi(cfg)
-	globalMutex.Unlock()
+	globalOnce.Do(func() {
+		global = NewPi(cfg)
+	})
 }
 
 func Global() *Pi {
-	globalMutex.RLock()
-	defer globalMutex.RUnlock()
 	return global
 }
 

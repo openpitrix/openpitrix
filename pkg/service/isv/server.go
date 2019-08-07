@@ -28,7 +28,7 @@ func Serve(cfg *config.Config) {
 	manager.NewGrpcServer("isv-manager", constants.IsvManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
-		WithBuilder(nil).
+		WithMysqlConfig(cfg.Mysql).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterIsvManagerServer(server, s)
 		})

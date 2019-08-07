@@ -23,6 +23,7 @@ func Serve(cfg *config.Config) {
 	manager.NewGrpcServer("category-manager", constants.CategoryManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
+		WithMysqlConfig(cfg.Mysql).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterCategoryManagerServer(server, &s)
 		})

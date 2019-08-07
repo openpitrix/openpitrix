@@ -23,6 +23,7 @@ func Serve(cfg *config.Config) {
 	manager.NewGrpcServer("market-manager", constants.MarketManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
+		WithMysqlConfig(cfg.Mysql).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterMarketManagerServer(server, &s)
 		})

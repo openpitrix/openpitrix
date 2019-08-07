@@ -230,8 +230,7 @@ func (c *Controller) HandleJobs(ctx context.Context) {
 	}
 }
 
-func (c *Controller) Serve() {
-	ctx := context.Background()
+func (c *Controller) Serve(ctx context.Context) {
 	err := c.UpdateWorkingJobs(ctx)
 	if err != nil {
 		logger.Error(ctx, "Failed to update working jobs: %+v", err)

@@ -14,9 +14,9 @@ import (
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
-	"github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -24,6 +24,8 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 
+	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
@@ -44,6 +46,7 @@ type GrpcServer struct {
 	showErrorCause bool
 	checker        checkerT
 	builder        builderT
+	mysqlConfig    config.MysqlConfig
 }
 
 type RegisterCallback func(*grpc.Server)
@@ -73,6 +76,11 @@ func (g *GrpcServer) WithBuilder(b builderT) *GrpcServer {
 	return g
 }
 
+func (g *GrpcServer) WithMysqlConfig(cfg config.MysqlConfig) *GrpcServer {
+	g.mysqlConfig = cfg
+	return g
+}
+
 func (g *GrpcServer) Serve(callback RegisterCallback, opt ...grpc.ServerOption) {
 	version.PrintVersionInfo(func(s string, i ...interface{}) {
 		logger.Info(nil, s, i)
@@ -93,6 +101,8 @@ func (g *GrpcServer) Serve(callback RegisterCallback, opt ...grpc.ServerOption) 
 			grpc_validator.UnaryServerInterceptor(),
 			g.unaryServerLogInterceptor(),
 			func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+				ctx = db.NewContext(ctx, g.mysqlConfig)
+
 				if g.checker != nil {
 					err = g.checker(ctx, req)
 					if err != nil {
