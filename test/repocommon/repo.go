@@ -81,7 +81,7 @@ func CreateRepo(t *testing.T, c *client.Openpitrix, name, provider, url string) 
 		})
 	createResp, err := c.RepoManager.CreateRepo(createParams, nil)
 	if err != nil {
-		fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-repo-manager"))
+		fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 		fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 		fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-qingcloud"))
 	}

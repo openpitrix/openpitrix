@@ -145,6 +145,8 @@ services:
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
+    external_links:
+      - hyperpitrix:openpitrix-rp-manager
     depends_on:
       - openpitrix-etcd
       - hyperpitrix
@@ -164,6 +166,8 @@ services:
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
+    external_links:
+      - hyperpitrix:openpitrix-rp-manager
     depends_on:
       - openpitrix-etcd
       - hyperpitrix
@@ -183,6 +187,8 @@ services:
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
+    external_links:
+      - hyperpitrix:openpitrix-rp-manager
     depends_on:
       - openpitrix-etcd
       - hyperpitrix
@@ -202,6 +208,8 @@ services:
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
+    external_links:
+      - hyperpitrix:openpitrix-rp-manager
     depends_on:
       - openpitrix-etcd
       - hyperpitrix
@@ -365,6 +373,9 @@ services:
     depends_on:
       - openpitrix-db
       - openpitrix-etcd
+      - openpitrix-am-service
+      - openpitrix-im-service
+      - openpitrix-notification
     container_name: "hyperpitrix"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}

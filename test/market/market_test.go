@@ -20,7 +20,7 @@ import (
 var client = testutil.GetClient(testutil.GetClientConfig())
 var userId = constants.UserSystem
 
-const Service = "openpitrix-market-manager"
+const Service = "hyperpitrix"
 
 func deleteMarketUser(t *testing.T, marketId string) {
 	userLeaveMarketParams := market_manager.NewUserLeaveMarketParams()
