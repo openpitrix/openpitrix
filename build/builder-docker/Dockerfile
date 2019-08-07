@@ -4,7 +4,7 @@
 
 FROM golang:1.11-alpine3.7 as builder
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache git curl openssl
 
 RUN go get github.com/golang/protobuf/protoc-gen-go

@@ -5,10 +5,13 @@
 package account
 
 import (
+	"context"
+
 	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -20,9 +23,9 @@ type Server struct {
 
 func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
-
-	go initIAMClient()
-	go initIAMAccount()
+	ctx := db.NewContext(context.Background(), cfg.Mysql)
+	go initIAMClient(ctx)
+	go initIAMAccount(ctx)
 
 	s := Server{cfg.IAM}
 

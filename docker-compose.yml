@@ -316,6 +316,31 @@ services:
       - openpitrix-db-init
     container_name: "openpitrix-am-db-ctrl"
 
+  # pilot service
+  openpitrix-pilot-service:
+    build: .
+    image: "openpitrix"
+    command: "pilot -config=/opt/openpitrix/conf/pilot-config.json --openpitrix-ca-crt-file=/opt/openpitrix/conf/openpitrix-ca.crt --pilot-server-crt-file=/opt/openpitrix/conf/pilot-server.crt --pilot-server-key-file=/opt/openpitrix/conf/pilot-server.key --pilot-client-crt-file=/opt/openpitrix/conf/pilot-client.crt --pilot-client-key-file=/opt/openpitrix/conf/pilot-client.key serve"
+    ports:
+      - "9110:9110"
+      - "9114:9114"
+    volumes:
+      - ./metadata/cmd/pilot/pilot-config.json:/opt/openpitrix/conf/pilot-config.json
+      - ./deploy/kubernetes/tls-config/openpitrix-ca.crt:/opt/openpitrix/conf/openpitrix-ca.crt
+      - ./deploy/kubernetes/tls-config/pilot-server.crt:/opt/openpitrix/conf/pilot-server.crt
+      - ./deploy/kubernetes/tls-config/pilot-server.key:/opt/openpitrix/conf/pilot-server.key
+      - ./deploy/kubernetes/tls-config/pilot-client.crt:/opt/openpitrix/conf/pilot-client.crt
+      - ./deploy/kubernetes/tls-config/pilot-client.key:/opt/openpitrix/conf/pilot-client.key
+    container_name: "openpitrix-pilot-service"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   hyperpitrix:
     build: .
     image: "openpitrix"
@@ -344,6 +369,10 @@ services:
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - IAM_INIT_CLIENT_ID=x
+      - IAM_INIT_CLIENT_SECRET=y
+      - IAM_INIT_ACCOUNT_EMAIL=admin@op.com
+      - IAM_INIT_ACCOUNT_PASSWORD=passw0rd
     logging:
       driver: "json-file"
       options:

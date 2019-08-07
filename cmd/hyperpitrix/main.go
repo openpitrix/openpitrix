@@ -15,7 +15,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/service/cluster"
 	"openpitrix.io/openpitrix/pkg/service/isv"
 	"openpitrix.io/openpitrix/pkg/service/job"
-	"openpitrix.io/openpitrix/pkg/service/market"
 	"openpitrix.io/openpitrix/pkg/service/repo"
 	"openpitrix.io/openpitrix/pkg/service/repo_indexer"
 	"openpitrix.io/openpitrix/pkg/service/runtime"
@@ -35,7 +34,6 @@ func main() {
 	go cluster.Serve(getConf("cluster"))
 	go isv.Serve(getConf("isv"))
 	go job.Serve(getConf("job"))
-	go market.Serve(getConf("market"))
 	go repo_indexer.Serve(getConf("repo"))
 	go repo.Serve(getConf("repo"))
 	go runtime.Serve(getConf("runtime"))
