@@ -33,7 +33,7 @@ func TestHelm(t *testing.T) {
 
 	t.Log(d.Setup())
 
-	t.Log(d.Exec("helm init --client-only"))
+	t.Log(d.Exec("helm init --client-only --skip-refresh --wait"))
 
 	t.Log(d.Exec("helm create nginx"))
 
