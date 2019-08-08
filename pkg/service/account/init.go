@@ -18,7 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
-func initIAMClient() {
+func initIAMClient(ctx context.Context) {
 	clientId := os.Getenv("IAM_INIT_CLIENT_ID")
 	clientSecret := os.Getenv("IAM_INIT_CLIENT_SECRET")
 	const userId = constants.UserSystem
@@ -26,7 +26,7 @@ func initIAMClient() {
 	if clientId == "" || clientSecret == "" {
 		return
 	}
-	_, err := pi.Global().DB(context.Background()).InsertBySql(
+	_, err := pi.Global().DB(ctx).InsertBySql(
 		`insert into user_client (client_id, user_id, client_secret, status, description)
 values (?, ?, ?, 'active', '')
 on duplicate key update user_id = ?, client_secret = ?, status = 'active';`,
@@ -40,14 +40,13 @@ on duplicate key update user_id = ?, client_secret = ?, status = 'active';`,
 	logger.Info(nil, "Init IAM client [%s] done", clientId)
 }
 
-func initIAMAccount() {
+func initIAMAccount(ctx context.Context) {
 	email := os.Getenv("IAM_INIT_ACCOUNT_EMAIL")
 	password := os.Getenv("IAM_INIT_ACCOUNT_PASSWORD")
 
 	if email == "" || password == "" {
 		return
 	}
-	ctx := context.Background()
 	var userId string
 
 	user, isUserExist, isGroupExist := validateUserAndGroupExist(ctx, email)

@@ -22,6 +22,7 @@ func Serve(cfg *config.Config) {
 	s := Server{}
 	manager.NewGrpcServer("attachment-manager", constants.AttachmentManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithMysqlConfig(cfg.Mysql).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterAttachmentManagerServer(server, &s)
 			pb.RegisterAttachmentServiceServer(server, &s)

@@ -15,6 +15,7 @@ RUN go generate openpitrix.io/openpitrix/pkg/version && \
 RUN find /openpitrix_bin -type f -exec upx {} \;
 
 FROM alpine:3.7
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --update ca-certificates && update-ca-certificates
 COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /usr/local/go/lib/time/zoneinfo.zip
 COPY --from=builder /openpitrix_bin/* /usr/local/bin/

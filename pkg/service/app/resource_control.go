@@ -113,6 +113,7 @@ func checkAppName(ctx context.Context, name string) error {
 		From(constants.TableApp).
 		Where(db.Eq(constants.ColumnName, name)).
 		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Count()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -665,7 +666,11 @@ func clearRepoAppVersions(ctx context.Context, repoId string, ignoredVersionIds 
 		Set(constants.ColumnStatus, constants.StatusDeleted).
 		Set(constants.ColumnStatusTime, time.Now()).
 		Set(constants.ColumnUpdateTime, time.Now()).
-		Where(db.Eq(constants.ColumnRepoId, repoId)).
+		Where(db.Eq(constants.ColumnAppId,
+			[]*db.SelectQuery{pi.Global().DB(ctx).
+				Select(constants.ColumnAppId).
+				From(constants.TableApp).
+				Where(db.Eq(constants.ColumnRepoId, repoId))})).
 		Where(db.Eq(constants.ColumnActive, false)).
 		Where(db.Neq(constants.ColumnVersionId, ignoredVersionIds)).
 		Exec()

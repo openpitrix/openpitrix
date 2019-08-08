@@ -27,7 +27,7 @@ import (
 var clientConfig = testutil.GetClientConfig()
 var testTmpDir = testutil.GetTmpDir()
 
-var Service = []string{"openpitrix-app-manager", "openpitrix-account-service", "openpitrix-am-service"}
+var Service = []string{"hyperpitrix", "openpitrix-am-service"}
 
 const Vmbased = "vmbased"
 

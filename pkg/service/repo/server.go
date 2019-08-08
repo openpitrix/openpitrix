@@ -24,6 +24,7 @@ func Serve(cfg *config.Config) {
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
 		WithBuilder(s.Builder).
+		WithMysqlConfig(cfg.Mysql).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterRepoManagerServer(server, &s)
 		})

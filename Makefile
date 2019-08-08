@@ -243,13 +243,13 @@ test: ## Run all tests
 .PHONY: e2e-test
 e2e-test: ## Run integration tests
 	cd ./test/init/ && sh init_config.sh
-	go test -a -tags="integration" ./test/...
+	go test -count=1 -v -a -tags="integration" ./test/...
 	@echo "e2e-test done"
 
 .PHONY: e2e-k8s-test
 e2e-k8s-test: ## Run k8s tests
 	cd ./test/init/ && sh init_config.sh
-	go test -a -timeout 0 -tags="k8s" ./test/...
+	go test -count=1 -v -a -timeout 0 -tags="k8s" ./test/...
 	@echo "e2e-k8s-test done"
 
 .PHONY: clean
@@ -260,7 +260,7 @@ clean: ## Clean generated version file
 
 .PHONY: unit-test
 unit-test: ## Run unit tests
-	$(DB_TEST) $(ETCD_TEST) go test -a -tags="etcd db" ./...
+	$(DB_TEST) $(ETCD_TEST) go test -count=1 -a -tags="etcd db" ./...
 	@echo "unit-test done"
 
 build-image-%: ## build docker image

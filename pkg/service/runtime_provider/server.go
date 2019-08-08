@@ -22,6 +22,7 @@ func Serve(cfg *config.Config) {
 	s := Server{}
 	manager.NewGrpcServer("runtime-provider-manager", constants.RuntimeProviderManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithMysqlConfig(cfg.Mysql).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterRuntimeProviderManagerServer(server, &s)
 		})

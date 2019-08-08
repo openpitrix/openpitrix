@@ -4,6 +4,7 @@
 
 FROM golang:1.11-alpine3.7 as builder
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache git curl openssl
 
 RUN go get github.com/golang/protobuf/protoc-gen-go
@@ -26,6 +27,7 @@ RUN mkdir -p /protoc && cd /protoc \
 
 FROM golang:1.11-alpine3.7
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache git protobuf make curl openssl jq rsync upx
 
 COPY --from=builder /protoc/include /usr/local/include

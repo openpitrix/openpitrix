@@ -5,12 +5,14 @@
 package job
 
 import (
+	"context"
 	"os"
 
 	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -30,10 +32,13 @@ func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
 	jobController := NewController(hostname)
 	s := Server{controller: jobController}
-	go jobController.Serve()
+	ctx := context.Background()
+	ctx = db.NewContext(ctx, cfg.Mysql)
+	go jobController.Serve(ctx)
 
 	manager.NewGrpcServer("job-controller", constants.JobManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithMysqlConfig(cfg.Mysql).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterJobManagerServer(server, &s)
 		})

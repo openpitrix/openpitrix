@@ -4,6 +4,7 @@
 
 FROM openpitrix/openpitrix-builder as builder
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache util-linux
 
 WORKDIR /go/src/openpitrix.io/openpitrix/
@@ -16,6 +17,7 @@ RUN go generate openpitrix.io/openpitrix/pkg/version && \
 RUN find /metadata_bin -type f -exec upx {} \;
 
 FROM alpine:3.7
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --update ca-certificates && update-ca-certificates
 
 RUN apk add --no-cache supervisor

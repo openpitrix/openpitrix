@@ -15,7 +15,7 @@ import (
 	"openpitrix.io/openpitrix/test/testutil"
 )
 
-const Service = "openpitrix-isv-manager"
+const Service = "hyperpitrix"
 
 var clientConfig = testutil.GetClientConfig()
 

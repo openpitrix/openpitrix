@@ -11,6 +11,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -22,13 +23,14 @@ type Server struct {
 
 func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
-	controller := NewEventController(context.TODO())
+	controller := NewEventController(db.NewContext(context.Background(), cfg.Mysql))
 	s := Server{controller: controller}
 	go controller.Serve()
 	go s.Cron()
 	manager.NewGrpcServer("repo-indexer", constants.RepoIndexerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
+		WithMysqlConfig(cfg.Mysql).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterRepoIndexerServer(server, &s)
 		})

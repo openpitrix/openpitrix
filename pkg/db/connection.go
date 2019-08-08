@@ -5,12 +5,24 @@
 package db
 
 import (
+	"context"
+	"sync"
 	"time"
 
 	"github.com/gocraft/dbr"
 
 	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/logger"
 )
+
+type key int
+
+var dbMap = sync.Map{}
+var dbKey key
+
+type Database struct {
+	Conn *dbr.Connection
+}
 
 func OpenDatabase(cfg config.MysqlConfig) (*Database, error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
@@ -21,7 +33,40 @@ func OpenDatabase(cfg config.MysqlConfig) (*Database, error) {
 	conn.SetMaxIdleConns(100)
 	conn.SetMaxOpenConns(100)
 	conn.SetConnMaxLifetime(10 * time.Second)
-	return &Database{
+
+	db := &Database{
 		Conn: conn,
-	}, nil
+	}
+	dbMap.Store(cfg, db)
+	return db, nil
+}
+
+func NewContext(ctx context.Context, cfg config.MysqlConfig) context.Context {
+	return context.WithValue(ctx, dbKey, cfg)
+}
+
+func FromContext(ctx context.Context) (*Database, bool) {
+	cfg := ctx.Value(dbKey).(config.MysqlConfig)
+	var err error
+	db, ok := dbMap.Load(cfg)
+	if !ok {
+		db, err = OpenDatabase(cfg)
+		if err != nil {
+			logger.Critical(ctx, "Failed to open database: %+v", err)
+			return nil, false
+		}
+	}
+	return db.(*Database), true
+}
+
+func (db *Database) New(ctx context.Context) *Conn {
+	actualDb, ok := FromContext(ctx)
+	conn := db.Conn
+	if ok {
+		conn = actualDb.Conn
+	}
+	return &Conn{
+		Session: conn.NewSession(&EventReceiver{ctx}),
+		ctx:     ctx,
+	}
 }

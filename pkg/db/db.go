@@ -35,10 +35,6 @@ type InsertHook func(query *InsertQuery)
 type UpdateHook func(query *UpdateQuery)
 type DeleteHook func(query *DeleteQuery)
 
-type Database struct {
-	Conn *dbr.Connection
-}
-
 type SelectQuery struct {
 	*dbr.SelectBuilder
 	ctx       context.Context
@@ -69,13 +65,6 @@ type Conn struct {
 	InsertHook InsertHook
 	UpdateHook UpdateHook
 	DeleteHook DeleteHook
-}
-
-func (db *Database) New(ctx context.Context) *Conn {
-	return &Conn{
-		Session: db.Conn.NewSession(&EventReceiver{ctx}),
-		ctx:     ctx,
-	}
 }
 
 // SelectQuery
