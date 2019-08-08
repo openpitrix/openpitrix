@@ -147,6 +147,8 @@ services:
       - openpitrix-etcd:openpitrix-etcd
     external_links:
       - hyperpitrix:openpitrix-rp-manager
+      - hyperpitrix:openpitrix-runtime-manager
+      - hyperpitrix:openpitrix-app-manager
     depends_on:
       - openpitrix-etcd
       - hyperpitrix
@@ -168,6 +170,8 @@ services:
       - openpitrix-etcd:openpitrix-etcd
     external_links:
       - hyperpitrix:openpitrix-rp-manager
+      - hyperpitrix:openpitrix-runtime-manager
+      - hyperpitrix:openpitrix-app-manager
     depends_on:
       - openpitrix-etcd
       - hyperpitrix
@@ -189,6 +193,8 @@ services:
       - openpitrix-etcd:openpitrix-etcd
     external_links:
       - hyperpitrix:openpitrix-rp-manager
+      - hyperpitrix:openpitrix-runtime-manager
+      - hyperpitrix:openpitrix-app-manager
     depends_on:
       - openpitrix-etcd
       - hyperpitrix
@@ -210,6 +216,8 @@ services:
       - openpitrix-etcd:openpitrix-etcd
     external_links:
       - hyperpitrix:openpitrix-rp-manager
+      - hyperpitrix:openpitrix-runtime-manager
+      - hyperpitrix:openpitrix-app-manager
     depends_on:
       - openpitrix-etcd
       - hyperpitrix
