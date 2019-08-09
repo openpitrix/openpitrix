@@ -11,10 +11,10 @@ OpenPitrix Roadmap demonstrates a list of open source product development plans 
 | [Release v0.1](Roadmap.md#v01)| May, 2018 |
 | [Release v0.2](Roadmap.md#v02)| June, 2018 | 
 | [Release v0.3](Roadmap.md#v03)| October, 2018 | 
-| [Release v0.4](Roadmap.md#v04)| January, 2019 | 
-| [Release v0.5](Roadmap.md#v05)| March, 2019 | 
-| [Release v1.0](Roadmap.md#v10)| May, 2019 | 
-| [Release v2.0](Roadmap.md#v20)| October, 2019 | 
+| [Release v0.4](Roadmap.md#v04)| April, 2019 | 
+| [Release v0.5](Roadmap.md#v05)| \ | 
+| [Release v1.0](Roadmap.md#v10)| \ | 
+| [Release v2.0](Roadmap.md#v20)| \ | 
 
 ## Features
 
@@ -59,8 +59,6 @@ OpenPitrix Roadmap demonstrates a list of open source product development plans 
 - [x] Runtime Management: support to manage runtimes such as QingCloud, AWS, Kubernetes, etc.   
 - [x] Platform Management: support to view and manage applications and cluster instances, as well as view Pods of Helm cluster nodes.
 
-## Upcoming releases
-
 ### v0.4:
 
 **Admin**
@@ -85,6 +83,7 @@ OpenPitrix Roadmap demonstrates a list of open source product development plans 
 
 - [ ] Adding user guide function to help user get started quickly.
 
+## Upcoming releases
 
 ### v0.5:
 

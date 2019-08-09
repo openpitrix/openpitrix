@@ -11,10 +11,10 @@ OpenPitrix Roadmap 是 OpenPitrix 核心开发团队预期的产品开发计划�
 | [Release v0.1](Roadmap-zh.md#v01)|2018 年 5 月|
 | [Release v0.2](Roadmap-zh.md#v02)|2018 年 7 月|
 | [Release v0.3](Roadmap-zh.md#v03)|2018 年 10 月|
-| [Release v0.4](Roadmap-zh.md#v04)|2019 年 1 月|
-| [Release v0.5](Roadmap-zh.md#v05)|2019 年 3 月|
-| [Release v1.0](Roadmap-zh.md#v10)|2019 年 5 月|
-| [Release v2.0](Roadmap-zh.md#v20)|2019 年 9 月|
+| [Release v0.4](Roadmap-zh.md#v04)|2019 年 4 月|
+| [Release v0.5](Roadmap-zh.md#v05)| \ |
+| [Release v1.0](Roadmap-zh.md#v10)| \ |
+| [Release v2.0](Roadmap-zh.md#v20)| \ |
 
 ## 功能
 
@@ -57,8 +57,6 @@ OpenPitrix Roadmap 是 OpenPitrix 核心开发团队预期的产品开发计划�
 - [x] 环境管理：如管理 QingCloud、AWS 这类运行环境
 - [x] 平台管理：支持查看和管理已部署的应用及集群实例，支持查看 Helm 集群节点的 Pods
 
-## 将发布的版本
-
 ### v0.4:
 
 **平台管理员**
@@ -82,6 +80,8 @@ OpenPitrix Roadmap 是 OpenPitrix 核心开发团队预期的产品开发计划�
 **用户**
 
 - [ ] 新增用户引导功能
+
+## 将发布的版本
 
 ### v0.5:
 
