@@ -605,6 +605,64 @@ func (a *Client) IsvReviewAppVersion(params *IsvReviewAppVersionParams, authInfo
 }
 
 /*
+KsAdminPassAppVersion operators of ksadmin pass version of the app
+*/
+func (a *Client) KsAdminPassAppVersion(params *KsAdminPassAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*KsAdminPassAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewKsAdminPassAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "KsAdminPassAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/pass/ksadmin",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KsAdminPassAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*KsAdminPassAppVersionOK), nil
+
+}
+
+/*
+KsAdminRejectAppVersion operators of ks admin reject version of the app
+*/
+func (a *Client) KsAdminRejectAppVersion(params *KsAdminRejectAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*KsAdminRejectAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewKsAdminRejectAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "KsAdminRejectAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/reject/ksadmimn",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &KsAdminRejectAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*KsAdminRejectAppVersionOK), nil
+
+}
+
+/*
 ModifyApp modifies app info
 */
 func (a *Client) ModifyApp(params *ModifyAppParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyAppOK, error) {

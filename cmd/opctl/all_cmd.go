@@ -77,6 +77,8 @@ var AllCmd = []Cmd{
 	NewIsvPassAppVersionCmd(),
 	NewIsvRejectAppVersionCmd(),
 	NewIsvReviewAppVersionCmd(),
+	NewKsAdminPassAppVersionCmd(),
+	NewKsAdminRejectAppVersionCmd(),
 	NewModifyAppCmd(),
 	NewModifyAppVersionCmd(),
 	NewRecoverAppVersionCmd(),
@@ -2033,6 +2035,77 @@ func (c *IsvReviewAppVersionCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AppManager.IsvReviewAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type KsAdminPassAppVersionCmd struct {
+	*models.OpenpitrixPassAppVersionRequest
+}
+
+func NewKsAdminPassAppVersionCmd() Cmd {
+	cmd := &KsAdminPassAppVersionCmd{}
+	cmd.OpenpitrixPassAppVersionRequest = &models.OpenpitrixPassAppVersionRequest{}
+	return cmd
+}
+
+func (*KsAdminPassAppVersionCmd) GetActionName() string {
+	return "KsAdminPassAppVersion"
+}
+
+func (c *KsAdminPassAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "required, id of version to pass")
+}
+
+func (c *KsAdminPassAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewKsAdminPassAppVersionParams()
+	params.WithBody(c.OpenpitrixPassAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.KsAdminPassAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type KsAdminRejectAppVersionCmd struct {
+	*models.OpenpitrixRejectAppVersionRequest
+}
+
+func NewKsAdminRejectAppVersionCmd() Cmd {
+	cmd := &KsAdminRejectAppVersionCmd{}
+	cmd.OpenpitrixRejectAppVersionRequest = &models.OpenpitrixRejectAppVersionRequest{}
+	return cmd
+}
+
+func (*KsAdminRejectAppVersionCmd) GetActionName() string {
+	return "KsAdminRejectAppVersion"
+}
+
+func (c *KsAdminRejectAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Message, "message", "", "", "reject message")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "required, id of version to reject")
+}
+
+func (c *KsAdminRejectAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewKsAdminRejectAppVersionParams()
+	params.WithBody(c.OpenpitrixRejectAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.KsAdminRejectAppVersion(params, nil)
 	if err != nil {
 		return err
 	}

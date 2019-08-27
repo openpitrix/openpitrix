@@ -147,6 +147,8 @@ func (p *Server) ValidatePackage(ctx context.Context, req *pb.ValidatePackageReq
 	} else {
 		res.Name = pbutil.ToProtoString(v.GetName())
 		res.VersionName = pbutil.ToProtoString(v.GetVersionName())
+		res.Description = pbutil.ToProtoString(v.GetDescription())
+		res.Url = pbutil.ToProtoString(v.GetUrls())
 	}
 	return res, nil
 }
@@ -1304,6 +1306,14 @@ func (p *Server) TechnicalPassAppVersion(ctx context.Context, req *pb.PassAppVer
 
 func (p *Server) TechnicalRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
 	return rejectAppVersion(ctx, constants.OperatorTypeTechnical, req)
+}
+
+func (p *Server) KsAdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+	return passAppVersion(ctx, constants.OperatorTypeKsAdmin, req)
+}
+
+func (p *Server) KsAdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+	return rejectAppVersion(ctx, constants.OperatorTypeKsAdmin, req)
 }
 
 func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersionRequest) (*pb.SuspendAppVersionResponse, error) {

@@ -129,9 +129,11 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 			}
 		}
 	case Pass, Reject:
-		if p.Status != constants.StatusInReview {
-			return gerr.New(ctx,
-				gerr.FailedPrecondition, gerr.ErrorAppVersionIncorrectStatus, version.VersionId, version.Status)
+		if operatorType != constants.OperatorTypeKsAdmin {
+			if p.Status != constants.StatusInReview {
+				return gerr.New(ctx,
+					gerr.FailedPrecondition, gerr.ErrorAppVersionIncorrectStatus, version.VersionId, version.Status)
+			}
 		}
 	case Cancel:
 
@@ -147,6 +149,8 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 		reviewStatus = "business-"
 	case constants.OperatorTypeTechnical:
 		reviewStatus = "develop-"
+	case constants.OperatorTypeKsAdmin:
+		reviewStatus = "ks_admin-"
 	}
 
 	updater := pi.Global().DB(ctx).
@@ -207,7 +211,7 @@ func passAppVersionReview(ctx context.Context, version *models.AppVersion, opera
 	if err != nil {
 		return err
 	}
-	if operatorType == constants.OperatorTypeTechnical {
+	if operatorType == constants.OperatorTypeTechnical || operatorType == constants.OperatorTypeKsAdmin {
 		err = updateVersionStatus(ctx, version, constants.StatusPassed)
 		if err != nil {
 			return err
