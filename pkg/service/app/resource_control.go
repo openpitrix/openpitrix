@@ -73,10 +73,15 @@ func checkAppVersionHandlePermission(ctx context.Context, action Action, version
 	return nil
 }
 
-func checkModifyAppPermission(ctx context.Context, app *models.App) error {
+func checkModifyAppPermission(ctx context.Context, app *models.App, req *pb.ModifyAppRequest) error {
 	if app.Status == constants.StatusDeleted {
 		return gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorResourceAlreadyDeleted, app.AppId)
 	}
+
+	if app.Name == req.GetName().String() {
+		return gerr.New(ctx, gerr.AlreadyExists, gerr.ErrorAppNameExists)
+	}
+
 	count, err := pi.Global().DB(ctx).
 		Select("").
 		From(constants.TableAppVersion).

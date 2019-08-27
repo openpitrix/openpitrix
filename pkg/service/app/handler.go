@@ -271,7 +271,7 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		return nil, err
 	}
 
-	err = checkModifyAppPermission(ctx, app)
+	err = checkModifyAppPermission(ctx, app, req)
 	if err != nil {
 		return nil, err
 	}
