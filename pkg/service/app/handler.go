@@ -208,7 +208,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	s := ctxutil.GetSender(ctx)
 
 	var isv string
-	if enabled, ok := pi.Global().GlobalConfig().InstallModule[constants.IAM]; ok && enabled {
+	if enabled := pi.Global().GlobalConfig().InstallModule.Iam; enabled {
 		accountClient, err := accountclient.NewClient()
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -821,17 +821,16 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 		return nil, err
 	}
 
-	accountClient, err := accountclient.NewClient()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
+	if enabled := pi.Global().GlobalConfig().InstallModule.Iam; enabled {
+		accountClient, err := accountclient.NewClient()
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
 
-	accessClient, err := accessclient.NewClient()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-
-	if enabled, ok := pi.Global().GlobalConfig().InstallModule[constants.IAM]; ok && enabled {
+		accessClient, err := accessclient.NewClient()
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
 		noNeedIsvReview := accessClient.CheckActionBundleUser(ctx, []string{constants.ActionBundleIsvReview}, s.UserId)
 		if noNeedIsvReview {
 			// When DescribeAppVersionReviews, need sort by create time
@@ -974,7 +973,7 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 		return nil, err
 	}
 
-	if enabled, ok := pi.Global().GlobalConfig().InstallModule[constants.IAM]; ok && enabled {
+	if enabled := pi.Global().GlobalConfig().InstallModule.Iam; enabled {
 
 		accountClient, err := accountclient.NewClient()
 		if err != nil {
@@ -1106,7 +1105,7 @@ func passAppVersion(ctx context.Context, operatorType string, req *pb.PassAppVer
 		return nil, err
 	}
 
-	if enabled, ok := pi.Global().GlobalConfig().InstallModule[constants.IAM]; ok && enabled {
+	if enabled := pi.Global().GlobalConfig().InstallModule.Iam; enabled {
 		accountClient, err := accountclient.NewClient()
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -1218,7 +1217,7 @@ func rejectAppVersion(ctx context.Context, operatorType string, req *pb.RejectAp
 		return nil, err
 	}
 
-	if enabled, ok := pi.Global().GlobalConfig().InstallModule[constants.IAM]; ok && enabled {
+	if enabled := pi.Global().GlobalConfig().InstallModule.Iam; enabled {
 
 		accountClient, err := accountclient.NewClient()
 		if err != nil {
@@ -1344,7 +1343,7 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 		return nil, err
 	}
 
-	if enabled, ok := pi.Global().GlobalConfig().InstallModule[constants.IAM]; ok && enabled {
+	if enabled := pi.Global().GlobalConfig().InstallModule.Iam; enabled {
 
 		accountClient, err := accountclient.NewClient()
 		if err != nil {
@@ -1439,7 +1438,7 @@ func (p *Server) RecoverAppVersion(ctx context.Context, req *pb.RecoverAppVersio
 		return nil, err
 	}
 
-	if enabled, ok := pi.Global().GlobalConfig().InstallModule[constants.IAM]; ok && enabled {
+	if enabled := pi.Global().GlobalConfig().InstallModule.Iam; enabled {
 
 		accountClient, err := accountclient.NewClient()
 		if err != nil {

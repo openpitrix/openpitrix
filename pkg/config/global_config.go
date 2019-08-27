@@ -24,7 +24,7 @@ type GlobalConfig struct {
 	Job             JobServiceConfig                  `json:"job"`
 	Task            TaskServiceConfig                 `json:"task"`
 	BasicCfg        BasicConfig                       `json:"basic_config"`
-	InstallModule   map[string]bool                   `json:"install_modules"`
+	InstallModule   InstallModuleConfig               `json:"install_module"`
 }
 
 type AppServiceConfig struct {
@@ -77,6 +77,11 @@ type RuntimeProviderConfig struct {
 
 type RuntimeConfig struct {
 	AutoDeleteClusters bool `json:"auto_delete_clusters"`
+}
+
+type InstallModuleConfig struct {
+	Iam          bool `json:"iam"`
+	Notification bool `json:"notification"`
 }
 
 func (r *RuntimeProviderConfig) GetPort() int {

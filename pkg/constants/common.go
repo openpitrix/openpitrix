@@ -270,8 +270,3 @@ var ServiceTypes = []string{
 	ServiceTypeRuntime,
 	ServiceTypeBasicConfig,
 }
-
-const (
-	IAM          = "iam"
-	Notification = "notification"
-)

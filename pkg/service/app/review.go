@@ -99,9 +99,11 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 		operator = s.UserId
 		status   = reviewActionStatusMap[action]
 	)
-	err := checkAppVersionHandlePermission(ctx, action, version)
-	if err != nil {
-		return err
+	if operatorType != constants.OperatorTypeKsAdmin {
+		err := checkAppVersionHandlePermission(ctx, action, version)
+		if err != nil {
+			return err
+		}
 	}
 
 	versionReview, err := getAppVersionReview(ctx, version)
