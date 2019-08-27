@@ -46,4 +46,7 @@ runtime:
   auto_delete_clusters: false
 basic_config:
   platform_name: OpenPitrix
-  platform_url: https://lab.openpitrix.io`
+  platform_url: https://lab.openpitrix.io
+install_modules:
+  iam: false
+  notification: false`

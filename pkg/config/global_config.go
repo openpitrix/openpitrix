@@ -24,6 +24,7 @@ type GlobalConfig struct {
 	Job             JobServiceConfig                  `json:"job"`
 	Task            TaskServiceConfig                 `json:"task"`
 	BasicCfg        BasicConfig                       `json:"basic_config"`
+	InstallModule   map[string]bool                   `json:"install_modules"`
 }
 
 type AppServiceConfig struct {
