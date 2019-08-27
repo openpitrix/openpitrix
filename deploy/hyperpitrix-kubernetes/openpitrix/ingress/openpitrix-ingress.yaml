@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: openpitrix-ingress
+  namespace: ${NAMESPACE}
+spec:
+  tls:
+  - hosts:
+    - ${HOST}
+    secretName: ingress-tls
+  rules:
+  - host: ${HOST}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: openpitrix-dashboard
+          servicePort: 80

@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-db
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    tier: db
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    tier: db
+  ports:
+  - name: tcp
+    protocol: TCP
+    port: 3306
+    targetPort: 3306
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openpitrix-db-pvc
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    tier: db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: openpitrix-db-deployment
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    tier: db
+    version: ${VERSION}
+spec:
+  selector:
+    matchLabels:
+      app: openpitrix
+      tier: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        tier: db
+        version: ${VERSION}
+    spec:
+      containers:
+      - name: openpitrix-db
+        image: mysql:8.0.11
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          postStart:
+            exec:
+              command: ["sh", "-c", "rm -rf /var/lib/mysql/lost+found"]
+        args:
+          - --default-authentication-plugin=mysql_native_password
+          - --binlog-expire-logs-seconds=604800
+          - --max-binlog-size=1073741824
+        env:
+          # $ kubectl create secret generic mysql-pass --from-file=password.txt
+          # make sure password.txt does not have a trailing newline
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password.txt
+              name: mysql-pass
+        - name: MYSQL_ROOT_HOST
+          value: "%"
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: db-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: db-persistent-storage
+        persistentVolumeClaim:
+          claimName: openpitrix-db-pvc
