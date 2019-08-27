@@ -31,14 +31,14 @@ type ProviderInterface interface {
 
 func GetAvailablePlugins() []string {
 	var plugins []string
-	for provider := range pi.Global().GlobalConfig().Runtime {
+	for provider := range pi.Global().GlobalConfig().RuntimeProvider {
 		plugins = append(plugins, provider)
 	}
 	return plugins
 }
 
 func IsVmbasedProviders(provider string) bool {
-	providerConfig, isExist := pi.Global().GlobalConfig().Runtime[provider]
+	providerConfig, isExist := pi.Global().GlobalConfig().RuntimeProvider[provider]
 	if !isExist {
 		return false
 	}

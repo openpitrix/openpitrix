@@ -35,13 +35,15 @@ task:
 pilot:
   ip: 127.0.0.1
   port: 9114
-#  runtime:
+#  runtime_provider:
 #    qingcloud:
 #      api_server: api.qingcloud.com
 #      zone: .*
 #      image_id: xenial4x64a
 #      image_url: https://openpitrix.pek3a.qingstor.com/image/ubuntu.tar.gz
 #      provider_type: vmbased
+runtime:
+  auto_delete_clusters: false
 basic_config:
   platform_name: OpenPitrix
   platform_url: https://lab.openpitrix.io`
