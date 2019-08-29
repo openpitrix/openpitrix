@@ -1680,6 +1680,33 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/app_version/action/pass/admin": {
+      "post": {
+        "summary": "Operator of admin pass version of the app",
+        "operationId": "AdminPassAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/app_version/action/pass/business": {
       "post": {
         "summary": "Operator of business pass version of the app",
@@ -1711,33 +1738,6 @@ var Files = map[string]string{
       "post": {
         "summary": "Operator of isv pass version of the app",
         "operationId": "IsvPassAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/pass/ksadmin": {
-      "post": {
-        "summary": "Operator of ksadmin pass version of the app",
-        "operationId": "KsAdminPassAppVersion",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1815,6 +1815,33 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/app_version/action/reject/admin": {
+      "post": {
+        "summary": "Operator of Admin reject version of the app",
+        "operationId": "AdminRejectAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/app_version/action/reject/business": {
       "post": {
         "summary": "Operator of business reject version of the app",
@@ -1846,33 +1873,6 @@ var Files = map[string]string{
       "post": {
         "summary": "Operator of isv reject version of the app",
         "operationId": "IsvRejectAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/reject/ksadmimn": {
-      "post": {
-        "summary": "Operator of KsAdmin reject version of the app",
-        "operationId": "KsAdminRejectAppVersion",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -8970,6 +8970,16 @@ var Files = map[string]string{
             "type": "string"
           },
           "title": "advanced param"
+        },
+        "force": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "whether force delete clusters or not"
+        },
+        "grace_period": {
+          "type": "integer",
+          "format": "int64",
+          "title": "timeout(s), when delete clusters"
         }
       }
     },
@@ -9617,6 +9627,16 @@ var Files = map[string]string{
             "type": "string"
           },
           "title": "advanced param"
+        },
+        "force": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "whether force delete clusters or not"
+        },
+        "grace_period": {
+          "type": "integer",
+          "format": "int64",
+          "title": "timeout(s), when delete clusters"
         }
       }
     },
@@ -11341,6 +11361,16 @@ var Files = map[string]string{
             "type": "string"
           },
           "title": "required, ids of runtime to delete"
+        },
+        "force": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "whether force delete runtime or not"
+        },
+        "grace_period": {
+          "type": "integer",
+          "format": "int64",
+          "title": "timeout(s), when delete runtime"
         }
       }
     },

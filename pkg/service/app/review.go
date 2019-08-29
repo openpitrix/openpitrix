@@ -99,7 +99,7 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 		operator = s.UserId
 		status   = reviewActionStatusMap[action]
 	)
-	if operatorType != constants.OperatorTypeKsAdmin {
+	if operatorType != constants.OperatorTypeAdmin {
 		err := checkAppVersionHandlePermission(ctx, action, version)
 		if err != nil {
 			return err
@@ -131,7 +131,7 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 			}
 		}
 	case Pass, Reject:
-		if operatorType != constants.OperatorTypeKsAdmin {
+		if operatorType != constants.OperatorTypeAdmin {
 			if p.Status != constants.StatusInReview {
 				return gerr.New(ctx,
 					gerr.FailedPrecondition, gerr.ErrorAppVersionIncorrectStatus, version.VersionId, version.Status)
@@ -151,8 +151,8 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 		reviewStatus = "business-"
 	case constants.OperatorTypeTechnical:
 		reviewStatus = "develop-"
-	case constants.OperatorTypeKsAdmin:
-		reviewStatus = "ks_admin-"
+	case constants.OperatorTypeAdmin:
+		reviewStatus = "admin-"
 	}
 
 	updater := pi.Global().DB(ctx).
@@ -213,7 +213,7 @@ func passAppVersionReview(ctx context.Context, version *models.AppVersion, opera
 	if err != nil {
 		return err
 	}
-	if operatorType == constants.OperatorTypeTechnical || operatorType == constants.OperatorTypeKsAdmin {
+	if operatorType == constants.OperatorTypeTechnical || operatorType == constants.OperatorTypeAdmin {
 		err = updateVersionStatus(ctx, version, constants.StatusPassed)
 		if err != nil {
 			return err

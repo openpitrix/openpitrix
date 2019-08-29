@@ -37,4 +37,9 @@ pilot:
   port: 9114
 basic_config:
   platform_name: OpenPitrix
-  platform_url: https://lab.openpitrix.io`
+  platform_url: https://lab.openpitrix.io
+runtime:
+  auto_delete_clusters: false
+install_module:
+  iam: false
+  notification: false`

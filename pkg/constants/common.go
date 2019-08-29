@@ -234,7 +234,7 @@ const (
 	OperatorTypeBusiness    = "business"
 	OperatorTypeTechnical   = "technical"
 	OperatorTypeIsv         = "isv"
-	OperatorTypeKsAdmin     = "ks_admin"
+	OperatorTypeAdmin       = "admin"
 
 	ActionBundleBusinessReview  = "business_review"
 	ActionBundleTechnicalReview = "technical_review"

@@ -1307,12 +1307,12 @@ func (p *Server) TechnicalRejectAppVersion(ctx context.Context, req *pb.RejectAp
 	return rejectAppVersion(ctx, constants.OperatorTypeTechnical, req)
 }
 
-func (p *Server) KsAdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
-	return passAppVersion(ctx, constants.OperatorTypeKsAdmin, req)
+func (p *Server) AdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+	return passAppVersion(ctx, constants.OperatorTypeAdmin, req)
 }
 
-func (p *Server) KsAdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
-	return rejectAppVersion(ctx, constants.OperatorTypeKsAdmin, req)
+func (p *Server) AdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+	return rejectAppVersion(ctx, constants.OperatorTypeAdmin, req)
 }
 
 func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersionRequest) (*pb.SuspendAppVersionResponse, error) {

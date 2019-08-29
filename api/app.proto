@@ -877,23 +877,23 @@ service AppManager {
             body: "*"
         };
 	}
-	// Operator of ksadmin pass version of the app
-	rpc KsAdminPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
+	// Operator of admin pass version of the app
+	rpc AdminPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "Operator of ksadmin pass version of the app"
+            summary: "Operator of admin pass version of the app"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/pass/ksadmin"
+            post: "/v1/app_version/action/pass/admin"
             body: "*"
         };
 	}
-	// Operator of ksadmin reject version of the app
-	rpc KsAdminRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
+	// Operator of admin reject version of the app
+	rpc AdminRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "Operator of KsAdmin reject version of the app"
+            summary: "Operator of Admin reject version of the app"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/reject/ksadmimn"
+            post: "/v1/app_version/action/reject/admin"
             body: "*"
         };
 	}

@@ -25,6 +25,64 @@ type Client struct {
 }
 
 /*
+AdminPassAppVersion operators of admin pass version of the app
+*/
+func (a *Client) AdminPassAppVersion(params *AdminPassAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*AdminPassAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewAdminPassAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "AdminPassAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/pass/admin",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &AdminPassAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*AdminPassAppVersionOK), nil
+
+}
+
+/*
+AdminRejectAppVersion operators of admin reject version of the app
+*/
+func (a *Client) AdminRejectAppVersion(params *AdminRejectAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*AdminRejectAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewAdminRejectAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "AdminRejectAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/reject/admin",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &AdminRejectAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*AdminRejectAppVersionOK), nil
+
+}
+
+/*
 BusinessPassAppVersion operators of business pass version of the app
 */
 func (a *Client) BusinessPassAppVersion(params *BusinessPassAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*BusinessPassAppVersionOK, error) {
@@ -601,64 +659,6 @@ func (a *Client) IsvReviewAppVersion(params *IsvReviewAppVersionParams, authInfo
 		return nil, err
 	}
 	return result.(*IsvReviewAppVersionOK), nil
-
-}
-
-/*
-KsAdminPassAppVersion operators of ksadmin pass version of the app
-*/
-func (a *Client) KsAdminPassAppVersion(params *KsAdminPassAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*KsAdminPassAppVersionOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewKsAdminPassAppVersionParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "KsAdminPassAppVersion",
-		Method:             "POST",
-		PathPattern:        "/v1/app_version/action/pass/ksadmin",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &KsAdminPassAppVersionReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*KsAdminPassAppVersionOK), nil
-
-}
-
-/*
-KsAdminRejectAppVersion operators of ks admin reject version of the app
-*/
-func (a *Client) KsAdminRejectAppVersion(params *KsAdminRejectAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*KsAdminRejectAppVersionOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewKsAdminRejectAppVersionParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "KsAdminRejectAppVersion",
-		Method:             "POST",
-		PathPattern:        "/v1/app_version/action/reject/ksadmimn",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &KsAdminRejectAppVersionReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*KsAdminRejectAppVersionOK), nil
 
 }
 

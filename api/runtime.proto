@@ -150,6 +150,10 @@ message ModifyRuntimeResponse {
 message DeleteRuntimesRequest {
 	// required, ids of runtime to delete
 	repeated string runtime_id = 1;
+	// whether force delete runtime or not
+	google.protobuf.BoolValue force = 2;
+	// timeout(s), when delete runtime
+	uint32 grace_period = 3;
 }
 
 message DeleteRuntimesResponse {

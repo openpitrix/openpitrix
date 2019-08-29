@@ -478,6 +478,25 @@
     password:
       help: required, user password
       type: string
+- action: AdminPassAppVersion
+  request: PassAppVersionRequest
+  description: Operator of admin pass version of the app
+  service: AppManager
+  body:
+    version_id:
+      help: required, id of version to pass
+      type: string
+- action: AdminRejectAppVersion
+  request: RejectAppVersionRequest
+  description: Operator of Admin reject version of the app
+  service: AppManager
+  body:
+    message:
+      help: reject message
+      type: string
+    version_id:
+      help: required, id of version to reject
+      type: string
 - action: BusinessPassAppVersion
   request: PassAppVersionRequest
   description: Operator of business pass version of the app
@@ -894,25 +913,6 @@
     version_id:
       help: required, id of version to review
       type: string
-- action: KsAdminPassAppVersion
-  request: PassAppVersionRequest
-  description: Operator of ksadmin pass version of the app
-  service: AppManager
-  body:
-    version_id:
-      help: required, id of version to pass
-      type: string
-- action: KsAdminRejectAppVersion
-  request: RejectAppVersionRequest
-  description: Operator of KsAdmin reject version of the app
-  service: AppManager
-  body:
-    message:
-      help: reject message
-      type: string
-    version_id:
-      help: required, id of version to reject
-      type: string
 - action: ModifyApp
   request: ModifyAppRequest
   description: Modify app info
@@ -1189,6 +1189,12 @@
     cluster_id:
       help: required, ids of cluster to cease
       type: '[]string'
+    force:
+      help: whether force delete clusters or not
+      type: boolean
+    grace_period:
+      help: timeout(s), when delete clusters
+      type: integer
 - action: CreateCluster
   request: CreateClusterRequest
   description: Create cluster
@@ -1268,6 +1274,12 @@
     cluster_id:
       help: required, ids of clusters to delete
       type: '[]string'
+    force:
+      help: whether force delete clusters or not
+      type: boolean
+    grace_period:
+      help: timeout(s), when delete clusters
+      type: integer
 - action: DeleteKeyPairs
   request: DeleteKeyPairsRequest
   description: Batch delete key pairs
@@ -2268,6 +2280,12 @@
   description: Delete runtimes
   service: RuntimeManager
   body:
+    force:
+      help: whether force delete runtime or not
+      type: boolean
+    grace_period:
+      help: timeout(s), when delete runtime
+      type: integer
     runtime_id:
       help: required, ids of runtime to delete
       type: '[]string'

@@ -16,17 +16,17 @@ import (
 	"openpitrix.io/openpitrix/test/models"
 )
 
-// KsAdminPassAppVersionReader is a Reader for the KsAdminPassAppVersion structure.
-type KsAdminPassAppVersionReader struct {
+// AdminPassAppVersionReader is a Reader for the AdminPassAppVersion structure.
+type AdminPassAppVersionReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *KsAdminPassAppVersionReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *AdminPassAppVersionReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
 	case 200:
-		result := NewKsAdminPassAppVersionOK()
+		result := NewAdminPassAppVersionOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -37,24 +37,24 @@ func (o *KsAdminPassAppVersionReader) ReadResponse(response runtime.ClientRespon
 	}
 }
 
-// NewKsAdminPassAppVersionOK creates a KsAdminPassAppVersionOK with default headers values
-func NewKsAdminPassAppVersionOK() *KsAdminPassAppVersionOK {
-	return &KsAdminPassAppVersionOK{}
+// NewAdminPassAppVersionOK creates a AdminPassAppVersionOK with default headers values
+func NewAdminPassAppVersionOK() *AdminPassAppVersionOK {
+	return &AdminPassAppVersionOK{}
 }
 
-/*KsAdminPassAppVersionOK handles this case with default header values.
+/*AdminPassAppVersionOK handles this case with default header values.
 
 A successful response.
 */
-type KsAdminPassAppVersionOK struct {
+type AdminPassAppVersionOK struct {
 	Payload *models.OpenpitrixPassAppVersionResponse
 }
 
-func (o *KsAdminPassAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /v1/app_version/action/pass/ksadmin][%d] ksAdminPassAppVersionOK  %+v", 200, o.Payload)
+func (o *AdminPassAppVersionOK) Error() string {
+	return fmt.Sprintf("[POST /v1/app_version/action/pass/admin][%d] adminPassAppVersionOK  %+v", 200, o.Payload)
 }
 
-func (o *KsAdminPassAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *AdminPassAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.OpenpitrixPassAppVersionResponse)
 

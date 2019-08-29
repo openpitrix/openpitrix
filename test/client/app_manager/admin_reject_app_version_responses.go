@@ -16,17 +16,17 @@ import (
 	"openpitrix.io/openpitrix/test/models"
 )
 
-// KsAdminRejectAppVersionReader is a Reader for the KsAdminRejectAppVersion structure.
-type KsAdminRejectAppVersionReader struct {
+// AdminRejectAppVersionReader is a Reader for the AdminRejectAppVersion structure.
+type AdminRejectAppVersionReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *KsAdminRejectAppVersionReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *AdminRejectAppVersionReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
 	case 200:
-		result := NewKsAdminRejectAppVersionOK()
+		result := NewAdminRejectAppVersionOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -37,24 +37,24 @@ func (o *KsAdminRejectAppVersionReader) ReadResponse(response runtime.ClientResp
 	}
 }
 
-// NewKsAdminRejectAppVersionOK creates a KsAdminRejectAppVersionOK with default headers values
-func NewKsAdminRejectAppVersionOK() *KsAdminRejectAppVersionOK {
-	return &KsAdminRejectAppVersionOK{}
+// NewAdminRejectAppVersionOK creates a AdminRejectAppVersionOK with default headers values
+func NewAdminRejectAppVersionOK() *AdminRejectAppVersionOK {
+	return &AdminRejectAppVersionOK{}
 }
 
-/*KsAdminRejectAppVersionOK handles this case with default header values.
+/*AdminRejectAppVersionOK handles this case with default header values.
 
 A successful response.
 */
-type KsAdminRejectAppVersionOK struct {
+type AdminRejectAppVersionOK struct {
 	Payload *models.OpenpitrixRejectAppVersionResponse
 }
 
-func (o *KsAdminRejectAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /v1/app_version/action/reject/ksadmimn][%d] ksAdminRejectAppVersionOK  %+v", 200, o.Payload)
+func (o *AdminRejectAppVersionOK) Error() string {
+	return fmt.Sprintf("[POST /v1/app_version/action/reject/admin][%d] adminRejectAppVersionOK  %+v", 200, o.Payload)
 }
 
-func (o *KsAdminRejectAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *AdminRejectAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.OpenpitrixRejectAppVersionResponse)
 
