@@ -7,6 +7,7 @@ package cluster
 import (
 	"context"
 	"fmt"
+	"github.com/golang/protobuf/ptypes/wrappers"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -158,4 +159,30 @@ func (c *Client) DescribeClustersWithFrontgateId(ctx context.Context, frontgateI
 	}
 
 	return response.ClusterSet, nil
+}
+
+func (c *Client) DeleteAndCeaseClusters(ctx context.Context, clusterIds []string, force bool) error {
+	var err error
+
+	deleteReq := &pb.DeleteClustersRequest{
+		ClusterId: clusterIds,
+		Force: &wrappers.BoolValue{
+			Value: force,
+		},
+	}
+	_, err = c.DeleteClusters(ctx, deleteReq)
+	if err != nil {
+		return err
+	}
+	ceaseReq := &pb.CeaseClustersRequest{
+		ClusterId: clusterIds,
+		Force: &wrappers.BoolValue{
+			Value: force,
+		},
+	}
+	_, err = c.CeaseClusters(ctx, ceaseReq)
+	if err != nil {
+		return err
+	}
+	return nil
 }

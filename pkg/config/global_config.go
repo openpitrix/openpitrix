@@ -18,7 +18,6 @@ type GlobalConfig struct {
 	App             AppServiceConfig                  `json:"app"`
 	Repo            RepoServiceConfig                 `json:"repo"`
 	Cluster         ClusterServiceConfig              `json:"cluster"`
-	Runtime         RuntimeConfig                     `json:"runtime"`
 	RuntimeProvider map[string]*RuntimeProviderConfig `json:"runtime_provider"`
 	Pilot           PilotServiceConfig                `json:"pilot"`
 	Job             JobServiceConfig                  `json:"job"`
@@ -73,10 +72,6 @@ type RuntimeProviderConfig struct {
 	Port            int                    `json:"port"`
 	Enable          bool                   `json:"enable"`
 	AdvancedOptions map[string]interface{} `json:"advanced_options"`
-}
-
-type RuntimeConfig struct {
-	AutoDeleteClusters bool `json:"auto_delete_clusters"`
 }
 
 type InstallModuleConfig struct {

@@ -376,7 +376,6 @@ services:
       - hyperpitrix:openpitrix-rp-manager
       - hyperpitrix:openpitrix-runtime-manager
       - hyperpitrix:openpitrix-task-manager
-      - hyperpitrix:openpitrix-account-service
       - hyperpitrix:openpitrix-repo-indexer
     depends_on:
       - openpitrix-db
@@ -384,6 +383,7 @@ services:
       - openpitrix-am-service
       - openpitrix-im-service
       - openpitrix-notification
+      - openpitrix-account-service
     container_name: "hyperpitrix"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
@@ -449,3 +449,31 @@ services:
     depends_on:
       - openpitrix-db-init
     container_name: "openpitrix-notification-db-ctrl"
+
+  # account service
+  openpitrix-account-service:
+    build: .
+    image: "openpitrix"
+    command: "account-service"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-iam-db-ctrl
+      - openpitrix-etcd
+      - openpitrix-im-service
+      - openpitrix-am-service
+    container_name: "openpitrix-account-service"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=iam
+      - IAM_INIT_CLIENT_ID=x
+      - IAM_INIT_CLIENT_SECRET=y
+      - IAM_INIT_ACCOUNT_EMAIL=admin@op.com
+      - IAM_INIT_ACCOUNT_PASSWORD=passw0rd
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}

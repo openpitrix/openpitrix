@@ -38,8 +38,6 @@ pilot:
 basic_config:
   platform_name: OpenPitrix
   platform_url: https://lab.openpitrix.io
-runtime:
-  auto_delete_clusters: false
 install_module:
   iam: false
   notification: false`

@@ -9,8 +9,8 @@ cd $(dirname $0)
 cd ../..
 
 CONFIG_FILE="./config/global_config.yaml"
-CONFIG_MAP_TMPL="./kubernetes/etcd/global_config_map.tmpl"
-CONFIG_MAP="./kubernetes/etcd/global_config_map.yaml"
+CONFIG_MAP_TMPL="./hyperpitrix-kubernetes/etcd/global_config_map.tmpl"
+CONFIG_MAP="./hyperpitrix-kubernetes/etcd/global_config_map.yaml"
 
 
 usage() {

@@ -32,10 +32,6 @@ spec:
     protocol: TCP
     port: 9104
     targetPort: 9104
-  - name: openpitrix-im-manager
-    protocol: TCP
-    port: 9119
-    targetPort: 9119
   - name: openpitrix-isv-manager
     protocol: TCP
     port: 9118
@@ -113,8 +109,6 @@ spec:
                 name: attachment-manager
               - containerPort: 9104
                 name: cluster-manager
-              - containerPort: 9119
-                name: im-manager
               - containerPort: 9118
                 name: isv-manager
               - containerPort: 9106
@@ -134,35 +128,6 @@ spec:
                 value: "${GRPC_SHOW_ERROR_CAUSE}"
               - name: OPENPITRIX_LOG_LEVEL
                 value: ${OPENPITRIX_LOG_LEVEL}
-              - name: OPENPITRIX_IAM_SECRET_KEY
-                valueFrom:
-                  secretKeyRef:
-                    key: secret-key.txt
-                    name: iam-secret-key
-              - name: OPENPITRIX_MYSQL_DATABASE_API
-                value: "openpitrix"
-              - name: OPENPITRIX_MYSQL_DATABASE_APP
-                value: "app"
-              - name: OPENPITRIX_MYSQL_DATABASE_ATTACHMENT
-                value: "attachment"
-              - name: OPENPITRIX_MYSQL_DATABASE_CLUSTER
-                value: "cluster"
-              - name: OPENPITRIX_MYSQL_DATABASE_IM
-                value: "im"
-              - name: IM_DB_LOG_MODE_ENABLE
-                value: "${DB_LOG_MODE_ENABLE}"
-              - name: IM_DB_HOST
-                value: "openpitrix-db"
-              - name: OPENPITRIX_MYSQL_DATABASE_ISV
-                value: "isv"
-              - name: OPENPITRIX_MYSQL_DATABASE_JOB
-                value: "job"
-              - name: OPENPITRIX_MYSQL_DATABASE_REPO
-                value: "repo"
-              - name: OPENPITRIX_MYSQL_DATABASE_RUNTIME
-                value: "runtime"
-              - name: OPENPITRIX_MYSQL_DATABASE_TASK
-                value: "task"
               - name: OPENPITRIX_MYSQL_PASSWORD
                 valueFrom:
                   secretKeyRef:
