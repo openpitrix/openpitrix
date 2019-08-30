@@ -18,7 +18,7 @@ func Example_unmarshalInitConfig() {
 }
 
 const AwsConfig = `
-runtime:
+runtime_provider:
   aws:
     api_server: .*.amazonaws.com
     zone: .*
