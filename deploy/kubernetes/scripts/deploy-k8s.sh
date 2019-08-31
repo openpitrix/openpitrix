@@ -27,6 +27,7 @@ DASHBOARD_NODEPORT=""
 OPENPITRIX_LOG_LEVEL="info"
 DB_LOG_MODE_ENABLE="true"
 GRPC_SHOW_ERROR_CAUSE="true"
+REPO_DIR=""
 # use nodePort for api/pilot/dashboard service
 # $cat ${NODEPORT_FILE}
 # API_NODEPORT=31009
@@ -67,6 +68,7 @@ usage() {
   echo "        -t TASK REPLICA : the task replica number."
   echo "        -o HOST         : the hostname used in ingress."
   echo "        -p PROVIDER     : the runtime provider plugin. such as: qingcloud,aws. such as: all"
+  echo "        -e REPO_DIR     : the other repo dir."
   echo "        -b              : base model will be applied."
   echo "        -m              : metadata will be applied."
   echo "        -c              : dbctrl will be applied."
@@ -79,7 +81,7 @@ usage() {
 }
 
 
-while getopts :o:n:v:r:l:j:t:p:hbcdmsuia option
+while getopts :o:n:v:r:l:j:t:p:e:hbcdmsuia option
 do
   case "${option}"
   in
@@ -91,6 +93,7 @@ do
   j) JOB_REPLICA=${OPTARG};;
   t) TASK_REPLICA=${OPTARG};;
   p) PROVIDER_PLUGINS=${OPTARG};;
+  e) REPO_DIR=${OPTARG};;
   c) DBCTRL=1;;
   d) OPENPITRIX_LOG_LEVEL="debug";;
   m) METADATA=1;;
@@ -234,6 +237,7 @@ replace() {
 	  -e "s!\${OPENPITRIX_LOG_LEVEL}!${OPENPITRIX_LOG_LEVEL}!g" \
 	  -e "s!\${DB_LOG_MODE_ENABLE}!${DB_LOG_MODE_ENABLE}!g" \
 	  -e "s!\${GRPC_SHOW_ERROR_CAUSE}!${GRPC_SHOW_ERROR_CAUSE}!g" \
+	  -e "s!\${REPO_DIR}!${REPO_DIR}!g" \
 	  $1
 }
 
