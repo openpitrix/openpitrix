@@ -102,10 +102,6 @@ get_resource() {
 apply_yaml() {
   version=${1}
   file=${2}
-  if [ "${file}" == "openpitrix-hyperpitrix.yaml" ];then
-    replace ./hyperpitrix-kubernetes/openpitrix/${file} > ~/openpitrix_yaml.yaml
-  fi
-
   if [ "${version}" == "latest" ];then
     replace ./hyperpitrix-kubernetes/openpitrix/${file} | kubectl delete -f - --ignore-not-found=true
     replace ./hyperpitrix-kubernetes/openpitrix/${file} | kubectl apply -f -

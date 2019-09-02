@@ -191,7 +191,7 @@ release-%: ## Release version
 	cp -r deploy/config deploy/kubernetes deploy/*.sh deploy/$*-kubernetes/; \
 	cp -r deploy/config deploy/hyperpitrix-kubernetes deploy/*.sh deploy/$*-hyperpitrix-kubernetes/; \
 	cd deploy/ && tar -czvf $*-kubernetes.tar.gz $*-kubernetes; \
-	cd deploy/ && tar -czvf $*-hyperpitrix-kubernetes.tar.gz $*hyperpitrix-kubernetes; \
+	cd deploy/ && tar -czvf $*-hyperpitrix-kubernetes.tar.gz $*-hyperpitrix-kubernetes; \
 	cd ../; \
 	rm -rf deploy/$*-docker-compose*; \
 	mkdir deploy/$*-docker-compose; \

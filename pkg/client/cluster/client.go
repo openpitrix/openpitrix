@@ -7,8 +7,9 @@ package cluster
 import (
 	"context"
 	"fmt"
-	"github.com/golang/protobuf/ptypes/wrappers"
 	"time"
+
+	"github.com/golang/protobuf/ptypes/wrappers"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"

@@ -9,7 +9,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/service/account"
 )
 
-func main(){
+func main() {
 	cfg := config.LoadConf()
 	account.Serve(cfg)
 }
