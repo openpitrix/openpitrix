@@ -47,7 +47,7 @@ spec:
       - name: wait-runtime-manager
         image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-rp-manager.${NAMESPACE}.svc 9121; do echo "waiting for runtime-manager"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z openpitrix-hyperpitrix.${NAMESPACE}.svc 9121; do echo "waiting for runtime-manager"; sleep 2; done;']
       containers:
       - name: openpitrix-rp-kubernetes
         image: ${RP_K8S_IMAGE}

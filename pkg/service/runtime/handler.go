@@ -286,7 +286,7 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 			}
 		}
 
-		err = deleteClusters(ctx, clusterClient, clusterIds, req.GetForce().Value)
+		err = clusterClient.DeleteAndCeaseClusters(ctx, clusterIds, req.GetForce().Value)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 		}

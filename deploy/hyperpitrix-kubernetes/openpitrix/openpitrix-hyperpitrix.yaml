@@ -32,10 +32,6 @@ spec:
     protocol: TCP
     port: 9104
     targetPort: 9104
-  - name: openpitrix-im-manager
-    protocol: TCP
-    port: 9119
-    targetPort: 9119
   - name: openpitrix-isv-manager
     protocol: TCP
     port: 9118
@@ -64,6 +60,7 @@ spec:
     protocol: TCP
     port: 9107
     targetPort: 9107
+
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
@@ -78,13 +75,13 @@ spec:
   selector:
     matchLabels:
       app: openpitrix
-      component: openpitrix
+      component: openpitrix-hyperpitrix
   replicas: 1
   template:
     metadata:
       labels:
         app: openpitrix
-        component: openpitrix
+        component: openpitrix-hyperpitrix
         version: ${VERSION}
     spec:
       initContainers:
@@ -97,77 +94,24 @@ spec:
         imagePullPolicy: IfNotPresent
         command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
-        - name: hyperpitrix
-            image: ${IMAGE}
-            imagePullPolicy: ${IMAGE_PULL_POLICY}
-            command:
-              - hyperpitrix
-            ports:
-              - containerPort: 9100
-                name: api-manager
-              - containerPort: 9102
-                name: app-manager
-              - containerPort: 9108
-                name: category-manager
-              - containerPort: 9120
-                name: attachment-manager
-              - containerPort: 9104
-                name: cluster-manager
-              - containerPort: 9119
-                name: im-manager
-              - containerPort: 9118
-                name: isv-manager
-              - containerPort: 9106
-                name: job-manager
-              - containerPort: 9102
-                name: repo-manager
-              - containerPort: 9121
-                name: repo-indexer
-              - containerPort: 9121
-                name: rp-manager
-              - containerPort: 9103
-                name: runtime-manager
-              - containerPort: 9107
-                name: task-manager
-            env:
-              - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
-                value: "${GRPC_SHOW_ERROR_CAUSE}"
-              - name: OPENPITRIX_LOG_LEVEL
-                value: ${OPENPITRIX_LOG_LEVEL}
-              - name: OPENPITRIX_IAM_SECRET_KEY
-                valueFrom:
-                  secretKeyRef:
-                    key: secret-key.txt
-                    name: iam-secret-key
-              - name: OPENPITRIX_MYSQL_DATABASE_API
-                value: "openpitrix"
-              - name: OPENPITRIX_MYSQL_DATABASE_APP
-                value: "app"
-              - name: OPENPITRIX_MYSQL_DATABASE_ATTACHMENT
-                value: "attachment"
-              - name: OPENPITRIX_MYSQL_DATABASE_CLUSTER
-                value: "cluster"
-              - name: OPENPITRIX_MYSQL_DATABASE_IM
-                value: "im"
-              - name: IM_DB_LOG_MODE_ENABLE
-                value: "${DB_LOG_MODE_ENABLE}"
-              - name: IM_DB_HOST
-                value: "openpitrix-db"
-              - name: OPENPITRIX_MYSQL_DATABASE_ISV
-                value: "isv"
-              - name: OPENPITRIX_MYSQL_DATABASE_JOB
-                value: "job"
-              - name: OPENPITRIX_MYSQL_DATABASE_REPO
-                value: "repo"
-              - name: OPENPITRIX_MYSQL_DATABASE_RUNTIME
-                value: "runtime"
-              - name: OPENPITRIX_MYSQL_DATABASE_TASK
-                value: "task"
-              - name: OPENPITRIX_MYSQL_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    key: password.txt
-                    name: mysql-pass
+      - name: openpitrix-api-gateway
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+        - api-gateway
+        ports:
+        - containerPort: 9100
+          name: api-gateway
+        env:
+        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+          value: "${GRPC_SHOW_ERROR_CAUSE}"
+        - name: OPENPITRIX_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
+        - name: OPENPITRIX_MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password.txt
+              name: mysql-pass
         resources:
           limits:
             cpu: ${CPU_LIMITS}m
@@ -175,3 +119,294 @@ spec:
           requests:
             cpu: ${CPU_REQUESTS}m
             memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-app-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - app-manager
+        ports:
+          - containerPort: 9102
+            name: app-mgr
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+          - name: OPENPITRIX_MYSQL_DATABASE
+            value: "app"
+          - name: OPENPITRIX_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password.txt
+                name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-category-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - category-manager
+        ports:
+          - containerPort: 9108
+            name: cateogory-mgr
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+          - name: OPENPITRIX_MYSQL_DATABASE
+            value: "app"
+          - name: OPENPITRIX_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password.txt
+                name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-attachment-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - attachment-manager
+        ports:
+          - containerPort: 9120
+            name: attachment-mgr
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+          - name: OPENPITRIX_MYSQL_DATABASE
+            value: "attachment"
+          - name: OPENPITRIX_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password.txt
+                name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-cluster-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - cluster-manager
+        ports:
+          - containerPort: 9104
+            name: cluster-mgr
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+          - name: OPENPITRIX_MYSQL_DATABASE
+            value: "cluster"
+          - name: OPENPITRIX_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password.txt
+                name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-isv-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - isv-manager
+        ports:
+          - containerPort: 9118
+            name: isv-mgr
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+          - name: OPENPITRIX_MYSQL_DATABASE
+            value: "isv"
+          - name: OPENPITRIX_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password.txt
+                name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-job-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - job-manager
+        ports:
+          - containerPort: 9106
+            name: job-mgr
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+          - name: OPENPITRIX_MYSQL_DATABASE
+            value: "job"
+          - name: OPENPITRIX_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password.txt
+                name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-repo-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - repo-manager
+        ports:
+          - containerPort: 9101
+            name: repo-mgr
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+          - name: OPENPITRIX_MYSQL_DATABASE
+            value: "repo"
+          - name: OPENPITRIX_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password.txt
+                name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-repo-indexer
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - repo-indexer
+        ports:
+          - containerPort: 9108
+            name: repo-indexer
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+          - name: OPENPITRIX_MYSQL_DATABASE
+            value: "repo"
+          - name: OPENPITRIX_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password.txt
+                name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-rp-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - runtime-provider-manager
+        ports:
+          - containerPort: 9121
+            name: rp-mgr
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-runtime-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - runtime-manager
+        ports:
+          - containerPort: 9103
+            name: runtime-mgr
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+          - name: OPENPITRIX_MYSQL_DATABASE
+            value: "runtime"
+          - name: OPENPITRIX_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password.txt
+                name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+      - name: openpitrix-task-manager
+        image: ${IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - task-manager
+        ports:
+          - containerPort: 9107
+            name: task-mgr
+        env:
+          - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+            value: "${GRPC_SHOW_ERROR_CAUSE}"
+          - name: OPENPITRIX_LOG_LEVEL
+            value: ${OPENPITRIX_LOG_LEVEL}
+          - name: OPENPITRIX_MYSQL_DATABASE
+            value: "task"
+          - name: OPENPITRIX_MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: password.txt
+                name: mysql-pass
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+

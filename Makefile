@@ -33,8 +33,8 @@ define get_build_flags
 		-w -s)
 endef
 
-#COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-isv-manager openpitrix-notification openpitrix-im-service openpitrix-am-service
-COMPOSE_APP_SERVICES=openpitrix-pilot-service openpitrix-im-service openpitrix-am-service hyperpitrix
+COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-isv-manager openpitrix-notification openpitrix-im-service openpitrix-am-service
+#COMPOSE_APP_SERVICES=openpitrix-pilot-service openpitrix-im-service openpitrix-am-service hyperpitrix
 COMPOSE_DB_CTRL=openpitrix-db-init openpitrix-im-db-init openpitrix-am-db-init openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-attachment-db-ctrl openpitrix-isv-db-ctrl openpitrix-notification-db-ctrl openpitrix-im-db-ctrl openpitrix-am-db-ctrl
 CMD?=...
 WITH_METADATA?=yes
@@ -187,8 +187,11 @@ compose-down: ## Shutdown docker compose
 release-%: ## Release version
 	@if [ "`echo "$*" | grep -E "^openpitrix-v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
 	mkdir deploy/$*-kubernetes; \
+	mkdir deploy/$*-hyperpitrix-kubernetes; \
 	cp -r deploy/config deploy/kubernetes deploy/*.sh deploy/$*-kubernetes/; \
+	cp -r deploy/config deploy/hyperpitrix-kubernetes deploy/*.sh deploy/$*-hyperpitrix-kubernetes/; \
 	cd deploy/ && tar -czvf $*-kubernetes.tar.gz $*-kubernetes; \
+	cd deploy/ && tar -czvf $*-hyperpitrix-kubernetes.tar.gz $*hyperpitrix-kubernetes; \
 	cd ../; \
 	rm -rf deploy/$*-docker-compose*; \
 	mkdir deploy/$*-docker-compose; \

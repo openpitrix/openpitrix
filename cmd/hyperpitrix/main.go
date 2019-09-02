@@ -8,7 +8,6 @@ package main
 import (
 	"openpitrix.io/openpitrix/pkg/apigateway"
 	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/service/account"
 	"openpitrix.io/openpitrix/pkg/service/app"
 	"openpitrix.io/openpitrix/pkg/service/attachment"
 	"openpitrix.io/openpitrix/pkg/service/category"
@@ -40,7 +39,6 @@ func main() {
 	go task.Serve(getConf("task"))
 	go app.Serve(getConf("app"))
 	go attachment.Serve(getConf("attachment"))
-	go account.Serve(getConf("iam"))
 	go runtime_provider.Serve(getConf(""))
 
 	apigateway.Serve(getConf(""))
