@@ -9,11 +9,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang/protobuf/ptypes/wrappers"
-
 	"github.com/ghodss/yaml"
 
-	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -97,6 +94,9 @@ func encodeRuntimeCredentialContent(provider, content string) (string, error) {
 }
 
 func deleteRuntime(ctx context.Context, runtimeIds []string) error {
+	if len(runtimeIds) == 0 {
+		return nil
+	}
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableRuntime).
 		Set(constants.ColumnStatus, constants.StatusDeleted).
@@ -104,30 +104,4 @@ func deleteRuntime(ctx context.Context, runtimeIds []string) error {
 		Where(db.Eq(constants.ColumnRuntimeId, runtimeIds)).
 		Exec()
 	return err
-}
-
-func deleteClusters(ctx context.Context, clusterClient *clusterclient.Client, clusterIds []string, force bool) error {
-	var err error
-
-	deleteReq := &pb.DeleteClustersRequest{
-		ClusterId: clusterIds,
-		Force: &wrappers.BoolValue{
-			Value: force,
-		},
-	}
-	_, err = clusterClient.DeleteClusters(ctx, deleteReq)
-	if err != nil {
-		return err
-	}
-	ceaseReq := &pb.CeaseClustersRequest{
-		ClusterId: clusterIds,
-		Force: &wrappers.BoolValue{
-			Value: force,
-		},
-	}
-	_, err = clusterClient.CeaseClusters(ctx, ceaseReq)
-	if err != nil {
-		return err
-	}
-	return nil
 }

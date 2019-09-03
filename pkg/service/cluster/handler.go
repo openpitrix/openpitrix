@@ -969,7 +969,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 		if err != nil {
 			return nil, err
 		}
-		if !req.GetForce().Value {
+		if !req.GetForce().GetValue() {
 			err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive, constants.StatusStopped, constants.StatusPending})
 			if err != nil {
 				return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourceFailed, cluster.ClusterId)
@@ -1995,7 +1995,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 
 	var jobIds []string
 	for _, cluster := range clusters {
-		if !req.GetForce().Value {
+		if !req.GetForce().GetValue() {
 			err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusDeleted})
 			if err != nil {
 				return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCeaseResourceFailed, cluster.ClusterId)

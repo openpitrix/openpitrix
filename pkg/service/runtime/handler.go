@@ -276,21 +276,19 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 		}
 
 		if response.TotalCount > 0 {
-			if req.GetForce().Value {
+			if req.GetForce().GetValue() {
 				for _, cluster := range response.ClusterSet {
-					clusterIds = append(clusterIds, cluster.GetClusterId().Value)
+					clusterIds = append(clusterIds, cluster.GetClusterId().GetValue())
+				}
+				err = clusterClient.DeleteAndCeaseClusters(ctx, clusterIds, req.GetForce().GetValue())
+				if err != nil {
+					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 				}
 			} else {
 				err = fmt.Errorf("there are still [%d] clusters in the runtime [%s]", response.TotalCount, runtime.RuntimeId)
 				return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourcesFailed)
 			}
 		}
-
-		err = clusterClient.DeleteAndCeaseClusters(ctx, clusterIds, req.GetForce().Value)
-		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
-		}
-
 	}
 
 	err = deleteRuntime(ctx, runtimeIds)
