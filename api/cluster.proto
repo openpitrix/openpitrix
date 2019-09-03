@@ -148,6 +148,10 @@ message DeleteClustersRequest {
 	repeated string cluster_id = 1;
 	// advanced param
 	repeated string advanced_param = 2;
+	// whether force delete clusters or not
+	google.protobuf.BoolValue force = 3;
+	// timeout(s), when delete clusters
+	uint32 grace_period = 4;
 }
 
 message DeleteClustersResponse {
@@ -652,6 +656,10 @@ message CeaseClustersRequest {
 	repeated string cluster_id = 1;
 	// advanced param
 	repeated string advanced_param = 2;
+	// whether force delete clusters or not
+	google.protobuf.BoolValue force = 3;
+	// timeout(s), when delete clusters
+	uint32 grace_period = 4;
 }
 
 message CeaseClustersResponse {

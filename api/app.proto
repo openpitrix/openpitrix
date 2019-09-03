@@ -51,6 +51,10 @@ message ValidatePackageResponse {
 	google.protobuf.StringValue name = 3;
 	// app version name.eg.[0.1.0]
 	google.protobuf.StringValue version_name = 4;
+	// app url
+	google.protobuf.StringValue url = 5;
+	// app description
+	google.protobuf.StringValue description = 6;
 }
 
 message ModifyAppRequest {
@@ -870,6 +874,26 @@ service AppManager {
         };
 		option (google.api.http) = {
             post: "/v1/app_version/action/reject/technical"
+            body: "*"
+        };
+	}
+	// Operator of admin pass version of the app
+	rpc AdminPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "Operator of admin pass version of the app"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/pass/admin"
+            body: "*"
+        };
+	}
+	// Operator of admin reject version of the app
+	rpc AdminRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "Operator of Admin reject version of the app"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/reject/admin"
             body: "*"
         };
 	}

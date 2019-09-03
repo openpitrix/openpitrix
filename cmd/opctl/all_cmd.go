@@ -57,6 +57,8 @@ var AllCmd = []Cmd{
 	NewModifyGroupCmd(),
 	NewModifyUserCmd(),
 	NewValidateUserPasswordCmd(),
+	NewAdminPassAppVersionCmd(),
+	NewAdminRejectAppVersionCmd(),
 	NewBusinessPassAppVersionCmd(),
 	NewBusinessRejectAppVersionCmd(),
 	NewBusinessReviewAppVersionCmd(),
@@ -1206,6 +1208,77 @@ func (c *ValidateUserPasswordCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AccountManager.ValidateUserPassword(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type AdminPassAppVersionCmd struct {
+	*models.OpenpitrixPassAppVersionRequest
+}
+
+func NewAdminPassAppVersionCmd() Cmd {
+	cmd := &AdminPassAppVersionCmd{}
+	cmd.OpenpitrixPassAppVersionRequest = &models.OpenpitrixPassAppVersionRequest{}
+	return cmd
+}
+
+func (*AdminPassAppVersionCmd) GetActionName() string {
+	return "AdminPassAppVersion"
+}
+
+func (c *AdminPassAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "required, id of version to pass")
+}
+
+func (c *AdminPassAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewAdminPassAppVersionParams()
+	params.WithBody(c.OpenpitrixPassAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.AdminPassAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type AdminRejectAppVersionCmd struct {
+	*models.OpenpitrixRejectAppVersionRequest
+}
+
+func NewAdminRejectAppVersionCmd() Cmd {
+	cmd := &AdminRejectAppVersionCmd{}
+	cmd.OpenpitrixRejectAppVersionRequest = &models.OpenpitrixRejectAppVersionRequest{}
+	return cmd
+}
+
+func (*AdminRejectAppVersionCmd) GetActionName() string {
+	return "AdminRejectAppVersion"
+}
+
+func (c *AdminRejectAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Message, "message", "", "", "reject message")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "required, id of version to reject")
+}
+
+func (c *AdminRejectAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewAdminRejectAppVersionParams()
+	params.WithBody(c.OpenpitrixRejectAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.AdminRejectAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2769,6 +2842,7 @@ func (*CeaseClustersCmd) GetActionName() string {
 func (c *CeaseClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AdvancedParam, "advanced_param", "", []string{}, "advanced param")
 	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "required, ids of cluster to cease")
+	f.BoolVarP(&c.Force, "force", "", false, "whether force delete clusters or not")
 }
 
 func (c *CeaseClustersCmd) Run(out Out) error {
@@ -2957,6 +3031,7 @@ func (*DeleteClustersCmd) GetActionName() string {
 func (c *DeleteClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AdvancedParam, "advanced_param", "", []string{}, "advanced param")
 	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "required, ids of clusters to delete")
+	f.BoolVarP(&c.Force, "force", "", false, "whether force delete clusters or not")
 }
 
 func (c *DeleteClustersCmd) Run(out Out) error {
@@ -4857,6 +4932,7 @@ func (*DeleteRuntimesCmd) GetActionName() string {
 }
 
 func (c *DeleteRuntimesCmd) ParseFlag(f Flag) {
+	f.BoolVarP(&c.Force, "force", "", false, "whether force delete runtime or not")
 	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "required, ids of runtime to delete")
 }
 

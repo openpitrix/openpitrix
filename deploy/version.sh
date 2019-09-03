@@ -46,6 +46,20 @@ openpitrix_v0_4_1="
   WATCHER_VERSION=v0.1.0
 "
 
+### OpenPitrix version v0.4.1
+openpitrix_v0_4_2="
+  VERSION=v0.4.2
+  DASHBOARD_VERSION=v0.4.2
+  IM_VERSION=v0.1.0
+  AM_VERSION=v0.1.0
+  NOTIFICATION_VERSION=v0.1.0
+  RP_QINGCLOUD_VERSION=v0.1.0
+  RP_AWS_VERSION=v0.1.0
+  RP_ALIYUN_VERSION=v0.1.0
+  RP_K8S_VERSION=v0.1.0
+  WATCHER_VERSION=v0.1.0
+"
+
 ## Usage:
 ## sh version.sh [openpitrix_${version}]
 

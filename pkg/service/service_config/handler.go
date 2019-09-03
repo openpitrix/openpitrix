@@ -63,7 +63,7 @@ func (p *Server) SetServiceConfig(ctx context.Context, req *pb.SetServiceConfigR
 		for _, cfg := range req.RuntimeConfig.ConfigSet {
 			name := cfg.GetName().GetValue()
 			enable := cfg.GetEnable().GetValue()
-			runtimeProviderConfig, isExist := pi.Global().GlobalConfig().Runtime[name]
+			runtimeProviderConfig, isExist := pi.Global().GlobalConfig().RuntimeProvider[name]
 			if !isExist {
 				return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorUnsupportedRuntimeProvider, name)
 			}
@@ -120,7 +120,7 @@ func (p *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 			serviceConfigResponse.NotificationConfig = NfToOpConfig(response)
 		case constants.ServiceTypeRuntime:
 			var configs []*pb.RuntimeItemConfig
-			for name, runtimeProviderConfig := range pi.Global().GlobalConfig().Runtime {
+			for name, runtimeProviderConfig := range pi.Global().GlobalConfig().RuntimeProvider {
 				configs = append(configs, &pb.RuntimeItemConfig{
 					Name:   pbutil.ToProtoString(name),
 					Enable: pbutil.ToProtoBool(runtimeProviderConfig.Enable),

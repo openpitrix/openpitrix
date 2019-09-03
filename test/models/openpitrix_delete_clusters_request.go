@@ -21,6 +21,12 @@ type OpenpitrixDeleteClustersRequest struct {
 
 	// required, ids of clusters to delete
 	ClusterID []string `json:"cluster_id"`
+
+	// whether force delete clusters or not
+	Force bool `json:"force,omitempty"`
+
+	// timeout(s), when delete clusters
+	GracePeriod int64 `json:"grace_period,omitempty"`
 }
 
 // Validate validates this openpitrix delete clusters request
