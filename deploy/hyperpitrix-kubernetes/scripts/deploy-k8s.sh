@@ -183,6 +183,33 @@ replace() {
 	  $1
 }
 
+DELETE_DEPLOYMENT=(
+"openpitrix-api-gateway-deployment"
+"openpitrix-app-manager-deployment"
+"openpitrix-category-manager-deployment"
+"openpitrix-cluster-manager-deployment"
+"openpitrix-dashboard-deployment"
+"openpitrix-db-deployment"
+"openpitrix-etcd-deployment"
+"openpitrix-iam-service-deployment"
+"openpitrix-job-manager-deployment"
+"openpitrix-minio-deployment"
+"openpitrix-pilot-deployment"
+"openpitrix-repo-indexer-deployment"
+"openpitrix-repo-manager-deployment"
+"openpitrix-runtime-manager-deployment"
+"openpitrix-task-manager-deployment"
+)
+
+
+for item in ${DELETE_DEPLOYMENT[@]}
+do
+    kubectl delete deployment ${item} -n openpitrix-system
+    if [ $? -ne 0 ]; then
+      echo "Delete deployment ${item} failed."
+    fi
+done
+
 [ -z `which make` ] && echo "Deployed failed: You need to install 'make' first." && exit 1
 
 
