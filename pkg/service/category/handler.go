@@ -158,20 +158,31 @@ func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryReque
 }
 
 func (p *Server) DeleteCategories(ctx context.Context, req *pb.DeleteCategoriesRequest) (*pb.DeleteCategoriesResponse, error) {
-	categoryIds := req.GetCategoryId()
+	var err error
+	var count uint32
+	var categoryIds []string
 
+	categoryIds = req.GetCategoryId()
 	if stringutil.StringIn(models.UncategorizedId, categoryIds) {
 		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorCannotDeleteDefaultCategory)
 	}
-
-	_, err := pi.Global().DB(ctx).
-		DeleteFrom(constants.TableCategory).
-		Where(db.Eq(constants.ColumnCategoryId, categoryIds)).
-		Exec()
+	count, err = countRelations(ctx, categoryIds)
+	if err != nil {
+		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorDeleteResourcesFailed)
+	}
+	if !req.Force.GetValue() && count > 0 {
+		return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorDeleteResourcesFailed)
+	}
+	if count > 0 {
+		err = deleteRelations(ctx, categoryIds)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		}
+	}
+	err = deleteCateogries(ctx, categoryIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
-
 	return &pb.DeleteCategoriesResponse{
 		CategoryId: categoryIds,
 	}, nil

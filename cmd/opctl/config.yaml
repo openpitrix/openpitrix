@@ -1095,6 +1095,9 @@
     category_id:
       help: required, ids of category to delete
       type: '[]string'
+    force:
+      help: if true force delete category
+      type: boolean
 - action: DescribeCategories
   request: DescribeCategoriesRequest
   description: Get categories, support filter with these fields(category_id, status,
