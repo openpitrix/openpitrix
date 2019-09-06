@@ -2639,6 +2639,7 @@ func (*DeleteCategoriesCmd) GetActionName() string {
 
 func (c *DeleteCategoriesCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "required, ids of category to delete")
+	f.BoolVarP(&c.Force, "force", "", false, "if true force delete category")
 }
 
 func (c *DeleteCategoriesCmd) Run(out Out) error {

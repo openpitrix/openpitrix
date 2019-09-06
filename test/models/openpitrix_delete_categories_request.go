@@ -18,6 +18,9 @@ type OpenpitrixDeleteCategoriesRequest struct {
 
 	// required, ids of category to delete
 	CategoryID []string `json:"category_id"`
+
+	// if true force delete category
+	Force bool `json:"force,omitempty"`
 }
 
 // Validate validates this openpitrix delete categories request

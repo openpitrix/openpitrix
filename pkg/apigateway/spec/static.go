@@ -8815,6 +8815,11 @@ var Files = map[string]string{
             "type": "string"
           },
           "title": "required, ids of category to delete"
+        },
+        "force": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "if true force delete category"
         }
       }
     },

@@ -53,7 +53,7 @@ usage() {
 }
 
 
-while getopts :n:v:r:l:j:t:p:e:hbcsa option
+while getopts :n:v:r:l:j:t:p:e:m:hbcsa option
 do
   case "${option}"
   in
@@ -182,6 +182,53 @@ replace() {
 	  -e "s!\${REPO_DIR}!${REPO_DIR}!g" \
 	  $1
 }
+
+DELETE_DEPLOYMENT=(
+"openpitrix-api-gateway-deployment"
+"openpitrix-app-manager-deployment"
+"openpitrix-category-manager-deployment"
+"openpitrix-cluster-manager-deployment"
+"openpitrix-dashboard-deployment"
+"openpitrix-iam-service-deployment"
+"openpitrix-job-manager-deployment"
+"openpitrix-pilot-deployment"
+"openpitrix-repo-indexer-deployment"
+"openpitrix-repo-manager-deployment"
+"openpitrix-runtime-manager-deployment"
+"openpitrix-task-manager-deployment"
+)
+
+DELETE_SERVICE=(
+"openpitrix-api-gateway"
+"openpitrix-app-manager"
+"openpitrix-category-manager"
+"openpitrix-cluster-manager"
+"openpitrix-dashboard"
+"openpitrix-iam-service"
+"openpitrix-job-manager"
+"openpitrix-pilot-service"
+"openpitrix-repo-indexer"
+"openpitrix-repo-manager"
+"openpitrix-runtime-manager"
+"openpitrix-task-manager"
+)
+
+
+for item in ${DELETE_DEPLOYMENT[@]}
+do
+    kubectl delete deployment ${item} -n ${NAMESPACE}
+    if [ $? -ne 0 ]; then
+      echo "Delete deployment ${item} failed."
+    fi
+done
+
+for item in ${DELETE_SERVICE[@]}
+do
+    kubectl delete svc ${item} -n ${NAMESPACE}
+    if [ $? -ne 0 ]; then
+      echo "Delete svc ${item} failed."
+    fi
+done
 
 [ -z `which make` ] && echo "Deployed failed: You need to install 'make' first." && exit 1
 

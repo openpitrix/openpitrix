@@ -39,3 +39,33 @@ func (p *Server) getCategories(ctx context.Context, categoryIds []string) ([]*mo
 	}
 	return categories, nil
 }
+
+func deleteRelations(ctx context.Context, categoryIds []string) (err error) {
+	_, err = pi.Global().DB(ctx).
+		Update(constants.TableCategoryResource).
+		Set(constants.ColumnStatus, constants.StatusDisabled).
+		Where(db.Eq(constants.ColumnCategoryId, categoryIds)).
+		Exec()
+	return
+}
+
+func deleteCateogries(ctx context.Context, categoryIds []string) (err error) {
+	_, err = pi.Global().DB(ctx).
+		DeleteFrom(constants.TableCategory).
+		Where(db.Eq(constants.ColumnCategoryId, categoryIds)).
+		Exec()
+	return
+}
+
+func countRelations(ctx context.Context, categoryIds []string) (uint32, error) {
+	count, err := pi.Global().DB(ctx).
+		Select("").
+		From(constants.TableCategoryResource).
+		Where(db.Eq(constants.ColumnCategoryId, categoryIds)).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusEnabled)).
+		Count()
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
