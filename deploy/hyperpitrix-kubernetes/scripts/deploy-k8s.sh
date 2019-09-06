@@ -28,7 +28,6 @@ MEMORY_LIMITS=500
 
 REQUESTS=""
 LIMITS=""
-REMOVE_NAMESPACE=""
 
 PROVIDER_PLUGINS=""
 REPO_DIR=""
@@ -50,7 +49,6 @@ usage() {
   echo "        -d              : set openpitrix log level to debug."
   echo "        -s              : storage will be applied."
   echo "        -a              : all of base/dbctrl/storage will be applied."
-  echo "        -m              : the namespace to delete in kubernetes before apply deployments."
   exit -1
 }
 
@@ -67,7 +65,6 @@ do
   t) TASK_REPLICA=${OPTARG};;
   p) PROVIDER_PLUGINS=${OPTARG};;
   e) REPO_DIR=${OPTARG};;
-  m) REMOVE_NAMESPACE=${OPTARG};;
   c) DBCTRL=1;;
   d) OPENPITRIX_LOG_LEVEL="debug";;
   b) BASE=1;;
@@ -201,12 +198,35 @@ DELETE_DEPLOYMENT=(
 "openpitrix-task-manager-deployment"
 )
 
+DELETE_SERVICE=(
+"openpitrix-api-gateway"
+"openpitrix-app-manager"
+"openpitrix-category-manager"
+"openpitrix-cluster-manager"
+"openpitrix-dashboard"
+"openpitrix-iam-service"
+"openpitrix-job-manager"
+"openpitrix-pilot-service"
+"openpitrix-repo-indexer"
+"openpitrix-repo-manager"
+"openpitrix-runtime-manager"
+"openpitrix-task-manager"
+)
+
 
 for item in ${DELETE_DEPLOYMENT[@]}
 do
-    kubectl delete deployment ${item} -n ${REMOVE_NAMESPACE}
+    kubectl delete deployment ${item} -n ${NAMESPACE}
     if [ $? -ne 0 ]; then
       echo "Delete deployment ${item} failed."
+    fi
+done
+
+for item in ${DELETE_SERVICE[@]}
+do
+    kubectl delete svc ${item} -n ${NAMESPACE}
+    if [ $? -ne 0 ]; then
+      echo "Delete svc ${item} failed."
     fi
 done
 
