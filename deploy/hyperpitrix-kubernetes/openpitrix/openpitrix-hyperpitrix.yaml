@@ -26,8 +26,8 @@ spec:
     targetPort: 9113
   - name: openpitrix-attachment-manager
     protocol: TCP
-    port: 9120
-    targetPort: 9120
+    port: 9122
+    targetPort: 9122
   - name: openpitrix-cluster-manager
     protocol: TCP
     port: 9104
@@ -179,7 +179,7 @@ spec:
         command:
           - attachment-manager
         ports:
-          - containerPort: 9120
+          - containerPort: 9122
             name: attachment-mgr
         env:
           - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE

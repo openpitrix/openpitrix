@@ -52,7 +52,7 @@ const (
 	IMServicePort              = 9119
 	AMServicePort              = 9120
 	EtcdServicePort            = 2379
-	AttachmentManagerPort      = 9120
+	AttachmentManagerPort      = 9122
 	RuntimeProviderManagerPort = 9121
 	NotificationPort           = 9201
 	ServiceConfigPort          = 9202
