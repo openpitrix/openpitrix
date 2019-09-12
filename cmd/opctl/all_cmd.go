@@ -1447,6 +1447,7 @@ func (*CreateAppCmd) GetActionName() string {
 
 func (c *CreateAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. app icon")
+	f.StringVarP(&c.Isv, "isv", "", "", "isv")
 	f.StringVarP(&c.Name, "name", "", "", "required, app name")
 	f.StringVarP(&c.VersionName, "version_name", "", "", "required, version name of the app")
 	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version_package. required, version with specific app package")
@@ -1672,6 +1673,8 @@ func (c *DescribeActiveAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "app category ids.")
 	f.StringSliceVarP(&c.ChartName, "chart_name", "", []string{}, "app chart name.")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "select column to display.")
+	c.Isv = new(string)
+	f.StringVarP(c.Isv, "isv", "", "", "isv.")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "data limit per page, default is 20, max value is 200.")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "app name.")
@@ -1873,6 +1876,8 @@ func (c *DescribeAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "app category ids.")
 	f.StringSliceVarP(&c.ChartName, "chart_name", "", []string{}, "app chart name.")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "select column to display.")
+	c.Isv = new(string)
+	f.StringVarP(c.Isv, "isv", "", "", "isv.")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "data limit per page, default is 20, max value is 200.")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "app name.")

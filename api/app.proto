@@ -26,6 +26,8 @@ message CreateAppRequest {
 	google.protobuf.StringValue version_name = 5;
 	// app icon
 	google.protobuf.BytesValue icon = 6;
+	// isv
+	google.protobuf.StringValue isv = 7;
 }
 
 message CreateAppResponse {
@@ -205,6 +207,8 @@ message DescribeAppsRequest {
 	repeated string category_id = 17;
 	// select column to display
 	repeated string display_columns = 18;
+	// isv
+	google.protobuf.StringValue isv = 19;
 }
 
 message DescribeAppsResponse {

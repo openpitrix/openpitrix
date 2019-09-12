@@ -1583,6 +1583,13 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "isv",
+            "description": "isv.",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -2729,6 +2736,13 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "isv",
+            "description": "isv.",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -8029,6 +8043,10 @@
           "type": "string",
           "format": "byte",
           "title": "app icon"
+        },
+        "isv": {
+          "type": "string",
+          "title": "isv"
         }
       }
     },

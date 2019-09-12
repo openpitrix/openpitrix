@@ -83,6 +83,11 @@ type DescribeAppsParams struct {
 
 	*/
 	DisplayColumns []string
+	/*Isv
+	  isv.
+
+	*/
+	Isv *string
 	/*Limit
 	  data limit per page, default is 20, max value is 200.
 
@@ -209,6 +214,17 @@ func (o *DescribeAppsParams) WithDisplayColumns(displayColumns []string) *Descri
 // SetDisplayColumns adds the displayColumns to the describe apps params
 func (o *DescribeAppsParams) SetDisplayColumns(displayColumns []string) {
 	o.DisplayColumns = displayColumns
+}
+
+// WithIsv adds the isv to the describe apps params
+func (o *DescribeAppsParams) WithIsv(isv *string) *DescribeAppsParams {
+	o.SetIsv(isv)
+	return o
+}
+
+// SetIsv adds the isv to the describe apps params
+func (o *DescribeAppsParams) SetIsv(isv *string) {
+	o.Isv = isv
 }
 
 // WithLimit adds the limit to the describe apps params
@@ -348,6 +364,22 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 	// query array param display_columns
 	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
 		return err
+	}
+
+	if o.Isv != nil {
+
+		// query param isv
+		var qrIsv string
+		if o.Isv != nil {
+			qrIsv = *o.Isv
+		}
+		qIsv := qrIsv
+		if qIsv != "" {
+			if err := r.SetQueryParam("isv", qIsv); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if o.Limit != nil {

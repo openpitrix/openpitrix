@@ -540,6 +540,9 @@
     icon:
       help: app icon
       type: byte
+    isv:
+      help: isv
+      type: string
     name:
       help: required, app name
       type: string
@@ -657,6 +660,9 @@
     display_columns:
       help: select column to display.
       type: '[]string'
+    isv:
+      help: isv.
+      type: string
     limit:
       help: data limit per page, default is 20, max value is 200.
       type: int64
@@ -835,6 +841,9 @@
     display_columns:
       help: select column to display.
       type: '[]string'
+    isv:
+      help: isv.
+      type: string
     limit:
       help: data limit per page, default is 20, max value is 200.
       type: int64
