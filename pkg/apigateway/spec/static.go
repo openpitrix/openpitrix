@@ -1598,7 +1598,11 @@ var Files = map[string]string{
             "description": "isv.",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -2751,7 +2755,11 @@ var Files = map[string]string{
             "description": "isv.",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [

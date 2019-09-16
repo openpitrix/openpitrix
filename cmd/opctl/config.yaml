@@ -662,7 +662,7 @@
       type: '[]string'
     isv:
       help: isv.
-      type: string
+      type: '[]string'
     limit:
       help: data limit per page, default is 20, max value is 200.
       type: int64
@@ -843,7 +843,7 @@
       type: '[]string'
     isv:
       help: isv.
-      type: string
+      type: '[]string'
     limit:
       help: data limit per page, default is 20, max value is 200.
       type: int64

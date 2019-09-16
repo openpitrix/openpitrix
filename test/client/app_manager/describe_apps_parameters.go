@@ -87,7 +87,7 @@ type DescribeAppsParams struct {
 	  isv.
 
 	*/
-	Isv *string
+	Isv []string
 	/*Limit
 	  data limit per page, default is 20, max value is 200.
 
@@ -217,13 +217,13 @@ func (o *DescribeAppsParams) SetDisplayColumns(displayColumns []string) {
 }
 
 // WithIsv adds the isv to the describe apps params
-func (o *DescribeAppsParams) WithIsv(isv *string) *DescribeAppsParams {
+func (o *DescribeAppsParams) WithIsv(isv []string) *DescribeAppsParams {
 	o.SetIsv(isv)
 	return o
 }
 
 // SetIsv adds the isv to the describe apps params
-func (o *DescribeAppsParams) SetIsv(isv *string) {
+func (o *DescribeAppsParams) SetIsv(isv []string) {
 	o.Isv = isv
 }
 
@@ -366,20 +366,12 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		return err
 	}
 
-	if o.Isv != nil {
+	valuesIsv := o.Isv
 
-		// query param isv
-		var qrIsv string
-		if o.Isv != nil {
-			qrIsv = *o.Isv
-		}
-		qIsv := qrIsv
-		if qIsv != "" {
-			if err := r.SetQueryParam("isv", qIsv); err != nil {
-				return err
-			}
-		}
-
+	joinedIsv := swag.JoinByFormat(valuesIsv, "multi")
+	// query array param isv
+	if err := r.SetQueryParam("isv", joinedIsv...); err != nil {
+		return err
 	}
 
 	if o.Limit != nil {

@@ -208,7 +208,7 @@ message DescribeAppsRequest {
 	// select column to display
 	repeated string display_columns = 18;
 	// isv
-	google.protobuf.StringValue isv = 19;
+	repeated string isv = 19;
 }
 
 message DescribeAppsResponse {
