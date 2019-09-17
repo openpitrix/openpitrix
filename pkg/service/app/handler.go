@@ -225,7 +225,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		}
 	} else {
 		s.OwnerPath = sender.OwnerPath(":" + s.UserId)
-		isv = s.UserId
+		isv = req.GetIsv().GetValue()
 	}
 
 	newApp := models.NewApp(name, s.GetOwnerPath(), isv)

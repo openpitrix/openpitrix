@@ -1592,6 +1592,17 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "isv",
+            "description": "isv.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -2731,6 +2742,17 @@ var Files = map[string]string{
           {
             "name": "display_columns",
             "description": "select column to display.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "isv",
+            "description": "isv.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -8038,6 +8060,10 @@ var Files = map[string]string{
           "type": "string",
           "format": "byte",
           "title": "app icon"
+        },
+        "isv": {
+          "type": "string",
+          "title": "isv"
         }
       }
     },

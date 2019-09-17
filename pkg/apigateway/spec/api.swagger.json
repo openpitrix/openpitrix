@@ -1583,6 +1583,17 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "isv",
+            "description": "isv.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -2722,6 +2733,17 @@
           {
             "name": "display_columns",
             "description": "select column to display.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "isv",
+            "description": "isv.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -8029,6 +8051,10 @@
           "type": "string",
           "format": "byte",
           "title": "app icon"
+        },
+        "isv": {
+          "type": "string",
+          "title": "isv"
         }
       }
     },

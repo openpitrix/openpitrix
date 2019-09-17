@@ -83,6 +83,11 @@ type DescribeActiveAppsParams struct {
 
 	*/
 	DisplayColumns []string
+	/*Isv
+	  isv.
+
+	*/
+	Isv []string
 	/*Limit
 	  data limit per page, default is 20, max value is 200.
 
@@ -209,6 +214,17 @@ func (o *DescribeActiveAppsParams) WithDisplayColumns(displayColumns []string) *
 // SetDisplayColumns adds the displayColumns to the describe active apps params
 func (o *DescribeActiveAppsParams) SetDisplayColumns(displayColumns []string) {
 	o.DisplayColumns = displayColumns
+}
+
+// WithIsv adds the isv to the describe active apps params
+func (o *DescribeActiveAppsParams) WithIsv(isv []string) *DescribeActiveAppsParams {
+	o.SetIsv(isv)
+	return o
+}
+
+// SetIsv adds the isv to the describe active apps params
+func (o *DescribeActiveAppsParams) SetIsv(isv []string) {
+	o.Isv = isv
 }
 
 // WithLimit adds the limit to the describe active apps params
@@ -347,6 +363,14 @@ func (o *DescribeActiveAppsParams) WriteToRequest(r runtime.ClientRequest, reg s
 	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
 	// query array param display_columns
 	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
+		return err
+	}
+
+	valuesIsv := o.Isv
+
+	joinedIsv := swag.JoinByFormat(valuesIsv, "multi")
+	// query array param isv
+	if err := r.SetQueryParam("isv", joinedIsv...); err != nil {
 		return err
 	}
 

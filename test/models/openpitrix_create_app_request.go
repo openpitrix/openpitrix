@@ -19,6 +19,9 @@ type OpenpitrixCreateAppRequest struct {
 	// app icon
 	Icon strfmt.Base64 `json:"icon,omitempty"`
 
+	// isv
+	Isv string `json:"isv,omitempty"`
+
 	// required, app name
 	Name string `json:"name,omitempty"`
 

@@ -103,6 +103,7 @@ const (
 	ColumnRejectMessage            = "reject_message"
 	ColumnSubmitTime               = "submit_time"
 	ColumnApprover                 = "approver"
+	ColumnIsv                      = "isv"
 )
 
 var PushEventTables = map[string][]string{
@@ -125,7 +126,7 @@ var IndexedColumns = map[string][]string{
 	TableApp: {
 		ColumnAppId, ColumnName, ColumnRepoId, ColumnDescription, ColumnStatus,
 		ColumnHome, ColumnIcon, ColumnScreenshots, ColumnMaintainers, ColumnSources,
-		ColumnReadme, ColumnOwner, ColumnChartName,
+		ColumnReadme, ColumnOwner, ColumnChartName, ColumnIsv,
 	},
 	TableAppVersion: {
 		ColumnVersionId, ColumnAppId, ColumnName, ColumnOwner, ColumnDescription,
