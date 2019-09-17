@@ -112,11 +112,6 @@ spec:
             secretKeyRef:
               key: password.txt
               name: mysql-pass
-        - name: OPENPITRIX_IAM_SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              key: secret-key.txt
-              name: iam-secret-key
         resources:
           limits:
             cpu: ${CPU_LIMITS}m
