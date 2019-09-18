@@ -1,6 +1,26 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: openpitrix-rp-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-rp-manager
+      protocol: TCP
+      port: 9121
+      targetPort: 9121
+
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: openpitrix-api-gateway
   namespace: ${NAMESPACE}
   labels:
@@ -181,26 +201,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: openpitrix-rp-manager
-  namespace: ${NAMESPACE}
-  labels:
-    app: openpitrix
-    component: openpitrix-hyperpitrix
-    version: ${VERSION}
-spec:
-  selector:
-    app: openpitrix
-    component: openpitrix-hyperpitrix
-  ports:
-    - name: openpitrix-rp-manager
-      protocol: TCP
-      port: 9121
-      targetPort: 9121
-
----
-apiVersion: v1
-kind: Service
-metadata:
   name: openpitrix-runtime-manager
   namespace: ${NAMESPACE}
   labels:
@@ -269,6 +269,20 @@ spec:
           image: busybox:1.28.4
           imagePullPolicy: IfNotPresent
           command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
+      hostAliases:
+        - ip: 127.0.0.1
+          hostnames:
+            - openpitrix-task-manager
+            - openpitrix-runtime-manager
+            - openpitrix-repo-indexer
+            - openpitrix-repo-manager
+            - openpitrix-job-manager
+            - openpitrix-isv-manager
+            - openpitrix-cluster-manager
+            - openpitrix-attachment-manager
+            - openpitrix-category-manager
+            - openpitrix-app-manager
+            - openpitrix-api-gateway
       containers:
         - name: openpitrix-api-gateway
           image: ${IMAGE}
