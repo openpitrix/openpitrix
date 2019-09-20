@@ -93,7 +93,7 @@ func checkModifyAppPermission(ctx context.Context, app *models.App) error {
 	}
 
 	if count > 0 {
-		return gerr.New(ctx, gerr.AlreadyExists, gerr.ErrorAppNameExists)
+		return gerr.New(ctx, gerr.AlreadyExists, gerr.ErrorAppNameExists, app.Name)
 	}
 
 	count, err = pi.Global().DB(ctx).

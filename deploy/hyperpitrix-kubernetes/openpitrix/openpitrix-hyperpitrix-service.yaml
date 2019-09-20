@@ -1,0 +1,238 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-rp-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-rp-manager
+      protocol: TCP
+      port: 9121
+      targetPort: 9121
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-api-gateway
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-api-gateway
+      protocol: TCP
+      port: 9100
+      targetPort: 9100
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-app-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-app-manager
+      protocol: TCP
+      port: 9102
+      targetPort: 9102
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-category-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-category-manager
+      protocol: TCP
+      port: 9113
+      targetPort: 9113
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-attachment-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-attachment-manager
+      protocol: TCP
+      port: 9122
+      targetPort: 9122
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-cluster-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-cluster-manager
+      protocol: TCP
+      port: 9104
+      targetPort: 9104
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-isv-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-isv-manager
+      protocol: TCP
+      port: 9118
+      targetPort: 9118
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-job-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-job-manager
+      protocol: TCP
+      port: 9106
+      targetPort: 9106
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-repo-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-repo-manager
+      protocol: TCP
+      port: 9101
+      targetPort: 9101
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-repo-indexer
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-repo-indexer
+      protocol: TCP
+      port: 9108
+      targetPort: 9108
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-runtime-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-runtime-manager
+      protocol: TCP
+      port: 9103
+      targetPort: 9103
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-task-manager
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+    version: ${VERSION}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-hyperpitrix
+  ports:
+    - name: openpitrix-task-manager
+      protocol: TCP
+      port: 9107
+      targetPort: 9107
