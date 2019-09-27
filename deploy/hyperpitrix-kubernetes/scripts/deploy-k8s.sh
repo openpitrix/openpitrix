@@ -21,8 +21,8 @@ TASK_REPLICA=1
 OPENPITRIX_LOG_LEVEL="info"
 OPENPITRIX_MYSQL_HOST="openpitrix-db"
 OPENPITRIX_ETCD_ENDPOINTS="openpitrix-etcd:2379"
-DB_SERVICE="openpitrix-db"
-ETCD_SERVICE="openpitrix-etcd"
+DB_SERVICE="openpitrix-db.${NAMESPACE}.svc"
+ETCD_SERVICE="openpitrix-etcd.${NAMESPACE}.svc"
 MINIO_SERVICE="openpitrix-minio"
 DB_LOG_MODE_ENABLE="true"
 GRPC_SHOW_ERROR_CAUSE="true"
@@ -108,9 +108,6 @@ apply_yaml() {
   version=${1}
   file=${2}
   if [ "${version}" == "latest" ];then
-    if [ "${file}" == "openpitrix_hyperpitrix.yaml" ];then
-      replace ./hyperpitrix-kubernetes/openpitrix/${file} > ~/hyperpitrix.yaml
-    fi
     replace ./hyperpitrix-kubernetes/openpitrix/${file} | kubectl delete -f - --ignore-not-found=true
     replace ./hyperpitrix-kubernetes/openpitrix/${file} | kubectl apply -f -
   else

@@ -43,7 +43,7 @@ spec:
       - name: wait-etcd
         image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z ${ETCD_SERVICE}.${NAMESPACE}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z ${ETCD_SERVICE} 2379; do echo "waiting for etcd"; sleep 2; done;']
       - name: wait-runtime-manager
         image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
