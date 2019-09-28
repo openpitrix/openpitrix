@@ -7,10 +7,12 @@ package idutil
 import (
 	"crypto/rand"
 	"errors"
+	"math/big"
 	"net"
+	"os"
 
 	"github.com/sony/sonyflake"
-	"github.com/speps/go-hashids"
+	hashids "github.com/speps/go-hashids"
 
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -20,12 +22,31 @@ var upperMachineID uint16
 
 func init() {
 	var st sonyflake.Settings
+
+	var enableRandomSeed = os.Getenv("OPENPITRIX_ID_RANDOM_SEED")
+	if enableRandomSeed == "yes" {
+		st.MachineID = getRandomMachineID
+	}
+
 	sf = sonyflake.NewSonyflake(st)
 	if sf == nil {
 		sf = sonyflake.NewSonyflake(sonyflake.Settings{
 			MachineID: lower16BitIP,
 		})
 		upperMachineID, _ = upper16BitIP()
+	}
+}
+
+func getRandomMachineID() (uint16, error) {
+	for {
+		i, err := rand.Int(rand.Reader, big.NewInt(65536))
+		if err != nil {
+			return 0, err
+		}
+		mid := i.Uint64()
+		if 0 < mid && mid < 65536 {
+			return uint16(mid), nil
+		}
 	}
 }
 
