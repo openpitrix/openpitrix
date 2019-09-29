@@ -40,7 +40,7 @@ spec:
         - name: IGNORE_KEYS
           value: '{"runtime": true, "cluster": {"registry_mirror": true}}'
         - name: WATCHER_ETCD_ENDPOINTS
-          value: "${ETCD_SERVICE}.${NAMESPACE}.svc:2379"
+          value: "${ETCD_SERVICE}:2379"
         resources:
           limits:
             cpu: ${CPU_LIMITS}m

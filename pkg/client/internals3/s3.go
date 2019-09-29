@@ -18,7 +18,7 @@ var creds = credentials.NewStaticCredentials(
 
 var config = &aws.Config{
 	Region:           aws.String("us-east-1"),
-	Endpoint:         aws.String("http://kubesphere-minio:9000"),
+	Endpoint:         aws.String("http://minio.kubesphere-system.svc:9000"),
 	DisableSSL:       aws.Bool(true),
 	S3ForcePathStyle: aws.Bool(true),
 	Credentials:      creds,

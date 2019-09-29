@@ -144,7 +144,7 @@ var IndexedColumns = map[string][]string{
 		ColumnAppDefaultStatus, ColumnOwner, ColumnController,
 	},
 	TableRuntime: {
-		ColumnRuntimeId, ColumnProvider, ColumnZone, ColumnStatus, ColumnOwner,
+		ColumnRuntimeId, ColumnProvider, ColumnZone, ColumnStatus, ColumnOwner, ColumnRuntimeCredentialId,
 	},
 	TableRuntimeCredential: {
 		ColumnRuntimeCredentialId, ColumnStatus, ColumnProvider, ColumnOwner,

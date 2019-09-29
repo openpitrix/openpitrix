@@ -5780,6 +5780,17 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "runtime_credential_id",
+            "description": "runtime credential id.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -6047,6 +6058,17 @@ var Files = map[string]string{
           {
             "name": "owner",
             "description": "owner.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "runtime_credential_id",
+            "description": "runtime credential id.",
             "in": "query",
             "required": false,
             "type": "array",

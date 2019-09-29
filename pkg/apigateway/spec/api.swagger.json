@@ -5771,6 +5771,17 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "runtime_credential_id",
+            "description": "runtime credential id.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -6038,6 +6049,17 @@
           {
             "name": "owner",
             "description": "owner.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "runtime_credential_id",
+            "description": "runtime credential id.",
             "in": "query",
             "required": false,
             "type": "array",
