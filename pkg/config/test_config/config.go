@@ -18,6 +18,11 @@ type DbTestConfig struct {
 	envConfig       *config.Config
 }
 
+var _ = func() bool {
+	testing.Init()
+	return true
+}()
+
 func NewDbTestConfig(database string) DbTestConfig {
 	tc := DbTestConfig{
 		openDbUnitTests: os.Getenv("OP_DB_UNIT_TEST"),

@@ -1,8 +1,8 @@
-dist: xenial
+dist: bionic
 sudo: required
 env:
   global:
-  - CHANGE_MINIKUBE_NONE_USER=true
+  - CHANGE_MINIKUBE_NONE_USER: true
   matrix:
   - TEST_SUITE=unit-test
   - TEST_SUITE=e2e-test
@@ -10,34 +10,30 @@ env:
 cache:
   directories:
   - tmp/cache
-services:
-- docker
+  - tmp/mod
+  - /var/lib/docker
 language: go
 go:
-- '1.11'
+- '1.13'
 go_import_path: openpitrix.io/openpitrix
 addons:
   apt:
     packages:
-    - docker-ce
     - socat
     - ebtables
 before_install:
-- sudo docker run -d -it --name nsenter ubuntu:16.04 bash
-- sudo docker cp nsenter:/usr/bin/nsenter /usr/local/bin/nsenter
-- sudo docker stop nsenter && sudo docker rm nsenter
-- sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname
-  -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-- sudo chmod +x /usr/local/bin/docker-compose
-- ./deploy/kubernetes/scripts/install-minikube.sh
-- ./deploy/kubernetes/scripts/init-helm.sh
+- sudo rm /usr/bin/docker
+- curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
+- if [ $TEST_SUITE'' == "e2e-k8s-test" ]; then
+  ./deploy/kubernetes/scripts/install-minikube.sh &&
+  ./deploy/kubernetes/scripts/init-helm.sh &&
+  kubectl cluster-info;
+  fi
 before_script:
 - docker --version
 - docker-compose --version
-- kubectl cluster-info
 - make fmt-check
-- docker build -t openpitrix -f ./Dockerfile .
-- docker build -t openpitrix:metadata -f ./Dockerfile.metadata .
+- make build
 - make compose-up
 - sleep 20
 script:
