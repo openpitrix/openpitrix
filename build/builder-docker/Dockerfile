@@ -2,9 +2,8 @@
 # Use of this source code is governed by a Apache license
 # that can be found in the LICENSE file.
 
-FROM golang:1.11-alpine3.7 as builder
+FROM golang:1.13-alpine as builder
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache git curl openssl
 
 RUN go get github.com/golang/protobuf/protoc-gen-go
@@ -25,9 +24,8 @@ RUN mkdir -p /protoc && cd /protoc \
 	&& wget https://github.com/google/protobuf/releases/download/v3.5.0/protoc-3.5.0-linux-x86_64.zip \
 	&& unzip protoc-3.5.0-linux-x86_64.zip
 
-FROM golang:1.11-alpine3.7
+FROM golang:1.13-alpine
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk add --no-cache git protobuf make curl openssl jq rsync upx
 
 COPY --from=builder /protoc/include /usr/local/include
