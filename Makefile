@@ -267,24 +267,15 @@ unit-test: ## Run unit tests
 	$(DB_TEST) $(ETCD_TEST) go test -count=1 -a -tags="etcd db" ./...
 	@echo "unit-test done"
 
-build-image-%: ## build docker image
-	@if [ "$*" = "latest" ];then \
-	docker build -t openpitrix/openpitrix:latest .; \
-	docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .; \
-	docker build -t openpitrix/openpitrix:flyway -f ./pkg/db/Dockerfile ./pkg/db/;\
-	elif [ "`echo "$*" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
-	docker build -t openpitrix/openpitrix:$* .; \
-	docker build -t openpitrix/openpitrix:metadata-$* -f ./Dockerfile.metadata .; \
-	docker build -t openpitrix/openpitrix:flyway-$* -f ./pkg/db/Dockerfile ./pkg/db/; \
-	fi
+BUILDX_BUILD_PUSH=docker buildx build --platform linux/amd64,linux/arm64 --output=type=registry --push
 
-push-image-%: ## push docker image
-	@if [ "$*" = "latest" ];then \
-	docker push openpitrix/openpitrix:latest; \
-	docker push openpitrix/openpitrix:metadata; \
-	docker push openpitrix/openpitrix:flyway; \
+build-push-image-%: ## build docker image
+	if [ "$*" = "latest" ];then \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:latest . && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata . && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:flyway -f ./pkg/db/Dockerfile ./pkg/db/;\
 	elif [ "`echo "$*" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
-	docker push openpitrix/openpitrix:$*; \
-	docker push openpitrix/openpitrix:metadata-$*; \
-	docker push openpitrix/openpitrix:flyway-$*; \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:$* . && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:metadata-$* -f ./Dockerfile.metadata . && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:flyway-$* -f ./pkg/db/Dockerfile ./pkg/db/; \
 	fi

@@ -9,8 +9,8 @@ COPY . .
 
 RUN mkdir -p /openpitrix_bin
 RUN go generate openpitrix.io/openpitrix/pkg/version && \
-	CGO_ENABLED=0 GOOS=linux GOBIN=/openpitrix_bin go install -ldflags '-w -s' -tags netgo openpitrix.io/openpitrix/cmd/... && \
-	CGO_ENABLED=0 GOOS=linux GOBIN=/openpitrix_bin go install -ldflags '-w -s' -tags netgo openpitrix.io/openpitrix/metadata/cmd/...
+	CGO_ENABLED=0 GOBIN=/openpitrix_bin go install -ldflags '-w -s' -tags netgo openpitrix.io/openpitrix/cmd/... && \
+	CGO_ENABLED=0 GOBIN=/openpitrix_bin go install -ldflags '-w -s' -tags netgo openpitrix.io/openpitrix/metadata/cmd/...
 
 RUN find /openpitrix_bin -type f -exec upx {} \;
 
