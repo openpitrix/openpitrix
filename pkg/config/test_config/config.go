@@ -26,7 +26,7 @@ var _ = func() bool {
 func NewDbTestConfig(database string) DbTestConfig {
 	tc := DbTestConfig{
 		openDbUnitTests: os.Getenv("OP_DB_UNIT_TEST"),
-		envConfig:       config.LoadConf(),
+		envConfig:       config.GetConf(),
 	}
 	tc.envConfig.Mysql.Database = database
 	return tc
@@ -57,7 +57,7 @@ type EtcdTestConfig struct {
 func NewEtcdTestConfig() EtcdTestConfig {
 	tc := EtcdTestConfig{
 		openEtcdUnitTests: os.Getenv("OP_ETCD_UNIT_TEST"),
-		envConfig:         config.LoadConf(),
+		envConfig:         config.GetConf(),
 	}
 	return tc
 }

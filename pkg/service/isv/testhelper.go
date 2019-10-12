@@ -17,6 +17,6 @@ var (
 )
 
 func InitGlobelSetting() {
-	cfg := config.LoadConf()
+	cfg := config.GetConf()
 	pi.SetGlobal(cfg)
 }

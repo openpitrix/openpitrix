@@ -11,6 +11,6 @@ import (
 )
 
 func main() {
-	cfg := config.LoadConf()
+	cfg := config.GetConf()
 	market.Serve(cfg)
 }
