@@ -2361,6 +2361,9 @@
     reverse:
       help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
+    runtime_credential_id:
+      help: runtime credential id.
+      type: '[]string'
     runtime_id:
       help: runtime ids.
       type: '[]string'
@@ -2441,6 +2444,9 @@
     reverse:
       help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
+    runtime_credential_id:
+      help: runtime credential id.
+      type: '[]string'
     runtime_id:
       help: runtime ids.
       type: '[]string'

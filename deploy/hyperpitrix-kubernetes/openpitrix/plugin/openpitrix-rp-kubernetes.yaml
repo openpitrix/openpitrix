@@ -43,7 +43,7 @@ spec:
       - name: wait-etcd
         image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z ${ETCD_SERVICE} 2379; do echo "waiting for etcd"; sleep 2; done;']
       - name: wait-runtime-manager
         image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
@@ -62,6 +62,10 @@ spec:
           value: "${GRPC_SHOW_ERROR_CAUSE}"
         - name: OPENPITRIX_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
+        - name: OPENPITRIX_ETCD_ENDPOINTS
+          value: "${OPENPITRIX_ETCD_ENDPOINTS}"
+        - name: OPENPITRIX_MYSQL_HOST
+          value: "${OPENPITRIX_MYSQL_HOST}"
         resources:
           limits:
             cpu: ${CPU_LIMITS}m

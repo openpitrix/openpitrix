@@ -25,7 +25,7 @@ spec:
       - name: wait-etcd
         image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z ${ETCD_SERVICE} 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
       - name: global-config-watcher
         image: ${WATCHER_IMAGE}
@@ -40,7 +40,7 @@ spec:
         - name: IGNORE_KEYS
           value: '{"runtime": true, "cluster": {"registry_mirror": true}}'
         - name: WATCHER_ETCD_ENDPOINTS
-          value: "openpitrix-etcd.${NAMESPACE}.svc:2379"
+          value: "${ETCD_SERVICE}:2379"
         resources:
           limits:
             cpu: ${CPU_LIMITS}m

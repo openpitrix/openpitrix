@@ -93,6 +93,11 @@ type DescribeRuntimesParams struct {
 
 	*/
 	Reverse *bool
+	/*RuntimeCredentialID
+	  runtime credential id.
+
+	*/
+	RuntimeCredentialID []string
 	/*RuntimeID
 	  runtime ids.
 
@@ -218,6 +223,17 @@ func (o *DescribeRuntimesParams) SetReverse(reverse *bool) {
 	o.Reverse = reverse
 }
 
+// WithRuntimeCredentialID adds the runtimeCredentialID to the describe runtimes params
+func (o *DescribeRuntimesParams) WithRuntimeCredentialID(runtimeCredentialID []string) *DescribeRuntimesParams {
+	o.SetRuntimeCredentialID(runtimeCredentialID)
+	return o
+}
+
+// SetRuntimeCredentialID adds the runtimeCredentialId to the describe runtimes params
+func (o *DescribeRuntimesParams) SetRuntimeCredentialID(runtimeCredentialID []string) {
+	o.RuntimeCredentialID = runtimeCredentialID
+}
+
 // WithRuntimeID adds the runtimeID to the describe runtimes params
 func (o *DescribeRuntimesParams) WithRuntimeID(runtimeID []string) *DescribeRuntimesParams {
 	o.SetRuntimeID(runtimeID)
@@ -340,6 +356,14 @@ func (o *DescribeRuntimesParams) WriteToRequest(r runtime.ClientRequest, reg str
 			}
 		}
 
+	}
+
+	valuesRuntimeCredentialID := o.RuntimeCredentialID
+
+	joinedRuntimeCredentialID := swag.JoinByFormat(valuesRuntimeCredentialID, "multi")
+	// query array param runtime_credential_id
+	if err := r.SetQueryParam("runtime_credential_id", joinedRuntimeCredentialID...); err != nil {
+		return err
 	}
 
 	valuesRuntimeID := o.RuntimeID

@@ -86,6 +86,7 @@ func checkModifyAppPermission(ctx context.Context, app *models.App) error {
 		From(constants.TableApp).
 		Where(db.Neq(constants.ColumnAppId, app.AppId)).
 		Where(db.Eq(constants.ColumnName, app.Name)).
+		Where(db.Eq(constants.ColumnRepoId, app.RepoId)).
 		Count()
 
 	if err != nil {

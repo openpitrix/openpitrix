@@ -19,6 +19,11 @@ ALL=0
 JOB_REPLICA=1
 TASK_REPLICA=1
 OPENPITRIX_LOG_LEVEL="info"
+OPENPITRIX_MYSQL_HOST="openpitrix-db"
+OPENPITRIX_ETCD_ENDPOINTS="openpitrix-etcd:2379"
+DB_SERVICE="openpitrix-db.${NAMESPACE}.svc"
+ETCD_SERVICE="openpitrix-etcd.${NAMESPACE}.svc"
+MINIO_SERVICE="minio.kubesphere-system.svc"
 DB_LOG_MODE_ENABLE="true"
 GRPC_SHOW_ERROR_CAUSE="true"
 CPU_REQUESTS=100
@@ -180,6 +185,11 @@ replace() {
 	  -e "s!\${DB_LOG_MODE_ENABLE}!${DB_LOG_MODE_ENABLE}!g" \
 	  -e "s!\${GRPC_SHOW_ERROR_CAUSE}!${GRPC_SHOW_ERROR_CAUSE}!g" \
 	  -e "s!\${REPO_DIR}!${REPO_DIR}!g" \
+	  -e "s!\${OPENPITRIX_MYSQL_HOST}!${OPENPITRIX_MYSQL_HOST}!g" \
+	  -e "s!\${OPENPITRIX_ETCD_ENDPOINTS}!${OPENPITRIX_ETCD_ENDPOINTS}!g" \
+	  -e "s!\${DB_SERVICE}!${DB_SERVICE}!g" \
+	  -e "s!\${ETCD_SERVICE}!${ETCD_SERVICE}!g" \
+	  -e "s!\${MINIO_SERVICE}!${MINIO_SERVICE}!g" \
 	  $1
 }
 
