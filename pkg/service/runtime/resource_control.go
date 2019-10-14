@@ -7,6 +7,7 @@ package runtime
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/ghodss/yaml"
 
@@ -90,4 +91,17 @@ func encodeRuntimeCredentialContent(provider, content string) (string, error) {
 		return string(content), nil
 	}
 	return "", fmt.Errorf("unsupport provider [%s]", provider)
+}
+
+func deleteRuntime(ctx context.Context, runtimeIds []string) error {
+	if len(runtimeIds) == 0 {
+		return nil
+	}
+	_, err := pi.Global().DB(ctx).
+		Update(constants.TableRuntime).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
+		Set(constants.ColumnStatusTime, time.Now()).
+		Where(db.Eq(constants.ColumnRuntimeId, runtimeIds)).
+		Exec()
+	return err
 }

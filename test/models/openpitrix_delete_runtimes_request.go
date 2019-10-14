@@ -16,6 +16,12 @@ import (
 // swagger:model openpitrixDeleteRuntimesRequest
 type OpenpitrixDeleteRuntimesRequest struct {
 
+	// whether force delete runtime or not
+	Force bool `json:"force,omitempty"`
+
+	// timeout(s), when delete runtime
+	GracePeriod int64 `json:"grace_period,omitempty"`
+
 	// required, ids of runtime to delete
 	RuntimeID []string `json:"runtime_id"`
 }

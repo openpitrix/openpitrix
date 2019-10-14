@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixValidatePackageResponse
 type OpenpitrixValidatePackageResponse struct {
 
+	// app description
+	Description string `json:"description,omitempty"`
+
 	// error eg.[json error]
 	Error string `json:"error,omitempty"`
 
@@ -24,6 +27,9 @@ type OpenpitrixValidatePackageResponse struct {
 
 	// app name eg.[wordpress|mysql|...]
 	Name string `json:"name,omitempty"`
+
+	// app url
+	URL string `json:"url,omitempty"`
 
 	// app version name.eg.[0.1.0]
 	VersionName string `json:"version_name,omitempty"`

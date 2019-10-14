@@ -25,6 +25,64 @@ type Client struct {
 }
 
 /*
+AdminPassAppVersion operators of admin pass version of the app
+*/
+func (a *Client) AdminPassAppVersion(params *AdminPassAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*AdminPassAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewAdminPassAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "AdminPassAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/pass/admin",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &AdminPassAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*AdminPassAppVersionOK), nil
+
+}
+
+/*
+AdminRejectAppVersion operators of admin reject version of the app
+*/
+func (a *Client) AdminRejectAppVersion(params *AdminRejectAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*AdminRejectAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewAdminRejectAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "AdminRejectAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/reject/admin",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &AdminRejectAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*AdminRejectAppVersionOK), nil
+
+}
+
+/*
 BusinessPassAppVersion operators of business pass version of the app
 */
 func (a *Client) BusinessPassAppVersion(params *BusinessPassAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*BusinessPassAppVersionOK, error) {

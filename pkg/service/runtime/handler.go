@@ -239,6 +239,10 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 }
 
 func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesRequest) (*pb.DeleteRuntimesResponse, error) {
+	var err error
+	var clusterIds []string
+	var response *pb.DescribeClustersResponse
+
 	runtimeIds := req.GetRuntimeId()
 	runtimes, err := CheckRuntimesPermission(ctx, runtimeIds)
 	if err != nil {
@@ -265,7 +269,6 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 				constants.StatusPending,
 			},
 		}
-		var response *pb.DescribeClustersResponse
 		if runtime.Debug {
 			response, err = clusterClient.DescribeDebugClusters(ctx, request)
 		} else {
@@ -273,18 +276,22 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 		}
 
 		if response.TotalCount > 0 {
-			err = fmt.Errorf("there are still [%d] clusters in the runtime [%s]", response.TotalCount, runtime.RuntimeId)
-			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourcesFailed)
+			if req.GetForce().GetValue() {
+				for _, cluster := range response.ClusterSet {
+					clusterIds = append(clusterIds, cluster.GetClusterId().GetValue())
+				}
+				err = clusterClient.DeleteAndCeaseClusters(ctx, clusterIds, req.GetForce().GetValue())
+				if err != nil {
+					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+				}
+			} else {
+				err = fmt.Errorf("there are still [%d] clusters in the runtime [%s]", response.TotalCount, runtime.RuntimeId)
+				return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourcesFailed)
+			}
 		}
 	}
 
-	// deleted runtimes
-	_, err = pi.Global().DB(ctx).
-		Update(constants.TableRuntime).
-		Set(constants.ColumnStatus, constants.StatusDeleted).
-		Set(constants.ColumnStatusTime, time.Now()).
-		Where(db.Eq(constants.ColumnRuntimeId, runtimeIds)).
-		Exec()
+	err = deleteRuntime(ctx, runtimeIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}

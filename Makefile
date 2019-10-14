@@ -34,6 +34,7 @@ define get_build_flags
 endef
 
 COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-isv-manager openpitrix-notification openpitrix-im-service openpitrix-am-service
+#COMPOSE_APP_SERVICES=openpitrix-pilot-service openpitrix-im-service openpitrix-am-service hyperpitrix
 COMPOSE_DB_CTRL=openpitrix-db-init openpitrix-im-db-init openpitrix-am-db-init openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-attachment-db-ctrl openpitrix-isv-db-ctrl openpitrix-notification-db-ctrl openpitrix-im-db-ctrl openpitrix-am-db-ctrl
 CMD?=...
 WITH_METADATA?=yes
@@ -186,8 +187,11 @@ compose-down: ## Shutdown docker compose
 release-%: ## Release version
 	@if [ "`echo "$*" | grep -E "^openpitrix-v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
 	mkdir deploy/$*-kubernetes; \
+	mkdir deploy/$*-hyperpitrix-kubernetes; \
 	cp -r deploy/config deploy/kubernetes deploy/*.sh deploy/$*-kubernetes/; \
+	cp -r deploy/config deploy/hyperpitrix-kubernetes deploy/*.sh deploy/$*-hyperpitrix-kubernetes/; \
 	cd deploy/ && tar -czvf $*-kubernetes.tar.gz $*-kubernetes; \
+	tar -czvf $*-hyperpitrix-kubernetes.tar.gz $*-hyperpitrix-kubernetes; \
 	cd ../; \
 	rm -rf deploy/$*-docker-compose*; \
 	mkdir deploy/$*-docker-compose; \
@@ -263,24 +267,17 @@ unit-test: ## Run unit tests
 	$(DB_TEST) $(ETCD_TEST) go test -count=1 -a -tags="etcd db" ./...
 	@echo "unit-test done"
 
-build-image-%: ## build docker image
-	@if [ "$*" = "latest" ];then \
-	docker build -t openpitrix/openpitrix:latest .; \
-	docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .; \
-	docker build -t openpitrix/openpitrix:flyway -f ./pkg/db/Dockerfile ./pkg/db/;\
-	elif [ "`echo "$*" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
-	docker build -t openpitrix/openpitrix:$* .; \
-	docker build -t openpitrix/openpitrix:metadata-$* -f ./Dockerfile.metadata .; \
-	docker build -t openpitrix/openpitrix:flyway-$* -f ./pkg/db/Dockerfile ./pkg/db/; \
-	fi
+BUILDX_BUILD_PUSH=docker buildx build --platform linux/amd64,linux/arm64 --output=type=registry --push
 
-push-image-%: ## push docker image
-	@if [ "$*" = "latest" ];then \
-	docker push openpitrix/openpitrix:latest; \
-	docker push openpitrix/openpitrix:metadata; \
-	docker push openpitrix/openpitrix:flyway; \
+build-push-image-%: ## build docker image
+	if [ "$*" = "latest" ];then \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:latest . && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata . && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix-builder:latest -f ./build/builder-docker/Dockerfile ./build/builder-docker/ && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:flyway -f ./pkg/db/Dockerfile ./pkg/db/;\
 	elif [ "`echo "$*" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
-	docker push openpitrix/openpitrix:$*; \
-	docker push openpitrix/openpitrix:metadata-$*; \
-	docker push openpitrix/openpitrix:flyway-$*; \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:$* . && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:metadata-$* -f ./Dockerfile.metadata . && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix-builder:release-$* -f ./build/builder-docker/Dockerfile ./build/builder-docker/ && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:flyway-$* -f ./pkg/db/Dockerfile ./pkg/db/; \
 	fi

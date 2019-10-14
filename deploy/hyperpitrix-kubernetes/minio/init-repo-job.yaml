@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hyperpitrix-init-repo-job
+  namespace: ${NAMESPACE}
+  labels:
+    app: hyperpitrix
+    job: hyperpitrix-init-repo
+    version: ${VERSION}
+spec:
+  backoffLimit: 6
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        app: hyperpitrix
+        job: hyperpitrix-init-repo
+        version: ${VERSION}
+      name: hyperpitrix-init-repo-job
+    spec:
+      containers:
+      - name: hyperpitrix-init-repo-job
+        image: openpitrix/init-repo:latest
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', '/usr/local/bin/init_repo.sh']

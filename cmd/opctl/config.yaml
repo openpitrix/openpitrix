@@ -478,6 +478,25 @@
     password:
       help: required, user password
       type: string
+- action: AdminPassAppVersion
+  request: PassAppVersionRequest
+  description: Operator of admin pass version of the app
+  service: AppManager
+  body:
+    version_id:
+      help: required, id of version to pass
+      type: string
+- action: AdminRejectAppVersion
+  request: RejectAppVersionRequest
+  description: Operator of Admin reject version of the app
+  service: AppManager
+  body:
+    message:
+      help: reject message
+      type: string
+    version_id:
+      help: required, id of version to reject
+      type: string
 - action: BusinessPassAppVersion
   request: PassAppVersionRequest
   description: Operator of business pass version of the app
@@ -521,6 +540,9 @@
     icon:
       help: app icon
       type: byte
+    isv:
+      help: isv
+      type: string
     name:
       help: required, app name
       type: string
@@ -637,6 +659,9 @@
       type: '[]string'
     display_columns:
       help: select column to display.
+      type: '[]string'
+    isv:
+      help: isv.
       type: '[]string'
     limit:
       help: data limit per page, default is 20, max value is 200.
@@ -815,6 +840,9 @@
       type: '[]string'
     display_columns:
       help: select column to display.
+      type: '[]string'
+    isv:
+      help: isv.
       type: '[]string'
     limit:
       help: data limit per page, default is 20, max value is 200.
@@ -1076,6 +1104,9 @@
     category_id:
       help: required, ids of category to delete
       type: '[]string'
+    force:
+      help: if true force delete category
+      type: boolean
 - action: DescribeCategories
   request: DescribeCategoriesRequest
   description: Get categories, support filter with these fields(category_id, status,
@@ -1170,6 +1201,12 @@
     cluster_id:
       help: required, ids of cluster to cease
       type: '[]string'
+    force:
+      help: whether force delete clusters or not
+      type: boolean
+    grace_period:
+      help: timeout(s), when delete clusters
+      type: integer
 - action: CreateCluster
   request: CreateClusterRequest
   description: Create cluster
@@ -1249,6 +1286,12 @@
     cluster_id:
       help: required, ids of clusters to delete
       type: '[]string'
+    force:
+      help: whether force delete clusters or not
+      type: boolean
+    grace_period:
+      help: timeout(s), when delete clusters
+      type: integer
 - action: DeleteKeyPairs
   request: DeleteKeyPairsRequest
   description: Batch delete key pairs
@@ -2249,6 +2292,12 @@
   description: Delete runtimes
   service: RuntimeManager
   body:
+    force:
+      help: whether force delete runtime or not
+      type: boolean
+    grace_period:
+      help: timeout(s), when delete runtime
+      type: integer
     runtime_id:
       help: required, ids of runtime to delete
       type: '[]string'
@@ -2312,6 +2361,9 @@
     reverse:
       help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
+    runtime_credential_id:
+      help: runtime credential id.
+      type: '[]string'
     runtime_id:
       help: runtime ids.
       type: '[]string'
@@ -2392,6 +2444,9 @@
     reverse:
       help: value = 0 sort ASC, value = 1 sort DESC.
       type: boolean
+    runtime_credential_id:
+      help: runtime credential id.
+      type: '[]string'
     runtime_id:
       help: runtime ids.
       type: '[]string'

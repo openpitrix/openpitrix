@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: global-config-watcher
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: global-config-watcher
+    version: ${WATCHER_VERSION}
+spec:
+  selector:
+    matchLabels:
+      app: openpitrix
+      component: global-config-watcher
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        component: global-config-watcher
+        version: ${WATCHER_VERSION}
+    spec:
+      initContainers:
+      - name: wait-etcd
+        image: busybox:1.28.4
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z ${ETCD_SERVICE} 2379; do echo "waiting for etcd"; sleep 2; done;']
+      containers:
+      - name: global-config-watcher
+        image: ${WATCHER_IMAGE}
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
+        command:
+          - watch
+        env:
+        - name: WATCHER_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
+        - name: WATCHER_DURATION
+          value: "10"
+        - name: IGNORE_KEYS
+          value: '{"runtime": true, "cluster": {"registry_mirror": true}}'
+        - name: WATCHER_ETCD_ENDPOINTS
+          value: "${ETCD_SERVICE}:2379"
+        resources:
+          limits:
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
+          requests:
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi
+        volumeMounts:
+        - name: global-config
+          mountPath: /opt
+      volumes:
+      - name: global-config
+        configMap:
+          name: global-config

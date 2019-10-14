@@ -9,22 +9,26 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+
+	opconfig "openpitrix.io/openpitrix/pkg/config"
 )
 
+var aConf = opconfig.GetConf().Attachment
+
 var creds = credentials.NewStaticCredentials(
-	"openpitrixminioaccesskey",
-	"openpitrixminiosecretkey",
+	aConf.AccessKey,
+	aConf.SecretKey,
 	"")
 
 var config = &aws.Config{
 	Region:           aws.String("us-east-1"),
-	Endpoint:         aws.String("http://openpitrix-minio:9000"),
+	Endpoint:         aws.String(aConf.Endpoint),
 	DisableSSL:       aws.Bool(true),
 	S3ForcePathStyle: aws.Bool(true),
 	Credentials:      creds,
 }
 
-var Bucket = aws.String("openpitrix-attachment")
+var Bucket = aws.String(aConf.BucketName)
 
 var S3 *s3.S3
 

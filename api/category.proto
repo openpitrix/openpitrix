@@ -99,6 +99,8 @@ message ModifyCategoryResponse {
 message DeleteCategoriesRequest {
 	// required, ids of category to delete
 	repeated string category_id = 1;
+	// if true force delete category
+	google.protobuf.BoolValue force = 2;
 }
 
 message DeleteCategoriesResponse {

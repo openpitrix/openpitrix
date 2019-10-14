@@ -18,7 +18,7 @@ import (
 )
 
 func getProviderClientFromProvider(ctx context.Context, provider string) (pb.RuntimeProviderManagerClient, error) {
-	providerConfig, isExist := pi.Global().GlobalConfig().Runtime[provider]
+	providerConfig, isExist := pi.Global().GlobalConfig().RuntimeProvider[provider]
 	if !isExist {
 		return nil, fmt.Errorf("provider [%s] has not been registered yet", provider)
 	}

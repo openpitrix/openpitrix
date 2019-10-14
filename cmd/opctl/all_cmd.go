@@ -57,6 +57,8 @@ var AllCmd = []Cmd{
 	NewModifyGroupCmd(),
 	NewModifyUserCmd(),
 	NewValidateUserPasswordCmd(),
+	NewAdminPassAppVersionCmd(),
+	NewAdminRejectAppVersionCmd(),
 	NewBusinessPassAppVersionCmd(),
 	NewBusinessRejectAppVersionCmd(),
 	NewBusinessReviewAppVersionCmd(),
@@ -1215,6 +1217,77 @@ func (c *ValidateUserPasswordCmd) Run(out Out) error {
 	return nil
 }
 
+type AdminPassAppVersionCmd struct {
+	*models.OpenpitrixPassAppVersionRequest
+}
+
+func NewAdminPassAppVersionCmd() Cmd {
+	cmd := &AdminPassAppVersionCmd{}
+	cmd.OpenpitrixPassAppVersionRequest = &models.OpenpitrixPassAppVersionRequest{}
+	return cmd
+}
+
+func (*AdminPassAppVersionCmd) GetActionName() string {
+	return "AdminPassAppVersion"
+}
+
+func (c *AdminPassAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "required, id of version to pass")
+}
+
+func (c *AdminPassAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewAdminPassAppVersionParams()
+	params.WithBody(c.OpenpitrixPassAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.AdminPassAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type AdminRejectAppVersionCmd struct {
+	*models.OpenpitrixRejectAppVersionRequest
+}
+
+func NewAdminRejectAppVersionCmd() Cmd {
+	cmd := &AdminRejectAppVersionCmd{}
+	cmd.OpenpitrixRejectAppVersionRequest = &models.OpenpitrixRejectAppVersionRequest{}
+	return cmd
+}
+
+func (*AdminRejectAppVersionCmd) GetActionName() string {
+	return "AdminRejectAppVersion"
+}
+
+func (c *AdminRejectAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Message, "message", "", "", "reject message")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "required, id of version to reject")
+}
+
+func (c *AdminRejectAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewAdminRejectAppVersionParams()
+	params.WithBody(c.OpenpitrixRejectAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.AdminRejectAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type BusinessPassAppVersionCmd struct {
 	*models.OpenpitrixPassAppVersionRequest
 }
@@ -1374,6 +1447,7 @@ func (*CreateAppCmd) GetActionName() string {
 
 func (c *CreateAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. app icon")
+	f.StringVarP(&c.Isv, "isv", "", "", "isv")
 	f.StringVarP(&c.Name, "name", "", "", "required, app name")
 	f.StringVarP(&c.VersionName, "version_name", "", "", "required, version name of the app")
 	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version_package. required, version with specific app package")
@@ -1599,6 +1673,7 @@ func (c *DescribeActiveAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "app category ids.")
 	f.StringSliceVarP(&c.ChartName, "chart_name", "", []string{}, "app chart name.")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "select column to display.")
+	f.StringSliceVarP(&c.Isv, "isv", "", []string{}, "isv.")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "data limit per page, default is 20, max value is 200.")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "app name.")
@@ -1800,6 +1875,7 @@ func (c *DescribeAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "app category ids.")
 	f.StringSliceVarP(&c.ChartName, "chart_name", "", []string{}, "app chart name.")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "select column to display.")
+	f.StringSliceVarP(&c.Isv, "isv", "", []string{}, "isv.")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "data limit per page, default is 20, max value is 200.")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "app name.")
@@ -2566,6 +2642,7 @@ func (*DeleteCategoriesCmd) GetActionName() string {
 
 func (c *DeleteCategoriesCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "required, ids of category to delete")
+	f.BoolVarP(&c.Force, "force", "", false, "if true force delete category")
 }
 
 func (c *DeleteCategoriesCmd) Run(out Out) error {
@@ -2769,6 +2846,7 @@ func (*CeaseClustersCmd) GetActionName() string {
 func (c *CeaseClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AdvancedParam, "advanced_param", "", []string{}, "advanced param")
 	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "required, ids of cluster to cease")
+	f.BoolVarP(&c.Force, "force", "", false, "whether force delete clusters or not")
 }
 
 func (c *CeaseClustersCmd) Run(out Out) error {
@@ -2957,6 +3035,7 @@ func (*DeleteClustersCmd) GetActionName() string {
 func (c *DeleteClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AdvancedParam, "advanced_param", "", []string{}, "advanced param")
 	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "required, ids of clusters to delete")
+	f.BoolVarP(&c.Force, "force", "", false, "whether force delete clusters or not")
 }
 
 func (c *DeleteClustersCmd) Run(out Out) error {
@@ -4857,6 +4936,7 @@ func (*DeleteRuntimesCmd) GetActionName() string {
 }
 
 func (c *DeleteRuntimesCmd) ParseFlag(f Flag) {
+	f.BoolVarP(&c.Force, "force", "", false, "whether force delete runtime or not")
 	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "required, ids of runtime to delete")
 }
 
@@ -4949,6 +5029,7 @@ func (c *DescribeDebugRuntimesCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "runtime provider eg.[qingcloud|aliyun|aws|kubernetes].")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "value = 0 sort ASC, value = 1 sort DESC.")
+	f.StringSliceVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", []string{}, "runtime credential id.")
 	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "runtime ids.")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "query key, support these fields(runtime_id, provider, zone, status, owner).")
@@ -5080,6 +5161,7 @@ func (c *DescribeRuntimesCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "runtime provider eg.[qingcloud|aliyun|aws|kubernetes].")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "value = 0 sort ASC, value = 1 sort DESC.")
+	f.StringSliceVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", []string{}, "runtime credential id.")
 	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "runtime ids.")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "query key, support these fields(runtime_id, provider, zone, status, owner).")

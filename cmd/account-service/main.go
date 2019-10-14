@@ -2,7 +2,6 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-// openpitrix account manager
 package main
 
 import (
@@ -11,6 +10,6 @@ import (
 )
 
 func main() {
-	cfg := config.LoadConf()
+	cfg := config.GetConf()
 	account.Serve(cfg)
 }

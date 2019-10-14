@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-config
+  namespace: ${NAMESPACE}
+  labels:
+    app: openpitrix
+    component: global-config
+    version: ${VERSION}
+data:
+  global_config.yaml: |-
+    ${GLOBAL_CONFIG}

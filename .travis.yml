@@ -1,8 +1,8 @@
-dist: xenial
+dist: bionic
 sudo: required
 env:
   global:
-  - CHANGE_MINIKUBE_NONE_USER=true
+  - CHANGE_MINIKUBE_NONE_USER: true
   matrix:
   - TEST_SUITE=unit-test
   - TEST_SUITE=e2e-test
@@ -10,34 +10,30 @@ env:
 cache:
   directories:
   - tmp/cache
-services:
-- docker
+  - tmp/mod
+  - /var/lib/docker
 language: go
 go:
-- '1.11'
+- '1.13'
 go_import_path: openpitrix.io/openpitrix
 addons:
   apt:
     packages:
-    - docker-ce
     - socat
     - ebtables
 before_install:
-- sudo docker run -d -it --name nsenter ubuntu:16.04 bash
-- sudo docker cp nsenter:/usr/bin/nsenter /usr/local/bin/nsenter
-- sudo docker stop nsenter && sudo docker rm nsenter
-- sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname
-  -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-- sudo chmod +x /usr/local/bin/docker-compose
-- ./deploy/kubernetes/scripts/install-minikube.sh
-- ./deploy/kubernetes/scripts/init-helm.sh
+- sudo rm /usr/bin/docker
+- curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
+- if [ $TEST_SUITE'' == "e2e-k8s-test" ]; then
+  ./deploy/kubernetes/scripts/install-minikube.sh &&
+  ./deploy/kubernetes/scripts/init-helm.sh &&
+  kubectl cluster-info;
+  fi
 before_script:
 - docker --version
 - docker-compose --version
-- kubectl cluster-info
 - make fmt-check
-- docker build -t openpitrix -f ./Dockerfile .
-- docker build -t openpitrix:metadata -f ./Dockerfile.metadata .
+- make build
 - make compose-up
 - sleep 20
 script:
@@ -52,6 +48,7 @@ deploy:
     secure: k6pBb0kP99Sb0ZmJjncWZNugdUpT90dwWmvnlG4j8t+U61QarfgarR1RdDi8fYLKdioIOwfduH3SU5iq1Xtc4qV62f1J0mXvoRalcEhCeh16edaBxSIs1akUNirNjAvosKURcqmVpUXo+iRFhSI2708J2XBl8sogAqnuuW49LbcrsY7K4DrFFujjysBeSZDaRxPU8nMFykHNSrbEQgw2u/YK6PI0jg73RDhAfnr6cPfZr0ZJDr0ykLrra6faZLANR9khXKaTCN5JT3enI6ufd4bAY0WvjM6XeNLU9vWGeB5QbJErvLlkANrrtkCA6mRDVh6kUxkEM0R1VirGR4XJMk+kVdCzgJV4bpmQSzFhHVbr0g2+4hqeAvNrbVjGq6z9orbv//Lkg7IXhu21u/wcgSAzBWHZdMpoaAVPvySJSVAIhdCgJD5Q3Ebh7L3olLnQ0MWWf95Mz21jTaH0F76pe3Kcu/p3ATSsomZQL9ez+W1A0P+3Bxcjk4fjqjQDkrwBqxo4wTb0Oix66eZFJtwPWKqu0erzuViprSDi6+vwPydjt9ADxMWescFc53sfFPkQWzVC6Pfbxdqt4jCcgRBPipzchsbxHYaofKzfMJrJYIx67iR5Ai9Z8Nwwki6rGXocuR06uhuIyyN4j0yR6Y9qiCslvLUbptsU69WDkMlsOwI=
   file:
   - deploy/openpitrix-$TRAVIS_TAG-kubernetes.tar.gz
+  - deploy/openpitrix-$TRAVIS_TAG-hyperpitrix-kubernetes.tar.gz
   - deploy/openpitrix-$TRAVIS_TAG-docker-compose.tar.gz
   - deploy/openpitrix-$TRAVIS_TAG-linux-bin.tar.gz
   - deploy/openpitrix-$TRAVIS_TAG-darwin-bin.tar.gz
