@@ -14,7 +14,7 @@ import (
 
 func ExampleNewPi() {
 	// TODO: Automatic startup dependent services.
-	cfg := config.LoadConf()
+	cfg := config.GetConf()
 	logger.SetLevelByString("debug")
 	cfg.Mysql.Host = "localhost"
 	cfg.Etcd.Endpoints = "localhost:2379"

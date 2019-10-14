@@ -10,6 +10,6 @@ import (
 )
 
 func main() {
-	cfg := config.LoadConf()
+	cfg := config.GetConf()
 	app.Serve(cfg)
 }
