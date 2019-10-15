@@ -260,7 +260,6 @@ e2e-k8s-test: ## Run k8s tests
 clean: ## Clean generated version file
 	-make -C ./pkg/version clean
 	cd ./deploy/kubernetes/tls-config && make clean
-	rm -rf ./tmp/*
 	@echo "ok"
 
 .PHONY: unit-test
