@@ -58,7 +58,7 @@ deploy:
     repo: openpitrix/openpitrix
     tags: true
 - provider: script
-  script: travis_wait 30 ./docker_push latest
+  script: ./docker_push latest
   on:
     branch: master
     repo: openpitrix/openpitrix
@@ -68,7 +68,7 @@ deploy:
     branch: master
     repo: openpitrix/openpitrix
 - provider: script
-  script: travis_wait 30 ./docker_push $TRAVIS_TAG
+  script: ./docker_push $TRAVIS_TAG
   on:
     tags: true
     repo: openpitrix/openpitrix
