@@ -260,7 +260,10 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	}
 
 	res.VersionId = pbutil.ToProtoString(version.VersionId)
-
+	err = categoryutil.SyncResourceCategories(ctx, pi.Global().DB(ctx), newApp.AppId, nil)
+	if err != nil {
+		return nil, err
+	}
 	return res, nil
 }
 
