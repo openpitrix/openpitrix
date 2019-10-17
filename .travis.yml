@@ -22,6 +22,8 @@ addons:
     - socat
     - ebtables
 before_install:
+- sudo rm /usr/bin/docker
+- curl -fsSL get.docker.com | sh
 - if [ $TEST_SUITE'' == "e2e-k8s-test" ]; then
   ./deploy/kubernetes/scripts/install-minikube.sh &&
   ./deploy/kubernetes/scripts/init-helm.sh &&
@@ -40,8 +42,6 @@ before_deploy:
 - make clean
 - make release-openpitrix-$TRAVIS_TAG
 - make bin-release-openpitrix-$TRAVIS_TAG
-- sudo rm /usr/bin/docker
-- curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
 deploy:
 - provider: releases
   api_key:
