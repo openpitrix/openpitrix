@@ -156,11 +156,6 @@ func (p *Server) ValidatePackage(ctx context.Context, req *pb.ValidatePackageReq
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
 	name := req.GetName().GetValue()
 
-	err := checkAppName(ctx, name)
-	if err != nil {
-		return nil, err
-	}
-
 	pkg := req.GetVersionPackage().GetValue()
 
 	v, err := repoiface.LoadPackage(ctx, req.GetVersionType().GetValue(), pkg)
