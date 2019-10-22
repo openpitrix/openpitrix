@@ -37,3 +37,27 @@ func Test_getBucketPrefix(t *testing.T) {
 		})
 	}
 }
+
+func TestURLJoin(t *testing.T) {
+	type args struct {
+		repoUrl  string
+		fileName string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{"", args{"http://some.com", "right"}, "http://some.com/right"},
+		{"", args{"http://some.com", "right/right"}, "http://some.com/right/right"},
+		{"", args{"http://some.com", "http://right.com"}, "http://right.com"},
+		{"", args{"http://some.com/right", "../left"}, "http://some.com/left"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := URLJoin(tt.args.repoUrl, tt.args.fileName); got != tt.want {
+				t.Errorf("URLJoin() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -25,7 +25,7 @@ func NewHttpInterface(ctx context.Context, url *neturl.URL) (*HttpInterface, err
 }
 
 func (i *HttpInterface) CheckFile(ctx context.Context, filename string) (bool, error) {
-	u := URLJoin(i.url.String(), GetFileName(filename))
+	u := URLJoin(i.url.String(), filename)
 
 	resp, err := httputil.HttpGet(u)
 	if err != nil {
@@ -41,7 +41,7 @@ func (i *HttpInterface) CheckFile(ctx context.Context, filename string) (bool, e
 }
 
 func (i *HttpInterface) ReadFile(ctx context.Context, filename string) ([]byte, error) {
-	u := URLJoin(i.url.String(), GetFileName(filename))
+	u := URLJoin(i.url.String(), filename)
 
 	resp, err := httputil.HttpGet(u)
 	if err != nil {
