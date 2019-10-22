@@ -5,10 +5,9 @@
 package repoiface
 
 import (
+	"net/url"
 	"path/filepath"
 	"strings"
-
-	"github.com/kubernetes/helm/pkg/urlutil"
 )
 
 func GetFileName(packageName string) string {
@@ -18,11 +17,9 @@ func GetFileName(packageName string) string {
 }
 
 func URLJoin(repoUrl, fileName string) string {
-	u, err := urlutil.URLJoin(repoUrl, fileName)
-	if err != nil {
-		u = filepath.Join(repoUrl, fileName)
-	}
-	return u
+	base, _ := url.Parse(repoUrl)
+	n, _ := url.Parse(fileName)
+	return base.ResolveReference(n).String()
 }
 
 func getBucketPrefix(path string) (bucket, prefix string) {

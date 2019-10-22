@@ -6,7 +6,6 @@ package wrapper
 
 import (
 	"fmt"
-	"path/filepath"
 	"sort"
 	"strings"
 
@@ -60,7 +59,7 @@ func (h HelmVersionWrapper) GetVersionName() string {
 }
 
 func (h HelmVersionWrapper) GetPackageName() string {
-	_, file := filepath.Split(h.GetUrls())
+	file := h.GetUrls()
 	if len(file) == 0 {
 		return fmt.Sprintf("%s-%s.tgz", h.Name, h.Version)
 	}
