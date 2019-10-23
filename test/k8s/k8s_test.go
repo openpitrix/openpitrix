@@ -8,114 +8,64 @@ package k8s
 
 import (
 	"fmt"
+	"io/ioutil"
 	"testing"
-	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	log "openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	apiclient "openpitrix.io/openpitrix/test/client"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
 	"openpitrix.io/openpitrix/test/client/job_manager"
-	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/models"
 	"openpitrix.io/openpitrix/test/testutil"
 )
 
 var (
-	RepoNameForTest    = "google"
-	AppNameForTest     = "cerebro"
 	RuntimeNameForTest = "minikube"
 
 	clientConfig = testutil.GetClientConfig()
+
+	package1, _ = ioutil.ReadFile("./test_data/mysql-1.1.0.tgz")
+	package2, _ = ioutil.ReadFile("./test_data/mysql-1.3.3.tgz")
+
+	versionType = "helm"
 )
 
 func TestK8S(t *testing.T) {
 	client := testutil.GetClient(clientConfig)
 
-	// create repo
-	var repoId string
+	var appId string
+	var version1 string
+	var version2 string
+	// create app and version
 	{
-		describeParams := repo_manager.NewDescribeReposParams()
-		describeParams.SetName([]string{RepoNameForTest})
-		describeResp, err := client.RepoManager.DescribeRepos(describeParams, nil)
+		createParams := app_manager.NewCreateAppParams()
+		createParams.WithBody(&models.OpenpitrixCreateAppRequest{
+			VersionPackage: package1,
+			Name:           "mysql",
+			VersionType:    versionType,
+		})
+		createResp, err := client.AppManager.CreateApp(createParams, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
-		repos := describeResp.Payload.RepoSet
+		appId = createResp.Payload.AppID
+		version1 = createResp.Payload.VersionID
 
-		if len(repos) != 0 {
-			repoId = repos[0].RepoID
-		} else {
-			createParams := repo_manager.NewCreateRepoParams()
-			createParams.SetBody(
-				&models.OpenpitrixCreateRepoRequest{
-					Name:        RepoNameForTest,
-					Description: "test repo",
-					Type:        "https",
-					URL:         "https://kubernetes-charts.storage.googleapis.com",
-					Credential:  `{}`,
-					Visibility:  "public",
-					Providers:   []string{constants.ProviderKubernetes},
-				})
-			createResp, err := client.RepoManager.CreateRepo(createParams, nil)
-			if err != nil {
-				t.Fatal(err)
-			}
-			repoId = createResp.Payload.RepoID
+		createVersionParams := app_manager.NewCreateAppVersionParams()
+		createVersionParams.WithBody(&models.OpenpitrixCreateAppVersionRequest{
+			AppID:   appId,
+			Package: package2,
+			Type:    versionType,
+		})
+		createVersionResp, err := client.AppManager.CreateAppVersion(createVersionParams, nil)
+		if err != nil {
+			t.Fatal(err)
 		}
+		version2 = createVersionResp.Payload.VersionID
 	}
-	log.Info(nil, "Got repo id [%s]", repoId)
-
-	// waiting for apps indexed by repo indexer
-	var app *models.OpenpitrixApp
-	{
-		for {
-			describeParams := app_manager.NewDescribeAppsParams()
-			describeParams.WithRepoID([]string{repoId})
-			describeParams.SetSearchWord(&AppNameForTest)
-			describeResp, err := client.AppManager.DescribeApps(describeParams, nil)
-			if err != nil {
-				t.Fatal(err)
-			}
-			apps := describeResp.Payload.AppSet
-			if len(apps) != 0 {
-				app = apps[0]
-				break
-			}
-			log.Info(nil, "Waiting for app [%s]...", AppNameForTest)
-			time.Sleep(5 * time.Second)
-		}
-	}
-	log.Info(nil, "Got app name [%s] latest version [%s]", app.Name, app.LatestAppVersion.Name)
-
-	var appVersion1 *models.OpenpitrixAppVersion
-	var appVersion2 *models.OpenpitrixAppVersion
-	{
-		for {
-			describeParams := app_manager.NewDescribeAppVersionsParams()
-			describeParams.SetAppID([]string{app.AppID})
-			describeParams.WithPackageName([]string{"cerebro-0.3.0.tgz", "cerebro-0.3.1.tgz"})
-			describeResp, err := client.AppManager.DescribeAppVersions(describeParams, nil)
-			if err != nil {
-				t.Fatal(err)
-			}
-			appVersions := describeResp.Payload.AppVersionSet
-
-			if len(appVersions) == 2 {
-				appVersion1 = appVersions[0]
-				appVersion2 = appVersions[1]
-				break
-			}
-
-			log.Info(nil, "Waiting for app version ...")
-			time.Sleep(5 * time.Second)
-		}
-	}
-	log.Info(nil, "Got app version 1, %s", appVersion1.Name)
-	log.Info(nil, "Got app version 2, %s", appVersion2.Name)
 
 	// create runtime
 	var runtimeId string
@@ -142,7 +92,7 @@ func TestK8S(t *testing.T) {
 				})
 			createCredentialResp, err := client.RuntimeManager.CreateRuntimeCredential(createCredentialParams, nil)
 			if err != nil {
-				fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-runtime-manager"))
+				fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 				t.Fatal(err)
 			}
 			runtimeCredentialId := createCredentialResp.Payload.RuntimeCredentialID
@@ -158,34 +108,33 @@ func TestK8S(t *testing.T) {
 				})
 			createResp, err := client.RuntimeManager.CreateRuntime(createParams, nil)
 			if err != nil {
-				fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-runtime-manager"))
+				fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 				t.Fatal(err)
 			}
 			runtimeId = createResp.Payload.RuntimeID
 		}
 	}
-	log.Info(nil, "Got runtime id [%s]", runtimeId)
+	fmt.Printf("Got runtime id [%s]", runtimeId)
 
 	var clusterId string
 	{
-		log.Info(nil, "Creating cluster...")
+		fmt.Printf("Creating cluster...")
 
 		conf := `Name: test`
 
 		createParams := cluster_manager.NewCreateClusterParams()
 		createParams.SetBody(&models.OpenpitrixCreateClusterRequest{
 			AdvancedParam: []string{},
-			AppID:         app.AppID,
+			AppID:         appId,
 			Conf:          conf,
 			RuntimeID:     runtimeId,
-			VersionID:     appVersion1.VersionID,
+			VersionID:     version1,
 		})
 
 		createResp, err := client.ClusterManager.CreateCluster(createParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
@@ -194,30 +143,28 @@ func TestK8S(t *testing.T) {
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
-		log.Info(nil, "Cluster [%s] created", clusterId)
+		fmt.Printf("Cluster [%s] created", clusterId)
 	}
 
 	{
-		log.Info(nil, "Upgrading cluster [%s] ...", clusterId)
+		fmt.Printf("Upgrading cluster [%s] ...", clusterId)
 
 		upgradeParams := cluster_manager.NewUpgradeClusterParams()
 		upgradeParams.SetBody(&models.OpenpitrixUpgradeClusterRequest{
 			AdvancedParam: []string{},
 			ClusterID:     clusterId,
-			VersionID:     appVersion2.VersionID,
+			VersionID:     version2,
 		})
 
 		upgradeResp, err := client.ClusterManager.UpgradeCluster(upgradeParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
@@ -225,17 +172,16 @@ func TestK8S(t *testing.T) {
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
-		log.Info(nil, "Cluster [%s] upgraded", clusterId)
+		fmt.Printf("Cluster [%s] upgraded", clusterId)
 	}
 
 	{
-		log.Info(nil, "Rolling back cluster [%s] ...", clusterId)
+		fmt.Printf("Rolling back cluster [%s] ...", clusterId)
 
 		rollbackParams := cluster_manager.NewRollbackClusterParams()
 		rollbackParams.SetBody(&models.OpenpitrixRollbackClusterRequest{
@@ -245,9 +191,8 @@ func TestK8S(t *testing.T) {
 
 		rollbackResp, err := client.ClusterManager.RollbackCluster(rollbackParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
@@ -255,17 +200,16 @@ func TestK8S(t *testing.T) {
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
-		log.Info(nil, "Cluster [%s] roll back", clusterId)
+		fmt.Printf("Cluster [%s] roll back", clusterId)
 	}
 
 	{
-		log.Info(nil, "Updating cluster [%s] env ...", clusterId)
+		fmt.Printf("Updating cluster [%s] env ...", clusterId)
 
 		env := `Name: test
 Description: test`
@@ -278,9 +222,8 @@ Description: test`
 
 		updateEnvResp, err := client.ClusterManager.UpdateClusterEnv(updateEnvParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
@@ -288,17 +231,16 @@ Description: test`
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
-		log.Info(nil, "Cluster [%s] env updated", clusterId)
+		fmt.Printf("Cluster [%s] env updated", clusterId)
 	}
 
 	{
-		log.Info(nil, "Deleting cluster [%s]...", clusterId)
+		fmt.Printf("Deleting cluster [%s]...", clusterId)
 
 		deleteParams := cluster_manager.NewDeleteClustersParams()
 		deleteParams.SetBody(&models.OpenpitrixDeleteClustersRequest{
@@ -308,9 +250,8 @@ Description: test`
 
 		deleteResp, err := client.ClusterManager.DeleteClusters(deleteParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
@@ -318,17 +259,16 @@ Description: test`
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
-		log.Info(nil, "Cluster [%s] deleted", clusterId)
+		fmt.Printf("Cluster [%s] deleted", clusterId)
 	}
 
 	{
-		log.Info(nil, "Purging cluster [%s]...", clusterId)
+		fmt.Printf("Purging cluster [%s]...", clusterId)
 
 		ceaseParams := cluster_manager.NewCeaseClustersParams()
 		ceaseParams.SetBody(&models.OpenpitrixCeaseClustersRequest{
@@ -338,9 +278,8 @@ Description: test`
 
 		ceaseResp, err := client.ClusterManager.CeaseClusters(ceaseParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
@@ -348,18 +287,17 @@ Description: test`
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
 
-		log.Info(nil, "Cluster [%s] purged", clusterId)
+		fmt.Printf("Cluster [%s] purged", clusterId)
 	}
 }
 
 func waitJobFinish(_ *testing.T, client *apiclient.Openpitrix, jobId string) error {
-	log.Info(nil, "Waiting job [%s]", jobId)
+	fmt.Printf("Waiting job [%s]", jobId)
 
 	describeParams := job_manager.NewDescribeJobsParams()
 	describeParams.WithJobID([]string{jobId})
@@ -384,7 +322,7 @@ func waitJobFinish(_ *testing.T, client *apiclient.Openpitrix, jobId string) err
 		if j.Status == "failed" {
 			return false, fmt.Errorf("job [%s] failed", jobId)
 		}
-		log.Info(nil, "Unknown status [%s] for job [%s]", j.Status, jobId)
+		fmt.Printf("Unknown status [%s] for job [%s]", j.Status, jobId)
 		return false, nil
 
 	}, constants.WaitTaskTimeout, constants.WaitTaskInterval)
