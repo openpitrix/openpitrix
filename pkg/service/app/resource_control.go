@@ -642,27 +642,53 @@ func getAppsVersionTypes(ctx context.Context, appIds []string, active bool) (map
 }
 
 func resortAppVersions(ctx context.Context, appId string) error {
-	var versions models.AppVersions
-	_, err := pi.Global().DB(ctx).
-		Select(constants.ColumnVersionId, constants.ColumnName, constants.ColumnSequence, constants.ColumnCreateTime).
-		From(constants.TableAppVersion).
-		Where(db.Eq(constants.ColumnActive, false)).
-		Where(db.Eq(constants.ColumnAppId, appId)).
-		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
-		Load(&versions)
-	if err != nil {
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, appId)
+	queryFunc := func(active bool) (versions models.AppVersions, err error) {
+		_, err = pi.Global().DB(ctx).
+			Select(constants.ColumnVersionId, constants.ColumnName, constants.ColumnSequence, constants.ColumnCreateTime).
+			From(constants.TableAppVersion).
+			Where(db.Eq(constants.ColumnActive, active)).
+			Where(db.Eq(constants.ColumnAppId, appId)).
+			Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
+			Load(&versions)
+		return
 	}
-	sort.Sort(versions)
-	for i, version := range versions {
-		if version.Sequence != uint32(i) {
-			err = updateVersion(ctx, version.VersionId, map[string]interface{}{
-				constants.ColumnSequence: i,
-			})
-			if err != nil {
-				return err
+
+	sortFunc := func(versions models.AppVersions) (err error) {
+		sort.Sort(versions)
+		for i, version := range versions {
+			if version.Sequence != uint32(i) {
+				updateVersion := func(ctx context.Context, versionId string, attributes map[string]interface{}) (err error) {
+					attributes[constants.ColumnUpdateTime] = time.Now()
+					_, err = pi.Global().DB(ctx).
+						Update(constants.TableAppVersion).
+						SetMap(attributes).
+						Where(db.Eq(constants.ColumnVersionId, versionId)).
+						Where(db.Eq(constants.ColumnActive, version.Active)).
+						Exec()
+					return
+				}
+				err = updateVersion(ctx, version.VersionId, map[string]interface{}{
+					constants.ColumnSequence: i,
+				})
 			}
 		}
+		return
+	}
+
+	var versions models.AppVersions
+	var err error
+
+	if versions, err = queryFunc(false); err != nil {
+		return err
+	}
+	if err = sortFunc(versions); err != nil {
+		return err
+	}
+	if versions, err = queryFunc(true); err != nil {
+		return err
+	}
+	if err = sortFunc(versions); err != nil {
+		return err
 	}
 	return nil
 }
