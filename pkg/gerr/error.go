@@ -13,7 +13,9 @@ import (
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/logger"
+
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 const En = "en"
@@ -21,7 +23,10 @@ const ZhCN = "zh_cn"
 const DefaultLocale = ZhCN
 
 func newStatus(ctx context.Context, code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) *status.Status {
-	locale := DefaultLocale
+	locale := ctxutil.GetLocale(ctx)
+	if len(locale) == 0 {
+		locale = DefaultLocale
+	}
 
 	s := status.New(code, errMsg.Message(locale, err, a...))
 
