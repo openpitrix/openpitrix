@@ -164,11 +164,13 @@ func (g *GrpcServer) unaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		var err error
-		var dst context.Context
-
-		dst = context.Background()
 		s := ctxutil.GetSender(ctx)
-		ctxutil.Copy(ctx, dst)
+		requestId := ctxutil.GetRequestId(ctx)
+		ctx = ctxutil.SetRequestId(ctx, requestId)
+		ctx = ctxutil.ContextWithSender(ctx, s)
+		locale := ctxutil.GetLocale(ctx)
+		ctx = ctxutil.SetLocale(ctx, locale)
+
 		method := strings.Split(info.FullMethod, "/")
 		action := method[len(method)-1]
 		if p, ok := req.(proto.Message); ok {
