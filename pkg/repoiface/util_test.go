@@ -52,6 +52,8 @@ func TestURLJoin(t *testing.T) {
 		{"", args{"http://some.com", "right/right"}, "http://some.com/right/right"},
 		{"", args{"http://some.com", "http://right.com"}, "http://right.com"},
 		{"", args{"http://some.com/right", "../left"}, "http://some.com/left"},
+		{"", args{"http://some.com/subdir/", "index.yaml"}, "http://some.com/subdir/index.yaml"},
+		{"", args{"http://some.com/subdir", "index.yaml"}, "http://some.com/subdir/index.yaml"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

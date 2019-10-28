@@ -17,6 +17,9 @@ func GetFileName(packageName string) string {
 }
 
 func URLJoin(repoUrl, fileName string) string {
+	if !strings.HasSuffix(repoUrl, "/") {
+		repoUrl += "/"
+	}
 	base, _ := url.Parse(repoUrl)
 	n, _ := url.Parse(fileName)
 	return base.ResolveReference(n).String()
