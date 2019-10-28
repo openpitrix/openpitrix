@@ -20,7 +20,7 @@ import (
 
 const En = "en"
 const ZhCN = "zh_cn"
-const DefaultLocale = ZhCN
+const DefaultLocale = En
 
 func newStatus(ctx context.Context, code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) *status.Status {
 	locale := ctxutil.GetLocale(ctx)
