@@ -58,17 +58,27 @@ deploy:
     repo: openpitrix/openpitrix
     tags: true
 - provider: script
-  script: ./docker_push latest
-  on:
-    branch: master
-    repo: openpitrix/openpitrix
-- provider: script
   script: bash image_package_upload $encrypted_31dac1cc4b44_key $encrypted_31dac1cc4b44_iv
   on:
     branch: master
     repo: openpitrix/openpitrix
 - provider: script
-  script: ./docker_push $TRAVIS_TAG
+  script: ./docker_push $TRAVIS_TAG core
   on:
     tags: true
+    repo: openpitrix/openpitrix
+- provider: script
+  script: ./docker_push latest core
+  on:
+    branch: master
+    repo: openpitrix/openpitrix
+- provider: script
+  script: ./docker_push $TRAVIS_TAG addition
+  on:
+    tags: true
+    repo: openpitrix/openpitrix
+- provider: script
+  script: ./docker_push latest addition
+  on:
+    branch: master
     repo: openpitrix/openpitrix

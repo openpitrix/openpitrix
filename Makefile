@@ -269,15 +269,20 @@ unit-test: ## Run unit tests
 
 BUILDX_BUILD_PUSH=docker buildx build --platform linux/amd64,linux/arm64 --output=type=registry --push
 
-build-push-image-%: ## build docker image
+build-push-addition-image-%: ## build docker image
+	if [ "$*" = "latest" ];then \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata . && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix-builder:latest -f ./build/builder-docker/Dockerfile ./build/builder-docker/ ;\
+	elif [ "`echo "$*" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:metadata-$* -f ./Dockerfile.metadata . && \
+	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix-builder:release-$* -f ./build/builder-docker/Dockerfile ./build/builder-docker/ ; \
+	fi
+
+build-push-core-image-%: ## build docker image
 	if [ "$*" = "latest" ];then \
 	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:latest . && \
-	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata . && \
-	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix-builder:latest -f ./build/builder-docker/Dockerfile ./build/builder-docker/ && \
 	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:flyway -f ./pkg/db/Dockerfile ./pkg/db/;\
 	elif [ "`echo "$*" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
 	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:$* . && \
-	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:metadata-$* -f ./Dockerfile.metadata . && \
-	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix-builder:release-$* -f ./build/builder-docker/Dockerfile ./build/builder-docker/ && \
 	$(BUILDX_BUILD_PUSH) -t openpitrix/openpitrix:flyway-$* -f ./pkg/db/Dockerfile ./pkg/db/; \
 	fi
