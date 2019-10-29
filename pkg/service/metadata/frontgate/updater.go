@@ -12,9 +12,9 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/drone"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbdrone "openpitrix.io/openpitrix/pkg/pb/metadata/drone"
+	pbpilot "openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone/droneutil"
 	"openpitrix.io/openpitrix/pkg/util/gziputil"
 	"openpitrix.io/openpitrix/pkg/util/httputil"

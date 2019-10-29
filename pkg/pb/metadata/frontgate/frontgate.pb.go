@@ -9,18 +9,18 @@ import (
 
 	proto "github.com/golang/protobuf/proto"
 
+	"bufio"
+	"crypto/tls"
+	"errors"
+	"io"
+	"log"
+	"net"
+	"net/http"
+	"net/rpc"
+	"time"
+
 	types "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 )
-
-import "bufio"
-import "crypto/tls"
-import "errors"
-import "io"
-import "log"
-import "net"
-import "net/http"
-import "net/rpc"
-import "time"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal

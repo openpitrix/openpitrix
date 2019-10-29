@@ -9,7 +9,7 @@ import (
 	"context"
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
-	"openpitrix.io/openpitrix/pkg/client/attachment"
+	attachmentclient "openpitrix.io/openpitrix/pkg/client/attachment"
 	repoclient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"

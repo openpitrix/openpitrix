@@ -7,7 +7,7 @@ package pilot
 import (
 	"sync"
 
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 )
 
 type TaskStatusManager struct {

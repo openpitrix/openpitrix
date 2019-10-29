@@ -13,8 +13,8 @@ import (
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/frontgate"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbfrontgate "openpitrix.io/openpitrix/pkg/pb/metadata/frontgate"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 )
 
 func MustLoadFrontgateConfig(path string) *pbtypes.FrontgateConfig {
