@@ -14,7 +14,7 @@ import (
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	accessclient "openpitrix.io/openpitrix/pkg/client/access"
 	accountclient "openpitrix.io/openpitrix/pkg/client/account"
-	"openpitrix.io/openpitrix/pkg/client/attachment"
+	attachmentclient "openpitrix.io/openpitrix/pkg/client/attachment"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"

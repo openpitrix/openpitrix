@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/manager"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/drone"
+	pbdrone "openpitrix.io/openpitrix/pkg/pb/metadata/drone"
 )
 
 type Server struct {

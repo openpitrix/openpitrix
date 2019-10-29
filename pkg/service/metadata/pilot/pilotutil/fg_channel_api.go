@@ -15,8 +15,8 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbpilot "openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 )
 
 var (

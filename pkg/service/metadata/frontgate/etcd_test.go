@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 )
 
 type TImage struct {
@@ -34,7 +34,7 @@ func tGetEtcdEndpoints() []string {
 }
 
 func _TestDefaultEtcdMaxOpsPerTxn(t *testing.T) {
-	// import "go.etcd.io/etcd/embed"
+	// import "github.com/coreos/etcd/embed"
 	// Assert(t, embed.DefaultMaxTxnOps == DefaultEtcdMaxOpsPerTxn)
 }
 

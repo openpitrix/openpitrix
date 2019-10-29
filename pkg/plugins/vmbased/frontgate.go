@@ -12,9 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
-	metadatatypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
-	types "openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/retryutil"
@@ -69,14 +67,14 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 }
 
 func (f *Frontgate) getCertificateExec() string {
-	var pilotClientTLSConfig *types.PilotClientTLSConfig
+	var pilotClientTLSConfig *pbtypes.PilotClientTLSConfig
 
 	err := retryutil.Retry(3, constants.RetryInterval, func() error {
 		pilotClient, err := pilotclient.NewClient()
 		if err != nil {
 			return err
 		}
-		pilotClientTLSConfig, err = pilotClient.GetPilotClientTLSConfig(f.Ctx, &metadatatypes.Empty{})
+		pilotClientTLSConfig, err = pilotClient.GetPilotClientTLSConfig(f.Ctx, &pbtypes.Empty{})
 		if err != nil {
 			return err
 		}

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	"openpitrix.io/openpitrix/pkg/client/attachment"
+	attachmentclient "openpitrix.io/openpitrix/pkg/client/attachment"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 )

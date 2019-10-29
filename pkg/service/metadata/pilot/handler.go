@@ -13,9 +13,9 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/frontgate"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbfrontgate "openpitrix.io/openpitrix/pkg/pb/metadata/frontgate"
+	pbpilot "openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/pilot/pilotutil"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/version"

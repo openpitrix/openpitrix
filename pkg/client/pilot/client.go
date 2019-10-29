@@ -15,8 +15,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbpilot "openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )

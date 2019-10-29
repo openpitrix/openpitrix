@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -84,6 +85,10 @@ func toJson(i interface{}) ([]byte, error) {
 type clientRequest struct {
 	query   url.Values
 	payload interface{}
+}
+
+func (c *clientRequest) GetHeaderParams() http.Header {
+	return make(http.Header)
 }
 
 func (c *clientRequest) SetHeaderParam(string, ...string) error {
