@@ -628,7 +628,11 @@ func getAppsVersionTypes(ctx context.Context, appIds []string, active bool) (map
 func resortAppVersions(ctx context.Context, appId string) error {
 	queryFunc := func(active bool) (versions models.AppVersions, err error) {
 		_, err = pi.Global().DB(ctx).
-			Select(constants.ColumnVersionId, constants.ColumnName, constants.ColumnSequence, constants.ColumnCreateTime).
+			Select(
+				constants.ColumnVersionId, constants.ColumnName,
+				constants.ColumnSequence, constants.ColumnCreateTime,
+				constants.ColumnActive,
+			).
 			From(constants.TableAppVersion).
 			Where(db.Eq(constants.ColumnActive, active)).
 			Where(db.Eq(constants.ColumnAppId, appId)).
