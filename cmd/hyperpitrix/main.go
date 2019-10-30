@@ -24,7 +24,6 @@ import (
 func getConf(database string) *config.Config {
 	cfg := config.GetConf()
 	cfg.Mysql.Database = database
-	cfg.DisableGops = true
 	return cfg
 }
 

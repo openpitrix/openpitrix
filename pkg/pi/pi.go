@@ -30,6 +30,7 @@ type Pi struct {
 var global *Pi
 var mutex sync.RWMutex
 var globalOnce sync.Once
+var gopsOnce sync.Once
 
 func NewPi(cfg *config.Config) *Pi {
 	p := &Pi{cfg: cfg}
@@ -38,11 +39,13 @@ func NewPi(cfg *config.Config) *Pi {
 	p.watchGlobalCfg()
 
 	if !cfg.DisableGops {
-		if err := agent.Listen(agent.Options{
-			ShutdownCleanup: true,
-		}); err != nil {
-			logger.Critical(nil, "failed to start gops agent")
-		}
+		gopsOnce.Do(func() {
+			if err := agent.Listen(agent.Options{
+				ShutdownCleanup: true,
+			}); err != nil {
+				logger.Critical(nil, "failed to start gops agent")
+			}
+		})
 	}
 
 	return p
