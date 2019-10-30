@@ -653,26 +653,23 @@ func resortAppVersions(ctx context.Context, appId string) error {
 		return
 	}
 
-	sortFunc := func(versions models.AppVersions) (err error) {
+	sortFunc := func(versions models.AppVersions) error {
 		sort.Sort(versions)
 		for i, version := range versions {
 			if version.Sequence != uint32(i) {
-				updateVersion := func(ctx context.Context, versionId string, attributes map[string]interface{}) (err error) {
-					attributes[constants.ColumnUpdateTime] = time.Now()
-					_, err = pi.Global().DB(ctx).
-						Update(constants.TableAppVersion).
-						SetMap(attributes).
-						Where(db.Eq(constants.ColumnVersionId, versionId)).
-						Where(db.Eq(constants.ColumnActive, version.Active)).
-						Exec()
-					return
+				_, err := pi.Global().DB(ctx).
+					Update(constants.TableAppVersion).
+					Set(constants.ColumnSequence, i).
+					Set(constants.ColumnUpdateTime, time.Now()).
+					Where(db.Eq(constants.ColumnVersionId, version.VersionId)).
+					Where(db.Eq(constants.ColumnActive, version.Active)).
+					Exec()
+				if err != nil {
+					return err
 				}
-				err = updateVersion(ctx, version.VersionId, map[string]interface{}{
-					constants.ColumnSequence: i,
-				})
 			}
 		}
-		return
+		return nil
 	}
 
 	var versions models.AppVersions
