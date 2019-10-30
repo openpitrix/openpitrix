@@ -83,22 +83,6 @@ func checkModifyAppPermission(ctx context.Context, app *models.App) error {
 
 	count, err = pi.Global().DB(ctx).
 		Select("").
-		From(constants.TableApp).
-		Where(db.Neq(constants.ColumnAppId, app.AppId)).
-		Where(db.Eq(constants.ColumnName, app.Name)).
-		Where(db.Eq(constants.ColumnRepoId, app.RepoId)).
-		Count()
-
-	if err != nil {
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-
-	if count > 0 {
-		return gerr.New(ctx, gerr.AlreadyExists, gerr.ErrorAppNameExists, app.Name)
-	}
-
-	count, err = pi.Global().DB(ctx).
-		Select("").
 		From(constants.TableAppVersion).
 		Where(db.Eq(constants.ColumnAppId, app.AppId)).
 		Where(db.Eq(constants.ColumnStatus, constants.StatusInReview)).
