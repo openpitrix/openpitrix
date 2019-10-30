@@ -677,17 +677,20 @@ func resortAppVersions(ctx context.Context, appId string) error {
 
 	var versions models.AppVersions
 	var err error
-
-	if versions, err = queryFunc(false); err != nil {
+	versions, err = queryFunc(false)
+	if err != nil {
 		return err
 	}
-	if err = sortFunc(versions); err != nil {
+	err = sortFunc(versions)
+	if err != nil {
 		return err
 	}
-	if versions, err = queryFunc(true); err != nil {
+	versions, err = queryFunc(true)
+	if err != nil {
 		return err
 	}
-	if err = sortFunc(versions); err != nil {
+	err = sortFunc(versions)
+	if err != nil {
 		return err
 	}
 	return nil
