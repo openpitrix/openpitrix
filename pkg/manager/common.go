@@ -202,11 +202,11 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 }
 
 func AddQueryOrderDir(query *db.SelectQuery, req Request, defaultColumn string) *db.SelectQuery {
-	isAsc := false
+	isAsc := true
 	if r, ok := req.(RequestWithReverse); ok {
 		reverse := r.GetReverse()
 		if reverse != nil {
-			isAsc = reverse.GetValue()
+			isAsc = !reverse.GetValue()
 		}
 	}
 	if r, ok := req.(RequestWithSortKey); ok {
