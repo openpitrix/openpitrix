@@ -63,22 +63,22 @@ deploy:
     branch: master
     repo: openpitrix/openpitrix
 - provider: script
-  script: ./docker_push $TRAVIS_TAG core
+  script: rm -rf tmp/ && ./docker_push $TRAVIS_TAG core
   on:
     tags: true
     repo: openpitrix/openpitrix
 - provider: script
-  script: ./docker_push latest core
+  script: rm -rf tmp/ && ./docker_push latest core
   on:
     branch: master
     repo: openpitrix/openpitrix
 - provider: script
-  script: ./docker_push $TRAVIS_TAG addition
+  script: rm -rf tmp/ && ./docker_push $TRAVIS_TAG addition
   on:
     tags: true
     repo: openpitrix/openpitrix
 - provider: script
-  script: ./docker_push latest addition
+  script: rm -rf tmp/ && ./docker_push latest addition
   on:
     branch: master
     repo: openpitrix/openpitrix
