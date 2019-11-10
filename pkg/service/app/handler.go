@@ -227,7 +227,14 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 
 	if len(iconAttachmentId) > 0 {
 		newApp.Icon = iconAttachmentId
+	} else {
+		newApp.Icon = v.GetIcon()
 	}
+
+	newApp.Description = v.GetDescription()
+	newApp.Home = v.GetHome()
+	newApp.Keywords = v.GetKeywords()
+	newApp.Sources = v.GetSources()
 
 	_, err = pi.Global().DB(ctx).
 		InsertInto(constants.TableApp).
