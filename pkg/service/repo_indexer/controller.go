@@ -53,7 +53,7 @@ func (i *EventController) NewRepoEvent(repoId string, ownerPath sender.OwnerPath
 			return err
 		}
 		if count > 0 {
-			return fmt.Errorf("repo [%s] had running index event", repoId)
+			return fmt.Errorf("repo index event [%s] is running", repoId)
 		}
 		repoEvent := models.NewRepoEvent(repoId, ownerPath)
 		_, err = pi.Global().DB(i.ctx).
