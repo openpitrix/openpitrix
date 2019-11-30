@@ -30,12 +30,16 @@ CPU_REQUESTS=100
 MEMORY_REQUESTS=100
 CPU_LIMITS=500
 MEMORY_LIMITS=500
+OPENPITRIX_ATTACHMENT_ENDPOINT='http://minio.openpitrix-system.svc:9000'
+OPENPITRIX_ATTACHMENT_BUCKET_NAME='openpitrix-attachment'
 
 REQUESTS=""
 LIMITS=""
 
 PROVIDER_PLUGINS=""
 REPO_DIR=""
+BUSYBOX=busybox:1.28.4
+RELEASE_APP_IMAGE="openpitrix/release-app:latest"
 
 usage() {
   echo "Usage:"
@@ -190,6 +194,10 @@ replace() {
 	  -e "s!\${DB_SERVICE}!${DB_SERVICE}!g" \
 	  -e "s!\${ETCD_SERVICE}!${ETCD_SERVICE}!g" \
 	  -e "s!\${MINIO_SERVICE}!${MINIO_SERVICE}!g" \
+	  -e "s!\${OPENPITRIX_ATTACHMENT_ENDPOINT}!${OPENPITRIX_ATTACHMENT_ENDPOINT}!g" \
+	  -e "s!\${OPENPITRIX_ATTACHMENT_BUCKET_NAME}!${OPENPITRIX_ATTACHMENT_BUCKET_NAME}!g" \
+	  -e "s!\${RELEASE_APP_IMAGE}!${RELEASE_APP_IMAGE}!g" \
+	  -e "s!\${BUSYBOX}!${BUSYBOX}!g" \
 	  $1
 }
 
@@ -250,34 +258,21 @@ fi
 
 if [ "${STORAGE}" == "1" ] || [ "${ALL}" == "1" ];then
   kubectl create secret generic mysql-pass --from-file=./hyperpitrix-kubernetes/password.txt -n ${NAMESPACE}
-  for FILE in `ls ./hyperpitrix-kubernetes/db/ | grep -v "\-job.yaml$"`;do
+  for FILE in `ls ./hyperpitrix-kubernetes/db/`;do
     replace ./hyperpitrix-kubernetes/db/${FILE} | kubectl apply -f -
   done
-
   ./hyperpitrix-kubernetes/scripts/generate-config-map.sh
   for FILE in `ls ./hyperpitrix-kubernetes/etcd/`;do
     if [ "x${FILE##*.}" == "xyaml" ]; then
       replace ./hyperpitrix-kubernetes/etcd/${FILE} | kubectl apply -f -
     fi
   done
-
   for FILE in `ls ./hyperpitrix-kubernetes/minio/`;do
     replace ./hyperpitrix-kubernetes/minio/${FILE} | kubectl apply -f -
   done
 fi
-if [ "${DBCTRL}" == "1" ] || [ "${ALL}" == "1" ];then
-  for FILE in `ls ./hyperpitrix-kubernetes/ctrl`;do
-    replace ./hyperpitrix-kubernetes/ctrl/${FILE} | kubectl delete -f - --ignore-not-found=true
-    replace ./hyperpitrix-kubernetes/ctrl/${FILE} | kubectl apply -f -
-  done
-
-  for FILE in `ls ./hyperpitrix-kubernetes/db/ | grep "\-job.yaml$"`;do
-    replace ./hyperpitrix-kubernetes/db/${FILE} | kubectl delete -f - --ignore-not-found=true
-    replace ./hyperpitrix-kubernetes/db/${FILE} | kubectl apply -f -
-  done
-fi
 if [ "${BASE}" == "1" ] || [ "${ALL}" == "1" ];then
-  for FILE in `ls ./hyperpitrix-kubernetes/openpitrix/ | grep "^openpitrix-"`; do
+  for FILE in `ls ./hyperpitrix-kubernetes/openpitrix/`; do
     apply_yaml ${VERSION} ${FILE}
   done
 fi

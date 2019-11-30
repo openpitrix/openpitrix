@@ -4,6 +4,7 @@
 package pb
 
 import (
+	context "context"
 	fmt "fmt"
 	math "math"
 
@@ -11,9 +12,10 @@ import (
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
-	context "golang.org/x/net/context"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -25,7 +27,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type UploadAppAttachmentRequest_Type int32
 
@@ -4439,6 +4441,113 @@ type AppManagerServer interface {
 	SuspendAppVersion(context.Context, *SuspendAppVersionRequest) (*SuspendAppVersionResponse, error)
 	// Recover version of app
 	RecoverAppVersion(context.Context, *RecoverAppVersionRequest) (*RecoverAppVersionResponse, error)
+}
+
+// UnimplementedAppManagerServer can be embedded to have forward compatible implementations.
+type UnimplementedAppManagerServer struct {
+}
+
+func (*UnimplementedAppManagerServer) SyncRepo(ctx context.Context, req *SyncRepoRequest) (*SyncRepoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncRepo not implemented")
+}
+func (*UnimplementedAppManagerServer) CreateApp(ctx context.Context, req *CreateAppRequest) (*CreateAppResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateApp not implemented")
+}
+func (*UnimplementedAppManagerServer) ValidatePackage(ctx context.Context, req *ValidatePackageRequest) (*ValidatePackageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidatePackage not implemented")
+}
+func (*UnimplementedAppManagerServer) GetAppStatistics(ctx context.Context, req *GetAppStatisticsRequest) (*GetAppStatisticsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppStatistics not implemented")
+}
+func (*UnimplementedAppManagerServer) DescribeApps(ctx context.Context, req *DescribeAppsRequest) (*DescribeAppsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeApps not implemented")
+}
+func (*UnimplementedAppManagerServer) DescribeActiveApps(ctx context.Context, req *DescribeAppsRequest) (*DescribeAppsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeActiveApps not implemented")
+}
+func (*UnimplementedAppManagerServer) ModifyApp(ctx context.Context, req *ModifyAppRequest) (*ModifyAppResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyApp not implemented")
+}
+func (*UnimplementedAppManagerServer) UploadAppAttachment(ctx context.Context, req *UploadAppAttachmentRequest) (*UploadAppAttachmentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadAppAttachment not implemented")
+}
+func (*UnimplementedAppManagerServer) DeleteApps(ctx context.Context, req *DeleteAppsRequest) (*DeleteAppsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteApps not implemented")
+}
+func (*UnimplementedAppManagerServer) CreateAppVersion(ctx context.Context, req *CreateAppVersionRequest) (*CreateAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) DescribeAppVersions(ctx context.Context, req *DescribeAppVersionsRequest) (*DescribeAppVersionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeAppVersions not implemented")
+}
+func (*UnimplementedAppManagerServer) DescribeActiveAppVersions(ctx context.Context, req *DescribeAppVersionsRequest) (*DescribeAppVersionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeActiveAppVersions not implemented")
+}
+func (*UnimplementedAppManagerServer) DescribeAppVersionAudits(ctx context.Context, req *DescribeAppVersionAuditsRequest) (*DescribeAppVersionAuditsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeAppVersionAudits not implemented")
+}
+func (*UnimplementedAppManagerServer) DescribeAppVersionReviews(ctx context.Context, req *DescribeAppVersionReviewsRequest) (*DescribeAppVersionReviewsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeAppVersionReviews not implemented")
+}
+func (*UnimplementedAppManagerServer) ModifyAppVersion(ctx context.Context, req *ModifyAppVersionRequest) (*ModifyAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) GetAppVersionPackage(ctx context.Context, req *GetAppVersionPackageRequest) (*GetAppVersionPackageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppVersionPackage not implemented")
+}
+func (*UnimplementedAppManagerServer) GetAppVersionPackageFiles(ctx context.Context, req *GetAppVersionPackageFilesRequest) (*GetAppVersionPackageFilesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppVersionPackageFiles not implemented")
+}
+func (*UnimplementedAppManagerServer) SubmitAppVersion(ctx context.Context, req *SubmitAppVersionRequest) (*SubmitAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) CancelAppVersion(ctx context.Context, req *CancelAppVersionRequest) (*CancelAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) ReleaseAppVersion(ctx context.Context, req *ReleaseAppVersionRequest) (*ReleaseAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReleaseAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) DeleteAppVersion(ctx context.Context, req *DeleteAppVersionRequest) (*DeleteAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) IsvReviewAppVersion(ctx context.Context, req *ReviewAppVersionRequest) (*ReviewAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsvReviewAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) IsvPassAppVersion(ctx context.Context, req *PassAppVersionRequest) (*PassAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsvPassAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) IsvRejectAppVersion(ctx context.Context, req *RejectAppVersionRequest) (*RejectAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsvRejectAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) BusinessReviewAppVersion(ctx context.Context, req *ReviewAppVersionRequest) (*ReviewAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BusinessReviewAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) BusinessPassAppVersion(ctx context.Context, req *PassAppVersionRequest) (*PassAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BusinessPassAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) BusinessRejectAppVersion(ctx context.Context, req *RejectAppVersionRequest) (*RejectAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BusinessRejectAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) TechnicalReviewAppVersion(ctx context.Context, req *ReviewAppVersionRequest) (*ReviewAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TechnicalReviewAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) TechnicalPassAppVersion(ctx context.Context, req *PassAppVersionRequest) (*PassAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TechnicalPassAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) TechnicalRejectAppVersion(ctx context.Context, req *RejectAppVersionRequest) (*RejectAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TechnicalRejectAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) AdminPassAppVersion(ctx context.Context, req *PassAppVersionRequest) (*PassAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminPassAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) AdminRejectAppVersion(ctx context.Context, req *RejectAppVersionRequest) (*RejectAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AdminRejectAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) SuspendAppVersion(ctx context.Context, req *SuspendAppVersionRequest) (*SuspendAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SuspendAppVersion not implemented")
+}
+func (*UnimplementedAppManagerServer) RecoverAppVersion(ctx context.Context, req *RecoverAppVersionRequest) (*RecoverAppVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecoverAppVersion not implemented")
 }
 
 func RegisterAppManagerServer(s *grpc.Server, srv AppManagerServer) {

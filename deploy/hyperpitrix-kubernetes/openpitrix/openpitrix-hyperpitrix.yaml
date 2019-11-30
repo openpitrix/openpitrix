@@ -22,13 +22,125 @@ spec:
     spec:
       initContainers:
         - name: wait-mysql
-          image: busybox:1.28.4
+          image: ${BUSYBOX}
           imagePullPolicy: IfNotPresent
           command: ['sh', '-c', 'until nc -z ${DB_SERVICE} 3306; do echo "waiting for mysql"; sleep 2; done;']
         - name: wait-etcd
-          image: busybox:1.28.4
+          image: ${BUSYBOX}
           imagePullPolicy: IfNotPresent
           command: ['sh', '-c', 'until nc -z ${ETCD_SERVICE} 2379; do echo "waiting for etcd"; sleep 2; done;']
+        - name: openpitrix-db-init
+          command: ["/flyway/sql/ddl/ddl_init.sh", "-h${DB_SERVICE}", "-uroot", "--connect-timeout=5"]
+          env:
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password.txt
+                  name: mysql-pass
+          image: ${FLYWAY_IMAGE}
+          imagePullPolicy: ${IMAGE_PULL_POLICY}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - name: openpitrix-app-db-ctrl
+          command: ["/flyway/flyway", "-X", "-url=jdbc:mysql://${DB_SERVICE}/app", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/app", "migrate"]
+          env:
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password.txt
+                  name: mysql-pass
+          image: ${FLYWAY_IMAGE}
+          imagePullPolicy: ${IMAGE_PULL_POLICY}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - name: openpitrix-attachment-db-ctrl
+          command: ["/flyway/flyway", "-X", "-url=jdbc:mysql://${DB_SERVICE}/attachment", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/attachment", "migrate"]
+          env:
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password.txt
+                  name: mysql-pass
+          image: ${FLYWAY_IMAGE}
+          imagePullPolicy: ${IMAGE_PULL_POLICY}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - name: openpitrix-cluster-db-ctrl
+          command: ["/flyway/flyway", "-X", "-url=jdbc:mysql://${DB_SERVICE}/cluster", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/cluster", "migrate"]
+          env:
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password.txt
+                  name: mysql-pass
+          image: ${FLYWAY_IMAGE}
+          imagePullPolicy: ${IMAGE_PULL_POLICY}
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - name: openpitrix-isv-db-ctrl
+          command: ["/flyway/flyway", "-X", "-url=jdbc:mysql://${DB_SERVICE}/isv", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/isv", "migrate"]
+          env:
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password.txt
+                  name: mysql-pass
+          image: ${FLYWAY_IMAGE}
+          imagePullPolicy: ${IMAGE_PULL_POLICY}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - name: openpitrix-job-db-ctrl
+          command: ["/flyway/flyway", "-X", "-url=jdbc:mysql://${DB_SERVICE}/job", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/job", "migrate"]
+          env:
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password.txt
+                  name: mysql-pass
+          image: ${FLYWAY_IMAGE}
+          imagePullPolicy: ${IMAGE_PULL_POLICY}
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - name: openpitrix-repo-db-ctrl
+          command: ["/flyway/flyway", "-X", "-url=jdbc:mysql://${DB_SERVICE}/repo", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/repo", "migrate"]
+          env:
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password.txt
+                  name: mysql-pass
+          image: ${FLYWAY_IMAGE}
+          imagePullPolicy: ${IMAGE_PULL_POLICY}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - name: openpitrix-runtime-db-ctrl
+          command: ["/flyway/flyway", "-X", "-url=jdbc:mysql://${DB_SERVICE}/runtime", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/runtime", "migrate"]
+          env:
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password.txt
+                  name: mysql-pass
+          image: ${FLYWAY_IMAGE}
+          imagePullPolicy: ${IMAGE_PULL_POLICY}
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - name: openpitrix-task-db-ctrl
+          command: ["/flyway/flyway", "-X", "-url=jdbc:mysql://${DB_SERVICE}/task", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/task", "migrate"]
+          env:
+            - name: FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password.txt
+                  name: mysql-pass
+          image: ${FLYWAY_IMAGE}
+          imagePullPolicy: ${IMAGE_PULL_POLICY}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+
       hostAliases:
         - ip: 127.0.0.1
           hostnames:
@@ -84,6 +196,10 @@ spec:
               value: "${OPENPITRIX_ETCD_ENDPOINTS}"
             - name: OPENPITRIX_MYSQL_HOST
               value: "${OPENPITRIX_MYSQL_HOST}"
+            - name: OPENPITRIX_ATTACHMENT_ENDPOINT
+              value: "${OPENPITRIX_ATTACHMENT_ENDPOINT}"
+            - name: OPENPITRIX_ATTACHMENT_BUCKET_NAME
+              value: "${OPENPITRIX_ATTACHMENT_BUCKET_NAME}"
             - name: OPENPITRIX_MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:

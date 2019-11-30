@@ -4,6 +4,7 @@
 package pb
 
 import (
+	context "context"
 	fmt "fmt"
 	math "math"
 
@@ -12,9 +13,10 @@ import (
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
-	context "golang.org/x/net/context"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -26,7 +28,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type DescribeSubnetsRequest struct {
 	// required, id of runtime that contain subnet
@@ -5201,7 +5203,7 @@ type ClusterManagerClient interface {
 	DeleteKeyPairs(ctx context.Context, in *DeleteKeyPairsRequest, opts ...grpc.CallOption) (*DeleteKeyPairsResponse, error)
 	// Batch attach key pairs to node
 	AttachKeyPairs(ctx context.Context, in *AttachKeyPairsRequest, opts ...grpc.CallOption) (*AttachKeyPairsResponse, error)
-	// Batch detach key pairs from node
+	//Batch detach key pairs from node
 	DetachKeyPairs(ctx context.Context, in *DetachKeyPairsRequest, opts ...grpc.CallOption) (*DetachKeyPairsResponse, error)
 	// Get subnets
 	DescribeSubnets(ctx context.Context, in *DescribeSubnetsRequest, opts ...grpc.CallOption) (*DescribeSubnetsResponse, error)
@@ -5570,7 +5572,7 @@ type ClusterManagerServer interface {
 	DeleteKeyPairs(context.Context, *DeleteKeyPairsRequest) (*DeleteKeyPairsResponse, error)
 	// Batch attach key pairs to node
 	AttachKeyPairs(context.Context, *AttachKeyPairsRequest) (*AttachKeyPairsResponse, error)
-	// Batch detach key pairs from node
+	//Batch detach key pairs from node
 	DetachKeyPairs(context.Context, *DetachKeyPairsRequest) (*DetachKeyPairsResponse, error)
 	// Get subnets
 	DescribeSubnets(context.Context, *DescribeSubnetsRequest) (*DescribeSubnetsResponse, error)
@@ -5620,6 +5622,110 @@ type ClusterManagerServer interface {
 	CeaseClusters(context.Context, *CeaseClustersRequest) (*CeaseClustersResponse, error)
 	// Get statistics of cluster
 	GetClusterStatistics(context.Context, *GetClusterStatisticsRequest) (*GetClusterStatisticsResponse, error)
+}
+
+// UnimplementedClusterManagerServer can be embedded to have forward compatible implementations.
+type UnimplementedClusterManagerServer struct {
+}
+
+func (*UnimplementedClusterManagerServer) AddNodeKeyPairs(ctx context.Context, req *AddNodeKeyPairsRequest) (*AddNodeKeyPairsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNodeKeyPairs not implemented")
+}
+func (*UnimplementedClusterManagerServer) DeleteNodeKeyPairs(ctx context.Context, req *DeleteNodeKeyPairsRequest) (*DeleteNodeKeyPairsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteNodeKeyPairs not implemented")
+}
+func (*UnimplementedClusterManagerServer) CreateKeyPair(ctx context.Context, req *CreateKeyPairRequest) (*CreateKeyPairResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateKeyPair not implemented")
+}
+func (*UnimplementedClusterManagerServer) DescribeKeyPairs(ctx context.Context, req *DescribeKeyPairsRequest) (*DescribeKeyPairsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeKeyPairs not implemented")
+}
+func (*UnimplementedClusterManagerServer) DeleteKeyPairs(ctx context.Context, req *DeleteKeyPairsRequest) (*DeleteKeyPairsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteKeyPairs not implemented")
+}
+func (*UnimplementedClusterManagerServer) AttachKeyPairs(ctx context.Context, req *AttachKeyPairsRequest) (*AttachKeyPairsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AttachKeyPairs not implemented")
+}
+func (*UnimplementedClusterManagerServer) DetachKeyPairs(ctx context.Context, req *DetachKeyPairsRequest) (*DetachKeyPairsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DetachKeyPairs not implemented")
+}
+func (*UnimplementedClusterManagerServer) DescribeSubnets(ctx context.Context, req *DescribeSubnetsRequest) (*DescribeSubnetsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeSubnets not implemented")
+}
+func (*UnimplementedClusterManagerServer) CreateCluster(ctx context.Context, req *CreateClusterRequest) (*CreateClusterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCluster not implemented")
+}
+func (*UnimplementedClusterManagerServer) CreateDebugCluster(ctx context.Context, req *CreateClusterRequest) (*CreateClusterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDebugCluster not implemented")
+}
+func (*UnimplementedClusterManagerServer) ModifyCluster(ctx context.Context, req *ModifyClusterRequest) (*ModifyClusterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyCluster not implemented")
+}
+func (*UnimplementedClusterManagerServer) ModifyClusterNode(ctx context.Context, req *ModifyClusterNodeRequest) (*ModifyClusterNodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyClusterNode not implemented")
+}
+func (*UnimplementedClusterManagerServer) ModifyClusterAttributes(ctx context.Context, req *ModifyClusterAttributesRequest) (*ModifyClusterAttributesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyClusterAttributes not implemented")
+}
+func (*UnimplementedClusterManagerServer) ModifyClusterNodeAttributes(ctx context.Context, req *ModifyClusterNodeAttributesRequest) (*ModifyClusterNodeAttributesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyClusterNodeAttributes not implemented")
+}
+func (*UnimplementedClusterManagerServer) AddTableClusterNodes(ctx context.Context, req *AddTableClusterNodesRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddTableClusterNodes not implemented")
+}
+func (*UnimplementedClusterManagerServer) DeleteTableClusterNodes(ctx context.Context, req *DeleteTableClusterNodesRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTableClusterNodes not implemented")
+}
+func (*UnimplementedClusterManagerServer) DeleteClusters(ctx context.Context, req *DeleteClustersRequest) (*DeleteClustersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteClusters not implemented")
+}
+func (*UnimplementedClusterManagerServer) UpgradeCluster(ctx context.Context, req *UpgradeClusterRequest) (*UpgradeClusterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpgradeCluster not implemented")
+}
+func (*UnimplementedClusterManagerServer) RollbackCluster(ctx context.Context, req *RollbackClusterRequest) (*RollbackClusterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RollbackCluster not implemented")
+}
+func (*UnimplementedClusterManagerServer) ResizeCluster(ctx context.Context, req *ResizeClusterRequest) (*ResizeClusterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResizeCluster not implemented")
+}
+func (*UnimplementedClusterManagerServer) AddClusterNodes(ctx context.Context, req *AddClusterNodesRequest) (*AddClusterNodesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddClusterNodes not implemented")
+}
+func (*UnimplementedClusterManagerServer) DeleteClusterNodes(ctx context.Context, req *DeleteClusterNodesRequest) (*DeleteClusterNodesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteClusterNodes not implemented")
+}
+func (*UnimplementedClusterManagerServer) UpdateClusterEnv(ctx context.Context, req *UpdateClusterEnvRequest) (*UpdateClusterEnvResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateClusterEnv not implemented")
+}
+func (*UnimplementedClusterManagerServer) DescribeClusters(ctx context.Context, req *DescribeClustersRequest) (*DescribeClustersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeClusters not implemented")
+}
+func (*UnimplementedClusterManagerServer) DescribeDebugClusters(ctx context.Context, req *DescribeClustersRequest) (*DescribeClustersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeDebugClusters not implemented")
+}
+func (*UnimplementedClusterManagerServer) DescribeAppClusters(ctx context.Context, req *DescribeAppClustersRequest) (*DescribeAppClustersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeAppClusters not implemented")
+}
+func (*UnimplementedClusterManagerServer) DescribeDebugAppClusters(ctx context.Context, req *DescribeAppClustersRequest) (*DescribeAppClustersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeDebugAppClusters not implemented")
+}
+func (*UnimplementedClusterManagerServer) DescribeClusterNodes(ctx context.Context, req *DescribeClusterNodesRequest) (*DescribeClusterNodesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeClusterNodes not implemented")
+}
+func (*UnimplementedClusterManagerServer) StopClusters(ctx context.Context, req *StopClustersRequest) (*StopClustersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StopClusters not implemented")
+}
+func (*UnimplementedClusterManagerServer) StartClusters(ctx context.Context, req *StartClustersRequest) (*StartClustersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartClusters not implemented")
+}
+func (*UnimplementedClusterManagerServer) RecoverClusters(ctx context.Context, req *RecoverClustersRequest) (*RecoverClustersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecoverClusters not implemented")
+}
+func (*UnimplementedClusterManagerServer) CeaseClusters(ctx context.Context, req *CeaseClustersRequest) (*CeaseClustersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CeaseClusters not implemented")
+}
+func (*UnimplementedClusterManagerServer) GetClusterStatistics(ctx context.Context, req *GetClusterStatisticsRequest) (*GetClusterStatisticsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetClusterStatistics not implemented")
 }
 
 func RegisterClusterManagerServer(s *grpc.Server, srv ClusterManagerServer) {

@@ -15,6 +15,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/jwtutil"
 )
 
+var MsgChan chan userMessage = make(chan userMessage)
+
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -83,6 +85,7 @@ func (tm *topicManager) Run() {
 
 		case userMsg := <-tm.msgChan:
 			receivers := tm.getReceivers(userMsg.UserId)
+			MsgChan <- userMsg
 			for r, mutex := range receivers {
 				go writeMessage(r, mutex, userMsg)
 			}

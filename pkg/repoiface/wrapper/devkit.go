@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
@@ -22,6 +23,8 @@ func (h OpVersionWrapper) GetVersion() string { return h.OpVersion.GetVersion() 
 func (h OpVersionWrapper) GetAppVersion() string { return h.OpVersion.GetAppVersion() }
 
 func (h OpVersionWrapper) GetDescription() string { return h.OpVersion.GetDescription() }
+
+func (h OpVersionWrapper) GetCreateTime() time.Time { return h.OpVersion.Created }
 
 func (h OpVersionWrapper) GetUrls() string {
 	return h.OpVersion.GetUrls()[0]

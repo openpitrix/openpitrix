@@ -14,6 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/service/cluster"
 	"openpitrix.io/openpitrix/pkg/service/isv"
 	"openpitrix.io/openpitrix/pkg/service/job"
+	"openpitrix.io/openpitrix/pkg/service/push"
 	"openpitrix.io/openpitrix/pkg/service/repo"
 	"openpitrix.io/openpitrix/pkg/service/repo_indexer"
 	"openpitrix.io/openpitrix/pkg/service/runtime"
@@ -39,6 +40,7 @@ func main() {
 	go app.Serve(getConf("app"))
 	go attachment.Serve(getConf("attachment"))
 	go runtime_provider.Serve(getConf(""))
+	go push.Serve(getConf(""))
 
 	apigateway.Serve(getConf(""))
 }
