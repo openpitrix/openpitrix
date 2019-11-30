@@ -5,6 +5,8 @@
 package wrapper
 
 import (
+	"time"
+
 	"github.com/Masterminds/semver"
 )
 
@@ -22,6 +24,7 @@ type VersionInterface interface {
 	GetMaintainers() string
 	GetScreenshots() string
 	GetPackageName() string
+	GetCreateTime() time.Time
 }
 
 type VersionInterfaces []VersionInterface

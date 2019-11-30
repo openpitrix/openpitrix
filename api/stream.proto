@@ -1,0 +1,28 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+option go_package = "pb";
+
+
+import "google/protobuf/wrappers.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+message CreateStreamRequest{
+    google.protobuf.StringValue UserId = 1;
+}
+
+message CreateStreamResponse{
+    google.protobuf.StringValue UserID = 1;
+    google.protobuf.BytesValue Message = 2;
+}
+
+
+service Stream{
+    rpc CreateServerStream(CreateStreamRequest) returns (stream CreateStreamResponse){}
+}
+

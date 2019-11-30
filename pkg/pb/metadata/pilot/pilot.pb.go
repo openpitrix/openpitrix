@@ -4,14 +4,16 @@
 package pbpilot
 
 import (
+	context "context"
 	fmt "fmt"
 	math "math"
 
 	proto "github.com/golang/protobuf/proto"
 	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
-	context "golang.org/x/net/context"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 
 	types "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 )
@@ -25,7 +27,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 func init() { proto.RegisterFile("metadata/pilot/pilot.proto", fileDescriptor_9b294d1323d9005f) }
 
@@ -422,6 +424,98 @@ type PilotServiceServer interface {
 	PingMetadataBackend(context.Context, *types.FrontgateId) (*types.Empty, error)
 	RunCommandOnFrontgateNode(context.Context, *types.RunCommandOnFrontgateRequest) (*types.String, error)
 	RunCommandOnDrone(context.Context, *types.RunCommandOnDroneRequest) (*types.String, error)
+}
+
+// UnimplementedPilotServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedPilotServiceServer struct {
+}
+
+func (*UnimplementedPilotServiceServer) GetPilotVersion(ctx context.Context, req *types.Empty) (*types.Version, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPilotVersion not implemented")
+}
+func (*UnimplementedPilotServiceServer) GetFrontgateVersion(ctx context.Context, req *types.FrontgateId) (*types.Version, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFrontgateVersion not implemented")
+}
+func (*UnimplementedPilotServiceServer) GetDroneVersion(ctx context.Context, req *types.DroneEndpoint) (*types.Version, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDroneVersion not implemented")
+}
+func (*UnimplementedPilotServiceServer) GetPilotConfig(ctx context.Context, req *types.Empty) (*types.PilotConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPilotConfig not implemented")
+}
+func (*UnimplementedPilotServiceServer) GetPilotClientTLSConfig(ctx context.Context, req *types.Empty) (*types.PilotClientTLSConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPilotClientTLSConfig not implemented")
+}
+func (*UnimplementedPilotServiceServer) GetFrontgateList(ctx context.Context, req *types.Empty) (*types.FrontgateIdList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFrontgateList not implemented")
+}
+func (*UnimplementedPilotServiceServer) GetFrontgateConfig(ctx context.Context, req *types.FrontgateId) (*types.FrontgateConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFrontgateConfig not implemented")
+}
+func (*UnimplementedPilotServiceServer) SetFrontgateConfig(ctx context.Context, req *types.FrontgateConfig) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetFrontgateConfig not implemented")
+}
+func (*UnimplementedPilotServiceServer) GetDroneConfig(ctx context.Context, req *types.DroneEndpoint) (*types.DroneConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDroneConfig not implemented")
+}
+func (*UnimplementedPilotServiceServer) SetDroneConfig(ctx context.Context, req *types.SetDroneConfigRequest) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetDroneConfig not implemented")
+}
+func (*UnimplementedPilotServiceServer) GetConfdConfig(ctx context.Context, req *types.ConfdEndpoint) (*types.ConfdConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetConfdConfig not implemented")
+}
+func (*UnimplementedPilotServiceServer) IsConfdRunning(ctx context.Context, req *types.DroneEndpoint) (*types.Bool, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsConfdRunning not implemented")
+}
+func (*UnimplementedPilotServiceServer) StartConfd(ctx context.Context, req *types.DroneEndpoint) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartConfd not implemented")
+}
+func (*UnimplementedPilotServiceServer) StopConfd(ctx context.Context, req *types.DroneEndpoint) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StopConfd not implemented")
+}
+func (*UnimplementedPilotServiceServer) RegisterMetadata(ctx context.Context, req *types.SubTask_RegisterMetadata) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterMetadata not implemented")
+}
+func (*UnimplementedPilotServiceServer) DeregisterMetadata(ctx context.Context, req *types.SubTask_DeregisterMetadata) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeregisterMetadata not implemented")
+}
+func (*UnimplementedPilotServiceServer) RegisterMetadataMapping(ctx context.Context, req *types.SubTask_RegisterMetadata) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterMetadataMapping not implemented")
+}
+func (*UnimplementedPilotServiceServer) DeregisterMetadataMapping(ctx context.Context, req *types.SubTask_DeregisterMetadata) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeregisterMetadataMapping not implemented")
+}
+func (*UnimplementedPilotServiceServer) RegisterCmd(ctx context.Context, req *types.SubTask_RegisterCmd) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterCmd not implemented")
+}
+func (*UnimplementedPilotServiceServer) DeregisterCmd(ctx context.Context, req *types.SubTask_DeregisterCmd) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeregisterCmd not implemented")
+}
+func (*UnimplementedPilotServiceServer) GetSubtaskStatus(ctx context.Context, req *types.SubTaskId) (*types.SubTaskStatus, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSubtaskStatus not implemented")
+}
+func (*UnimplementedPilotServiceServer) HandleSubtask(ctx context.Context, req *types.SubTaskMessage) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HandleSubtask not implemented")
+}
+func (*UnimplementedPilotServiceServer) PingPilot(ctx context.Context, req *types.Empty) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PingPilot not implemented")
+}
+func (*UnimplementedPilotServiceServer) PingFrontgate(ctx context.Context, req *types.FrontgateId) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PingFrontgate not implemented")
+}
+func (*UnimplementedPilotServiceServer) PingFrontgateNode(ctx context.Context, req *types.FrontgateNodeId) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PingFrontgateNode not implemented")
+}
+func (*UnimplementedPilotServiceServer) PingDrone(ctx context.Context, req *types.DroneEndpoint) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PingDrone not implemented")
+}
+func (*UnimplementedPilotServiceServer) PingMetadataBackend(ctx context.Context, req *types.FrontgateId) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PingMetadataBackend not implemented")
+}
+func (*UnimplementedPilotServiceServer) RunCommandOnFrontgateNode(ctx context.Context, req *types.RunCommandOnFrontgateRequest) (*types.String, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RunCommandOnFrontgateNode not implemented")
+}
+func (*UnimplementedPilotServiceServer) RunCommandOnDrone(ctx context.Context, req *types.RunCommandOnDroneRequest) (*types.String, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RunCommandOnDrone not implemented")
 }
 
 func RegisterPilotServiceServer(s *grpc.Server, srv PilotServiceServer) {
@@ -1190,6 +1284,32 @@ type PilotServiceForFrontgateServer interface {
 	GetPilotConfig(context.Context, *types.Empty) (*types.PilotConfig, error)
 	ReportSubTaskStatus(context.Context, *types.SubTaskStatus) (*types.Empty, error)
 	FrontgateChannel(PilotServiceForFrontgate_FrontgateChannelServer) error
+}
+
+// UnimplementedPilotServiceForFrontgateServer can be embedded to have forward compatible implementations.
+type UnimplementedPilotServiceForFrontgateServer struct {
+}
+
+func (*UnimplementedPilotServiceForFrontgateServer) GetPilotVersion(ctx context.Context, req *types.Empty) (*types.Version, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPilotVersion not implemented")
+}
+func (*UnimplementedPilotServiceForFrontgateServer) GetFrontgateVersion(ctx context.Context, req *types.FrontgateId) (*types.Version, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFrontgateVersion not implemented")
+}
+func (*UnimplementedPilotServiceForFrontgateServer) GetDroneVersion(ctx context.Context, req *types.DroneEndpoint) (*types.Version, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDroneVersion not implemented")
+}
+func (*UnimplementedPilotServiceForFrontgateServer) PingPilot(ctx context.Context, req *types.Empty) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PingPilot not implemented")
+}
+func (*UnimplementedPilotServiceForFrontgateServer) GetPilotConfig(ctx context.Context, req *types.Empty) (*types.PilotConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPilotConfig not implemented")
+}
+func (*UnimplementedPilotServiceForFrontgateServer) ReportSubTaskStatus(ctx context.Context, req *types.SubTaskStatus) (*types.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReportSubTaskStatus not implemented")
+}
+func (*UnimplementedPilotServiceForFrontgateServer) FrontgateChannel(srv PilotServiceForFrontgate_FrontgateChannelServer) error {
+	return status.Errorf(codes.Unimplemented, "method FrontgateChannel not implemented")
 }
 
 func RegisterPilotServiceForFrontgateServer(s *grpc.Server, srv PilotServiceForFrontgateServer) {

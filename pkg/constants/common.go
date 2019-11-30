@@ -56,6 +56,7 @@ const (
 	RuntimeProviderManagerPort = 9121
 	NotificationPort           = 9201
 	ServiceConfigPort          = 9202
+	ServicePushPort            = 9203
 )
 
 const (

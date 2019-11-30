@@ -149,6 +149,7 @@ func (rp *repoProxy) syncAppInfo(ctx context.Context, appIface wrapper.VersionIn
 		app.Maintainers = appIface.GetMaintainers()
 		app.Keywords = appIface.GetKeywords()
 		app.Sources = appIface.GetSources()
+		app.CreateTime = appIface.GetCreateTime()
 
 		_, err = pi.Global().DB(ctx).
 			InsertInto(constants.TableApp).
@@ -193,6 +194,9 @@ func (rp *repoProxy) syncAppInfo(ctx context.Context, appIface wrapper.VersionIn
 	}
 	if app.Sources != appIface.GetSources() {
 		updateAttr[constants.ColumnSources] = appIface.GetSources()
+	}
+	if app.CreateTime != appIface.GetCreateTime() {
+		updateAttr[constants.ColumnCreateTime] = appIface.GetCreateTime()
 	}
 	if len(updateAttr) > 0 {
 		_, err = pi.Global().DB(ctx).

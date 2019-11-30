@@ -19,7 +19,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type SubTaskAction int32
 
@@ -212,11 +212,11 @@ func (m *SubTaskStatus) GetStatus() string {
 }
 
 //
-// {
-// "action": "StartConfd",
-// "taskId": "t-abcdefgh",
-// "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", "timeout": 600}
-// }
+//{
+//"action": "StartConfd",
+//"taskId": "t-abcdefgh",
+//"directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", "timeout": 600}
+//}
 type SubTask_StartConfd struct {
 	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
 	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
@@ -289,11 +289,11 @@ func (m *SubTask_StartConfd) GetTimeout() int32 {
 }
 
 //
-// {
-// "action": "StopConfd",
-// "taskId": "t-abcdefgh",
-// "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", "timeout": 600}
-// }
+//{
+//"action": "StopConfd",
+//"taskId": "t-abcdefgh",
+//"directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", "timeout": 600}
+//}
 type SubTask_StopConfd struct {
 	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
 	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
@@ -366,11 +366,11 @@ func (m *SubTask_StopConfd) GetTimeout() int32 {
 }
 
 //
-// {
-// "action": "RegisterMetadata",
-// "taskId": "t-abcdefgh",
-// "directive": {"frontgateId": "cl-abcdefgh", "cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
-// }
+//{
+//"action": "RegisterMetadata",
+//"taskId": "t-abcdefgh",
+//"directive": {"frontgateId": "cl-abcdefgh", "cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
+//}
 type SubTask_RegisterMetadata struct {
 	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
 	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
@@ -451,11 +451,11 @@ func (m *SubTask_RegisterMetadata) GetRetry() int32 {
 }
 
 //
-// {
-// "action": "DeregisterMetadata",
-// "taskId": "t-abcdefgh",
-// "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
-// }
+//{
+//"action": "DeregisterMetadata",
+//"taskId": "t-abcdefgh",
+//"directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
+//}
 type SubTask_DeregisterMetadata struct {
 	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
 	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
@@ -544,11 +544,11 @@ func (m *SubTask_DeregisterMetadata) GetRetry() int32 {
 }
 
 //
-// {
-// "action": "RegisterCmd",
-// "taskId": "t-abcdefgh",
-// "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
-// }
+//{
+//"action": "RegisterCmd",
+//"taskId": "t-abcdefgh",
+//"directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
+//}
 type SubTask_RegisterCmd struct {
 	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
 	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
@@ -637,11 +637,11 @@ func (m *SubTask_RegisterCmd) GetRetry() int32 {
 }
 
 //
-// {
-// "action": "DeregisterCmd",
-// "taskId": "t-abcdefgh",
-// "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
-// }
+//{
+//"action": "DeregisterCmd",
+//"taskId": "t-abcdefgh",
+//"directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
+//}
 type SubTask_DeregisterCmd struct {
 	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
 	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
@@ -730,10 +730,10 @@ func (m *SubTask_DeregisterCmd) GetRetry() int32 {
 }
 
 //
-// {
-// "action": "GetTaskStatus",
-// "taskId": "t-abcdefgh"
-// }
+//{
+//"action": "GetTaskStatus",
+//"taskId": "t-abcdefgh"
+//}
 type SubTask_GetTaskStatus struct {
 	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
 	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`

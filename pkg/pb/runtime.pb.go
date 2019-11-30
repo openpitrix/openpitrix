@@ -4,6 +4,7 @@
 package pb
 
 import (
+	context "context"
 	fmt "fmt"
 	math "math"
 
@@ -11,9 +12,10 @@ import (
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
-	context "golang.org/x/net/context"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -25,7 +27,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type RuntimeCredential struct {
 	// runtime credential id
@@ -2049,6 +2051,59 @@ type RuntimeManagerServer interface {
 	DescribeRuntimeProviderZones(context.Context, *DescribeRuntimeProviderZonesRequest) (*DescribeRuntimeProviderZonesResponse, error)
 	// Get statistics of runtime
 	GetRuntimeStatistics(context.Context, *GetRuntimeStatisticsRequest) (*GetRuntimeStatisticsResponse, error)
+}
+
+// UnimplementedRuntimeManagerServer can be embedded to have forward compatible implementations.
+type UnimplementedRuntimeManagerServer struct {
+}
+
+func (*UnimplementedRuntimeManagerServer) CreateRuntime(ctx context.Context, req *CreateRuntimeRequest) (*CreateRuntimeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRuntime not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) CreateDebugRuntime(ctx context.Context, req *CreateRuntimeRequest) (*CreateRuntimeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDebugRuntime not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) DescribeRuntimeDetails(ctx context.Context, req *DescribeRuntimesRequest) (*DescribeRuntimeDetailsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeRuntimeDetails not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) DescribeRuntimes(ctx context.Context, req *DescribeRuntimesRequest) (*DescribeRuntimesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeRuntimes not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) DescribeDebugRuntimes(ctx context.Context, req *DescribeRuntimesRequest) (*DescribeRuntimesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeDebugRuntimes not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) ModifyRuntime(ctx context.Context, req *ModifyRuntimeRequest) (*ModifyRuntimeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyRuntime not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) DeleteRuntimes(ctx context.Context, req *DeleteRuntimesRequest) (*DeleteRuntimesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRuntimes not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) CreateRuntimeCredential(ctx context.Context, req *CreateRuntimeCredentialRequest) (*CreateRuntimeCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRuntimeCredential not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) CreateDebugRuntimeCredential(ctx context.Context, req *CreateRuntimeCredentialRequest) (*CreateRuntimeCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDebugRuntimeCredential not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) DescribeRuntimeCredentials(ctx context.Context, req *DescribeRuntimeCredentialsRequest) (*DescribeRuntimeCredentialsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeRuntimeCredentials not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) DescribeDebugRuntimeCredentials(ctx context.Context, req *DescribeRuntimeCredentialsRequest) (*DescribeRuntimeCredentialsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeDebugRuntimeCredentials not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) ModifyRuntimeCredential(ctx context.Context, req *ModifyRuntimeCredentialRequest) (*ModifyRuntimeCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyRuntimeCredential not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) DeleteRuntimeCredentials(ctx context.Context, req *DeleteRuntimeCredentialsRequest) (*DeleteRuntimeCredentialsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRuntimeCredentials not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) ValidateRuntimeCredential(ctx context.Context, req *ValidateRuntimeCredentialRequest) (*ValidateRuntimeCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateRuntimeCredential not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) DescribeRuntimeProviderZones(ctx context.Context, req *DescribeRuntimeProviderZonesRequest) (*DescribeRuntimeProviderZonesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeRuntimeProviderZones not implemented")
+}
+func (*UnimplementedRuntimeManagerServer) GetRuntimeStatistics(ctx context.Context, req *GetRuntimeStatisticsRequest) (*GetRuntimeStatisticsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRuntimeStatistics not implemented")
 }
 
 func RegisterRuntimeManagerServer(s *grpc.Server, srv RuntimeManagerServer) {
