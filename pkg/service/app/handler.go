@@ -8,6 +8,8 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"openpitrix.io/openpitrix/pkg/topic"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"strings"
 	"time"
 
@@ -38,6 +40,24 @@ import (
 var (
 	_ pb.AppManagerServer = &Server{}
 )
+
+func (s *Server) CreateServerStream(req *pb.CreateStreamRequest, stream pb.Stream_CreateServerStreamServer) error {
+	for {
+		msg := <-topic.MsgChan
+		jsonMsg, err := jsonutil.ToJson(msg.Message).Bytes()
+		if err != nil {
+			return err
+		}
+		resp := &pb.CreateStreamResponse{
+			UserID:  pbutil.ToProtoString(msg.UserId),
+			Message: pbutil.ToProtoBytes(jsonMsg),
+		}
+		err = stream.Send(resp)
+		if err != nil {
+			return err
+		}
+	}
+}
 
 func (p *Server) SyncRepo(ctx context.Context, req *pb.SyncRepoRequest) (*pb.SyncRepoResponse, error) {
 	var res = &pb.SyncRepoResponse{}
@@ -460,6 +480,10 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 	if name == "" {
 		name = v.GetVersionName()
 	}
+	description := req.GetDescription().GetValue()
+	if description == "" {
+		description = v.GetDescription()
+	}
 
 	appId := req.GetAppId().GetValue()
 	err = checkAppVersionName(ctx, appId, name)
@@ -490,7 +514,7 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 	newAppVersion := models.NewAppVersion(
 		appId,
 		name,
-		req.GetDescription().GetValue(),
+		description,
 		s.GetOwnerPath())
 
 	newAppVersion.PackageName = attachmentId
