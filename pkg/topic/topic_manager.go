@@ -15,7 +15,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/jwtutil"
 )
 
-var MsgChan chan userMessage = make(chan userMessage)
+var MsgChan = make(chan userMessage)
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
