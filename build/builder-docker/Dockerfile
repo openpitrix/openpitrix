@@ -26,7 +26,7 @@ RUN mkdir -p /protoc && cd /protoc \
 
 FROM golang:1.13-alpine
 
-RUN apk add --no-cache git protobuf make curl openssl jq rsync upx
+RUN apk add --no-cache git protobuf make curl openssl jq rsync upx build-base
 
 COPY --from=builder /protoc/include /usr/local/include
 COPY --from=builder /go/bin /go/bin

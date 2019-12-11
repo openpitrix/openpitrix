@@ -89,7 +89,8 @@ func (p *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 		return nil, err
 	}
 
-	return providerClient.HandleSubtask(ctx, req)
+	rep, err := providerClient.HandleSubtask(ctx, req)
+	return rep, err
 }
 
 func (p *Server) WaitSubtask(ctx context.Context, req *pb.WaitSubtaskRequest) (*pb.WaitSubtaskResponse, error) {

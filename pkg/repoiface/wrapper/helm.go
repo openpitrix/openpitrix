@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"k8s.io/helm/pkg/repo"
+	"helm.sh/helm/v3/pkg/repo"
 
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
@@ -19,9 +19,12 @@ type HelmVersionWrapper struct {
 	*repo.ChartVersion
 }
 
-func (h HelmVersionWrapper) GetVersion() string       { return h.ChartVersion.GetVersion() }
-func (h HelmVersionWrapper) GetAppVersion() string    { return h.ChartVersion.GetAppVersion() }
-func (h HelmVersionWrapper) GetDescription() string   { return h.ChartVersion.GetDescription() }
+func (h HelmVersionWrapper) GetIcon() string          { return h.ChartVersion.Icon }
+func (h HelmVersionWrapper) GetName() string          { return h.ChartVersion.Name }
+func (h HelmVersionWrapper) GetHome() string          { return h.ChartVersion.Home }
+func (h HelmVersionWrapper) GetVersion() string       { return h.ChartVersion.Version }
+func (h HelmVersionWrapper) GetAppVersion() string    { return h.ChartVersion.AppVersion }
+func (h HelmVersionWrapper) GetDescription() string   { return h.ChartVersion.Description }
 func (h HelmVersionWrapper) GetCreateTime() time.Time { return h.ChartVersion.Created }
 func (h HelmVersionWrapper) GetUrls() string {
 	if len(h.ChartVersion.URLs) == 0 {
@@ -31,21 +34,21 @@ func (h HelmVersionWrapper) GetUrls() string {
 }
 
 func (h HelmVersionWrapper) GetSources() string {
-	if len(h.ChartVersion.GetSources()) == 0 {
+	if len(h.ChartVersion.Sources) == 0 {
 		return ""
 	}
-	return jsonutil.ToString(h.ChartVersion.GetSources())
+	return jsonutil.ToString(h.ChartVersion.Sources)
 }
 
 func (h HelmVersionWrapper) GetKeywords() string {
-	return strings.Join(h.ChartVersion.GetKeywords(), ",")
+	return strings.Join(h.ChartVersion.Keywords, ",")
 }
 
 func (h HelmVersionWrapper) GetMaintainers() string {
-	if len(h.ChartVersion.GetMaintainers()) == 0 {
+	if len(h.ChartVersion.Maintainers) == 0 {
 		return ""
 	}
-	return jsonutil.ToString(h.ChartVersion.GetMaintainers())
+	return jsonutil.ToString(h.ChartVersion.Maintainers)
 }
 
 func (h HelmVersionWrapper) GetScreenshots() string {
