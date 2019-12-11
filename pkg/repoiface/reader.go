@@ -10,9 +10,9 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-	"k8s.io/helm/pkg/chartutil"
-	"k8s.io/helm/pkg/provenance"
-	"k8s.io/helm/pkg/repo"
+	"helm.sh/helm/v3/pkg/chart/loader"
+	"helm.sh/helm/v3/pkg/provenance"
+	"helm.sh/helm/v3/pkg/repo"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/devkit"
@@ -121,7 +121,7 @@ func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 		if err != nil {
 			return errors.Wrap(err, "decode yaml failed")
 		}
-		app, err := chartutil.LoadArchive(bytes.NewReader(pkg))
+		app, err := loader.LoadArchive(bytes.NewReader(pkg))
 		if err != nil {
 			return err
 		}

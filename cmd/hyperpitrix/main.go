@@ -12,6 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/service/attachment"
 	"openpitrix.io/openpitrix/pkg/service/category"
 	"openpitrix.io/openpitrix/pkg/service/cluster"
+	"openpitrix.io/openpitrix/pkg/service/helm"
 	"openpitrix.io/openpitrix/pkg/service/isv"
 	"openpitrix.io/openpitrix/pkg/service/job"
 	"openpitrix.io/openpitrix/pkg/service/repo"
@@ -39,6 +40,7 @@ func main() {
 	go app.Serve(getConf("app"))
 	go attachment.Serve(getConf("attachment"))
 	go runtime_provider.Serve(getConf(""))
+	go helm.Serve(getConf(""))
 
 	apigateway.Serve(getConf(""))
 }

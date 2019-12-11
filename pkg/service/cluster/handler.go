@@ -661,6 +661,7 @@ func (p *Server) createCluster(ctx context.Context, req *pb.CreateClusterRequest
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
+
 	response, err := providerClient.ParseClusterConf(ctx, &pb.ParseClusterConfRequest{
 		RuntimeId: pbutil.ToProtoString(runtimeId),
 		VersionId: pbutil.ToProtoString(versionId),
@@ -671,6 +672,7 @@ func (p *Server) createCluster(ctx context.Context, req *pb.CreateClusterRequest
 		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] conf [%s] failed: %+v",
 			versionId, runtimeId, conf, err)
 		if gerr.IsGRPCError(err) {
+			logger.Debug(nil,"debug: %s",err.Error())
 			return nil, err
 		}
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)

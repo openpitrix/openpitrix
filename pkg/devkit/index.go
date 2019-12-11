@@ -6,10 +6,11 @@ package devkit
 
 import (
 	"fmt"
+	"net/url"
+	"path"
 	"path/filepath"
 
-	"k8s.io/helm/pkg/provenance"
-	"k8s.io/helm/pkg/urlutil"
+	"helm.sh/helm/v3/pkg/provenance"
 
 	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
@@ -29,7 +30,18 @@ func IndexDirectory(dir, baseURL string) (*opapp.IndexFile, error) {
 
 		var parentDir string
 		parentDir, fname = filepath.Split(fname)
-		parentURL, err := urlutil.URLJoin(baseURL, parentDir)
+		parentURL, err := func(baseURL string, paths ...string) (string, error) {
+			u, err := url.Parse(baseURL)
+			if err != nil {
+				return "", err
+			}
+			// We want path instead of filepath because path always uses /.
+			all := []string{u.Path}
+			all = append(all, paths...)
+			u.Path = path.Join(all...)
+			return u.String(), nil
+		}(baseURL, parentDir)
+
 		if err != nil {
 			parentURL = filepath.Join(baseURL, parentDir)
 		}
