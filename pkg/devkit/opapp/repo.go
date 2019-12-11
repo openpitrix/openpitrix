@@ -7,13 +7,14 @@ package opapp
 import (
 	"fmt"
 	"io/ioutil"
+	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"time"
 
 	"github.com/Masterminds/semver"
-	"k8s.io/helm/pkg/urlutil"
 
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
@@ -64,7 +65,18 @@ func (i IndexFile) Add(md *Metadata, filename, baseURL, digest string) {
 	if baseURL != "" {
 		var err error
 		_, file := filepath.Split(filename)
-		u, err = urlutil.URLJoin(baseURL, file)
+		u, err = func(baseURL string, paths ...string) (string, error) {
+			u, err := url.Parse(baseURL)
+			if err != nil {
+				return "", err
+			}
+			// We want path instead of filepath because path always uses /.
+			all := []string{u.Path}
+			all = append(all, paths...)
+			u.Path = path.Join(all...)
+			return u.String(), nil
+		}(baseURL, file)
+
 		if err != nil {
 			u = filepath.Join(baseURL, file)
 		}

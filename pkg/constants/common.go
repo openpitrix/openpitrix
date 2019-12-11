@@ -54,6 +54,7 @@ const (
 	EtcdServicePort            = 2379
 	AttachmentManagerPort      = 9122
 	RuntimeProviderManagerPort = 9121
+	KubernetesProviderPort     = 9123
 	NotificationPort           = 9201
 	ServiceConfigPort          = 9202
 	ServicePushPort            = 9203
