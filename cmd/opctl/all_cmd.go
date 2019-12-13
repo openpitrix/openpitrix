@@ -1446,6 +1446,7 @@ func (*CreateAppCmd) GetActionName() string {
 }
 
 func (c *CreateAppCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.Categories, "categories", "", []string{}, "categories")
 	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. app icon")
 	f.StringVarP(&c.Isv, "isv", "", "", "isv")
 	f.StringVarP(&c.Name, "name", "", "", "required, app name")

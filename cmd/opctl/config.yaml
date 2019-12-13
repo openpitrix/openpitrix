@@ -537,6 +537,9 @@
   description: Create app, user of isv can create app on the platform
   service: AppManager
   body:
+    categories:
+      help: categories
+      type: '[]string'
     icon:
       help: app icon
       type: byte
