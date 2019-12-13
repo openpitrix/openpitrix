@@ -6,7 +6,6 @@ PROTO_FILES=$(sort $(wildcard ./*.proto))
 PROTOC_INC_PATH=/usr/local/include
 GOOGLEAPIS_PATH=third_party/googleapis
 GRPC_GATEWAY_PATH=third_party/grpc-ecosystem/grpc-gateway/
-#VENDOR_PATH=../vendor/
 
 #PROTOC_FLAGS:=-I. -I$(GOOGLEAPIS_PATH) -I$(GRPC_GATEWAY_PATH) -I$(PROTOC_INC_PATH) -I$(VENDOR_PATH)
 PROTOC_FLAGS:=-I. -I$(GOOGLEAPIS_PATH) -I$(GRPC_GATEWAY_PATH) -I$(PROTOC_INC_PATH)
@@ -43,7 +42,7 @@ generate: $(PROTO_FILES) Makefile
 	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:../pkg/pb ${PROTO_FILES}
 	protoc $(PROTOC_FLAGS) --grpc-gateway_out=logtostderr=true,allow_delete_body=true:../pkg/pb ${PROTO_FILES}
 	protoc $(PROTOC_FLAGS) --swagger_out=logtostderr=true,allow_delete_body=true:../pkg/apigateway/spec ${PROTO_FILES}
-	cd ../pkg/apigateway/spec/ && cat ./*.swagger.json 0.swagger.json | jq --slurp 'reduce .[] as $$item ({}; . * $$item)' > ./api.swagger.json
+	cd ../pkg/apigateway/spec/ && cat ./*.swagger.json 0.swagger.json | jq --slurp 'reduce .[] as $$item ({}; . * $$item)' | jq -f ./preprocess.jq > ./api.swagger.json
 	cd ../pkg/apigateway/spec/ && find . | grep .swagger.json | grep -v "api" | xargs rm
 #	# generate client code
 	make generate_opctl

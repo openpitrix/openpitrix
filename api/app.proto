@@ -28,6 +28,8 @@ message CreateAppRequest {
 	google.protobuf.BytesValue icon = 6;
 	// isv
 	google.protobuf.StringValue isv = 7;
+	// categories
+	repeated string categories = 8;
 }
 
 message CreateAppResponse {

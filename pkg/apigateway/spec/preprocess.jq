@@ -8,6 +8,6 @@ def walk(f):
   end;
 
 walk( if type == "object" and .type == "array" and .in == "query"
-      then .collectionFormat += "multi"
+      then .collectionFormat += ""
       else .
       end)

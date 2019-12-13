@@ -8,8 +8,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"openpitrix.io/openpitrix/pkg/topic"
-	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"strings"
 	"time"
 
@@ -17,6 +15,7 @@ import (
 	accessclient "openpitrix.io/openpitrix/pkg/client/access"
 	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	attachmentclient "openpitrix.io/openpitrix/pkg/client/attachment"
+	"openpitrix.io/openpitrix/pkg/client/category"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -40,24 +39,6 @@ import (
 var (
 	_ pb.AppManagerServer = &Server{}
 )
-
-func (s *Server) CreateServerStream(req *pb.CreateStreamRequest, stream pb.Stream_CreateServerStreamServer) error {
-	for {
-		msg := <-topic.MsgChan
-		jsonMsg, err := jsonutil.ToJson(msg.Message).Bytes()
-		if err != nil {
-			return err
-		}
-		resp := &pb.CreateStreamResponse{
-			UserID:  pbutil.ToProtoString(msg.UserId),
-			Message: pbutil.ToProtoBytes(jsonMsg),
-		}
-		err = stream.Send(resp)
-		if err != nil {
-			return err
-		}
-	}
-}
 
 func (p *Server) SyncRepo(ctx context.Context, req *pb.SyncRepoRequest) (*pb.SyncRepoResponse, error) {
 	var res = &pb.SyncRepoResponse{}
@@ -282,7 +263,35 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	}
 
 	res.VersionId = pbutil.ToProtoString(version.VersionId)
-	err = categoryutil.SyncResourceCategories(ctx, pi.Global().DB(ctx), newApp.AppId, nil)
+
+	var categoryIds []string
+	for _, categoryName := range req.GetCategories() {
+		categoryClient, err := category.NewCategoryManagerClient()
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		describeCateReq := &pb.DescribeCategoriesRequest{
+			Name:  []string{categoryName},
+			Owner: []string{s.UserId},
+		}
+		cates, err := categoryClient.DescribeCategories(ctx, describeCateReq)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+		if cates.TotalCount == 0 {
+			createCateReq := &pb.CreateCategoryRequest{
+				Name: pbutil.ToProtoString(categoryName),
+			}
+			resp, err := categoryClient.CreateCategory(ctx, createCateReq)
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+			}
+			categoryIds = []string{resp.CategoryId.GetValue()}
+		} else {
+			categoryIds = []string{cates.CategorySet[0].CategoryId.GetValue()}
+		}
+	}
+	err = categoryutil.SyncResourceCategories(ctx, pi.Global().DB(ctx), newApp.AppId, categoryIds)
 	if err != nil {
 		return nil, err
 	}
