@@ -1,7 +1,7 @@
 #!/bin/bash
 
-MINIKUBE_VERSION=v0.35.0
-KUBE_VERSION=v1.13.4
+MINIKUBE_VERSION=v1.6.2
+KUBE_VERSION=v1.15.7
 
 curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/linux/amd64/kubectl \
   && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
