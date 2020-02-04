@@ -201,7 +201,15 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 	return attributes
 }
 
+func AddQueryOrderDirWithPrefix(query *db.SelectQuery, req Request, defaultColumn, tableName string) *db.SelectQuery {
+	return addQueryOrderDir(query, req, defaultColumn, tableName)
+}
+
 func AddQueryOrderDir(query *db.SelectQuery, req Request, defaultColumn string) *db.SelectQuery {
+	return addQueryOrderDir(query, req, defaultColumn, "")
+}
+
+func addQueryOrderDir(query *db.SelectQuery, req Request, defaultColumn string, tableName string) *db.SelectQuery {
 	isAsc := false
 	if r, ok := req.(RequestWithReverse); ok {
 		reverse := r.GetReverse()
@@ -214,6 +222,9 @@ func AddQueryOrderDir(query *db.SelectQuery, req Request, defaultColumn string) 
 		if s != nil {
 			defaultColumn = s.GetValue()
 		}
+	}
+	if len(tableName) > 0 {
+		defaultColumn = tableName + "." + defaultColumn
 	}
 	query = query.OrderDir(defaultColumn, isAsc)
 	return query
@@ -242,6 +253,18 @@ func BuildPermissionFilter(ctx context.Context) dbr.Builder {
 	ops := []dbr.Builder{
 		db.Prefix(constants.ColumnOwnerPath, string(s.GetAccessPath())),
 		db.Eq(constants.ColumnOwner, s.UserId),
+	}
+	return db.Or(ops...)
+}
+
+func BuildPermissionFilterWithPrefix(ctx context.Context, prefix string) dbr.Builder {
+	s := ctxutil.GetSender(ctx)
+	if s == nil {
+		return nil
+	}
+	ops := []dbr.Builder{
+		db.Prefix(prefix+"."+constants.ColumnOwnerPath, string(s.GetAccessPath())),
+		db.Eq(prefix+"."+constants.ColumnOwner, s.UserId),
 	}
 	return db.Or(ops...)
 }

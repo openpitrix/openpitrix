@@ -1782,7 +1782,7 @@ func (c *DescribeAppVersionReviewsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.ReviewID, "review_id", "", []string{}, "app version review ids.")
 	f.StringSliceVarP(&c.Reviewer, "reviewer", "", []string{}, "reviewer of app version eg.[global_admin|developer|business|technical|isv].")
 	c.SearchWord = new(string)
-	f.StringVarP(c.SearchWord, "search_word", "", "", "query key, support these fields(review_id, version_id, app_id, status, reviewer).")
+	f.StringVarP(c.SearchWord, "search_word", "", "", "query key, support these fields(review_id, version_id, app_id, status, reviewer, app_name, owner).")
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "sort key, order by sort_key, default create_time.")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "app version status eg.[isv-in-review|isv-passed|isv-rejected|isv-draft|business-in-review|business-passed|business-rejected|develop-draft|develop-in-review|develop-passed|develop-rejected|develop-draft].")

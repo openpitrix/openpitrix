@@ -1993,7 +1993,7 @@ func (m *AppVersionReview) GetVersionType() *wrappers.StringValue {
 }
 
 type DescribeAppVersionReviewsRequest struct {
-	// query key, support these fields(review_id, version_id, app_id, status, reviewer)
+	// query key, support these fields(review_id, version_id, app_id, status, reviewer, app_name, owner)
 	SearchWord *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
 	// sort key, order by sort_key, default create_time
 	SortKey *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`

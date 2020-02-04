@@ -2297,7 +2297,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "search_word",
-            "description": "query key, support these fields(review_id, version_id, app_id, status, reviewer).",
+            "description": "query key, support these fields(review_id, version_id, app_id, status, reviewer, app_name, owner).",
             "in": "query",
             "required": false,
             "type": "string"
