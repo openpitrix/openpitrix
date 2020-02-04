@@ -764,7 +764,7 @@
       type: '[]string'
     search_word:
       help: query key, support these fields(review_id, version_id, app_id, status,
-        reviewer).
+        reviewer, app_name, owner).
       type: string
     sort_key:
       help: sort key, order by sort_key, default create_time.

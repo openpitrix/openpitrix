@@ -369,7 +369,7 @@ message AppVersionReview {
 }
 
 message DescribeAppVersionReviewsRequest {
-	// query key, support these fields(review_id, version_id, app_id, status, reviewer)
+	// query key, support these fields(review_id, version_id, app_id, status, reviewer, app_name, owner)
 	google.protobuf.StringValue search_word = 1;
 	// sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 2;

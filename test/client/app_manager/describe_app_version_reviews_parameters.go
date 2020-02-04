@@ -99,7 +99,7 @@ type DescribeAppVersionReviewsParams struct {
 	*/
 	Reviewer []string
 	/*SearchWord
-	  query key, support these fields(review_id, version_id, app_id, status, reviewer).
+	  query key, support these fields(review_id, version_id, app_id, status, reviewer, app_name, owner).
 
 	*/
 	SearchWord *string

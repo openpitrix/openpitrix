@@ -193,6 +193,7 @@ var SearchWordColumnTable = []string{
 	TableRuntimeCredential,
 	TableApp,
 	TableAppVersion,
+	TableAppVersionReview,
 	TableRepo,
 	TableJob,
 	TableTask,
@@ -209,6 +210,14 @@ var SearchColumns = map[string][]string{
 	},
 	TableAppVersion: {
 		ColumnVersionId, ColumnAppId, ColumnName, ColumnDescription, ColumnOwner, ColumnPackageName,
+	},
+	TableAppVersionReview: {
+		TableAppVersionReview + "." + ColumnReviewId,
+		TableAppVersionReview + "." + ColumnVersionId,
+		TableAppVersionReview + "." + ColumnAppId,
+		TableAppVersionReview + "." + ColumnOwner,
+		"app.name",
+		"app_version.name",
 	},
 	TableJob: {
 		ColumnJobId, ColumnClusterId, ColumnOwner, ColumnJobAction, ColumnExecutor, ColumnProvider, ColumnExecutor, ColumnProvider,

@@ -545,16 +545,30 @@ func (p *Server) DescribeAppVersionReviews(ctx context.Context, req *pb.Describe
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
-	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.AppVersionReviewColumns)
+	columns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.AppVersionReviewColumns)
+
+	var displayColumns []string
+
+	for _, c := range columns {
+		displayColumns = append(displayColumns, "app_version_review."+c)
+	}
+	displayColumns = append(displayColumns,
+		"app.name AS app_name",
+		"app_version.name AS app_version_name",
+		"app_version.type AS app_version_type",
+	)
 	query := pi.Global().DB(ctx).
 		Select(displayColumns...).
 		From(constants.TableAppVersionReview).
+		LeftJoin(constants.TableAppVersion, "app_version.version_id = app_version_review.version_id").
+		LeftJoin(constants.TableApp, "app.app_id = app_version_review.app_id").
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildPermissionFilter(ctx)).
-		Where(manager.BuildFilterConditions(req, constants.TableAppVersionReview))
+		Distinct().
+		Where(manager.BuildPermissionFilterWithPrefix(ctx, "app_version_review")).
+		Where(manager.BuildFilterConditionsWithPrefix(req, constants.TableAppVersionReview))
 
-	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
+	query = manager.AddQueryOrderDirWithPrefix(query, req, constants.ColumnStatusTime, constants.TableAppVersionReview)
 
 	if len(displayColumns) > 0 {
 		_, err := query.Load(&versionReviews)
