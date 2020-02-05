@@ -218,7 +218,7 @@ var SearchColumns = map[string][]string{
 		TableAppVersionReview + "." + ColumnOwner,
 		"app.name",
 		"app_version.name",
-		"app.owner",
+		"app.isv",
 	},
 	TableJob: {
 		ColumnJobId, ColumnClusterId, ColumnOwner, ColumnJobAction, ColumnExecutor, ColumnProvider, ColumnExecutor, ColumnProvider,
