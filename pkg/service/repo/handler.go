@@ -272,6 +272,22 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	res := &pb.ModifyRepoResponse{
 		RepoId: req.GetRepoId(),
 	}
+	if needValidate {
+		ctx = clientutil.SetSystemUserToContext(ctx)
+		repoIndexerClient, err := indexerclient.NewRepoIndexerClient()
+		if err != nil {
+			logger.Warn(ctx, "Could not get repo indexer client, %+v", err)
+			return res, nil
+		}
+
+		indexRequest := pb.IndexRepoRequest{
+			RepoId: pbutil.ToProtoString(repoId),
+		}
+		_, err = repoIndexerClient.IndexRepo(ctx, &indexRequest)
+		if err != nil {
+			logger.Warn(ctx, "Call index repo service failed, %+v", err)
+		}
+	}
 	return res, nil
 }
 
