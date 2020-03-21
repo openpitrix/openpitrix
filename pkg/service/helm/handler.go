@@ -243,6 +243,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 			return nil, err
 		}
 	case constants.ActionDeleteClusters:
+		logger.Debug(nil,"delete cluster ++++++++++++++++++++++++++++")
 		err = proxy.DeleteRelease(cfg, directive.ClusterName, false)
 		if err != nil {
 			return nil, err
