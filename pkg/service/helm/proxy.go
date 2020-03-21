@@ -2,6 +2,7 @@ package helm
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -165,7 +166,12 @@ func (proxy *Proxy) ListRelease(cfg *action.Configuration, name string) (*releas
 		logger.Debug(proxy.ctx, "release: [%s] not found [%s]", name, err.Error())
 		return nil, err
 	}
-	return rls[0], nil
+	for _,r := range rls{
+		if r.Name == name{
+			return r,nil
+		}
+	}
+	return nil, errors.New("release not found")
 
 }
 
