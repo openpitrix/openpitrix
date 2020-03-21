@@ -73,7 +73,6 @@ func TestHelmv3(t *testing.T) {
 	if err != nil{
 		fmt.Println("list deleted release error: " + err.Error())
 	}
-	fmt.Println("release name is: " + rls.Name)
 
 }
 

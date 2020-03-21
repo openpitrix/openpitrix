@@ -166,9 +166,9 @@ func (proxy *Proxy) ListRelease(cfg *action.Configuration, name string) (*releas
 		logger.Debug(proxy.ctx, "release: [%s] not found [%s]", name, err.Error())
 		return nil, err
 	}
-	for _,r := range rls{
-		if r.Name == name{
-			return r,nil
+	for _, r := range rls {
+		if r.Name == name {
+			return r, nil
 		}
 	}
 	return nil, errors.New("release not found")
@@ -216,6 +216,7 @@ func (proxy *Proxy) RollbackRelease(cfg *action.Configuration, releaseName strin
 }
 
 func (proxy *Proxy) DeleteRelease(cfg *action.Configuration, releaseName string, purge bool) error {
+	logger.Debug(nil, "((((((((((((((((((((((((((((((((: %s", releaseName)
 	deleteCli := action.NewUninstall(cfg)
 	if purge {
 		deleteCli.KeepHistory = false

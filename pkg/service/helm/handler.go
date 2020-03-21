@@ -248,6 +248,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 			return nil, err
 		}
 	case constants.ActionCeaseClusters:
+		logger.Debug(nil,"######################")
 		err = proxy.DeleteRelease(cfg, directive.ClusterName, true)
 		if err != nil {
 			return nil, err
