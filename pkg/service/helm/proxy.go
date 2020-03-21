@@ -52,10 +52,10 @@ var (
 	ClusterNameRegExp = regexp.MustCompile(ClusterNameReg)
 )
 
-type CredentialGetter func(string) (string, error)
+type CredentialGetter func(context.Context,string) (string, error)
 
-var DefaultCredentialGetter CredentialGetter = func(runtimeId string) (string, error) {
-	runtime, err := runtimeclient.NewRuntime(nil, runtimeId)
+var DefaultCredentialGetter CredentialGetter = func(ctx context.Context, runtimeId string) (string, error) {
+	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
 	if err != nil {
 		logger.Debug(nil, "get runtime error: [%s]", err.Error())
 		return "", err
@@ -129,7 +129,7 @@ func (proxy *Proxy) GetHelmConfig(ns, driver string, getter CredentialGetter) (*
 		return nil, err
 	}
 
-	credentialContent, err := getter(proxy.RuntimeId)
+	credentialContent, err := getter(proxy.ctx,proxy.RuntimeId)
 	if len(credentialContent) == 0 {
 		return nil, err
 	}
