@@ -217,12 +217,13 @@ func (proxy *Proxy) RollbackRelease(cfg *action.Configuration, releaseName strin
 
 func (proxy *Proxy) DeleteRelease(cfg *action.Configuration, releaseName string, purge bool) error {
 	logger.Debug(nil, "((((((((((((((((((((((((((((((((: %s", releaseName)
+	fmt.Println("DeleteRelease")
 	deleteCli := action.NewUninstall(cfg)
 	if purge {
 		deleteCli.KeepHistory = false
 	}
 	resp, err := deleteCli.Run(releaseName)
-	fmt.Println(releaseName, resp.Release.Name, resp.Release.Namespace)
+	fmt.Println("output",releaseName, resp.Release.Name, resp.Release.Namespace)
 	if err != nil {
 		logger.Debug(proxy.ctx, "delete release [%s] error [%s]", releaseName, err.Error())
 		return err
