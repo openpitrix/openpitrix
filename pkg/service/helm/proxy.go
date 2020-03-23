@@ -52,7 +52,7 @@ var (
 	ClusterNameRegExp = regexp.MustCompile(ClusterNameReg)
 )
 
-type CredentialGetter func(context.Context,string) (string, error)
+type CredentialGetter func(context.Context, string) (string, error)
 
 var DefaultCredentialGetter CredentialGetter = func(ctx context.Context, runtimeId string) (string, error) {
 	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
@@ -129,7 +129,7 @@ func (proxy *Proxy) GetHelmConfig(ns, driver string, getter CredentialGetter) (*
 		return nil, err
 	}
 
-	credentialContent, err := getter(proxy.ctx,proxy.RuntimeId)
+	credentialContent, err := getter(proxy.ctx, proxy.RuntimeId)
 	if len(credentialContent) == 0 {
 		return nil, err
 	}
@@ -221,7 +221,8 @@ func (proxy *Proxy) DeleteRelease(cfg *action.Configuration, releaseName string,
 	if purge {
 		deleteCli.KeepHistory = false
 	}
-	_, err := deleteCli.Run(releaseName)
+	resp, err := deleteCli.Run(releaseName)
+	fmt.Println(releaseName, resp.Release.Name, resp.Release.Namespace)
 	if err != nil {
 		logger.Debug(proxy.ctx, "delete release [%s] error [%s]", releaseName, err.Error())
 		return err
