@@ -208,29 +208,6 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
-  openpitrix-rp-kubernetes:
-    image: "openpitrix/runtime-provider-kubernetes:latest"
-    command: "runtime-provider"
-    links:
-      - openpitrix-db:openpitrix-db
-      - openpitrix-etcd:openpitrix-etcd
-    external_links:
-      - hyperpitrix:openpitrix-rp-manager
-      - hyperpitrix:openpitrix-runtime-manager
-      - hyperpitrix:openpitrix-app-manager
-    depends_on:
-      - openpitrix-etcd
-      - hyperpitrix
-    container_name: "openpitrix-rp-kubernetes"
-    environment:
-      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
-      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
-        max-file: ${OPENPITRIX_LOG_MAX_FILE}
-
   openpitrix-job-db-ctrl:
     image: "openpitrix/flyway:alpine"
     command: -url=jdbc:mysql://openpitrix-db/job -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
@@ -377,6 +354,7 @@ services:
       - hyperpitrix:openpitrix-runtime-manager
       - hyperpitrix:openpitrix-task-manager
       - hyperpitrix:openpitrix-repo-indexer
+      - hyperpitrix:openpitrix-rp-kubernetes
     depends_on:
       - openpitrix-db
       - openpitrix-etcd
