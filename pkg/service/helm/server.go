@@ -25,7 +25,7 @@ func Serve(cfg *config.Config) {
 		logger.Critical(nil, "failed to register provider config: %+v", err)
 	}
 	s := Server{}
-	manager.NewGrpcServer("rp-kubernetes", constants.KubernetesProviderPort).
+	manager.NewGrpcServer("openpitrix-rp-kubernetes", constants.KubernetesProviderPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterRuntimeProviderManagerServer(server, &s)
