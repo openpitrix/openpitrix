@@ -133,7 +133,7 @@ func TestK8S(t *testing.T) {
 
 		createResp, err := client.ClusterManager.CreateCluster(createParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -143,7 +143,7 @@ func TestK8S(t *testing.T) {
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -163,7 +163,7 @@ func TestK8S(t *testing.T) {
 
 		upgradeResp, err := client.ClusterManager.UpgradeCluster(upgradeParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -172,7 +172,7 @@ func TestK8S(t *testing.T) {
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -191,7 +191,7 @@ func TestK8S(t *testing.T) {
 
 		rollbackResp, err := client.ClusterManager.RollbackCluster(rollbackParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -200,7 +200,7 @@ func TestK8S(t *testing.T) {
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -222,7 +222,7 @@ Description: test`
 
 		updateEnvResp, err := client.ClusterManager.UpdateClusterEnv(updateEnvParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -231,7 +231,7 @@ Description: test`
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -250,7 +250,7 @@ Description: test`
 
 		deleteResp, err := client.ClusterManager.DeleteClusters(deleteParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -259,7 +259,7 @@ Description: test`
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -278,7 +278,7 @@ Description: test`
 
 		ceaseResp, err := client.ClusterManager.CeaseClusters(ceaseParams, nil)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
@@ -287,7 +287,7 @@ Description: test`
 
 		err = waitJobFinish(t, client, jobId)
 		if err != nil {
-			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+			//fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs hyperpitrix"))
 			t.Fatal(err)
 		}
