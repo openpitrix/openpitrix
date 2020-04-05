@@ -226,7 +226,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 			return nil, err
 		}
 		rawVals := make(map[string]interface{})
-		err = jsonutil.Decode([]byte(directive.Values), rawVals)
+		err = jsonutil.Decode([]byte(directive.Values), &rawVals)
 		if err != nil {
 			return nil, err
 		}
