@@ -249,7 +249,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 		}
 	case constants.ActionCeaseClusters:
 		// todo about namespaces
-		cfg, err = proxy.GetHelmConfig("configmap", DefaultCredentialGetter)
+		//cfg, err = proxy.GetHelmConfig("configmap", DefaultCredentialGetter)
 		err = proxy.DeleteRelease(cfg, directive.ClusterName, true)
 		if err != nil {
 			return nil, err
