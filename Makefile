@@ -7,8 +7,8 @@ TRAG.Gopkg:=openpitrix.io/openpitrix
 TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 
 DOCKER_TAGS=latest
-BUILDER_IMAGE=glianyi/openpitrix-builder:latest
-RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/mod:/go/pkg/mod -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e GOPROXY=https://goproxy.cn -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
+BUILDER_IMAGE=openpitrix/openpitrix-builder:v3.0.0
+RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/mod:/go/pkg/mod -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
 RUN_IN_DOCKER_WITHOUT_GOPATH:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
 GO_BUILD_DARWIN:=CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -tags netgo
 GO_BUILD_LINUX:=CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags netgo
