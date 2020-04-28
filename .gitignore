@@ -18,3 +18,4 @@ bin/
 .vscode/
 tmp/
 Justfile
+# pkg/service/helm/helm_test.go

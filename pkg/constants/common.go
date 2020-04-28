@@ -29,6 +29,7 @@ const (
 	MarketManagerHost          = prefix + "market-manager"
 	AttachmentManagerHost      = prefix + "attachment-manager"
 	IsvManagerHost             = prefix + "isv-manager"
+	ReleaseManagerHost         = prefix + "release-manager"
 )
 
 const (
@@ -55,6 +56,7 @@ const (
 	AttachmentManagerPort      = 9122
 	RuntimeProviderManagerPort = 9121
 	KubernetesProviderPort     = 9123
+	ReleaseManagerPort         = 9124
 	NotificationPort           = 9201
 	ServiceConfigPort          = 9202
 	ServicePushPort            = 9203
