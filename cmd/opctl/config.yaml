@@ -2009,6 +2009,72 @@
       type: '[]string'
     user_id:
       type: '[]string'
+- action: CreateRelease
+  request: CreateReleaseRequest
+  description: Create Release
+  service: ReleaseManager
+  body:
+    app_id:
+      help: required, id of app to run in cluster
+      type: string
+    namespace:
+      help: namespace
+      type: string
+    release_name:
+      help: release name
+      type: string
+    runtime_id:
+      help: required, id of runtime
+      type: string
+    version_id:
+      help: required, id of app version
+      type: string
+- action: DeleteRelease
+  request: DeleteReleaseRequest
+  description: Delete Release
+  service: ReleaseManager
+  body:
+    purge:
+      type: boolean
+    release_name:
+      type: string
+    runtime_id:
+      type: string
+- action: ListReleases
+  request: ListReleasesRequest
+  description: List Release
+  service: ReleaseManager
+  query:
+    namespace:
+      type: string
+    release_name:
+      type: string
+    runtime_id:
+      type: string
+    status:
+      type: string
+- action: RollbackRelease
+  request: RollbackReleaseRequest
+  description: Rollback Release
+  service: ReleaseManager
+  body:
+    release_name:
+      type: string
+    runtime_id:
+      type: string
+    version:
+      type: integer
+- action: UpgradeRelease
+  request: UpgradeReleaseRequest
+  description: Upgrade Release
+  service: ReleaseManager
+  body:
+    release_name:
+      type: string
+    runtime_id:
+      type: string
+    version_id:
+      type: string
 - action: DescribeRepoEvents
   request: DescribeRepoEventsRequest
   description: Get repository events

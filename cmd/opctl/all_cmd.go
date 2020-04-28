@@ -20,6 +20,7 @@ import (
 	"openpitrix.io/openpitrix/test/client/isv_manager"
 	"openpitrix.io/openpitrix/test/client/job_manager"
 	"openpitrix.io/openpitrix/test/client/market_manager"
+	"openpitrix.io/openpitrix/test/client/release_manager"
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
@@ -136,6 +137,11 @@ var AllCmd = []Cmd{
 	NewModifyMarketCmd(),
 	NewUserJoinMarketCmd(),
 	NewUserLeaveMarketCmd(),
+	NewCreateReleaseCmd(),
+	NewDeleteReleaseCmd(),
+	NewListReleasesCmd(),
+	NewRollbackReleaseCmd(),
+	NewUpgradeReleaseCmd(),
 	NewDescribeRepoEventsCmd(),
 	NewIndexRepoCmd(),
 	NewCreateRepoCmd(),
@@ -4421,6 +4427,196 @@ func (c *UserLeaveMarketCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.MarketManager.UserLeaveMarket(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateReleaseCmd struct {
+	*models.OpenpitrixCreateReleaseRequest
+}
+
+func NewCreateReleaseCmd() Cmd {
+	cmd := &CreateReleaseCmd{}
+	cmd.OpenpitrixCreateReleaseRequest = &models.OpenpitrixCreateReleaseRequest{}
+	return cmd
+}
+
+func (*CreateReleaseCmd) GetActionName() string {
+	return "CreateRelease"
+}
+
+func (c *CreateReleaseCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.AppID, "app_id", "", "", "required, id of app to run in cluster")
+	f.StringVarP(&c.Namespace, "namespace", "", "", "namespace")
+	f.StringVarP(&c.ReleaseName, "release_name", "", "", "release name")
+	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "required, id of runtime")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "required, id of app version")
+}
+
+func (c *CreateReleaseCmd) Run(out Out) error {
+	params := release_manager.NewCreateReleaseParams()
+	params.WithBody(c.OpenpitrixCreateReleaseRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ReleaseManager.CreateRelease(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DeleteReleaseCmd struct {
+	*models.OpenpitrixDeleteReleaseRequest
+}
+
+func NewDeleteReleaseCmd() Cmd {
+	cmd := &DeleteReleaseCmd{}
+	cmd.OpenpitrixDeleteReleaseRequest = &models.OpenpitrixDeleteReleaseRequest{}
+	return cmd
+}
+
+func (*DeleteReleaseCmd) GetActionName() string {
+	return "DeleteRelease"
+}
+
+func (c *DeleteReleaseCmd) ParseFlag(f Flag) {
+	f.BoolVarP(&c.Purge, "purge", "", false, "")
+	f.StringVarP(&c.ReleaseName, "release_name", "", "", "")
+	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "")
+}
+
+func (c *DeleteReleaseCmd) Run(out Out) error {
+	params := release_manager.NewDeleteReleaseParams()
+	params.WithBody(c.OpenpitrixDeleteReleaseRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ReleaseManager.DeleteRelease(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ListReleasesCmd struct {
+	*release_manager.ListReleasesParams
+}
+
+func NewListReleasesCmd() Cmd {
+	return &ListReleasesCmd{
+		release_manager.NewListReleasesParams(),
+	}
+}
+
+func (*ListReleasesCmd) GetActionName() string {
+	return "ListReleases"
+}
+
+func (c *ListReleasesCmd) ParseFlag(f Flag) {
+	c.Namespace = new(string)
+	f.StringVarP(c.Namespace, "namespace", "", "", "")
+	c.ReleaseName = new(string)
+	f.StringVarP(c.ReleaseName, "release_name", "", "", "")
+	c.RuntimeID = new(string)
+	f.StringVarP(c.RuntimeID, "runtime_id", "", "", "")
+	c.Status = new(string)
+	f.StringVarP(c.Status, "status", "", "", "")
+}
+
+func (c *ListReleasesCmd) Run(out Out) error {
+	params := c.ListReleasesParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ReleaseManager.ListReleases(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type RollbackReleaseCmd struct {
+	*models.OpenpitrixRollbackReleaseRequest
+}
+
+func NewRollbackReleaseCmd() Cmd {
+	cmd := &RollbackReleaseCmd{}
+	cmd.OpenpitrixRollbackReleaseRequest = &models.OpenpitrixRollbackReleaseRequest{}
+	return cmd
+}
+
+func (*RollbackReleaseCmd) GetActionName() string {
+	return "RollbackRelease"
+}
+
+func (c *RollbackReleaseCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.ReleaseName, "release_name", "", "", "")
+	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "")
+}
+
+func (c *RollbackReleaseCmd) Run(out Out) error {
+	params := release_manager.NewRollbackReleaseParams()
+	params.WithBody(c.OpenpitrixRollbackReleaseRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ReleaseManager.RollbackRelease(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type UpgradeReleaseCmd struct {
+	*models.OpenpitrixUpgradeReleaseRequest
+}
+
+func NewUpgradeReleaseCmd() Cmd {
+	cmd := &UpgradeReleaseCmd{}
+	cmd.OpenpitrixUpgradeReleaseRequest = &models.OpenpitrixUpgradeReleaseRequest{}
+	return cmd
+}
+
+func (*UpgradeReleaseCmd) GetActionName() string {
+	return "UpgradeRelease"
+}
+
+func (c *UpgradeReleaseCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.ReleaseName, "release_name", "", "", "")
+	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *UpgradeReleaseCmd) Run(out Out) error {
+	params := release_manager.NewUpgradeReleaseParams()
+	params.WithBody(c.OpenpitrixUpgradeReleaseRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ReleaseManager.UpgradeRelease(params, nil)
 	if err != nil {
 		return err
 	}

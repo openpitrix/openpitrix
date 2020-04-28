@@ -223,6 +223,9 @@ func addQueryOrderDir(query *db.SelectQuery, req Request, defaultColumn string, 
 			defaultColumn = s.GetValue()
 		}
 	}
+	if !stringutil.StringIn(defaultColumn, constants.Fields) {
+		defaultColumn = constants.ColumnCreateTime
+	}
 	if len(tableName) > 0 {
 		defaultColumn = tableName + "." + defaultColumn
 	}
