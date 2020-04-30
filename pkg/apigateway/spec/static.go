@@ -4488,6 +4488,149 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/releases": {
+      "get": {
+        "summary": "List Release",
+        "operationId": "ListReleases",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixListReleaseResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "runtime_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "release_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "namespace",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ReleaseManager"
+        ]
+      },
+      "delete": {
+        "summary": "Delete Release",
+        "operationId": "DeleteRelease",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteReleaseResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteReleaseRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ReleaseManager"
+        ]
+      },
+      "post": {
+        "summary": "Rollback Release",
+        "operationId": "RollbackRelease",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRollbackReleaseResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRollbackReleaseRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ReleaseManager"
+        ]
+      },
+      "put": {
+        "summary": "Create Release",
+        "operationId": "CreateRelease",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateReleaseResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateReleaseRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ReleaseManager"
+        ]
+      },
+      "patch": {
+        "summary": "Upgrade Release",
+        "operationId": "UpgradeRelease",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixUpgradeReleaseResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixUpgradeReleaseRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ReleaseManager"
+        ]
+      }
+    },
     "/v1/app_vendors": {
       "get": {
         "summary": "Get vendor verifies info, can filer with these fields(user_id, status), default return all VendorVerifyInfos",
@@ -10344,6 +10487,155 @@ var Files = map[string]string{
         "job_id": {
           "type": "string",
           "title": "job id"
+        }
+      }
+    },
+    "openpitrixCreateReleaseRequest": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string",
+          "title": "required, id of app to run in cluster"
+        },
+        "version_id": {
+          "type": "string",
+          "title": "required, id of app version"
+        },
+        "runtime_id": {
+          "type": "string",
+          "title": "required, id of runtime"
+        },
+        "release_name": {
+          "type": "string",
+          "title": "release name"
+        },
+        "namespace": {
+          "type": "string",
+          "title": "namespace"
+        }
+      }
+    },
+    "openpitrixCreateReleaseResponse": {
+      "type": "object",
+      "properties": {
+        "release_name": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteReleaseRequest": {
+      "type": "object",
+      "properties": {
+        "runtime_id": {
+          "type": "string"
+        },
+        "release_name": {
+          "type": "string"
+        },
+        "purge": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "openpitrixDeleteReleaseResponse": {
+      "type": "object",
+      "properties": {
+        "release_name": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixListReleaseResponse": {
+      "type": "object",
+      "properties": {
+        "release_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRelease"
+          }
+        }
+      }
+    },
+    "openpitrixRelease": {
+      "type": "object",
+      "properties": {
+        "release_name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "first_deployed_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_deployed_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "deleted_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixRollbackReleaseRequest": {
+      "type": "object",
+      "properties": {
+        "runtime_id": {
+          "type": "string"
+        },
+        "release_name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "openpitrixRollbackReleaseResponse": {
+      "type": "object",
+      "properties": {
+        "release_name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "openpitrixUpgradeReleaseRequest": {
+      "type": "object",
+      "properties": {
+        "runtime_id": {
+          "type": "string"
+        },
+        "release_name": {
+          "type": "string"
+        },
+        "version_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixUpgradeReleaseResponse": {
+      "type": "object",
+      "properties": {
+        "release_name": {
+          "type": "string"
         }
       }
     },

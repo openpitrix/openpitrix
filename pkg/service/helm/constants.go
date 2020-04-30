@@ -18,4 +18,5 @@ const (
 	DeploymentFlag  = "-Deployment"
 	StatefulSetFlag = "-StatefulSet"
 	DaemonSetFlag   = "-DaemonSet"
+	Driver          = "configmap"
 )
