@@ -10,7 +10,7 @@
 
 ----
 
-[OpenPitrix](https://openpitrix.io/) is an web-based open-source system to package, deploy and manage different types of applications including Kubernetes application, microservice application and serverless applications into multiple cloud environment such as AWS, Azure, Kubernetes, QingCloud, OpenStack, VMWare etc.
+[OpenPitrix](https://openpitrix.io/) is a web-based open-source system to package, deploy and manage different types of applications including Kubernetes application, microservice application and serverless applications into multiple cloud environment such as AWS, Azure, Kubernetes, QingCloud, OpenStack, VMWare etc.
 
 > Definition: Pitrix _['paitriks]_ means the matrix of PaaS and IaaS which makes it easy to develop, deploy, manage applications including PaaS on various runtime environments, i.e., Pitrix = **P**aaS + **I**aaS + Ma**trix**. It also means a matrix that contains endless (PI - the Greek letter "π") applications. 
 
@@ -23,9 +23,9 @@ OpenPitrix originates from [QingCloud AppCenter](https://appcenter.qingcloud.com
 ## Features
 
 - **Multi-cloud:** Support multiple runtimes, such as AWS, Aliyun, Azure, Kubernetes, QingCloud, OpenStack, VMWare and so on. 
-- **Multiple Apps types:** Support a variaty of application types including VM-based application, Kubernetes application, microservice application and serverless application.
+- **Multiple Apps types:** Support a variety of application types including VM-based application, Kubernetes application, microservice application and serverless application.
 - **Application Lifecycle Management:** Developers can easily create and package applications, make flexible application versioning and publishing, others can check, test and quick deploy applications through the application marketplace.
-- **Extendable and Pluggable:** The types of runtime and application are hightly extendable and pluggable, regardless of what new application type or runtime emerges.
+- **Extendable and Pluggable:** The types of runtime and application are highly extendable and pluggable, regardless of what new application type or runtime emerges.
 - **RBAC for organization:** Provide multiple roles including regular user, ISV, developers and admin, admin can also create custom roles and department.
 - **Commercial Operation (Coming soon):** Provide cloud metering and billing for application marketplace, ISV can sell and operate published applications.
 
