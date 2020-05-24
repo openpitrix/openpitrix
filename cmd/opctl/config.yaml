@@ -1224,6 +1224,9 @@
     conf:
       help: required, conf a json string, include cpu, memory info of cluster
       type: string
+    namespace:
+      help: kubernetes namespace
+      type: string
     runtime_id:
       help: required, id of runtime
       type: string
@@ -1243,6 +1246,9 @@
       type: string
     conf:
       help: required, conf a json string, include cpu, memory info of cluster
+      type: string
+    namespace:
+      help: kubernetes namespace
       type: string
     runtime_id:
       help: required, id of runtime
@@ -1438,6 +1444,9 @@
     with_detail:
       help: get cluster detail info or not.
       type: boolean
+    zone:
+      help: namespace.
+      type: '[]string'
 - action: DescribeDebugAppClusters
   request: DescribeDebugAppClustersRequest
   description: Get debug app clusters, can filter with these fields(cluster_id, app_id,
@@ -1538,6 +1547,9 @@
     with_detail:
       help: get cluster detail info or not.
       type: boolean
+    zone:
+      help: namespace.
+      type: '[]string'
 - action: DescribeKeyPairs
   request: DescribeKeyPairsRequest
   description: Get key pairs, support filter with these fields(key_pair_id, name,

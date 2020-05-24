@@ -29,6 +29,9 @@ func decodeJobDirective(ctx context.Context, data string) (*JobDirective, error)
 	}
 
 	namespace := runtime.Zone
+	if clusterWrapper.Cluster.Zone != "" {
+		namespace = clusterWrapper.Cluster.Zone
+	}
 
 	j := &JobDirective{
 		Namespace:   namespace,

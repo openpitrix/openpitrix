@@ -25,6 +25,9 @@ type OpenpitrixCreateClusterRequest struct {
 	// required, conf a json string, include cpu, memory info of cluster
 	Conf string `json:"conf,omitempty"`
 
+	// kubernetes namespace
+	Namespace string `json:"namespace,omitempty"`
+
 	// required, id of runtime
 	RuntimeID string `json:"runtime_id,omitempty"`
 

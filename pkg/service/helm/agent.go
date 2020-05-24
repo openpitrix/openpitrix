@@ -10,13 +10,13 @@ import (
 
 //todo
 func DescribeRelease(cfg *action.Configuration, releaseName string) (map[string]string, error) {
-	rls,err := GetRelease(cfg,releaseName)
-	if err != nil{
+	rls, err := GetRelease(cfg, releaseName)
+	if err != nil {
 		return nil, fmt.Errorf("release [%s] not found", releaseName)
 	}
-	roles,_,err := ExactResources(rls)
-	if err != nil{
-		return nil,err
+	roles, _, err := ExactResources(rls)
+	if err != nil {
+		return nil, err
 	}
 	return roles, nil
 }
