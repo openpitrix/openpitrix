@@ -2887,6 +2887,7 @@ func (c *CreateClusterCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Conf, "conf", "", "", "required, conf a json string, include cpu, memory info of cluster")
 	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "required, id of runtime")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "required, id of app version")
+	f.StringVarP(&c.Zone, "zone", "", "", "kubernetes namespace")
 }
 
 func (c *CreateClusterCmd) Run(out Out) error {
@@ -2926,6 +2927,7 @@ func (c *CreateDebugClusterCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Conf, "conf", "", "", "required, conf a json string, include cpu, memory info of cluster")
 	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "required, id of runtime")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "required, id of app version")
+	f.StringVarP(&c.Zone, "zone", "", "", "kubernetes namespace")
 }
 
 func (c *CreateDebugClusterCmd) Run(out Out) error {
@@ -3232,6 +3234,7 @@ func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "version ids.")
 	c.WithDetail = new(bool)
 	f.BoolVarP(c.WithDetail, "with_detail", "", false, "get cluster detail info or not.")
+	f.StringSliceVarP(&c.Zone, "zone", "", []string{}, "namespace.")
 }
 
 func (c *DescribeClustersCmd) Run(out Out) error {
@@ -3342,6 +3345,7 @@ func (c *DescribeDebugClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "version ids.")
 	c.WithDetail = new(bool)
 	f.BoolVarP(c.WithDetail, "with_detail", "", false, "get cluster detail info or not.")
+	f.StringSliceVarP(&c.Zone, "zone", "", []string{}, "namespace.")
 }
 
 func (c *DescribeDebugClustersCmd) Run(out Out) error {

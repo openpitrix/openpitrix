@@ -651,6 +651,7 @@ func (p *Server) createCluster(ctx context.Context, req *pb.CreateClusterRequest
 	conf := req.GetConf().GetValue()
 	clusterId := models.NewClusterId()
 	runtimeId := req.GetRuntimeId().GetValue()
+	zone := req.GetZone().GetValue()
 	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
 	if err != nil || !runtime.Runtime.OwnerPath.CheckPermission(s) {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAccessDenied, runtimeId)
@@ -678,8 +679,9 @@ func (p *Server) createCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 	clusterWrapper = models.PbToClusterWrapper(response.Cluster)
-	if clusterWrapper.Cluster.Zone == "" {
-		clusterWrapper.Cluster.Zone = runtime.Zone
+	// for kubernetes application
+	if zone != "" {
+		clusterWrapper.Cluster.Zone = zone
 	}
 	clusterWrapper.Cluster.RuntimeId = runtimeId
 	clusterWrapper.Cluster.Owner = s.GetOwnerPath().Owner()

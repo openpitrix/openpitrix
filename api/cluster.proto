@@ -68,6 +68,8 @@ message CreateClusterRequest {
 	google.protobuf.StringValue conf = 4;
 	// advanced param
 	repeated string advanced_param = 5;
+	// kubernetes namespace
+	google.protobuf.StringValue zone = 6;
 }
 
 message CreateClusterResponse {
@@ -541,6 +543,8 @@ message DescribeClustersRequest {
 	google.protobuf.UInt32Value created_date = 16;
 	// select column to display
 	repeated string display_columns = 17;
+	// namespace
+	repeated string zone = 18;
 }
 message DescribeClustersResponse {
 	// total count of qualified cluster

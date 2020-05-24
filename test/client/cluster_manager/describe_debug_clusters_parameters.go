@@ -148,6 +148,11 @@ type DescribeDebugClustersParams struct {
 
 	*/
 	WithDetail *bool
+	/*Zone
+	  namespace.
+
+	*/
+	Zone []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -374,6 +379,17 @@ func (o *DescribeDebugClustersParams) SetWithDetail(withDetail *bool) {
 	o.WithDetail = withDetail
 }
 
+// WithZone adds the zone to the describe debug clusters params
+func (o *DescribeDebugClustersParams) WithZone(zone []string) *DescribeDebugClustersParams {
+	o.SetZone(zone)
+	return o
+}
+
+// SetZone adds the zone to the describe debug clusters params
+func (o *DescribeDebugClustersParams) SetZone(zone []string) {
+	o.Zone = zone
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DescribeDebugClustersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -588,6 +604,14 @@ func (o *DescribeDebugClustersParams) WriteToRequest(r runtime.ClientRequest, re
 			}
 		}
 
+	}
+
+	valuesZone := o.Zone
+
+	joinedZone := swag.JoinByFormat(valuesZone, "multi")
+	// query array param zone
+	if err := r.SetQueryParam("zone", joinedZone...); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

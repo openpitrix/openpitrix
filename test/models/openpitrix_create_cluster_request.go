@@ -30,6 +30,9 @@ type OpenpitrixCreateClusterRequest struct {
 
 	// required, id of app version
 	VersionID string `json:"version_id,omitempty"`
+
+	// kubernetes namespace
+	Zone string `json:"zone,omitempty"`
 }
 
 // Validate validates this openpitrix create cluster request
