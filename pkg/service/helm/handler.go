@@ -200,7 +200,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 
 	proxy := NewProxy(ctx, directive.RuntimeId)
 	//todo HELM_DRIVER
-	cfg, _ := proxy.GetHelmConfig("configmap", DefaultCredentialGetter)
+	cfg, _ := proxy.GetHelmConfig("configmap", directive.Namespace, DefaultCredentialGetter)
 
 	switch task.TaskAction {
 	case constants.ActionCreateCluster:
@@ -272,7 +272,7 @@ func (s *Server) WaitSubtask(ctx context.Context, req *pb.WaitSubtaskRequest) (*
 
 	proxy := NewProxy(ctx, taskDirective.RuntimeId)
 	//todo HELMDRIVER
-	cfg, err := proxy.GetHelmConfig("configmap", DefaultCredentialGetter)
+	cfg, err := proxy.GetHelmConfig("configmap", taskDirective.Namespace, DefaultCredentialGetter)
 	if err != nil {
 		logger.Debug(ctx, "get helm action config error [%s]", err.Error())
 		return nil, err
@@ -364,7 +364,7 @@ func (p *Server) CheckResource(ctx context.Context, req *pb.CheckResourceRequest
 	cluster := models.PbToClusterWrapper(req.GetCluster())
 	proxy := NewProxy(ctx, cluster.Cluster.RuntimeId)
 
-	err := proxy.CheckClusterNameIsUnique(cluster.Cluster.Name)
+	err := proxy.CheckClusterNameIsUnique(cluster.Cluster.Name, cluster.Cluster.Zone)
 	if err != nil {
 		logger.Error(ctx, "Cluster name [%s] already existed in runtime [%s]: %+v",
 			cluster.Cluster.Name, cluster.Cluster.RuntimeId, err)
@@ -386,6 +386,7 @@ func (p *Server) DescribeClusterDetails(ctx context.Context, req *pb.DescribeClu
 	cluster := models.PbToClusterWrapper(req.GetCluster())
 	proxy := NewProxy(ctx, cluster.Cluster.RuntimeId)
 	err := proxy.DescribeClusterDetails(cluster)
+	cluster.Cluster.AdditionalInfo = jsonutil.ToString(proxy.WorkloadInfo)
 	return &pb.DescribeClusterDetailsResponse{
 		Cluster: models.ClusterWrapperToPb(cluster),
 	}, err

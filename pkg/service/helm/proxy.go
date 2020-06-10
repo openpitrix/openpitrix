@@ -12,6 +12,7 @@ import (
 
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/kube"
+	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/version"
@@ -30,6 +31,7 @@ import (
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/release"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/api/extensions/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"openpitrix.io/openpitrix/pkg/models"
@@ -66,14 +68,24 @@ var DefaultCredentialGetter CredentialGetter = func(ctx context.Context, runtime
 
 //Helm kubernetes proxy
 type Proxy struct {
-	ctx       context.Context
-	RuntimeId string
+	ctx          context.Context
+	RuntimeId    string
+	WorkloadInfo *Workload
+}
+
+type Workload struct {
+	Deployments  []appsv1.Deployment  `json:"deployments,omitempty" description:"deployment list"`
+	Statefulsets []appsv1.StatefulSet `json:"statefulsets,omitempty" description:"statefulset list"`
+	Daemonsets   []appsv1.DaemonSet   `json:"daemonsets,omitempty" description:"daemonset list"`
+	Services     []corev1.Service     `json:"services,omitempty" description:"application services"`
+	Ingresses    []v1beta1.Ingress    `json:"ingresses,omitempty" description:"application ingresses"`
 }
 
 func NewProxy(ctx context.Context, runtimeId string) *Proxy {
 	proxy := new(Proxy)
 	proxy.RuntimeId = runtimeId
 	proxy.ctx = ctx
+	proxy.WorkloadInfo = new(Workload)
 	return proxy
 }
 
@@ -122,7 +134,7 @@ func (proxy *Proxy) GetKubeClientWithCredential(credential string) (*kubernetes.
 	return clientset, config, err
 }
 
-func (proxy *Proxy) GetHelmConfig(driver string, getter CredentialGetter) (*action.Configuration, error) {
+func (proxy *Proxy) GetHelmConfig(driver, namespace string, getter CredentialGetter) (*action.Configuration, error) {
 	file, err := ioutil.TempFile("", "config")
 	defer os.Remove(file.Name())
 	if err != nil {
@@ -131,6 +143,9 @@ func (proxy *Proxy) GetHelmConfig(driver string, getter CredentialGetter) (*acti
 	}
 
 	ns, credentialContent, err := getter(proxy.ctx, proxy.RuntimeId)
+	if namespace != "" {
+		ns = namespace
+	}
 	if len(credentialContent) == 0 {
 		return nil, err
 	}
@@ -240,7 +255,7 @@ func (proxy *Proxy) ReleaseStatus(cfg *action.Configuration, releaseName string)
 	return rls.Info.Status, nil
 }
 
-func (proxy *Proxy) CheckClusterNameIsUnique(clusterName string) error {
+func (proxy *Proxy) CheckClusterNameIsUnique(clusterName, namespace string) error {
 	if clusterName == "" {
 		return fmt.Errorf("cluster name must be provided")
 	}
@@ -256,7 +271,7 @@ func (proxy *Proxy) CheckClusterNameIsUnique(clusterName string) error {
 
 	err := funcutil.WaitForSpecificOrError(func() (bool, error) {
 		//todo
-		cfg, err := proxy.GetHelmConfig("", DefaultCredentialGetter)
+		cfg, err := proxy.GetHelmConfig("", namespace, DefaultCredentialGetter)
 		_, err = proxy.ReleaseStatus(cfg, clusterName)
 		if err != nil {
 			if isConnectionError(err) {
@@ -358,6 +373,7 @@ func (proxy *Proxy) describeAdditionalInfo(namespace string, cluster *models.Clu
 				if err != nil {
 					return err
 				}
+				proxy.WorkloadInfo.Services = append(proxy.WorkloadInfo.Services, *service)
 
 				additionalInfo[t][i][Type] = string(service.Spec.Type)
 				additionalInfo[t][i]["cluster_ip"] = service.Spec.ClusterIP
@@ -420,6 +436,7 @@ func (proxy *Proxy) describeAdditionalInfo(namespace string, cluster *models.Clu
 				if err != nil {
 					return err
 				}
+				proxy.WorkloadInfo.Ingresses = append(proxy.WorkloadInfo.Ingresses, *ingress)
 
 				hosts := []string{}
 				for _, rule := range ingress.Spec.Rules {
@@ -446,6 +463,9 @@ func (proxy *Proxy) DescribeClusterDetails(clusterWrapper *models.ClusterWrapper
 		return err
 	}
 	namespace := runtime.Zone
+	if clusterWrapper.Cluster.Zone != "" {
+		namespace = clusterWrapper.Cluster.Zone
+	}
 
 	for k, clusterRole := range clusterWrapper.ClusterRoles {
 
@@ -561,6 +581,7 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			if err != nil {
 				return nil, err
 			}
+			proxy.WorkloadInfo.Deployments = append(proxy.WorkloadInfo.Deployments, *deployment)
 
 			(*clusterRole).ReadyReplicas = uint32(deployment.Status.ReadyReplicas)
 
@@ -622,6 +643,7 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			if err != nil {
 				return nil, err
 			}
+			proxy.WorkloadInfo.Statefulsets = append(proxy.WorkloadInfo.Statefulsets, *statefulSet)
 
 			(*clusterRole).ReadyReplicas = uint32(statefulSet.Status.ReadyReplicas)
 
@@ -669,6 +691,7 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			if err != nil {
 				return nil, err
 			}
+			proxy.WorkloadInfo.Daemonsets = append(proxy.WorkloadInfo.Daemonsets, *daemonSet)
 
 			(*clusterRole).Replicas = uint32(daemonSet.Status.DesiredNumberScheduled)
 			(*clusterRole).ReadyReplicas = uint32(daemonSet.Status.NumberReady)

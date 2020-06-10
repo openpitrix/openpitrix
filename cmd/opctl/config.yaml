@@ -1230,6 +1230,9 @@
     version_id:
       help: required, id of app version
       type: string
+    zone:
+      help: kubernetes namespace
+      type: string
 - action: CreateDebugCluster
   request: CreateClusterRequest
   description: Create debug cluster
@@ -1249,6 +1252,9 @@
       type: string
     version_id:
       help: required, id of app version
+      type: string
+    zone:
+      help: kubernetes namespace
       type: string
 - action: CreateKeyPair
   request: CreateKeyPairRequest
@@ -1438,6 +1444,9 @@
     with_detail:
       help: get cluster detail info or not.
       type: boolean
+    zone:
+      help: namespace.
+      type: '[]string'
 - action: DescribeDebugAppClusters
   request: DescribeDebugAppClustersRequest
   description: Get debug app clusters, can filter with these fields(cluster_id, app_id,
@@ -1538,6 +1547,9 @@
     with_detail:
       help: get cluster detail info or not.
       type: boolean
+    zone:
+      help: namespace.
+      type: '[]string'
 - action: DescribeKeyPairs
   request: DescribeKeyPairsRequest
   description: Get key pairs, support filter with these fields(key_pair_id, name,
