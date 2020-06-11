@@ -28,6 +28,9 @@ type OpenpitrixCreateRuntimeCredentialRequest struct {
 	// required, runtime credential content, a json file
 	RuntimeCredentialContent string `json:"runtime_credential_content,omitempty"`
 
+	// for kubesphere only, if provider this value means upsert this record
+	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
+
 	// required, runtime url
 	RuntimeURL string `json:"runtime_url,omitempty"`
 }

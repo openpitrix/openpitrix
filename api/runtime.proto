@@ -86,6 +86,8 @@ message CreateRuntimeRequest {
 	google.protobuf.StringValue runtime_credential_id = 4;
 	// required, runtime zone eg.[pek3a|pek3b|...]
 	google.protobuf.StringValue zone = 5;
+	// for kubesphere only, if provider this value means upsert this record
+	google.protobuf.StringValue runtime_id = 10;
 }
 
 message CreateRuntimeResponse {
@@ -173,6 +175,8 @@ message CreateRuntimeCredentialRequest {
 	google.protobuf.StringValue name = 4;
 	// runtime credential description
 	google.protobuf.StringValue description = 5;
+	// for kubesphere only, if provider this value means upsert this record
+	google.protobuf.StringValue runtime_credential_id = 10;
 }
 
 message CreateRuntimeCredentialResponse {

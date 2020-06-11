@@ -2297,6 +2297,9 @@
     runtime_credential_id:
       help: required, runtime credential id
       type: string
+    runtime_id:
+      help: for kubesphere only, if provider this value means upsert this record
+      type: string
     zone:
       help: required, runtime zone eg.[pek3a|pek3b|...]
       type: string
@@ -2316,6 +2319,9 @@
       type: string
     runtime_credential_content:
       help: required, runtime credential content, a json file
+      type: string
+    runtime_credential_id:
+      help: for kubesphere only, if provider this value means upsert this record
       type: string
     runtime_url:
       help: required, runtime url
@@ -2337,6 +2343,9 @@
     runtime_credential_id:
       help: required, runtime credential id
       type: string
+    runtime_id:
+      help: for kubesphere only, if provider this value means upsert this record
+      type: string
     zone:
       help: required, runtime zone eg.[pek3a|pek3b|...]
       type: string
@@ -2356,6 +2365,9 @@
       type: string
     runtime_credential_content:
       help: required, runtime credential content, a json file
+      type: string
+    runtime_credential_id:
+      help: for kubesphere only, if provider this value means upsert this record
       type: string
     runtime_url:
       help: required, runtime url

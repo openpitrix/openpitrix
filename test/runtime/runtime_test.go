@@ -24,6 +24,46 @@ func getRuntimeCredential(t *testing.T) string {
 	return testutil.ExecCmd(t, "kubectl config view --flatten")
 }
 
+func TestKubeSphereRuntime(t *testing.T) {
+	const kubesphereRuntimeName = "kubesphereRuntimeName"
+	const kubesphereRuntimeCredentialName = "kubesphereRuntimeCredentialName"
+	const kubesphereRuntimeId = "kubesphere-runtime-id"
+	const kubesphereRuntimeCredentialId = "kubesphere-runtime-credential-id"
+
+	credential := getRuntimeCredential(t)
+
+	client := testutil.GetClient(clientConfig)
+
+	// create runtime credential
+	createCredentialParams := runtime_manager.NewCreateRuntimeCredentialParams()
+	createCredentialParams.SetBody(
+		&models.OpenpitrixCreateRuntimeCredentialRequest{
+			RuntimeCredentialID:      kubesphereRuntimeCredentialId,
+			Name:                     kubesphereRuntimeCredentialName,
+			Description:              "description",
+			Provider:                 constants.ProviderKubernetes,
+			RuntimeCredentialContent: credential,
+		})
+	createCredentialResp, err := client.RuntimeManager.CreateRuntimeCredential(createCredentialParams, nil)
+	require.NoError(t, err)
+	require.Equal(t, kubesphereRuntimeCredentialId, createCredentialResp.Payload.RuntimeCredentialID)
+
+	// create runtime
+	createParams := runtime_manager.NewCreateRuntimeParams()
+	createParams.SetBody(
+		&models.OpenpitrixCreateRuntimeRequest{
+			RuntimeID:           kubesphereRuntimeId,
+			Name:                kubesphereRuntimeName,
+			Description:         "description",
+			Provider:            constants.ProviderKubernetes,
+			RuntimeCredentialID: createCredentialResp.Payload.RuntimeCredentialID,
+			Zone:                idutil.GetUuid36("r-"),
+		})
+	createResp, err := client.RuntimeManager.CreateRuntime(createParams, nil)
+	require.NoError(t, err)
+	require.Equal(t, kubesphereRuntimeId, createResp.Payload.RuntimeID)
+}
+
 func TestRuntime(t *testing.T) {
 	credential := getRuntimeCredential(t)
 

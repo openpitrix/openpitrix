@@ -4950,6 +4950,7 @@ func (c *CreateDebugRuntimeCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Name, "name", "", "", "required, runtime name")
 	f.StringVarP(&c.Provider, "provider", "", "", "required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]")
 	f.StringVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", "", "required, runtime credential id")
+	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "for kubesphere only, if provider this value means upsert this record")
 	f.StringVarP(&c.Zone, "zone", "", "", "required, runtime zone eg.[pek3a|pek3b|...]")
 }
 
@@ -4989,6 +4990,7 @@ func (c *CreateDebugRuntimeCredentialCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Name, "name", "", "", "runtime credential name")
 	f.StringVarP(&c.Provider, "provider", "", "", "required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]")
 	f.StringVarP(&c.RuntimeCredentialContent, "runtime_credential_content", "", "", "required, runtime credential content, a json file")
+	f.StringVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", "", "for kubesphere only, if provider this value means upsert this record")
 	f.StringVarP(&c.RuntimeURL, "runtime_url", "", "", "required, runtime url")
 }
 
@@ -5028,6 +5030,7 @@ func (c *CreateRuntimeCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Name, "name", "", "", "required, runtime name")
 	f.StringVarP(&c.Provider, "provider", "", "", "required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]")
 	f.StringVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", "", "required, runtime credential id")
+	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "for kubesphere only, if provider this value means upsert this record")
 	f.StringVarP(&c.Zone, "zone", "", "", "required, runtime zone eg.[pek3a|pek3b|...]")
 }
 
@@ -5067,6 +5070,7 @@ func (c *CreateRuntimeCredentialCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Name, "name", "", "", "runtime credential name")
 	f.StringVarP(&c.Provider, "provider", "", "", "required, runtime provider eg.[qingcloud|aliyun|aws|kubernetes]")
 	f.StringVarP(&c.RuntimeCredentialContent, "runtime_credential_content", "", "", "required, runtime credential content, a json file")
+	f.StringVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", "", "for kubesphere only, if provider this value means upsert this record")
 	f.StringVarP(&c.RuntimeURL, "runtime_url", "", "", "required, runtime url")
 }
 
