@@ -57,6 +57,24 @@ message DescribeSubnetsResponse {
 	repeated Subnet subnet_set = 2;
 }
 
+message DeleteClusterInRuntimeRequest {
+	repeated string runtime_id = 1;
+}
+
+message DeleteClusterInRuntimeResponse {
+	repeated string runtime_id = 1;
+}
+
+message MigrateClusterInRuntimeRequest {
+	string from_runtime_id = 1;
+	string to_runtime_id = 2;
+}
+
+message MigrateClusterInRuntimeResponse {
+	string from_runtime_id = 1;
+	string to_runtime_id = 2;
+}
+
 message CreateClusterRequest {
 	// required, id of app to run in cluster
 	google.protobuf.StringValue app_id = 1;
@@ -1081,4 +1099,8 @@ service ClusterManager {
 			get: "/v1/clusters/statistics"
 		};
 	}
+
+	// for kubesphere
+	rpc DeleteClusterInRuntime (DeleteClusterInRuntimeRequest) returns (DeleteClusterInRuntimeResponse) {}
+	rpc MigrateClusterInRuntime (MigrateClusterInRuntimeRequest) returns (MigrateClusterInRuntimeResponse) {}
 }
