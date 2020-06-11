@@ -1501,6 +1501,45 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	}, nil
 }
 
+func (p *Server) MigrateClusterInRuntime(ctx context.Context, req *pb.MigrateClusterInRuntimeRequest) (*pb.MigrateClusterInRuntimeResponse, error) {
+	var resp = &pb.MigrateClusterInRuntimeResponse{
+		FromRuntimeId: req.FromRuntimeId,
+		ToRuntimeId:   req.ToRuntimeId,
+	}
+	if req.FromRuntimeId == "" || req.ToRuntimeId == "" {
+		return resp, nil
+	}
+	_, err := pi.Global().DB(ctx).
+		Update(constants.TableCluster).
+		Set(constants.ColumnRuntimeId, req.ToRuntimeId).
+		Where(db.Eq(constants.ColumnRuntimeId, req.FromRuntimeId)).
+		Exec()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
+	}
+
+	return resp, nil
+}
+
+func (p *Server) DeleteClusterInRuntime(ctx context.Context, req *pb.DeleteClusterInRuntimeRequest) (*pb.DeleteClusterInRuntimeResponse, error) {
+	var resp = &pb.DeleteClusterInRuntimeResponse{
+		RuntimeId: req.RuntimeId,
+	}
+	if len(req.RuntimeId) == 0 {
+		return resp, nil
+	}
+	_, err := pi.Global().DB(ctx).
+		Update(constants.TableCluster).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
+		Where(db.Eq(constants.ColumnRuntimeId, req.RuntimeId)).
+		Exec()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
+	}
+
+	return resp, nil
+}
+
 func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersRequest) (*pb.DescribeClustersResponse, error) {
 	return p.describeClusters(ctx, req, false)
 }

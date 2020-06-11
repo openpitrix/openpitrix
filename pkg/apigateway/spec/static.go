@@ -9804,6 +9804,17 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixDeleteClusterInRuntimeResponse": {
+      "type": "object",
+      "properties": {
+        "runtime_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "openpitrixDeleteClusterNodesRequest": {
       "type": "object",
       "properties": {
@@ -10113,6 +10124,17 @@ var Files = map[string]string{
         "owner": {
           "type": "string",
           "title": "owner"
+        }
+      }
+    },
+    "openpitrixMigrateClusterInRuntimeResponse": {
+      "type": "object",
+      "properties": {
+        "from_runtime_id": {
+          "type": "string"
+        },
+        "to_runtime_id": {
+          "type": "string"
         }
       }
     },
