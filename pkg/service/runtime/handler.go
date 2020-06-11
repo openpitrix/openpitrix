@@ -37,6 +37,29 @@ func (p *Server) createRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	runtimeCredentialId := req.GetRuntimeCredentialId().GetValue()
 	zone := req.GetZone().GetValue()
 
+	if req.RuntimeId != nil && req.RuntimeId.GetValue() != "" {
+		runtimeId = req.RuntimeId.GetValue()
+		_, err := pi.Global().DB(ctx).InsertBySql(
+			`insert into runtime (runtime_id, name, description, provider, zone, runtime_credential_id, owner, owner_path, status, debug)
+values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+on duplicate key update runtime_id = ?, name = ?, description = ?, provider = ?, zone = ?, runtime_credential_id = ?, owner = ?, owner_path = ?, status = ?, debug = ?;`,
+
+			runtimeId, req.Name.GetValue(), req.Description.GetValue(), req.Provider.GetValue(), req.Zone.GetValue(),
+			req.RuntimeCredentialId.GetValue(), s.GetOwnerPath().Owner(), s.GetOwnerPath(), "active", debug,
+
+			runtimeId, req.Name.GetValue(), req.Description.GetValue(), req.Provider.GetValue(), req.Zone.GetValue(),
+			req.RuntimeCredentialId.GetValue(), s.GetOwnerPath().Owner(), s.GetOwnerPath(), "active", debug,
+		).Exec()
+		if err != nil {
+			logger.Error(nil, "Failed to upsert runtime [%s], err: %+v", runtimeId, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		res := &pb.CreateRuntimeResponse{
+			RuntimeId: pbutil.ToProtoString(runtimeId),
+		}
+		return res, nil
+	}
+
 	runtimeCredential, err := CheckRuntimeCredentialPermission(ctx, runtimeCredentialId)
 	if err != nil {
 		return nil, err
@@ -317,6 +340,35 @@ func (p *Server) createRuntimeCredential(ctx context.Context, req *pb.CreateRunt
 	provider := req.Provider.GetValue()
 	runtimeUrl := req.RuntimeUrl.GetValue()
 	runtimeCredentialContent := req.RuntimeCredentialContent.GetValue()
+
+	if req.RuntimeCredentialId != nil && req.RuntimeCredentialId.GetValue() != "" {
+		runtimeCredentialId = req.RuntimeCredentialId.GetValue()
+
+		content, err := decodeRuntimeCredentialContent(provider, runtimeCredentialContent)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorCreateResourcesFailed)
+		}
+
+		_, err = pi.Global().DB(ctx).InsertBySql(
+			`insert into runtime_credential (runtime_credential_id, name, description, runtime_url, runtime_credential_content, provider, owner, owner_path, status, debug)
+values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+on duplicate key update runtime_credential_id = ?, name = ?, description = ?, runtime_url = ?, runtime_credential_content = ?, provider = ?, owner = ?, owner_path = ?, status = ?, debug = ?;`,
+
+			runtimeCredentialId, req.Name.GetValue(), req.Description.GetValue(), runtimeUrl,
+			content, provider, s.GetOwnerPath().Owner(), s.GetOwnerPath(), "active", debug,
+
+			runtimeCredentialId, req.Name.GetValue(), req.Description.GetValue(), runtimeUrl,
+			content, provider, s.GetOwnerPath().Owner(), s.GetOwnerPath(), "active", debug,
+		).Exec()
+		if err != nil {
+			logger.Error(nil, "Failed to upsert runtime_credential [%s], err: %+v", runtimeCredentialId, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		res := &pb.CreateRuntimeCredentialResponse{
+			RuntimeCredentialId: pbutil.ToProtoString(runtimeCredentialId),
+		}
+		return res, nil
+	}
 
 	runtimeCredential := &models.RuntimeCredential{
 		RuntimeUrl:               runtimeUrl,

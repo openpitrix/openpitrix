@@ -11655,6 +11655,10 @@ var Files = map[string]string{
         "description": {
           "type": "string",
           "title": "runtime credential description"
+        },
+        "runtime_credential_id": {
+          "type": "string",
+          "title": "for kubesphere only, if provider this value means upsert this record"
         }
       }
     },
@@ -11689,6 +11693,10 @@ var Files = map[string]string{
         "zone": {
           "type": "string",
           "title": "required, runtime zone eg.[pek3a|pek3b|...]"
+        },
+        "runtime_id": {
+          "type": "string",
+          "title": "for kubesphere only, if provider this value means upsert this record"
         }
       }
     },

@@ -28,6 +28,9 @@ type OpenpitrixCreateRuntimeRequest struct {
 	// required, runtime credential id
 	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
 
+	// for kubesphere only, if provider this value means upsert this record
+	RuntimeID string `json:"runtime_id,omitempty"`
+
 	// required, runtime zone eg.[pek3a|pek3b|...]
 	Zone string `json:"zone,omitempty"`
 }
