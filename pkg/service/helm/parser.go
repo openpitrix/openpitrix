@@ -115,7 +115,8 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{})
 
 				if err != nil {
 					logger.Error(p.ctx, "Decode file [%s] in chart failed, %+v", filePath, err)
-					return nil, nil, "", err
+					//if unregister do not deal error
+					continue
 				}
 				logger.Debug(p.ctx, "Yaml content: %+v", obj)
 				logger.Debug(p.ctx, "Group version: %+v", groupVersionKind.GroupVersion().String())
