@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -136,7 +135,6 @@ func (proxy *Proxy) GetKubeClientWithCredential(credential string) (*kubernetes.
 
 func (proxy *Proxy) GetHelmConfig(driver, namespace string, getter CredentialGetter) (*action.Configuration, error) {
 	file, err := ioutil.TempFile("", "config")
-	defer os.Remove(file.Name())
 	if err != nil {
 		logger.Debug(proxy.ctx, "get helm config error: [%s]", err.Error())
 		return nil, err
@@ -158,9 +156,8 @@ func (proxy *Proxy) GetHelmConfig(driver, namespace string, getter CredentialGet
 	kubeConfigPath := file.Name()
 	actionConfig := new(action.Configuration)
 
-	// todo
 	var FMT = func(format string, v ...interface{}) {
-		fmt.Sprintf(format, v)
+		logger.Debug(proxy.ctx, format, v...)
 	}
 	//todo context
 	if err := actionConfig.Init(kube.GetConfig(kubeConfigPath, "", ns), ns, driver, FMT); err != nil {
@@ -197,10 +194,10 @@ func (proxy *Proxy) InstallReleaseFromChart(cfg *action.Configuration, c *chart.
 	rls, err := installCli.Run(c, rawVals)
 	if err != nil {
 		if rls != nil {
-			errDelete := proxy.DeleteRelease(cfg, rls.Name, true)
-			if errDelete != nil && !strings.Contains(errDelete.Error(), "release: not found") {
+			deleteErr := proxy.DeleteRelease(cfg, rls.Name, true)
+			if deleteErr != nil && !strings.Contains(deleteErr.Error(), "release: not found") {
 				logger.Debug(proxy.ctx, "release: [%s] not found [%s]", releaseName, err.Error())
-				return fmt.Errorf("Release %q failed: %v. Unable to delete failed release: %v", rls.Name, err, errDelete)
+				return fmt.Errorf("release %q failed: %v. Unable to delete failed release: %v", rls.Name, err, deleteErr)
 			}
 		}
 		return err

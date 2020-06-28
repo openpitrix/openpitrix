@@ -200,7 +200,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 
 	proxy := NewProxy(ctx, directive.RuntimeId)
 	//todo HELM_DRIVER
-	cfg, _ := proxy.GetHelmConfig("configmap", directive.Namespace, DefaultCredentialGetter)
+	cfg, _ := proxy.GetHelmConfig("", directive.Namespace, DefaultCredentialGetter)
 
 	switch task.TaskAction {
 	case constants.ActionCreateCluster:
@@ -272,7 +272,7 @@ func (s *Server) WaitSubtask(ctx context.Context, req *pb.WaitSubtaskRequest) (*
 
 	proxy := NewProxy(ctx, taskDirective.RuntimeId)
 	//todo HELMDRIVER
-	cfg, err := proxy.GetHelmConfig("configmap", taskDirective.Namespace, DefaultCredentialGetter)
+	cfg, err := proxy.GetHelmConfig("", taskDirective.Namespace, DefaultCredentialGetter)
 	if err != nil {
 		logger.Debug(ctx, "get helm action config error [%s]", err.Error())
 		return nil, err
