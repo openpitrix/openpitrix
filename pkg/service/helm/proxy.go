@@ -369,7 +369,7 @@ func (proxy *Proxy) describeAdditionalInfo(namespace string, cluster *models.Clu
 		switch t {
 		case "service":
 			for i, svc := range v {
-				service, err := kubeClient.CoreV1().Services(namespace).Get(svc["name"].(string), metav1.GetOptions{})
+				service, err := kubeClient.CoreV1().Services(namespace).Get(proxy.ctx, svc["name"].(string), metav1.GetOptions{})
 				if err != nil {
 					return err
 				}
@@ -399,7 +399,7 @@ func (proxy *Proxy) describeAdditionalInfo(namespace string, cluster *models.Clu
 			}
 		case "configmap":
 			for i, cm := range v {
-				configMap, err := kubeClient.CoreV1().ConfigMaps(namespace).Get(cm["name"].(string), metav1.GetOptions{})
+				configMap, err := kubeClient.CoreV1().ConfigMaps(namespace).Get(proxy.ctx, cm["name"].(string), metav1.GetOptions{})
 				if err != nil {
 					return err
 				}
@@ -408,7 +408,7 @@ func (proxy *Proxy) describeAdditionalInfo(namespace string, cluster *models.Clu
 			}
 		case "secret":
 			for i, sec := range v {
-				secret, err := kubeClient.CoreV1().Secrets(namespace).Get(sec["name"].(string), metav1.GetOptions{})
+				secret, err := kubeClient.CoreV1().Secrets(namespace).Get(proxy.ctx, sec["name"].(string), metav1.GetOptions{})
 				if err != nil {
 					return err
 				}
@@ -417,7 +417,7 @@ func (proxy *Proxy) describeAdditionalInfo(namespace string, cluster *models.Clu
 			}
 		case "pvc":
 			for i, p := range v {
-				pvc, err := kubeClient.CoreV1().PersistentVolumeClaims(namespace).Get(p["name"].(string), metav1.GetOptions{})
+				pvc, err := kubeClient.CoreV1().PersistentVolumeClaims(namespace).Get(proxy.ctx, p["name"].(string), metav1.GetOptions{})
 				if err != nil {
 					return err
 				}
@@ -432,7 +432,7 @@ func (proxy *Proxy) describeAdditionalInfo(namespace string, cluster *models.Clu
 			}
 		case "ingress":
 			for i, ing := range v {
-				ingress, err := kubeClient.ExtensionsV1beta1().Ingresses(namespace).Get(ing["name"].(string), metav1.GetOptions{})
+				ingress, err := kubeClient.ExtensionsV1beta1().Ingresses(namespace).Get(proxy.ctx, ing["name"].(string), metav1.GetOptions{})
 				if err != nil {
 					return err
 				}
@@ -506,7 +506,7 @@ func (proxy *Proxy) ValidateRuntime(zone string, runtimeCredential *models.Runti
 
 	cli := client.CoreV1().Namespaces()
 	if !needCreate {
-		_, err = cli.Get(zone, metav1.GetOptions{})
+		_, err = cli.Get(proxy.ctx, zone, metav1.GetOptions{})
 		if err != nil {
 			return gerr.NewWithDetail(nil, gerr.PermissionDenied, err, gerr.ErrorNamespaceUnavailable, zone)
 		}
@@ -514,17 +514,17 @@ func (proxy *Proxy) ValidateRuntime(zone string, runtimeCredential *models.Runti
 		// create runtime
 		// if not exist namespace, create new namespace with annotations
 		// if exist namespace, should not with annotations
-		namespace, err := cli.Get(zone, metav1.GetOptions{})
+		namespace, err := cli.Get(proxy.ctx, zone, metav1.GetOptions{})
 		if err != nil {
 			logger.Info(proxy.ctx, "namespace [%s] not exist, need create", fmt.Sprintf("namespace: %s", zone))
-			_, err = cli.Create(&corev1.Namespace{
+			_, err = cli.Create(proxy.ctx, &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: zone,
 					Annotations: map[string]string{
 						RuntimeAnnotationKey: proxy.RuntimeId,
 					},
 				},
-			})
+			}, metav1.CreateOptions{})
 			if err != nil {
 				return gerr.NewWithDetail(nil, gerr.Internal, err, gerr.ErrorCreateResourceFailed, zone)
 			}
@@ -535,8 +535,9 @@ func (proxy *Proxy) ValidateRuntime(zone string, runtimeCredential *models.Runti
 				return gerr.NewWithDetail(nil, gerr.AlreadyExists, err, gerr.ErrorNamespaceExists, zone)
 			} else {
 				logger.Info(proxy.ctx, "namespace [%s] exist, need update", zone)
-				_, err = cli.Patch(zone, types.StrategicMergePatchType,
-					[]byte(fmt.Sprintf(`{"metadata": {"annotations": {"%s": "%s"}}}`, RuntimeAnnotationKey, proxy.RuntimeId)))
+				_, err = cli.Patch(proxy.ctx, zone, types.StrategicMergePatchType,
+					[]byte(fmt.Sprintf(`{"metadata": {"annotations": {"%s": "%s"}}}`, RuntimeAnnotationKey, proxy.RuntimeId)),
+					metav1.PatchOptions{})
 				if err != nil {
 					return gerr.NewWithDetail(nil, gerr.Internal, err, gerr.ErrorUpdateResourceFailed, fmt.Sprintf("namespace: %s", zone))
 				}
@@ -554,7 +555,7 @@ func (proxy *Proxy) DescribeRuntimeProviderZones(runtimeCredential *models.Runti
 	}
 
 	cli := client.CoreV1().Namespaces()
-	out, err := cli.List(metav1.ListOptions{})
+	out, err := cli.List(proxy.ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -577,7 +578,7 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 		deploymentName := strings.TrimSuffix(clusterRole.Role, DeploymentFlag)
 		switch clusterRole.ApiVersion {
 		case "apps/v1":
-			deployment, err := kubeClient.AppsV1().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+			deployment, err := kubeClient.AppsV1().Deployments(namespace).Get(proxy.ctx, deploymentName, metav1.GetOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -586,13 +587,13 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			(*clusterRole).ReadyReplicas = uint32(deployment.Status.ReadyReplicas)
 
 			labelSelector := labels.Set(deployment.Spec.Selector.MatchLabels).AsSelector().String()
-			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(proxy.ctx, metav1.ListOptions{LabelSelector: labelSelector})
 			if err != nil {
 				return nil, err
 			}
 			return pods, nil
 		case "apps/v1beta2":
-			deployment, err := kubeClient.AppsV1beta2().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+			deployment, err := kubeClient.AppsV1beta2().Deployments(namespace).Get(proxy.ctx, deploymentName, metav1.GetOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -600,13 +601,13 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			(*clusterRole).ReadyReplicas = uint32(deployment.Status.ReadyReplicas)
 
 			labelSelector := labels.Set(deployment.Spec.Selector.MatchLabels).AsSelector().String()
-			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(proxy.ctx, metav1.ListOptions{LabelSelector: labelSelector})
 			if err != nil {
 				return nil, err
 			}
 			return pods, nil
 		case "apps/v1beta1":
-			deployment, err := kubeClient.AppsV1beta1().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+			deployment, err := kubeClient.AppsV1beta1().Deployments(namespace).Get(proxy.ctx, deploymentName, metav1.GetOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -614,13 +615,13 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			(*clusterRole).ReadyReplicas = uint32(deployment.Status.ReadyReplicas)
 
 			labelSelector := labels.Set(deployment.Spec.Selector.MatchLabels).AsSelector().String()
-			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(proxy.ctx, metav1.ListOptions{LabelSelector: labelSelector})
 			if err != nil {
 				return nil, err
 			}
 			return pods, nil
 		case "extensions/v1beta1":
-			deployment, err := kubeClient.ExtensionsV1beta1().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+			deployment, err := kubeClient.ExtensionsV1beta1().Deployments(namespace).Get(proxy.ctx, deploymentName, metav1.GetOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -628,7 +629,7 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			(*clusterRole).ReadyReplicas = uint32(deployment.Status.ReadyReplicas)
 
 			labelSelector := labels.Set(deployment.Spec.Selector.MatchLabels).AsSelector().String()
-			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(proxy.ctx, metav1.ListOptions{LabelSelector: labelSelector})
 			if err != nil {
 				return nil, err
 			}
@@ -639,7 +640,7 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 
 		switch clusterRole.ApiVersion {
 		case "apps/v1":
-			statefulSet, err := kubeClient.AppsV1().StatefulSets(namespace).Get(statefulSetName, metav1.GetOptions{})
+			statefulSet, err := kubeClient.AppsV1().StatefulSets(namespace).Get(proxy.ctx, statefulSetName, metav1.GetOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -648,13 +649,13 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			(*clusterRole).ReadyReplicas = uint32(statefulSet.Status.ReadyReplicas)
 
 			labelSelector := labels.Set(statefulSet.Spec.Selector.MatchLabels).AsSelector().String()
-			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(proxy.ctx, metav1.ListOptions{LabelSelector: labelSelector})
 			if err != nil {
 				return nil, err
 			}
 			return pods, nil
 		case "apps/v1beta2":
-			statefulSet, err := kubeClient.AppsV1beta2().StatefulSets(namespace).Get(statefulSetName, metav1.GetOptions{})
+			statefulSet, err := kubeClient.AppsV1beta2().StatefulSets(namespace).Get(proxy.ctx, statefulSetName, metav1.GetOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -662,13 +663,13 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			(*clusterRole).ReadyReplicas = uint32(statefulSet.Status.ReadyReplicas)
 
 			labelSelector := labels.Set(statefulSet.Spec.Selector.MatchLabels).AsSelector().String()
-			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(proxy.ctx, metav1.ListOptions{LabelSelector: labelSelector})
 			if err != nil {
 				return nil, err
 			}
 			return pods, nil
 		case "apps/v1beta1":
-			statefulSet, err := kubeClient.AppsV1beta1().StatefulSets(namespace).Get(statefulSetName, metav1.GetOptions{})
+			statefulSet, err := kubeClient.AppsV1beta1().StatefulSets(namespace).Get(proxy.ctx, statefulSetName, metav1.GetOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -676,7 +677,7 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			(*clusterRole).ReadyReplicas = uint32(statefulSet.Status.ReadyReplicas)
 
 			labelSelector := labels.Set(statefulSet.Spec.Selector.MatchLabels).AsSelector().String()
-			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(proxy.ctx, metav1.ListOptions{LabelSelector: labelSelector})
 			if err != nil {
 				return nil, err
 			}
@@ -687,7 +688,7 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 
 		switch clusterRole.ApiVersion {
 		case "apps/v1":
-			daemonSet, err := kubeClient.AppsV1().DaemonSets(namespace).Get(daemonSetName, metav1.GetOptions{})
+			daemonSet, err := kubeClient.AppsV1().DaemonSets(namespace).Get(proxy.ctx, daemonSetName, metav1.GetOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -697,13 +698,13 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			(*clusterRole).ReadyReplicas = uint32(daemonSet.Status.NumberReady)
 
 			labelSelector := labels.Set(daemonSet.Spec.Selector.MatchLabels).AsSelector().String()
-			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(proxy.ctx, metav1.ListOptions{LabelSelector: labelSelector})
 			if err != nil {
 				return nil, err
 			}
 			return pods, nil
 		case "apps/v1beta2":
-			daemonSet, err := kubeClient.AppsV1beta2().DaemonSets(namespace).Get(daemonSetName, metav1.GetOptions{})
+			daemonSet, err := kubeClient.AppsV1beta2().DaemonSets(namespace).Get(proxy.ctx, daemonSetName, metav1.GetOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -712,13 +713,13 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			(*clusterRole).ReadyReplicas = uint32(daemonSet.Status.NumberReady)
 
 			labelSelector := labels.Set(daemonSet.Spec.Selector.MatchLabels).AsSelector().String()
-			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(proxy.ctx, metav1.ListOptions{LabelSelector: labelSelector})
 			if err != nil {
 				return nil, err
 			}
 			return pods, nil
 		case "extensions/v1beta1":
-			daemonSet, err := kubeClient.ExtensionsV1beta1().DaemonSets(namespace).Get(daemonSetName, metav1.GetOptions{})
+			daemonSet, err := kubeClient.ExtensionsV1beta1().DaemonSets(namespace).Get(proxy.ctx, daemonSetName, metav1.GetOptions{})
 			if err != nil {
 				return nil, err
 			}
@@ -727,7 +728,7 @@ func (proxy *Proxy) getPodsByClusterRole(namespace string, clusterRole *models.C
 			(*clusterRole).ReadyReplicas = uint32(daemonSet.Status.NumberReady)
 
 			labelSelector := labels.Set(daemonSet.Spec.Selector.MatchLabels).AsSelector().String()
-			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(proxy.ctx, metav1.ListOptions{LabelSelector: labelSelector})
 			if err != nil {
 				return nil, err
 			}

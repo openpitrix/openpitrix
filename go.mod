@@ -13,7 +13,6 @@ require (
 	github.com/bugsnag/bugsnag-go v1.5.0 // indirect
 	github.com/bugsnag/panicwrap v1.2.0 // indirect
 	github.com/chai2010/jsonmap v1.0.0
-	github.com/coreos/etcd v3.3.17+incompatible
 	github.com/disintegration/imaging v1.6.1
 	github.com/docker/go-metrics v0.0.0-20181218153428-b84716841b82 // indirect
 	github.com/docker/libtrust v0.0.0-20160708172513-aabc10ec26b7 // indirect
@@ -59,14 +58,14 @@ require (
 	github.com/xenolf/lego v0.3.2-0.20160613233155-a9d8cec0e656 // indirect
 	github.com/yvasiyarov/go-metrics v0.0.0-20150112132944-c25f46c4b940 // indirect
 	github.com/yvasiyarov/gorelic v0.0.6 // indirect
-	go.etcd.io/etcd v3.3.17+incompatible
+	go.etcd.io/etcd v0.0.0-20200520232829-54ba9589114f
 	golang.org/x/crypto v0.0.0-20200414173820-0848c9571904
+	golang.org/x/image v0.0.0-20190227222117-0694c2d4d067 // indirect
 	golang.org/x/net v0.0.0-20191028085509-fe3aa8a45271
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sys v0.0.0-20191028164358-195ce5e7f934 // indirect
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
 	golang.org/x/tools v0.0.0-20191029041327-9cc4af7d6b2c
-	gonum.org/v1/netlib v0.0.0-20190331212654-76723241ea4e // indirect
 	google.golang.org/genproto v0.0.0-20191028173616-919d9bdd9fe6
 	google.golang.org/grpc v1.27.0
 	gopkg.in/square/go-jose.v1 v1.1.2 // indirect
@@ -81,7 +80,6 @@ require (
 	openpitrix.io/iam v0.1.0
 	openpitrix.io/notification v0.2.2
 	rsc.io/letsencrypt v0.0.1 // indirect
-	sigs.k8s.io/structured-merge-diff v0.0.0-20190817042607-6149e4549fca // indirect
 )
 
 replace github.com/ugorji/go => github.com/ugorji/go v0.0.0-20190128213124-ee1426cffec0
@@ -89,3 +87,5 @@ replace github.com/ugorji/go => github.com/ugorji/go v0.0.0-20190128213124-ee142
 replace github.com/gocraft/dbr => github.com/gocraft/dbr v0.0.0-20180507214907-a0fd650918f6
 
 replace github.com/docker/docker => github.com/docker/engine v0.0.0-20190423201726-d2cfbce3f3b0
+
+replace go.etcd.io/etcd => go.etcd.io/etcd v0.0.0-20200520232829-54ba9589114f

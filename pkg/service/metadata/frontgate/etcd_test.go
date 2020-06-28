@@ -34,7 +34,7 @@ func tGetEtcdEndpoints() []string {
 }
 
 func _TestDefaultEtcdMaxOpsPerTxn(t *testing.T) {
-	// import "github.com/coreos/etcd/embed"
+	// import "go.etcd.io/etcd/embed"
 	// Assert(t, embed.DefaultMaxTxnOps == DefaultEtcdMaxOpsPerTxn)
 }
 

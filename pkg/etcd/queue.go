@@ -4,7 +4,7 @@
 
 package etcd
 
-import recipe "github.com/coreos/etcd/contrib/recipes"
+import recipe "go.etcd.io/etcd/contrib/recipes"
 
 type Queue struct {
 	*recipe.Queue
