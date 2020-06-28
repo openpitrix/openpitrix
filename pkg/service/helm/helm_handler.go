@@ -7,13 +7,12 @@ import (
 	"io/ioutil"
 	"os"
 
-	"openpitrix.io/openpitrix/pkg/gerr"
-
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/kube"
 
 	"openpitrix.io/openpitrix/pkg/client/app"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
