@@ -9,27 +9,27 @@ import (
 )
 
 const (
+	hyperpitrix                = "hyperpitrix"
 	prefix                     = "openpitrix-"
 	ProviderPrefix             = "openpitrix-rp-"
-	ApiGatewayHost             = prefix + "api-gateway"
-	RepoManagerHost            = prefix + "repo-manager"
-	AppManagerHost             = prefix + "app-manager"
-	RuntimeManagerHost         = prefix + "runtime-manager"
-	ClusterManagerHost         = prefix + "cluster-manager"
-	JobManagerHost             = prefix + "job-manager"
-	TaskManagerHost            = prefix + "task-manager"
-	PilotServiceHost           = prefix + "pilot-service"
+	RepoManagerHost            = hyperpitrix
+	AppManagerHost             = hyperpitrix
+	RuntimeManagerHost         = hyperpitrix
+	ClusterManagerHost         = hyperpitrix
+	JobManagerHost             = hyperpitrix
+	TaskManagerHost            = hyperpitrix
+	RepoIndexerHost            = hyperpitrix
+	CategoryManagerHost        = hyperpitrix
+	RuntimeProviderManagerHost = hyperpitrix
+	AttachmentManagerHost      = hyperpitrix
 	AccountServiceHost         = prefix + "account-service"
+	PilotServiceHost           = prefix + "pilot-service"
 	IMServiceHost              = prefix + "im-service"
 	AMServiceHost              = prefix + "am-service"
-	RepoIndexerHost            = prefix + "repo-indexer"
-	CategoryManagerHost        = prefix + "category-manager"
-	RuntimeProviderManagerHost = prefix + "rp-manager"
 	NotificationHost           = prefix + "notification"
 	MarketManagerHost          = prefix + "market-manager"
-	AttachmentManagerHost      = prefix + "attachment-manager"
+	ApiGatewayHost             = prefix + "api-gateway"
 	IsvManagerHost             = prefix + "isv-manager"
-	ReleaseManagerHost         = prefix + "release-manager"
 )
 
 const (

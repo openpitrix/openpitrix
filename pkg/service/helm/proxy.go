@@ -196,10 +196,12 @@ func (proxy *Proxy) InstallReleaseFromChart(cfg *action.Configuration, c *chart.
 	installCli.ReleaseName = releaseName
 	rls, err := installCli.Run(c, rawVals)
 	if err != nil {
-		errDelete := proxy.DeleteRelease(cfg, rls.Name, true)
-		if errDelete != nil && !strings.Contains(errDelete.Error(), "release: not found") {
-			logger.Debug(proxy.ctx, "release: [%s] not found [%s]", releaseName, err.Error())
-			return fmt.Errorf("Release %q failed: %v. Unable to delete failed release: %v", rls.Name, err, errDelete)
+		if rls != nil {
+			errDelete := proxy.DeleteRelease(cfg, rls.Name, true)
+			if errDelete != nil && !strings.Contains(errDelete.Error(), "release: not found") {
+				logger.Debug(proxy.ctx, "release: [%s] not found [%s]", releaseName, err.Error())
+				return fmt.Errorf("Release %q failed: %v. Unable to delete failed release: %v", rls.Name, err, errDelete)
+			}
 		}
 		return err
 	}
