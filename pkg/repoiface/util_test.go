@@ -54,6 +54,15 @@ func TestURLJoin(t *testing.T) {
 		{"", args{"http://some.com/right", "../left"}, "http://some.com/left"},
 		{"", args{"http://some.com/subdir/", "index.yaml"}, "http://some.com/subdir/index.yaml"},
 		{"", args{"http://some.com/subdir", "index.yaml"}, "http://some.com/subdir/index.yaml"},
+
+		{"", args{"http://user:password@some.com", "right"}, "http://user:password@some.com/right"},
+		{"", args{"http://user:password@some.com", "right/right"}, "http://user:password@some.com/right/right"},
+		{"", args{"http://user:password@some.com", "http://right.com"}, "http://right.com"},
+		{"", args{"http://user:password@some.com", "http://some.com/right"}, "http://user:password@some.com/right"},
+		{"", args{"http://user:password@some.com", "http://u:p@some.com/right"}, "http://u:p@some.com/right"},
+		{"", args{"http://user:password@some.com/right", "../left"}, "http://user:password@some.com/left"},
+		{"", args{"http://user:password@some.com/subdir/", "index.yaml"}, "http://user:password@some.com/subdir/index.yaml"},
+		{"", args{"http://user:password@some.com/subdir", "index.yaml"}, "http://user:password@some.com/subdir/index.yaml"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

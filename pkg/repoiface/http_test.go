@@ -30,4 +30,14 @@ func TestNewHttpInterface(t *testing.T) {
 	body, err = httpInterface.ReadFile(context.Background(), "https://helm.elastic.co/helm/metricbeat/metricbeat-7.3.2.tgz")
 	require.NoError(t, err)
 	t.Log(len(body))
+
+	// httpbin guide: https://httpbin.org/#/Auth/get_basic_auth__user___passwd_
+	url = "https://1:2@httpbin.org/basic-auth/username-1/password-2"
+	u, err = neturl.Parse(url)
+	require.NoError(t, err)
+	httpInterface, err = NewHttpInterface(context.TODO(), u)
+	require.NoError(t, err)
+	body, err = httpInterface.ReadFile(context.Background(), "https://httpbin.org/basic-auth/1/2")
+	require.NoError(t, err)
+	t.Log(len(body))
 }
