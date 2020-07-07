@@ -22,6 +22,9 @@ func URLJoin(repoUrl, fileName string) string {
 	}
 	base, _ := url.Parse(repoUrl)
 	n, _ := url.Parse(fileName)
+	if base.Host == n.Host && n.User == nil {
+		n.User = base.User
+	}
 	return base.ResolveReference(n).String()
 }
 
