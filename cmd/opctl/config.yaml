@@ -1417,7 +1417,7 @@
       help: data limit per page, default value 20, max value 200.
       type: int64
     min_create_time:
-      type: string
+      type: datetime
     offset:
       help: data offset, default 0.
       type: int64
@@ -1522,7 +1522,7 @@
       help: data limit per page, default value 20, max value 200.
       type: int64
     min_create_time:
-      type: string
+      type: datetime
     offset:
       help: data offset, default 0.
       type: int64

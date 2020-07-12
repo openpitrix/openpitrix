@@ -13,7 +13,7 @@ import (
 
 	"github.com/go-openapi/spec"
 	flag "github.com/spf13/pflag"
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 
 	. "openpitrix.io/openpitrix/cmd/opctl/common"
 )
@@ -66,6 +66,8 @@ func (g *Gen) GetCmdFromOperation(op *spec.Operation) Cmd {
 				}
 			} else if p.Format == "int32" {
 				t = "int32"
+			} else if p.Format == "date-time" {
+				t = "datetime"
 			} else if p.Format == "int64" {
 				t = "int64"
 			} else {

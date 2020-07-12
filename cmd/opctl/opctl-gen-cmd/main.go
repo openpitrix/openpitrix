@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	flag "github.com/spf13/pflag"
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 
 	. "openpitrix.io/openpitrix/cmd/opctl/common"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
@@ -121,11 +121,18 @@ func (c *{{$element.Action}}Cmd) Run(out Out) error {
 {{/*   this if get action   */}}
 type {{$element.Action}}Cmd struct {
 	*{{snakeCase $element.Service}}.{{$element.Action}}Params
+
+{{- range $name, $p := $element.Query}}
+{{- if (eq $p.Type "datetime")}}
+	{{pascalCase $name}}String *string
+{{- end}}
+{{- end}}
+
 }
 
 func New{{$element.Action}}Cmd() Cmd {
 	return &{{$element.Action}}Cmd{
-		{{snakeCase $element.Service}}.New{{$element.Action}}Params(),
+		{{$element.Action}}Params: {{snakeCase $element.Service}}.New{{$element.Action}}Params(),
 	}
 }
 
@@ -138,6 +145,9 @@ func (c *{{$element.Action}}Cmd) ParseFlag(f Flag) {
 {{- if (eq $p.Type "string")}}
 	c.{{pascalCase $name}} = new(string)
 	f.StringVarP(c.{{pascalCase $name}}, "{{$name}}", "{{$p.Shorthand}}", "", "{{$p.Help}}")
+{{- else if (eq $p.Type "datetime")}}
+	c.{{pascalCase $name}}String = new(string)
+	f.StringVarP(c.{{pascalCase $name}}String, "{{$name}}", "{{$p.Shorthand}}", "", "{{$p.Help}}")
 {{- else if (eq $p.Type "[]string")}}
 	f.StringSliceVarP(&c.{{pascalCase $name}}, "{{$name}}", "{{$p.Shorthand}}", []string{}, "{{$p.Help}}")
 {{- else if (eq $p.Type "boolean")}}
@@ -165,6 +175,18 @@ func (c *{{$element.Action}}Cmd) Run(out Out) error {
 
 {{- range $name, $p := $element.Path}}
 	params.With{{pascalCase $name}}(c.{{pascalCase $name}})
+{{- end}}
+
+{{- range $name, $p := $element.Query}}
+{{- if (eq $p.Type "datetime")}}
+	if c.{{pascalCase $name}}String != nil && *c.{{pascalCase $name}}String != "" {
+		dt, err := strfmt.ParseDateTime(*c.{{pascalCase $name}}String)
+		if err != nil {
+			return err
+		}
+		params.With{{pascalCase $name}}(&dt)
+	}
+{{- end}}
 {{- end}}
 
 	out.WriteRequest(params)
