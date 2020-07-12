@@ -188,9 +188,10 @@ func (proxy *Proxy) ListRelease(cfg *action.Configuration, name string) (*releas
 
 }
 
-func (proxy *Proxy) InstallReleaseFromChart(cfg *action.Configuration, c *chart.Chart, rawVals map[string]interface{}, releaseName string) error {
+func (proxy *Proxy) InstallReleaseFromChart(cfg *action.Configuration, c *chart.Chart, rawVals map[string]interface{}, releaseName, namespace string) error {
 	installCli := action.NewInstall(cfg)
 	installCli.ReleaseName = releaseName
+	installCli.Namespace = namespace
 	rls, err := installCli.Run(c, rawVals)
 	if err != nil {
 		if rls != nil {
@@ -199,6 +200,7 @@ func (proxy *Proxy) InstallReleaseFromChart(cfg *action.Configuration, c *chart.
 				logger.Error(proxy.ctx, "delete relese failed: %+v", deleteErr)
 			}
 		}
+		logger.Error(proxy.ctx, "Create release failed: %+v", err)
 		return err
 	}
 	return err

@@ -75,6 +75,7 @@ func (server *HelmServer) CreateRelease(ctx context.Context, req *pb.CreateRelea
 	chrt, err := loader.LoadArchive(r)
 	releaseInfo, err := CreateRelease(cfg, releaseName, namespace, chrt, nil)
 	if err != nil {
+		logger.Error(ctx, "Create release failed: %+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	createReleaseResp := &pb.CreateReleaseResponse{

@@ -199,7 +199,6 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 	}
 
 	proxy := NewProxy(ctx, directive.RuntimeId)
-	//todo HELM_DRIVER
 	cfg, _ := proxy.GetHelmConfig("", directive.Namespace, DefaultCredentialGetter)
 
 	switch task.TaskAction {
@@ -216,7 +215,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 		}
 		logger.Debug(ctx, "Install helm release with name [%+v], namespace [%+v], values [%s]", directive.ClusterName, directive.Namespace, rawVals)
 
-		err = proxy.InstallReleaseFromChart(cfg, c, rawVals, directive.ClusterName)
+		err = proxy.InstallReleaseFromChart(cfg, c, rawVals, directive.ClusterName, directive.Namespace)
 		if err != nil {
 			return nil, err
 		}
