@@ -206,13 +206,14 @@ func (proxy *Proxy) InstallReleaseFromChart(cfg *action.Configuration, c *chart.
 	return err
 }
 
-func (proxy *Proxy) UpdateReleaseFromChart(cfg *action.Configuration, releaseName string, c *chart.Chart, rawVals map[string]interface{}) error {
+func (proxy *Proxy) UpdateReleaseFromChart(cfg *action.Configuration, releaseName string, c *chart.Chart, rawVals map[string]interface{}, namespace string) error {
 	_, err := proxy.ListRelease(cfg, releaseName)
 	if err != nil {
 		logger.Debug(proxy.ctx, "release: [%s] not found [%s]!", releaseName, err.Error())
 		return err
 	}
 	updateCli := action.NewUpgrade(cfg)
+	updateCli.Namespace = namespace
 	_, err = updateCli.Run(releaseName, c, rawVals)
 	if err != nil {
 		logger.Debug(proxy.ctx, "update release [%s] error [%s]", releaseName, err.Error())

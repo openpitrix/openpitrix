@@ -231,7 +231,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 		}
 
 		logger.Debug(ctx, "Update helm release [%+v] with values [%s]", directive.ClusterName, rawVals)
-		err = proxy.UpdateReleaseFromChart(cfg, directive.ClusterName, c, rawVals)
+		err = proxy.UpdateReleaseFromChart(cfg, directive.ClusterName, c, rawVals, directive.Namespace)
 		if err != nil {
 			return nil, err
 		}
