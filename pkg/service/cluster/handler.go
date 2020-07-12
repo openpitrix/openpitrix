@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/golang/protobuf/ptypes"
 	pbempty "github.com/golang/protobuf/ptypes/empty"
 
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
@@ -1572,6 +1573,13 @@ func (p *Server) describeClusters(ctx context.Context, req *pb.DescribeClustersR
 			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorDescribeResourcesFailed)
 		}
 		timeCreated := time.Now().Add(-createdTime)
+		query = query.Where(db.Gte(constants.ColumnCreateTime, timeCreated))
+	}
+	if req.MinCreateTime != nil {
+		timeCreated, err := ptypes.Timestamp(req.MinCreateTime)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorDescribeResourcesFailed)
+		}
 		query = query.Where(db.Gte(constants.ColumnCreateTime, timeCreated))
 	}
 	if len(displayColumns) > 0 {

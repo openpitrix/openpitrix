@@ -3274,6 +3274,13 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "min_create_time",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
           }
         ],
         "tags": [
@@ -4359,6 +4366,13 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "min_create_time",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time"
           }
         ],
         "tags": [
