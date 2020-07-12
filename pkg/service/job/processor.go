@@ -357,6 +357,9 @@ func (p *Processor) UpdateClusterDetails(ctx context.Context) error {
 			ClusterRoleSet: models.ClusterRolesToPbs(clusterRoles),
 			ClusterNodeSet: models.ClusterNodesWithKeyPairsToPbs(clusterNodes),
 		}
+		if p.Job.VersionId != "" {
+			modifyClusterRequest.Cluster.VersionId = pbutil.ToProtoString(p.Job.VersionId)
+		}
 		_, err = clusterClient.ModifyCluster(ctx, modifyClusterRequest)
 		if err != nil {
 			return err
