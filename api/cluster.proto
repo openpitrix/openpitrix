@@ -563,6 +563,8 @@ message DescribeClustersRequest {
 	repeated string display_columns = 17;
 	// namespace
 	repeated string zone = 18;
+
+	google.protobuf.Timestamp min_create_time = 19;
 }
 message DescribeClustersResponse {
 	// total count of qualified cluster

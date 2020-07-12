@@ -103,6 +103,8 @@ type DescribeClustersParams struct {
 
 	*/
 	Limit *int64
+	/*MinCreateTime*/
+	MinCreateTime *strfmt.DateTime
 	/*Offset
 	  data offset, default 0.
 
@@ -278,6 +280,17 @@ func (o *DescribeClustersParams) WithLimit(limit *int64) *DescribeClustersParams
 // SetLimit adds the limit to the describe clusters params
 func (o *DescribeClustersParams) SetLimit(limit *int64) {
 	o.Limit = limit
+}
+
+// WithMinCreateTime adds the minCreateTime to the describe clusters params
+func (o *DescribeClustersParams) WithMinCreateTime(minCreateTime *strfmt.DateTime) *DescribeClustersParams {
+	o.SetMinCreateTime(minCreateTime)
+	return o
+}
+
+// SetMinCreateTime adds the minCreateTime to the describe clusters params
+func (o *DescribeClustersParams) SetMinCreateTime(minCreateTime *strfmt.DateTime) {
+	o.MinCreateTime = minCreateTime
 }
 
 // WithOffset adds the offset to the describe clusters params
@@ -488,6 +501,22 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 		qLimit := swag.FormatInt64(qrLimit)
 		if qLimit != "" {
 			if err := r.SetQueryParam("limit", qLimit); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.MinCreateTime != nil {
+
+		// query param min_create_time
+		var qrMinCreateTime strfmt.DateTime
+		if o.MinCreateTime != nil {
+			qrMinCreateTime = *o.MinCreateTime
+		}
+		qMinCreateTime := qrMinCreateTime.String()
+		if qMinCreateTime != "" {
+			if err := r.SetQueryParam("min_create_time", qMinCreateTime); err != nil {
 				return err
 			}
 		}
