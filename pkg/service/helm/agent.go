@@ -48,7 +48,6 @@ func CreateRelease(cfg *action.Configuration, releaseName, ns string, ch *chart.
 
 	rls, err := cmd.Run(ch, vals)
 	if err != nil {
-
 		return nil, err
 	}
 	return rls, nil
