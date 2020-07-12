@@ -325,7 +325,7 @@ type DescribeRolesCmd struct {
 
 func NewDescribeRolesCmd() Cmd {
 	return &DescribeRolesCmd{
-		access_manager.NewDescribeRolesParams(),
+		DescribeRolesParams: access_manager.NewDescribeRolesParams(),
 	}
 }
 
@@ -373,7 +373,7 @@ type GetRoleCmd struct {
 
 func NewGetRoleCmd() Cmd {
 	return &GetRoleCmd{
-		access_manager.NewGetRoleParams(),
+		GetRoleParams: access_manager.NewGetRoleParams(),
 	}
 }
 
@@ -408,7 +408,7 @@ type GetRoleModuleCmd struct {
 
 func NewGetRoleModuleCmd() Cmd {
 	return &GetRoleModuleCmd{
-		access_manager.NewGetRoleModuleParams(),
+		GetRoleModuleParams: access_manager.NewGetRoleModuleParams(),
 	}
 }
 
@@ -769,7 +769,7 @@ type DescribeGroupsCmd struct {
 
 func NewDescribeGroupsCmd() Cmd {
 	return &DescribeGroupsCmd{
-		account_manager.NewDescribeGroupsParams(),
+		DescribeGroupsParams: account_manager.NewDescribeGroupsParams(),
 	}
 }
 
@@ -818,7 +818,7 @@ type DescribeGroupsDetailCmd struct {
 
 func NewDescribeGroupsDetailCmd() Cmd {
 	return &DescribeGroupsDetailCmd{
-		account_manager.NewDescribeGroupsDetailParams(),
+		DescribeGroupsDetailParams: account_manager.NewDescribeGroupsDetailParams(),
 	}
 }
 
@@ -867,7 +867,7 @@ type DescribeUsersCmd struct {
 
 func NewDescribeUsersCmd() Cmd {
 	return &DescribeUsersCmd{
-		account_manager.NewDescribeUsersParams(),
+		DescribeUsersParams: account_manager.NewDescribeUsersParams(),
 	}
 }
 
@@ -918,7 +918,7 @@ type DescribeUsersDetailCmd struct {
 
 func NewDescribeUsersDetailCmd() Cmd {
 	return &DescribeUsersDetailCmd{
-		account_manager.NewDescribeUsersDetailParams(),
+		DescribeUsersDetailParams: account_manager.NewDescribeUsersDetailParams(),
 	}
 }
 
@@ -969,7 +969,7 @@ type GetPasswordResetCmd struct {
 
 func NewGetPasswordResetCmd() Cmd {
 	return &GetPasswordResetCmd{
-		account_manager.NewGetPasswordResetParams(),
+		GetPasswordResetParams: account_manager.NewGetPasswordResetParams(),
 	}
 }
 
@@ -1615,7 +1615,7 @@ type DescribeActiveAppVersionsCmd struct {
 
 func NewDescribeActiveAppVersionsCmd() Cmd {
 	return &DescribeActiveAppVersionsCmd{
-		app_manager.NewDescribeActiveAppVersionsParams(),
+		DescribeActiveAppVersionsParams: app_manager.NewDescribeActiveAppVersionsParams(),
 	}
 }
 
@@ -1667,7 +1667,7 @@ type DescribeActiveAppsCmd struct {
 
 func NewDescribeActiveAppsCmd() Cmd {
 	return &DescribeActiveAppsCmd{
-		app_manager.NewDescribeActiveAppsParams(),
+		DescribeActiveAppsParams: app_manager.NewDescribeActiveAppsParams(),
 	}
 }
 
@@ -1719,7 +1719,7 @@ type DescribeAppVersionAuditsCmd struct {
 
 func NewDescribeAppVersionAuditsCmd() Cmd {
 	return &DescribeAppVersionAuditsCmd{
-		app_manager.NewDescribeAppVersionAuditsParams(),
+		DescribeAppVersionAuditsParams: app_manager.NewDescribeAppVersionAuditsParams(),
 	}
 }
 
@@ -1768,7 +1768,7 @@ type DescribeAppVersionReviewsCmd struct {
 
 func NewDescribeAppVersionReviewsCmd() Cmd {
 	return &DescribeAppVersionReviewsCmd{
-		app_manager.NewDescribeAppVersionReviewsParams(),
+		DescribeAppVersionReviewsParams: app_manager.NewDescribeAppVersionReviewsParams(),
 	}
 }
 
@@ -1817,7 +1817,7 @@ type DescribeAppVersionsCmd struct {
 
 func NewDescribeAppVersionsCmd() Cmd {
 	return &DescribeAppVersionsCmd{
-		app_manager.NewDescribeAppVersionsParams(),
+		DescribeAppVersionsParams: app_manager.NewDescribeAppVersionsParams(),
 	}
 }
 
@@ -1869,7 +1869,7 @@ type DescribeAppsCmd struct {
 
 func NewDescribeAppsCmd() Cmd {
 	return &DescribeAppsCmd{
-		app_manager.NewDescribeAppsParams(),
+		DescribeAppsParams: app_manager.NewDescribeAppsParams(),
 	}
 }
 
@@ -1921,7 +1921,7 @@ type GetAppStatisticsCmd struct {
 
 func NewGetAppStatisticsCmd() Cmd {
 	return &GetAppStatisticsCmd{
-		app_manager.NewGetAppStatisticsParams(),
+		GetAppStatisticsParams: app_manager.NewGetAppStatisticsParams(),
 	}
 }
 
@@ -1954,7 +1954,7 @@ type GetAppVersionPackageCmd struct {
 
 func NewGetAppVersionPackageCmd() Cmd {
 	return &GetAppVersionPackageCmd{
-		app_manager.NewGetAppVersionPackageParams(),
+		GetAppVersionPackageParams: app_manager.NewGetAppVersionPackageParams(),
 	}
 }
 
@@ -1989,7 +1989,7 @@ type GetAppVersionPackageFilesCmd struct {
 
 func NewGetAppVersionPackageFilesCmd() Cmd {
 	return &GetAppVersionPackageFilesCmd{
-		app_manager.NewGetAppVersionPackageFilesParams(),
+		GetAppVersionPackageFilesParams: app_manager.NewGetAppVersionPackageFilesParams(),
 	}
 }
 
@@ -2556,7 +2556,7 @@ type GetAttachmentCmd struct {
 
 func NewGetAttachmentCmd() Cmd {
 	return &GetAttachmentCmd{
-		attachment_service.NewGetAttachmentParams(),
+		GetAttachmentParams: attachment_service.NewGetAttachmentParams(),
 	}
 }
 
@@ -2675,7 +2675,7 @@ type DescribeCategoriesCmd struct {
 
 func NewDescribeCategoriesCmd() Cmd {
 	return &DescribeCategoriesCmd{
-		category_manager.NewDescribeCategoriesParams(),
+		DescribeCategoriesParams: category_manager.NewDescribeCategoriesParams(),
 	}
 }
 
@@ -3105,7 +3105,7 @@ type DescribeAppClustersCmd struct {
 
 func NewDescribeAppClustersCmd() Cmd {
 	return &DescribeAppClustersCmd{
-		cluster_manager.NewDescribeAppClustersParams(),
+		DescribeAppClustersParams: cluster_manager.NewDescribeAppClustersParams(),
 	}
 }
 
@@ -3156,7 +3156,7 @@ type DescribeClusterNodesCmd struct {
 
 func NewDescribeClusterNodesCmd() Cmd {
 	return &DescribeClusterNodesCmd{
-		cluster_manager.NewDescribeClusterNodesParams(),
+		DescribeClusterNodesParams: cluster_manager.NewDescribeClusterNodesParams(),
 	}
 }
 
@@ -3201,11 +3201,12 @@ func (c *DescribeClusterNodesCmd) Run(out Out) error {
 
 type DescribeClustersCmd struct {
 	*cluster_manager.DescribeClustersParams
+	MinCreateTimeString *string
 }
 
 func NewDescribeClustersCmd() Cmd {
 	return &DescribeClustersCmd{
-		cluster_manager.NewDescribeClustersParams(),
+		DescribeClustersParams: cluster_manager.NewDescribeClustersParams(),
 	}
 }
 
@@ -3226,8 +3227,8 @@ func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.FrontgateID, "frontgate_id", "", []string{}, "frontgate ids.")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "data limit per page, default value 20, max value 200.")
-	c.MinCreateTime = new(string)
-	f.StringVarP(c.MinCreateTime, "min_create_time", "", "", "")
+	c.MinCreateTimeString = new(string)
+	f.StringVarP(c.MinCreateTimeString, "min_create_time", "", "", "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "data offset, default 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "owner.")
@@ -3247,6 +3248,13 @@ func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 
 func (c *DescribeClustersCmd) Run(out Out) error {
 	params := c.DescribeClustersParams
+	if c.MinCreateTimeString != nil && *c.MinCreateTimeString != "" {
+		dt, err := strfmt.ParseDateTime(*c.MinCreateTimeString)
+		if err != nil {
+			return err
+		}
+		params.WithMinCreateTime(&dt)
+	}
 
 	out.WriteRequest(params)
 
@@ -3267,7 +3275,7 @@ type DescribeDebugAppClustersCmd struct {
 
 func NewDescribeDebugAppClustersCmd() Cmd {
 	return &DescribeDebugAppClustersCmd{
-		cluster_manager.NewDescribeDebugAppClustersParams(),
+		DescribeDebugAppClustersParams: cluster_manager.NewDescribeDebugAppClustersParams(),
 	}
 }
 
@@ -3314,11 +3322,12 @@ func (c *DescribeDebugAppClustersCmd) Run(out Out) error {
 
 type DescribeDebugClustersCmd struct {
 	*cluster_manager.DescribeDebugClustersParams
+	MinCreateTimeString *string
 }
 
 func NewDescribeDebugClustersCmd() Cmd {
 	return &DescribeDebugClustersCmd{
-		cluster_manager.NewDescribeDebugClustersParams(),
+		DescribeDebugClustersParams: cluster_manager.NewDescribeDebugClustersParams(),
 	}
 }
 
@@ -3339,8 +3348,8 @@ func (c *DescribeDebugClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.FrontgateID, "frontgate_id", "", []string{}, "frontgate ids.")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "data limit per page, default value 20, max value 200.")
-	c.MinCreateTime = new(string)
-	f.StringVarP(c.MinCreateTime, "min_create_time", "", "", "")
+	c.MinCreateTimeString = new(string)
+	f.StringVarP(c.MinCreateTimeString, "min_create_time", "", "", "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "data offset, default 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "owner.")
@@ -3360,6 +3369,13 @@ func (c *DescribeDebugClustersCmd) ParseFlag(f Flag) {
 
 func (c *DescribeDebugClustersCmd) Run(out Out) error {
 	params := c.DescribeDebugClustersParams
+	if c.MinCreateTimeString != nil && *c.MinCreateTimeString != "" {
+		dt, err := strfmt.ParseDateTime(*c.MinCreateTimeString)
+		if err != nil {
+			return err
+		}
+		params.WithMinCreateTime(&dt)
+	}
 
 	out.WriteRequest(params)
 
@@ -3380,7 +3396,7 @@ type DescribeKeyPairsCmd struct {
 
 func NewDescribeKeyPairsCmd() Cmd {
 	return &DescribeKeyPairsCmd{
-		cluster_manager.NewDescribeKeyPairsParams(),
+		DescribeKeyPairsParams: cluster_manager.NewDescribeKeyPairsParams(),
 	}
 }
 
@@ -3429,7 +3445,7 @@ type DescribeSubnetsCmd struct {
 
 func NewDescribeSubnetsCmd() Cmd {
 	return &DescribeSubnetsCmd{
-		cluster_manager.NewDescribeSubnetsParams(),
+		DescribeSubnetsParams: cluster_manager.NewDescribeSubnetsParams(),
 	}
 }
 
@@ -3509,7 +3525,7 @@ type GetClusterStatisticsCmd struct {
 
 func NewGetClusterStatisticsCmd() Cmd {
 	return &GetClusterStatisticsCmd{
-		cluster_manager.NewGetClusterStatisticsParams(),
+		GetClusterStatisticsParams: cluster_manager.NewGetClusterStatisticsParams(),
 	}
 }
 
@@ -3869,7 +3885,7 @@ type DescribeAppVendorStatisticsCmd struct {
 
 func NewDescribeAppVendorStatisticsCmd() Cmd {
 	return &DescribeAppVendorStatisticsCmd{
-		isv_manager.NewDescribeAppVendorStatisticsParams(),
+		DescribeAppVendorStatisticsParams: isv_manager.NewDescribeAppVendorStatisticsParams(),
 	}
 }
 
@@ -3916,7 +3932,7 @@ type DescribeVendorVerifyInfosCmd struct {
 
 func NewDescribeVendorVerifyInfosCmd() Cmd {
 	return &DescribeVendorVerifyInfosCmd{
-		isv_manager.NewDescribeVendorVerifyInfosParams(),
+		DescribeVendorVerifyInfosParams: isv_manager.NewDescribeVendorVerifyInfosParams(),
 	}
 }
 
@@ -3963,7 +3979,7 @@ type GetVendorVerifyInfoCmd struct {
 
 func NewGetVendorVerifyInfoCmd() Cmd {
 	return &GetVendorVerifyInfoCmd{
-		isv_manager.NewGetVendorVerifyInfoParams(),
+		GetVendorVerifyInfoParams: isv_manager.NewGetVendorVerifyInfoParams(),
 	}
 }
 
@@ -4113,7 +4129,7 @@ type DescribeJobsCmd struct {
 
 func NewDescribeJobsCmd() Cmd {
 	return &DescribeJobsCmd{
-		job_manager.NewDescribeJobsParams(),
+		DescribeJobsParams: job_manager.NewDescribeJobsParams(),
 	}
 }
 
@@ -4244,7 +4260,7 @@ type DescribeMarketUsersCmd struct {
 
 func NewDescribeMarketUsersCmd() Cmd {
 	return &DescribeMarketUsersCmd{
-		market_manager.NewDescribeMarketUsersParams(),
+		DescribeMarketUsersParams: market_manager.NewDescribeMarketUsersParams(),
 	}
 }
 
@@ -4290,7 +4306,7 @@ type DescribeMarketsCmd struct {
 
 func NewDescribeMarketsCmd() Cmd {
 	return &DescribeMarketsCmd{
-		market_manager.NewDescribeMarketsParams(),
+		DescribeMarketsParams: market_manager.NewDescribeMarketsParams(),
 	}
 }
 
@@ -4526,7 +4542,7 @@ type ListReleasesCmd struct {
 
 func NewListReleasesCmd() Cmd {
 	return &ListReleasesCmd{
-		release_manager.NewListReleasesParams(),
+		ListReleasesParams: release_manager.NewListReleasesParams(),
 	}
 }
 
@@ -4640,7 +4656,7 @@ type DescribeRepoEventsCmd struct {
 
 func NewDescribeRepoEventsCmd() Cmd {
 	return &DescribeRepoEventsCmd{
-		repo_indexer.NewDescribeRepoEventsParams(),
+		DescribeRepoEventsParams: repo_indexer.NewDescribeRepoEventsParams(),
 	}
 }
 
@@ -4796,7 +4812,7 @@ type DescribeReposCmd struct {
 
 func NewDescribeReposCmd() Cmd {
 	return &DescribeReposCmd{
-		repo_manager.NewDescribeReposParams(),
+		DescribeReposParams: repo_manager.NewDescribeReposParams(),
 	}
 }
 
@@ -4902,7 +4918,7 @@ type ValidateRepoCmd struct {
 
 func NewValidateRepoCmd() Cmd {
 	return &ValidateRepoCmd{
-		repo_manager.NewValidateRepoParams(),
+		ValidateRepoParams: repo_manager.NewValidateRepoParams(),
 	}
 }
 
@@ -5172,7 +5188,7 @@ type DescribeDebugRuntimeCredentialsCmd struct {
 
 func NewDescribeDebugRuntimeCredentialsCmd() Cmd {
 	return &DescribeDebugRuntimeCredentialsCmd{
-		runtime_manager.NewDescribeDebugRuntimeCredentialsParams(),
+		DescribeDebugRuntimeCredentialsParams: runtime_manager.NewDescribeDebugRuntimeCredentialsParams(),
 	}
 }
 
@@ -5220,7 +5236,7 @@ type DescribeDebugRuntimesCmd struct {
 
 func NewDescribeDebugRuntimesCmd() Cmd {
 	return &DescribeDebugRuntimesCmd{
-		runtime_manager.NewDescribeDebugRuntimesParams(),
+		DescribeDebugRuntimesParams: runtime_manager.NewDescribeDebugRuntimesParams(),
 	}
 }
 
@@ -5269,7 +5285,7 @@ type DescribeRuntimeCredentialsCmd struct {
 
 func NewDescribeRuntimeCredentialsCmd() Cmd {
 	return &DescribeRuntimeCredentialsCmd{
-		runtime_manager.NewDescribeRuntimeCredentialsParams(),
+		DescribeRuntimeCredentialsParams: runtime_manager.NewDescribeRuntimeCredentialsParams(),
 	}
 }
 
@@ -5317,7 +5333,7 @@ type DescribeRuntimeProviderZonesCmd struct {
 
 func NewDescribeRuntimeProviderZonesCmd() Cmd {
 	return &DescribeRuntimeProviderZonesCmd{
-		runtime_manager.NewDescribeRuntimeProviderZonesParams(),
+		DescribeRuntimeProviderZonesParams: runtime_manager.NewDescribeRuntimeProviderZonesParams(),
 	}
 }
 
@@ -5352,7 +5368,7 @@ type DescribeRuntimesCmd struct {
 
 func NewDescribeRuntimesCmd() Cmd {
 	return &DescribeRuntimesCmd{
-		runtime_manager.NewDescribeRuntimesParams(),
+		DescribeRuntimesParams: runtime_manager.NewDescribeRuntimesParams(),
 	}
 }
 
@@ -5401,7 +5417,7 @@ type GetRuntimeStatisticsCmd struct {
 
 func NewGetRuntimeStatisticsCmd() Cmd {
 	return &GetRuntimeStatisticsCmd{
-		runtime_manager.NewGetRuntimeStatisticsParams(),
+		GetRuntimeStatisticsParams: runtime_manager.NewGetRuntimeStatisticsParams(),
 	}
 }
 
@@ -5650,7 +5666,7 @@ type DescribeTasksCmd struct {
 
 func NewDescribeTasksCmd() Cmd {
 	return &DescribeTasksCmd{
-		task_manager.NewDescribeTasksParams(),
+		DescribeTasksParams: task_manager.NewDescribeTasksParams(),
 	}
 }
 
