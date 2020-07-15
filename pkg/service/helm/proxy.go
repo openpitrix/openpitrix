@@ -53,18 +53,6 @@ var (
 	ClusterNameRegExp = regexp.MustCompile(ClusterNameReg)
 )
 
-type CredentialGetter func(context.Context, string) (string, string, error)
-
-var DefaultCredentialGetter CredentialGetter = func(ctx context.Context, runtimeId string) (string, string, error) {
-	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
-	if err != nil {
-		logger.Debug(nil, "get runtime error: [%s]", err.Error())
-		return "", "", err
-	}
-
-	return runtime.Runtime.Zone, runtime.RuntimeCredentialContent, nil
-}
-
 //Helm kubernetes proxy
 type Proxy struct {
 	ctx          context.Context
@@ -133,24 +121,23 @@ func (proxy *Proxy) GetKubeClientWithCredential(credential string) (*kubernetes.
 	return clientset, config, err
 }
 
-func (proxy *Proxy) GetHelmConfig(driver, namespace string, getter CredentialGetter) (*action.Configuration, error) {
-	file, err := ioutil.TempFile("", "config")
+func (proxy *Proxy) GetHelmConfig(namespace string) (*action.Configuration, error) {
+	var driver = ""
+	file, err := ioutil.TempFile("", proxy.RuntimeId)
 	if err != nil {
-		logger.Debug(proxy.ctx, "get helm config error: [%s]", err.Error())
+		logger.Error(proxy.ctx, "get helm config error: [%s]", err.Error())
 		return nil, err
 	}
 
-	ns, credentialContent, err := getter(proxy.ctx, proxy.RuntimeId)
-	if namespace != "" {
-		ns = namespace
-	}
-	if len(credentialContent) == 0 {
+	runtime, err := runtimeclient.NewRuntime(proxy.ctx, proxy.RuntimeId)
+	if err != nil {
+		logger.Error(nil, "get runtime error: [%s]", err.Error())
 		return nil, err
 	}
 
-	_, err = file.Write([]byte(credentialContent))
+	_, err = file.Write([]byte(runtime.RuntimeCredential.RuntimeCredentialContent))
 	if err != nil {
-		logger.Debug(proxy.ctx, "write crendential content error: [%s]", err.Error())
+		logger.Error(proxy.ctx, "write crendential content error: [%s]", err.Error())
 		return nil, err
 	}
 	kubeConfigPath := file.Name()
@@ -159,9 +146,9 @@ func (proxy *Proxy) GetHelmConfig(driver, namespace string, getter CredentialGet
 	var FMT = func(format string, v ...interface{}) {
 		logger.Debug(proxy.ctx, format, v...)
 	}
-	//todo context
-	if err := actionConfig.Init(kube.GetConfig(kubeConfigPath, "", ns), ns, driver, FMT); err != nil {
-		logger.Debug(proxy.ctx, "Init ActionConfig Error: [%s]", err.Error())
+	// todo: context
+	if err := actionConfig.Init(kube.GetConfig(kubeConfigPath, "", namespace), namespace, driver, FMT); err != nil {
+		logger.Error(proxy.ctx, "Init ActionConfig Error: [%s]", err.Error())
 		return nil, err
 	}
 	return actionConfig, nil
@@ -195,7 +182,7 @@ func (proxy *Proxy) InstallReleaseFromChart(cfg *action.Configuration, c *chart.
 	rls, err := installCli.Run(c, rawVals)
 	if err != nil {
 		if rls != nil {
-			deleteErr := proxy.DeleteRelease(cfg, rls.Name, true)
+			deleteErr := proxy.DeleteRelease(cfg, rls.Name, true, namespace)
 			if deleteErr != nil {
 				logger.Error(proxy.ctx, "delete relese failed: %+v", deleteErr)
 			}
@@ -232,8 +219,9 @@ func (proxy *Proxy) RollbackRelease(cfg *action.Configuration, releaseName strin
 	return nil
 }
 
-func (proxy *Proxy) DeleteRelease(cfg *action.Configuration, releaseName string, purge bool) error {
+func (proxy *Proxy) DeleteRelease(cfg *action.Configuration, releaseName string, purge bool, namespace string) error {
 	deleteCli := action.NewUninstall(cfg)
+
 	deleteCli.KeepHistory = true
 	if purge {
 		deleteCli.KeepHistory = false
@@ -276,7 +264,7 @@ func (proxy *Proxy) CheckClusterNameIsUnique(clusterName, namespace string) erro
 
 	err := funcutil.WaitForSpecificOrError(func() (bool, error) {
 		//todo
-		cfg, err := proxy.GetHelmConfig("", namespace, DefaultCredentialGetter)
+		cfg, err := proxy.GetHelmConfig(namespace)
 		_, err = proxy.ReleaseStatus(cfg, clusterName)
 		if err != nil {
 			if isConnectionError(err) {
