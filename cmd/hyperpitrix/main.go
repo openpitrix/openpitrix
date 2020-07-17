@@ -41,8 +41,6 @@ func main() {
 	go attachment.Serve(getConf("attachment"))
 	go runtime_provider.Serve(getConf(""))
 	go helm.Serve(getConf(""))
-	//todo replace helm.Serve
-	go helm.HelmServe(getConf(""))
 
 	apigateway.Serve(getConf(""))
 }

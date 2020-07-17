@@ -163,6 +163,7 @@ func (p *Server) SplitJobIntoTasks(ctx context.Context, req *pb.SplitJobIntoTask
 		td := TaskDirective{
 			RuntimeId:   jobDirective.RuntimeId,
 			ClusterName: jobDirective.ClusterName,
+			Namespace:   jobDirective.Namespace,
 		}
 		tdj := encodeTaskDirective(td)
 
@@ -175,6 +176,7 @@ func (p *Server) SplitJobIntoTasks(ctx context.Context, req *pb.SplitJobIntoTask
 		td := TaskDirective{
 			RuntimeId:   jobDirective.RuntimeId,
 			ClusterName: jobDirective.ClusterName,
+			Namespace:   jobDirective.Namespace,
 		}
 		tdj := encodeTaskDirective(td)
 
@@ -199,7 +201,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 	}
 
 	proxy := NewProxy(ctx, directive.RuntimeId)
-	cfg, _ := proxy.GetHelmConfig("", directive.Namespace, DefaultCredentialGetter)
+	cfg, _ := proxy.GetHelmConfig(directive.Namespace)
 
 	switch task.TaskAction {
 	case constants.ActionCreateCluster:
@@ -242,14 +244,12 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 			return nil, err
 		}
 	case constants.ActionDeleteClusters:
-		err = proxy.DeleteRelease(cfg, directive.ClusterName, false)
+		err = proxy.DeleteRelease(cfg, directive.ClusterName, false, directive.Namespace)
 		if err != nil {
 			return nil, err
 		}
 	case constants.ActionCeaseClusters:
-		// todo about namespaces
-		//cfg, err = proxy.GetHelmConfig("configmap", DefaultCredentialGetter)
-		err = proxy.DeleteRelease(cfg, directive.ClusterName, true)
+		err = proxy.DeleteRelease(cfg, directive.ClusterName, true, directive.Namespace)
 		if err != nil {
 			logger.Debug(ctx, "Cease helm release [%+v] error: [%s]", directive.ClusterName, err.Error())
 			return nil, err
@@ -270,8 +270,7 @@ func (s *Server) WaitSubtask(ctx context.Context, req *pb.WaitSubtaskRequest) (*
 	}
 
 	proxy := NewProxy(ctx, taskDirective.RuntimeId)
-	//todo HELMDRIVER
-	cfg, err := proxy.GetHelmConfig("", taskDirective.Namespace, DefaultCredentialGetter)
+	cfg, err := proxy.GetHelmConfig(taskDirective.Namespace)
 	if err != nil {
 		logger.Debug(ctx, "get helm action config error [%s]", err.Error())
 		return nil, err
