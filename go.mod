@@ -89,3 +89,5 @@ replace github.com/gocraft/dbr => github.com/gocraft/dbr v0.0.0-20180507214907-a
 replace github.com/docker/docker => github.com/docker/engine v0.0.0-20190423201726-d2cfbce3f3b0
 
 replace go.etcd.io/etcd => go.etcd.io/etcd v0.0.0-20200520232829-54ba9589114f
+
+replace helm.sh/helm => openpitrix.io/helm v0.0.0-20200725015400-ebf6d7e5b2b0
