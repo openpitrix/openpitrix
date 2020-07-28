@@ -114,10 +114,10 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	}
 
 	name := req.GetName().GetValue()
-	err = p.validateRepoName(ctx, name)
-	if err != nil {
-		return nil, err
-	}
+	//err = p.validateRepoName(ctx, name)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	s := ctxutil.GetSender(ctx)
 	newRepo := models.NewRepo(
