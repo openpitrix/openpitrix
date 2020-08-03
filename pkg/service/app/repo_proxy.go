@@ -85,11 +85,11 @@ func (rp *repoProxy) SyncRepo(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		err = resortAppVersions(ctx, appId)
+		err = ResortAppVersions(ctx, appId)
 		if err != nil {
 			return err
 		}
-		err = syncAppStatus(ctx, appId)
+		err = SyncAppStatus(ctx, appId)
 		if err != nil {
 			return err
 		}

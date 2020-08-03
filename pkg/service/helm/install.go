@@ -9,6 +9,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	"k8s.io/kubernetes/pkg/apis/apps"
 )
 
 // Scheme is the default instance of runtime.Scheme to which types in the Kubernetes API are already registered.
@@ -36,7 +37,7 @@ func ExtensionInstall(scheme *runtime.Scheme) {
 }
 
 func AppInstall(scheme *runtime.Scheme) {
-	//utilruntime.Must(apps.AddToScheme(scheme))
+	utilruntime.Must(apps.AddToScheme(scheme))
 	utilruntime.Must(appsv1beta1.AddToScheme(scheme))
 	utilruntime.Must(appsv1beta2.AddToScheme(scheme))
 	utilruntime.Must(appsv1.AddToScheme(scheme))

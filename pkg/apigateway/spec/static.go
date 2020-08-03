@@ -8672,6 +8672,17 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixResortAppsResponse": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "openpitrixResourceCategory": {
       "type": "object",
       "properties": {
