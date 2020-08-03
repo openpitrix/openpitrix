@@ -1038,6 +1038,10 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 	if err != nil {
 		return nil, err
 	}
+	err = ResortAppVersions(ctx, app.AppId)
+	if err != nil {
+		return nil, err
+	}
 
 	if enabled := pi.Global().GlobalConfig().InstallModule.Iam; enabled {
 
