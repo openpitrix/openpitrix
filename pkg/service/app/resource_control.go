@@ -204,7 +204,7 @@ func updateVersionStatus(ctx context.Context, version *models.AppVersion, status
 	if err != nil {
 		return err
 	}
-	err = syncAppStatus(ctx, version.AppId)
+	err = SyncAppStatus(ctx, version.AppId)
 	if err != nil {
 		return err
 	}
@@ -340,7 +340,7 @@ func syncAppVersion(ctx context.Context, versionId string) error {
 	return syncActiveApp(ctx, app)
 }
 
-func syncAppStatus(ctx context.Context, appId string) error {
+func SyncAppStatus(ctx context.Context, appId string) error {
 	app, err := getApp(ctx, appId)
 	if err != nil {
 		return err
@@ -625,7 +625,7 @@ func getAppsVersionTypes(ctx context.Context, appIds []string, active bool) (map
 	return appsVersionTypes, err
 }
 
-func resortAppVersions(ctx context.Context, appId string) error {
+func ResortAppVersions(ctx context.Context, appId string) error {
 	queryFunc := func(active bool) (versions models.AppVersions, err error) {
 		_, err = pi.Global().DB(ctx).
 			Select(

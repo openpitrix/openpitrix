@@ -40,6 +40,20 @@ var (
 	_ pb.AppManagerServer = &Server{}
 )
 
+func (p *Server) ResortApps(ctx context.Context, req *pb.ResortAppsRequest) (*pb.ResortAppsResponse, error) {
+	for _, appId := range req.AppId {
+		err := ResortAppVersions(ctx, appId)
+		if err != nil {
+			return nil, err
+		}
+		err = SyncAppStatus(ctx, appId)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &pb.ResortAppsResponse{AppId: req.AppId}, nil
+}
+
 func (p *Server) SyncRepo(ctx context.Context, req *pb.SyncRepoRequest) (*pb.SyncRepoResponse, error) {
 	var res = &pb.SyncRepoResponse{}
 	var repoId = req.GetRepoId()

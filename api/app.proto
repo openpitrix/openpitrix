@@ -599,7 +599,16 @@ message SyncRepoResponse {
 	string result = 2;
 }
 
+message ResortAppsRequest {
+	repeated string app_id = 1;
+}
+message ResortAppsResponse {
+	repeated string app_id = 1;
+}
+
 service AppManager {
+	rpc ResortApps (ResortAppsRequest) returns (ResortAppsResponse) {
+	}
 	rpc SyncRepo (SyncRepoRequest) returns (SyncRepoResponse) {
 	}
 	// Create app, user of isv can create app on the platform
