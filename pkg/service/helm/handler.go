@@ -193,6 +193,20 @@ func (p *Server) SplitJobIntoTasks(ctx context.Context, req *pb.SplitJobIntoTask
 	}, nil
 }
 
+func trimStringInMap(values map[string]interface{}) map[string]interface{} {
+	for k, v := range values {
+		switch i := v.(type) {
+		case string:
+			if len(i) == 0 {
+				delete(values, k)
+			}
+		case map[string]interface{}:
+			values[k] = trimStringInMap(i)
+		}
+	}
+	return values
+}
+
 func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest) (*pb.HandleSubtaskResponse, error) {
 	task := models.PbToTask(req.GetTask())
 	directive, err := decodeTaskDirective(task.Directive)
@@ -215,6 +229,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 		if err != nil {
 			return nil, err
 		}
+		rawVals = trimStringInMap(rawVals)
 		logger.Debug(ctx, "Install helm release with name [%+v], namespace [%+v], values [%s]", directive.ClusterName, directive.Namespace, rawVals)
 
 		err = proxy.InstallReleaseFromChart(cfg, c, rawVals, directive.ClusterName, directive.Namespace)
@@ -231,6 +246,7 @@ func (s *Server) HandleSubtask(ctx context.Context, req *pb.HandleSubtaskRequest
 		if err != nil {
 			return nil, err
 		}
+		rawVals = trimStringInMap(rawVals)
 
 		logger.Debug(ctx, "Update helm release [%+v] with values [%s]", directive.ClusterName, rawVals)
 		err = proxy.UpdateReleaseFromChart(cfg, directive.ClusterName, c, rawVals, directive.Namespace)

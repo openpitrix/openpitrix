@@ -7,8 +7,8 @@ require (
 	github.com/MakeNowJust/heredoc v0.0.0-20171113091838-e9091a26100e // indirect
 	github.com/Masterminds/semver v1.5.0
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
-	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496
-	github.com/aws/aws-sdk-go v1.25.21
+	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
+	github.com/aws/aws-sdk-go v1.27.0
 	github.com/bitly/go-simplejson v0.5.0
 	github.com/bugsnag/bugsnag-go v1.5.0 // indirect
 	github.com/bugsnag/panicwrap v1.2.0 // indirect
@@ -43,39 +43,35 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.11.3
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/koding/multiconfig v0.0.0-20171124222453-69c27309b2d7
-	github.com/miekg/dns v0.0.0-20181005163659-0d29b283ac0f // indirect
 	github.com/pborman/uuid v1.2.0
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.2.1 // indirect
 	github.com/robfig/cron v1.2.0
 	github.com/sony/sonyflake v1.0.0
 	github.com/speps/go-hashids v2.0.0+incompatible
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.5.1
+	github.com/stretchr/testify v1.6.1
 	github.com/urfave/cli v1.22.1
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/xenolf/lego v0.3.2-0.20160613233155-a9d8cec0e656 // indirect
 	github.com/yvasiyarov/go-metrics v0.0.0-20150112132944-c25f46c4b940 // indirect
 	github.com/yvasiyarov/gorelic v0.0.6 // indirect
 	go.etcd.io/etcd v0.0.0-20200520232829-54ba9589114f
-	golang.org/x/crypto v0.0.0-20200414173820-0848c9571904
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/image v0.0.0-20190227222117-0694c2d4d067 // indirect
 	golang.org/x/net v0.0.0-20191028085509-fe3aa8a45271
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	golang.org/x/sys v0.0.0-20191028164358-195ce5e7f934 // indirect
-	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
-	golang.org/x/tools v0.0.0-20191029041327-9cc4af7d6b2c
+	golang.org/x/tools v0.0.0-20200103221440-774c71fcf114
 	google.golang.org/genproto v0.0.0-20191028173616-919d9bdd9fe6
 	google.golang.org/grpc v1.27.0
 	gopkg.in/square/go-jose.v1 v1.1.2 // indirect
 	gopkg.in/square/go-jose.v2 v2.4.0
 	gopkg.in/yaml.v2 v2.2.8
-	helm.sh/helm/v3 v3.2.4
-	k8s.io/api v0.18.0
-	k8s.io/apiextensions-apiserver v0.18.0
-	k8s.io/apimachinery v0.18.0
-	k8s.io/client-go v0.18.0
+	helm.sh/helm/v3 v3.0.0-00010101000000-000000000000
+	k8s.io/api v0.18.4
+	k8s.io/apiextensions-apiserver v0.18.4
+	k8s.io/apimachinery v0.18.4
+	k8s.io/client-go v0.18.4
 	kubesphere.io/im v0.1.0
 	openpitrix.io/iam v0.1.0
 	openpitrix.io/notification v0.2.2
@@ -90,4 +86,4 @@ replace github.com/docker/docker => github.com/docker/engine v0.0.0-201904232017
 
 replace go.etcd.io/etcd => go.etcd.io/etcd v0.0.0-20200520232829-54ba9589114f
 
-replace helm.sh/helm => openpitrix.io/helm v0.0.0-20200725015400-ebf6d7e5b2b0
+replace helm.sh/helm/v3 => github.com/openpitrix/helm/v3 v3.0.0-20200725015400-ebf6d7e5b2b0
