@@ -6,7 +6,6 @@ env:
   matrix:
   - TEST_SUITE=unit-test
   - TEST_SUITE=e2e-test
-  - TEST_SUITE=e2e-k8s-test
 cache:
   directories:
   - tmp/cache
@@ -24,11 +23,6 @@ addons:
 before_install:
 - sudo rm /usr/bin/docker
 - curl -fsSL get.docker.com | sh
-- if [ $TEST_SUITE'' == "e2e-k8s-test" ]; then
-  ./deploy/kubernetes/scripts/install-minikube.sh &&
-  ./deploy/kubernetes/scripts/init-helm.sh &&
-  kubectl cluster-info;
-  fi
 before_script:
 - docker --version
 - docker-compose --version
