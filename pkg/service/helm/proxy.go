@@ -179,7 +179,7 @@ func (proxy *Proxy) InstallReleaseFromChart(cfg *action.Configuration, c *chart.
 	installCli := action.NewInstall(cfg)
 	installCli.ReleaseName = releaseName
 	installCli.Namespace = namespace
-	installCli.DisableOpenAPIValidation = true
+	//installCli.DisableOpenAPIValidation = true
 	rls, err := installCli.Run(c, rawVals)
 	if err != nil {
 		if rls != nil {
@@ -203,7 +203,7 @@ func (proxy *Proxy) UpdateReleaseFromChart(cfg *action.Configuration, releaseNam
 	}
 	updateCli := action.NewUpgrade(cfg)
 	updateCli.Namespace = namespace
-	updateCli.DisableOpenAPIValidation = true
+	//updateCli.DisableOpenAPIValidation = true
 	_, err = updateCli.Run(releaseName, c, rawVals)
 	if err != nil {
 		logger.Debug(proxy.ctx, "update release [%s] error [%s]", releaseName, err.Error())
