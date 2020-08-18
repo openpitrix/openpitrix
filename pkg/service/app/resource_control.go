@@ -160,6 +160,10 @@ func insertVersion(ctx context.Context, version *models.AppVersion) error {
 	if err != nil {
 		return err
 	}
+	err = resortInactiveAppVersions(ctx, version.AppId, false)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -346,7 +350,7 @@ func SyncAppStatus(ctx context.Context, appId string) error {
 		return err
 	}
 	attributes := make(map[string]interface{})
-	activeVersion, err := getLatestAppVersion(ctx, appId, constants.StatusActive)
+	activeVersion, err := getLatestAppVersion(ctx, app, constants.StatusActive)
 	if err != nil {
 		return err
 	}
@@ -399,13 +403,13 @@ func getApp(ctx context.Context, appId string) (*models.App, error) {
 	return app, nil
 }
 
-func getLatestAppVersion(ctx context.Context, appId string, status ...string) (*models.AppVersion, error) {
+func getLatestAppVersion(ctx context.Context, app *models.App, status ...string) (*models.AppVersion, error) {
 	appVersion := &models.AppVersion{}
 	stmt := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
 		From(constants.TableAppVersion).
-		Where(db.Eq(constants.ColumnActive, false)).
-		Where(db.Eq(constants.ColumnAppId, appId))
+		Where(db.Eq(constants.ColumnActive, app.Active)).
+		Where(db.Eq(constants.ColumnAppId, app.AppId))
 	if len(status) > 0 {
 		stmt.Where(db.Eq(constants.ColumnStatus, status))
 	}
@@ -445,7 +449,7 @@ func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorV
 func formatApp(ctx context.Context, app *models.App) (*pb.App, error) {
 	pbApp := models.AppToPb(app)
 
-	latestAppVersion, err := getLatestAppVersion(ctx, app.AppId)
+	latestAppVersion, err := getLatestAppVersion(ctx, app)
 	if err != nil {
 		return nil, err
 	}
@@ -625,56 +629,61 @@ func getAppsVersionTypes(ctx context.Context, appIds []string, active bool) (map
 	return appsVersionTypes, err
 }
 
-func ResortAppVersions(ctx context.Context, appId string) error {
-	queryFunc := func(active bool) (versions models.AppVersions, err error) {
-		_, err = pi.Global().DB(ctx).
-			Select(
-				constants.ColumnVersionId, constants.ColumnName,
-				constants.ColumnSequence, constants.ColumnCreateTime,
-				constants.ColumnActive,
-			).
-			From(constants.TableAppVersion).
-			Where(db.Eq(constants.ColumnActive, active)).
-			Where(db.Eq(constants.ColumnAppId, appId)).
-			Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
-			Load(&versions)
-		return
-	}
+func resortInactiveAppVersions(ctx context.Context, appId string, resetUpdateTime bool) error {
+	return resortAppVersions(ctx, appId, resetUpdateTime, false)
+}
 
-	sortFunc := func(versions models.AppVersions) error {
-		sort.Sort(versions)
-		for i, version := range versions {
-			if version.Sequence != uint32(i) {
-				_, err := pi.Global().DB(ctx).
-					Update(constants.TableAppVersion).
-					Set(constants.ColumnSequence, i).
-					Set(constants.ColumnUpdateTime, time.Now()).
-					Where(db.Eq(constants.ColumnVersionId, version.VersionId)).
-					Where(db.Eq(constants.ColumnActive, version.Active)).
-					Exec()
-				if err != nil {
-					return err
-				}
-			}
-		}
-		return nil
-	}
+func resortActiveAppVersions(ctx context.Context, appId string, resetUpdateTime bool) error {
+	return resortAppVersions(ctx, appId, resetUpdateTime, true)
+}
 
+func resortAppVersions(ctx context.Context, appId string, resetUpdateTime bool, active bool) error {
 	var versions models.AppVersions
 	var err error
-	versions, err = queryFunc(false)
+	_, err = pi.Global().DB(ctx).
+		Select(
+			constants.ColumnVersionId, constants.ColumnName,
+			constants.ColumnSequence, constants.ColumnCreateTime,
+			constants.ColumnActive,
+		).
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnActive, active)).
+		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
+		Load(&versions)
 	if err != nil {
 		return err
 	}
-	err = sortFunc(versions)
+	sort.Sort(versions)
+	for i, version := range versions {
+		if version.Sequence != uint32(i) {
+			stmt := pi.Global().DB(ctx).
+				Update(constants.TableAppVersion).
+				Set(constants.ColumnSequence, i).
+				Where(db.Eq(constants.ColumnVersionId, version.VersionId)).
+				Where(db.Eq(constants.ColumnActive, version.Active))
+			if resetUpdateTime {
+				stmt = stmt.Set(constants.ColumnUpdateTime, time.Now())
+			}
+			_, err := stmt.Exec()
+			if err != nil {
+				return err
+			}
+		}
+	}
 	if err != nil {
 		return err
 	}
-	versions, err = queryFunc(true)
+	return nil
+}
+
+func ResortAppVersions(ctx context.Context, appId string, resetUpdateTime bool) error {
+	var err error
+	err = resortInactiveAppVersions(ctx, appId, resetUpdateTime)
 	if err != nil {
 		return err
 	}
-	err = sortFunc(versions)
+	err = resortActiveAppVersions(ctx, appId, resetUpdateTime)
 	if err != nil {
 		return err
 	}

@@ -85,7 +85,7 @@ func (rp *repoProxy) SyncRepo(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		err = ResortAppVersions(ctx, appId)
+		err = ResortAppVersions(ctx, appId, true)
 		if err != nil {
 			return err
 		}

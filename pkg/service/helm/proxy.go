@@ -144,7 +144,7 @@ func (proxy *Proxy) GetHelmConfig(namespace string) (*action.Configuration, erro
 	actionConfig := new(action.Configuration)
 
 	var FMT = func(format string, v ...interface{}) {
-		logger.Debug(proxy.ctx, format, v...)
+		logger.Info(proxy.ctx, format, v...)
 	}
 	// todo: context
 	if err := actionConfig.Init(kube.GetConfig(kubeConfigPath, "", namespace), namespace, driver, FMT); err != nil {
@@ -179,17 +179,14 @@ func (proxy *Proxy) InstallReleaseFromChart(cfg *action.Configuration, c *chart.
 	installCli := action.NewInstall(cfg)
 	installCli.ReleaseName = releaseName
 	installCli.Namespace = namespace
+	installCli.Atomic = true
 	//installCli.DisableOpenAPIValidation = true
 	rls, err := installCli.Run(c, rawVals)
 	if err != nil {
-		if rls != nil {
-			deleteErr := proxy.DeleteRelease(cfg, rls.Name, true, namespace)
-			if deleteErr != nil {
-				logger.Error(proxy.ctx, "delete relese failed: %+v", deleteErr)
-			}
-		}
 		logger.Error(proxy.ctx, "Create release failed: %+v", err)
-		logger.Error(proxy.ctx, "Release mainfest: %s", rls.Manifest)
+		if rls != nil {
+			logger.Error(proxy.ctx, "Release mainfest: %s", rls.Manifest)
+		}
 		return err
 	}
 	return err
