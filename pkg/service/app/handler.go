@@ -42,7 +42,7 @@ var (
 
 func (p *Server) ResortApps(ctx context.Context, req *pb.ResortAppsRequest) (*pb.ResortAppsResponse, error) {
 	for _, appId := range req.AppId {
-		err := ResortAppVersions(ctx, appId)
+		err := ResortAppVersions(ctx, appId, true)
 		if err != nil {
 			return nil, err
 		}
@@ -722,7 +722,10 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 	if err != nil {
 		return nil, err
 	}
-
+	err = resortInactiveAppVersions(ctx, version.AppId, false)
+	if err != nil {
+		return nil, err
+	}
 	pkg := req.GetPackage().GetValue()
 	if len(pkg) > 0 {
 		_, err = repoiface.LoadPackage(ctx, version.Type, pkg)
@@ -1038,7 +1041,7 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 	if err != nil {
 		return nil, err
 	}
-	err = ResortAppVersions(ctx, app.AppId)
+	err = resortActiveAppVersions(ctx, app.AppId, false)
 	if err != nil {
 		return nil, err
 	}
@@ -1130,6 +1133,10 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 		return nil, err
 	}
 	err = addAppVersionAudit(ctx, version, constants.StatusDeleted, constants.OperatorTypeDeveloper, "")
+	if err != nil {
+		return nil, err
+	}
+	err = resortInactiveAppVersions(ctx, version.AppId, false)
 	if err != nil {
 		return nil, err
 	}

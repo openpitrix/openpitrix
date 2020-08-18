@@ -144,7 +144,7 @@ func (proxy *Proxy) GetHelmConfig(namespace string) (*action.Configuration, erro
 	actionConfig := new(action.Configuration)
 
 	var FMT = func(format string, v ...interface{}) {
-		logger.Debug(proxy.ctx, format, v...)
+		logger.Info(proxy.ctx, format, v...)
 	}
 	// todo: context
 	if err := actionConfig.Init(kube.GetConfig(kubeConfigPath, "", namespace), namespace, driver, FMT); err != nil {
