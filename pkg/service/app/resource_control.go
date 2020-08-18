@@ -412,6 +412,8 @@ func getLatestAppVersion(ctx context.Context, app *models.App, status ...string)
 		Where(db.Eq(constants.ColumnAppId, app.AppId))
 	if len(status) > 0 {
 		stmt.Where(db.Eq(constants.ColumnStatus, status))
+	} else {
+		stmt.Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted))
 	}
 	err := stmt.
 		OrderDir(constants.ColumnSequence, false).
