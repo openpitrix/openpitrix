@@ -451,7 +451,14 @@ func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorV
 func formatApp(ctx context.Context, app *models.App) (*pb.App, error) {
 	pbApp := models.AppToPb(app)
 
-	latestAppVersion, err := getLatestAppVersion(ctx, app)
+	var latestAppVersion *models.AppVersion
+	var err error
+	if app.Active {
+		latestAppVersion, err = getLatestAppVersion(ctx, app, constants.StatusActive)
+	} else {
+		latestAppVersion, err = getLatestAppVersion(ctx, app)
+	}
+
 	if err != nil {
 		return nil, err
 	}
