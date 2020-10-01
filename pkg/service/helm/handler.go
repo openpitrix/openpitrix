@@ -294,11 +294,7 @@ func (s *Server) WaitSubtask(ctx context.Context, req *pb.WaitSubtaskRequest) (*
 
 	err = funcutil.WaitForSpecificOrError(func() (bool, error) {
 		switch task.TaskAction {
-		case constants.ActionCreateCluster:
-			fallthrough
-		case constants.ActionUpgradeCluster:
-			fallthrough
-		case constants.ActionRollbackCluster:
+		case constants.ActionCreateCluster, constants.ActionUpgradeCluster, constants.ActionRollbackCluster:
 			status, err := proxy.ReleaseStatus(cfg, taskDirective.ClusterName)
 			if err != nil {
 				if isConnectionError(err) {
@@ -312,21 +308,6 @@ func (s *Server) WaitSubtask(ctx context.Context, req *pb.WaitSubtaskRequest) (*
 				logger.Debug(ctx, "Helm release gone to failed")
 				return true, fmt.Errorf("release failed")
 			case release.StatusDeployed:
-				clusterWrapper, err := models.NewClusterWrapper(ctx, taskDirective.RawClusterWrapper)
-				if err != nil {
-					return true, err
-				}
-				err = proxy.WaitWorkloadReady(
-					taskDirective.RuntimeId,
-					taskDirective.Namespace,
-					clusterWrapper.ClusterRoles,
-					task.GetTimeout(constants.WaitTaskTimeout),
-					constants.WaitTaskInterval,
-				)
-				if err != nil {
-					return true, err
-				}
-
 				return true, nil
 			}
 		case constants.ActionDeleteClusters:
