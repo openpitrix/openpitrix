@@ -56,16 +56,18 @@ deploy:
 #  on:
 #    branch: master
 #    repo: openpitrix/openpitrix
-- provider: script
-  script: sudo rm -rf tmp/ && ./docker_push $TRAVIS_TAG core
-  on:
-    tags: true
-    repo: openpitrix/openpitrix
-- provider: script
-  script: sudo rm -rf tmp/ && ./docker_push latest core
-  on:
-    branch: master
-    repo: openpitrix/openpitrix
+
+#- provider: script
+#  script: sudo rm -rf tmp/ && ./docker_push $TRAVIS_TAG core
+#  on:
+#    tags: true
+#    repo: openpitrix/openpitrix
+#- provider: script
+#  script: sudo rm -rf tmp/ && ./docker_push latest core
+#  on:
+#    branch: master
+#    repo: openpitrix/openpitrix
+
 #- provider: script
 #  script: sudo rm -rf tmp/ && ./docker_push $TRAVIS_TAG addition
 #  on:
