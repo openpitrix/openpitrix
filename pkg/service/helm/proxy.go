@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 
 	"helm.sh/helm/v3/pkg/action"
@@ -76,13 +77,14 @@ func NewProxy(ctx context.Context, runtimeId string) *Proxy {
 	return proxy
 }
 
-func (proxy *Proxy) GetKubeClient() (*kubernetes.Clientset, *rest.Config, error) {
-	kubeconfigGetter := func() (*clientcmdapi.Config, error) {
-		runtime, err := runtimeclient.NewRuntime(proxy.ctx, proxy.RuntimeId)
-		if err != nil {
-			return nil, err
-		}
+var runtimeClientCache = sync.Map{}
 
+func (proxy *Proxy) GetKubeClient() (*kubernetes.Clientset, *rest.Config, error) {
+	runtime, err := runtimeclient.NewRuntime(proxy.ctx, proxy.RuntimeId)
+	if err != nil {
+		return nil, nil, err
+	}
+	kubeconfigGetter := func() (*clientcmdapi.Config, error) {
 		return clientcmd.Load([]byte(runtime.RuntimeCredentialContent))
 	}
 
@@ -94,10 +96,15 @@ func (proxy *Proxy) GetKubeClient() (*kubernetes.Clientset, *rest.Config, error)
 	config.CAData = config.CAData[0:0]
 	config.TLSClientConfig.Insecure = true
 
+	if c, loaded := runtimeClientCache.Load(runtime.RuntimeCredentialContent); loaded {
+		return c.(*kubernetes.Clientset), config, err
+	}
+
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, nil, err
 	}
+	runtimeClientCache.Store(runtime.RuntimeCredentialContent, clientset)
 	return clientset, config, err
 }
 
