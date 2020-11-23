@@ -2,7 +2,9 @@
 # Use of this source code is governed by a Apache license
 # that can be found in the LICENSE file.
 
-FROM openpitrix/openpitrix-builder as builder
+FROM golang:1.13-alpine as builder
+
+RUN apk add --no-cache git curl openssl
 
 WORKDIR /go/src/openpitrix.io/openpitrix/
 COPY . .
@@ -12,10 +14,10 @@ RUN go generate openpitrix.io/openpitrix/pkg/version && \
 	CGO_ENABLED=0 GOBIN=/openpitrix_bin go install -ldflags '-w -s' -v -tags netgo openpitrix.io/openpitrix/cmd/... && \
 	CGO_ENABLED=0 GOBIN=/openpitrix_bin go install -ldflags '-w -s' -v -tags netgo openpitrix.io/openpitrix/metadata/cmd/...
 
-# RUN find /openpitrix_bin -type f -exec upx {} \;
-
 FROM alpine:3.7
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
+RUN apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing gops
+RUN apk add --no-cache curl wget
 
 COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /usr/local/go/lib/time/zoneinfo.zip
 COPY --from=builder /openpitrix_bin/* /usr/local/bin/
@@ -24,6 +26,7 @@ RUN apk add --update ca-certificates && \
     update-ca-certificates && \
     adduser -D -g openpitrix -u 1002 openpitrix && \
     chown -R openpitrix:openpitrix /usr/local/bin/
+
 USER openpitrix
 
 CMD ["sh"]
