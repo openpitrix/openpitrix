@@ -491,10 +491,6 @@ func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.A
 	if err != nil {
 		return pbApps, err
 	}
-	vendorMap, err := getVendorMap(ctx, userIds)
-	if err != nil {
-		return pbApps, err
-	}
 	for _, app := range apps {
 
 		var pbApp *pb.App
@@ -507,12 +503,6 @@ func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.A
 		}
 		if categorySet, ok := rcMap[app.AppId]; ok {
 			pbApp.CategorySet = categorySet
-		}
-		if vendor, ok := vendorMap[app.Isv]; ok {
-			pbApp.CompanyJoinTime = vendor.StatusTime
-			pbApp.CompanyName = vendor.CompanyName
-			pbApp.CompanyProfile = vendor.CompanyProfile
-			pbApp.CompanyWebsite = vendor.CompanyWebsite
 		}
 
 		pbApps = append(pbApps, pbApp)

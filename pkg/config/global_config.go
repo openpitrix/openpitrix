@@ -89,6 +89,9 @@ func (r *RuntimeProviderConfig) GetPort() int {
 }
 
 func (r *RuntimeProviderConfig) GetHost(provider string) string {
+	if provider == constants.ProviderKubernetes {
+		return constants.ClusterManagerHost
+	}
 	if len(r.Host) > 0 {
 		return r.Host
 	} else {

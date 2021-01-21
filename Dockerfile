@@ -11,8 +11,7 @@ COPY . .
 
 RUN mkdir -p /openpitrix_bin
 RUN go generate openpitrix.io/openpitrix/pkg/version && \
-	CGO_ENABLED=0 GOBIN=/openpitrix_bin go install -ldflags '-w -s' -v -tags netgo openpitrix.io/openpitrix/cmd/... && \
-	CGO_ENABLED=0 GOBIN=/openpitrix_bin go install -ldflags '-w -s' -v -tags netgo openpitrix.io/openpitrix/metadata/cmd/...
+	CGO_ENABLED=0 GOBIN=/openpitrix_bin go install -ldflags '-w -s' -v -tags netgo openpitrix.io/openpitrix/cmd/hyperpitrix
 
 FROM alpine:3.7
 

@@ -36,7 +36,7 @@ endef
 COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-isv-manager openpitrix-notification openpitrix-im-service openpitrix-am-service
 #COMPOSE_APP_SERVICES=openpitrix-pilot-service openpitrix-im-service openpitrix-am-service hyperpitrix
 COMPOSE_DB_CTRL=openpitrix-db-init openpitrix-im-db-init openpitrix-am-db-init openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-attachment-db-ctrl openpitrix-isv-db-ctrl openpitrix-notification-db-ctrl openpitrix-im-db-ctrl openpitrix-am-db-ctrl
-CMD?=...
+CMD?=hyperpitrix
 WITH_METADATA?=yes
 WITH_K8S=no
 comma:= ,

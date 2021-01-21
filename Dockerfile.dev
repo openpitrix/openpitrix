@@ -1,6 +1,6 @@
 FROM alpine:3.7
 
-COPY ./* /usr/local/bin/
+COPY ./hyperpitrix /usr/local/bin/
 
 RUN apk add --update ca-certificates && \
     update-ca-certificates && \

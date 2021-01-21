@@ -136,13 +136,14 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 			return err
 		}
 
-		pilotClient, err := pilotclient.NewClient()
-		if err != nil {
-			logger.Error(ctx, "Connect to pilot service failed: %+v", err)
-			return err
-		}
-
 		if task.Target == constants.TargetPilot {
+
+			pilotClient, err := pilotclient.NewClient()
+			if err != nil {
+				logger.Error(ctx, "Connect to pilot service failed: %+v", err)
+				return err
+			}
+
 			switch task.TaskAction {
 			case vmbased.ActionSetDroneConfig:
 				config := new(pbtypes.SetDroneConfigRequest)
