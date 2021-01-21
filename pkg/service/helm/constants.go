@@ -4,8 +4,10 @@
 
 package helm
 
+import "openpitrix.io/openpitrix/pkg/constants"
+
 const (
-	Provider       = "kubernetes"
+	Provider       = constants.ProviderKubernetes
 	ProviderConfig = `
 provider_type: helm
 enable: true

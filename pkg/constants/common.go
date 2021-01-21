@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	hyperpitrix                = "hyperpitrix"
+	hyperpitrix                = "127.0.0.1"
 	prefix                     = "openpitrix-"
 	ProviderPrefix             = "openpitrix-rp-"
 	RepoManagerHost            = hyperpitrix

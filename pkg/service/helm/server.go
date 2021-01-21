@@ -1,7 +1,6 @@
 package helm
 
 import (
-	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/manager"
 	runtimeprovider "openpitrix.io/openpitrix/pkg/service/runtime_provider"
@@ -20,7 +19,7 @@ type Server struct {
 
 func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
-	err := providerclient.RegisterRuntimeProvider(Provider, ProviderConfig)
+	err := pi.Global().RegisterRuntimeProvider(Provider, ProviderConfig)
 	if err != nil {
 		logger.Critical(nil, "failed to register provider config: %+v", err)
 	}

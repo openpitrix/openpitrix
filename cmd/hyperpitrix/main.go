@@ -6,7 +6,6 @@
 package main
 
 import (
-	"openpitrix.io/openpitrix/pkg/apigateway"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/service/app"
 	"openpitrix.io/openpitrix/pkg/service/attachment"
@@ -40,7 +39,5 @@ func main() {
 	go app.Serve(getConf("app"))
 	go attachment.Serve(getConf("attachment"))
 	go runtime_provider.Serve(getConf(""))
-	go helm.Serve(getConf(""))
-
-	apigateway.Serve(getConf(""))
+	helm.Serve(getConf(""))
 }
