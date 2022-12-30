@@ -8,7 +8,7 @@ require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
-	github.com/aws/aws-sdk-go v1.27.0
+	github.com/aws/aws-sdk-go v1.33.0
 	github.com/bitly/go-simplejson v0.5.0
 	github.com/bugsnag/bugsnag-go v1.5.0 // indirect
 	github.com/bugsnag/panicwrap v1.2.0 // indirect
@@ -30,7 +30,7 @@ require (
 	github.com/go-openapi/strfmt v0.19.3
 	github.com/go-openapi/swag v0.19.5
 	github.com/go-openapi/validate v0.19.5
-	github.com/go-sql-driver/mysql v1.4.1
+	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gocraft/dbr v0.0.0-00010101000000-000000000000
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
 	github.com/golang/protobuf v1.3.2
@@ -59,7 +59,7 @@ require (
 	go.etcd.io/etcd v0.0.0-20200520232829-54ba9589114f
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/image v0.0.0-20190227222117-0694c2d4d067 // indirect
-	golang.org/x/net v0.0.0-20191028085509-fe3aa8a45271
+	golang.org/x/net v0.0.0-20200202094626-16171245cfb2
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/tools v0.0.0-20200103221440-774c71fcf114
 	google.golang.org/genproto v0.0.0-20191028173616-919d9bdd9fe6
@@ -72,6 +72,7 @@ require (
 	k8s.io/apiextensions-apiserver v0.18.4
 	k8s.io/apimachinery v0.18.4
 	k8s.io/client-go v0.18.4
+	k8s.io/kubernetes v1.13.0
 	kubesphere.io/im v0.1.0
 	openpitrix.io/iam v0.1.0
 	openpitrix.io/notification v0.2.2
