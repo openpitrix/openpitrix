@@ -1,3 +1,7 @@
+**This project is deprecated as all features were merged to the https://kubesphere.io**
+
+---
+
 <p align="center"><a href="http://openpitrix.io" target="_blank"><img src="https://raw.githubusercontent.com/openpitrix/openpitrix/master/docs/images/logo.png" alt="OpenPitrix"></a></p>
 
 # OpenPitrix
