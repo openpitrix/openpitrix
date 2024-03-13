@@ -79,9 +79,7 @@ func deleteAttachmentFiles(ctx context.Context, attachment *models.Attachment, f
 		}
 	} else {
 		// with prefix
-		for _, f := range filename {
-			filenames = append(filenames, f)
-		}
+		filenames = append(filenames, filename...)
 	}
 
 	// delete object
@@ -145,9 +143,7 @@ func getAttachmentFiles(ctx context.Context, attachments []*models.Attachment, r
 				return nil, err
 			}
 		} else {
-			for _, filename := range req.GetFilename() {
-				filenames = append(filenames, filename)
-			}
+			filenames = append(filenames, req.GetFilename()...)
 		}
 
 		// get object content
