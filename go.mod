@@ -23,7 +23,7 @@ require (
 	github.com/fatih/structs v1.1.0
 	github.com/garyburd/redigo v1.6.0 // indirect
 	github.com/ghodss/yaml v1.0.0
-	github.com/gin-gonic/gin v1.4.0
+	github.com/gin-gonic/gin v1.7.0
 	github.com/go-openapi/errors v0.19.2
 	github.com/go-openapi/runtime v0.19.7
 	github.com/go-openapi/spec v0.19.4
@@ -33,7 +33,7 @@ require (
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/gocraft/dbr v0.0.0-00010101000000-000000000000
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
-	github.com/golang/protobuf v1.3.2
+	github.com/golang/protobuf v1.3.3
 	github.com/google/gops v0.3.6
 	github.com/googleapis/gnostic v0.3.1 // indirect
 	github.com/gorilla/handlers v1.4.0 // indirect
@@ -72,6 +72,7 @@ require (
 	k8s.io/apiextensions-apiserver v0.18.4
 	k8s.io/apimachinery v0.18.4
 	k8s.io/client-go v0.18.4
+	k8s.io/kubernetes v1.13.0
 	kubesphere.io/im v0.1.0
 	openpitrix.io/iam v0.1.0
 	openpitrix.io/notification v0.2.2
